@@ -355,12 +355,35 @@ mbereg_search_getregs();
      */
     protected function createConfigurationDefinition(): FixerConfigurationResolverInterface
     {
-        $sets = ['@internal', '@IMAP', '@mbreg', '@all', '@time', '@exif', '@snmp', '@ldap', '@mysqli', '@pg', '@oci', '@odbc', '@openssl', '@sodium', '@ftp', '@posix', '@pcntl'];
+        $sets = [
+            '@all' => 'all listed sets',
+            '@internal' => 'native functions',
+            '@IMAP' => 'IMAP functions',
+            '@mbreg' => 'from `ext-mbstring`',
+            '@time' => 'time functions',
+            '@exif' => 'EXIF functions',
+            '@snmp' => 'SNMP functions',
+            '@ldap' => 'LDAP functions',
+            '@mysqli' => 'mysqli functions',
+            '@pg' => 'pg functions',
+            '@oci' => 'oci functions',
+            '@odbc' => 'odbc functions',
+            '@openssl' => 'openssl functions',
+            '@sodium' => 'libsodium functions',
+            '@ftp' => 'FTP functions',
+            '@posix' => 'POSIX functions',
+            '@pcntl' => 'PCNTL functions',
+        ];
+
+        $list = '';
+        foreach ($sets as $set => $description) {
+            $list .= "* `{$set}` ({$description})\n";
+        }
 
         return new FixerConfigurationResolver([
-            (new FixerOptionBuilder('sets', 'List of sets to fix. Defined sets are `@internal` (native functions), `@IMAP` (IMAP functions), `@mbreg` (from `ext-mbstring`) `@all` (all listed sets).'))
+            (new FixerOptionBuilder('sets', "List of sets to fix. Defined sets are:\n\n{$list}"))
                 ->setAllowedTypes(['array'])
-                ->setAllowedValues([new AllowedValueSubset($sets)])
+                ->setAllowedValues([new AllowedValueSubset(array_keys($sets))])
                 ->setDefault(['@internal', '@IMAP', '@pg'])
                 ->getOption(),
         ]);
