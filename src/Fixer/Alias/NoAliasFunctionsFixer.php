@@ -35,6 +35,22 @@ final class NoAliasFunctionsFixer extends AbstractFixer implements Configuration
 
     /** @var array<string, string> stores alias (key) - master (value) functions mapping */
     private static $internalSet = [
+        'dir' => 'getdir',
+        'diskfreespace' => 'disk_free_space',
+
+        'checkdnsrr' => 'dns_check_record',
+        'getmxrr' => 'dns_get_mx',
+
+        'session_commit' => 'session_write_close',
+
+        'stream_register_wrapper' => 'stream_wrapper_register',
+        'set_file_buffer' => 'stream_set_write_buffer',
+        'socket_set_blocking' => 'stream_set_blocking',
+        'socket_get_status' => 'stream_get_meta_data',
+        'socket_set_timeout' => 'stream_set_timeout',
+        'socket_getopt' => 'socket_get_option',
+        'socket_setopt' => 'socket_set_option',
+
         'chop' => 'rtrim',
         'close' => 'closedir',
         'doubleval' => 'floatval',
@@ -69,6 +85,42 @@ final class NoAliasFunctionsFixer extends AbstractFixer implements Configuration
     ];
 
     /** @var array<string, string> stores alias (key) - master (value) functions mapping */
+    private static $snmpSet = [
+        'snmpwalkoid' => 'snmprealwalk',
+        'snmp_set_oid_numeric_print' => 'snmp_set_oid_output_format',
+    ];
+
+    /** @var array<string, string> stores alias (key) - master (value) functions mapping */
+    private static $ldapSet = [
+        'ldap_close' => 'ldap_unbind',
+        'ldap_get_values' => 'ldap_get_values_len',
+        'ldap_modify' => 'ldap_mod_replace',
+    ];
+
+    /** @var array<string, string> stores alias (key) - master (value) functions mapping */
+    private static $mysqliSet = [
+        'mysqli_execute' => 'mysqli_stmt_execute',
+        'mysqli_set_opt' => 'mysqli_options',
+        'mysqli_escape_string' => 'mysqli_real_escape_string',
+    ];
+
+    /** @var array<string, string> stores alias (key) - master (value) functions mapping */
+    private static $pgSet = [
+        'pg_exec' => 'pg_query',
+    ];
+
+    /** @var array<string, string> stores alias (key) - master (value) functions mapping */
+    private static $ociSet = [
+        'oci_free_cursor' => 'oci_free_statement',
+    ];
+
+    /** @var array<string, string> stores alias (key) - master (value) functions mapping */
+    private static $odbcSet = [
+        'odbc_do' => 'odbc_exec',
+        'odbc_field_precision' => 'odbc_field_len',
+    ];
+
+    /** @var array<string, string> stores alias (key) - master (value) functions mapping */
     private static $mbregSet = [
         'mbereg' => 'mb_ereg',
         'mbereg_match' => 'mb_ereg_match',
@@ -86,8 +138,29 @@ final class NoAliasFunctionsFixer extends AbstractFixer implements Configuration
         'mbsplit' => 'mb_split',
     ];
 
+    private static $opensslSet = [
+        'openssl_get_publickey' => 'openssl_pkey_get_public',
+        'openssl_get_privatekey' => 'openssl_pkey_get_private',
+    ];
+
+    private static $sodiumSet = [
+        'sodium_crypto_scalarmult_base' => 'sodium_crypto_box_publickey_from_secretkey',
+    ];
+
     private static $exifSet = [
         'read_exif_data' => 'exif_read_data',
+    ];
+
+    private static $ftpSet = [
+        'ftp_quit' => 'ftp_close',
+    ];
+
+    private static $posixSet = [
+        'posix_errno' => 'posix_get_last_error',
+    ];
+
+    private static $pcntlSet = [
+        'pcntl_errno' => 'pcntl_get_last_error',
     ];
 
     private static $timeSet = [
@@ -107,6 +180,17 @@ final class NoAliasFunctionsFixer extends AbstractFixer implements Configuration
                 $this->aliases = array_merge($this->aliases, self::$mbregSet);
                 $this->aliases = array_merge($this->aliases, self::$timeSet);
                 $this->aliases = array_merge($this->aliases, self::$exifSet);
+                $this->aliases = array_merge($this->aliases, self::$snmpSet);
+                $this->aliases = array_merge($this->aliases, self::$ldapSet);
+                $this->aliases = array_merge($this->aliases, self::$mysqliSet);
+                $this->aliases = array_merge($this->aliases, self::$pgSet);
+                $this->aliases = array_merge($this->aliases, self::$ociSet);
+                $this->aliases = array_merge($this->aliases, self::$odbcSet);
+                $this->aliases = array_merge($this->aliases, self::$opensslSet);
+                $this->aliases = array_merge($this->aliases, self::$sodiumSet);
+                $this->aliases = array_merge($this->aliases, self::$ftpSet);
+                $this->aliases = array_merge($this->aliases, self::$posixSet);
+                $this->aliases = array_merge($this->aliases, self::$pcntlSet);
 
                 break;
             }
@@ -121,6 +205,28 @@ final class NoAliasFunctionsFixer extends AbstractFixer implements Configuration
                 $this->aliases = array_merge($this->aliases, self::$timeSet);
             } elseif ('@exif' === $set) {
                 $this->aliases = array_merge($this->aliases, self::$exifSet);
+            } elseif ('@snmp' === $set) {
+                $this->aliases = array_merge($this->aliases, self::$snmpSet);
+            } elseif ('@ldap' === $set) {
+                $this->aliases = array_merge($this->aliases, self::$ldapSet);
+            } elseif ('@mysqli' === $set) {
+                $this->aliases = array_merge($this->aliases, self::$mysqliSet);
+            } elseif ('@pg' === $set) {
+                $this->aliases = array_merge($this->aliases, self::$pgSet);
+            } elseif ('@oci' === $set) {
+                $this->aliases = array_merge($this->aliases, self::$ociSet);
+            } elseif ('@odbc' === $set) {
+                $this->aliases = array_merge($this->aliases, self::$odbcSet);
+            } elseif ('@openssl' === $set) {
+                $this->aliases = array_merge($this->aliases, self::$opensslSet);
+            } elseif ('@sodium' === $set) {
+                $this->aliases = array_merge($this->aliases, self::$sodiumSet);
+            } elseif ('@ftp' === $set) {
+                $this->aliases = array_merge($this->aliases, self::$ftpSet);
+            } elseif ('@posix' === $set) {
+                $this->aliases = array_merge($this->aliases, self::$posixSet);
+            } elseif ('@pcntl' === $set) {
+                $this->aliases = array_merge($this->aliases, self::$pcntlSet);
             }
         }
     }
@@ -245,13 +351,13 @@ mbereg_search_getregs();
      */
     protected function createConfigurationDefinition()
     {
-        $sets = ['@internal', '@IMAP', '@mbreg', '@all', '@time', '@exif'];
+        $sets = ['@internal', '@IMAP', '@mbreg', '@all', '@time', '@exif', '@snmp', '@ldap', '@mysqli', '@pg', '@oci', '@odbc', '@openssl', '@sodium', '@ftp', '@posix', '@pcntl'];
 
         return new FixerConfigurationResolver([
             (new FixerOptionBuilder('sets', 'List of sets to fix. Defined sets are `@internal` (native functions), `@IMAP` (IMAP functions), `@mbreg` (from `ext-mbstring`) `@all` (all listed sets).'))
                 ->setAllowedTypes(['array'])
                 ->setAllowedValues([new AllowedValueSubset($sets)])
-                ->setDefault(['@internal', '@IMAP'])
+                ->setDefault(['@internal', '@IMAP', '@pg'])
                 ->getOption(),
         ]);
     }
