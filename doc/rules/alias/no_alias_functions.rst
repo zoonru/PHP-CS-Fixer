@@ -14,13 +14,29 @@ Configuration
 ``sets``
 ~~~~~~~~
 
-List of sets to fix. Defined sets are ``@internal`` (native functions),
-``@IMAP`` (IMAP functions), ``@mbreg`` (from ``ext-mbstring``) ``@all`` (all
-listed sets).
+List of sets to fix. Defined sets are:
 
-Allowed values: a subset of ``['@internal', '@IMAP', '@mbreg', '@all', '@time', '@exif']``
+* ``@all`` (all listed sets).
+* ``@internal`` (native functions)
+* ``@IMAP`` (IMAP functions)
+* ``@mbreg`` (from ``ext-mbstring``) 
+* ``@time`` (time functions) 
+* ``@exif`` (EXIF functions) 
+* ``@snmp`` (SNMP functions) 
+* ``@ldap`` (LDAP functions) 
+* ``@mysqli`` (mysqli functions) 
+* ``@pg`` (pg functions) 
+* ``@oci`` (oci functions) 
+* ``@odbc`` (odbc functions) 
+* ``@openssl`` (openssl functions) 
+* ``@sodium`` (libsodium functions) 
+* ``@ftp`` (FTP functions) 
+* ``@posix`` (POSIX functions) 
+* ``@pcntl`` (PCNTL functions) 
 
-Default value: ``['@internal', '@IMAP']``
+Allowed values: a subset of ``['@internal', '@IMAP', '@mbreg', '@all', '@time', '@exif', '@snmp', '@ldap', '@mysqli', '@pg', '@oci', '@odbc', '@openssl', '@sodium', '@ftp', '@posix', '@pcntl']``
+
+Default value: ``['@internal', '@IMAP', '@pg']``
 
 Examples
 --------
