@@ -180,57 +180,57 @@ final class NoAliasFunctionsFixer extends AbstractFixer implements ConfigurableF
         foreach ($this->configuration['sets'] as $set) {
             if ('@all' === $set) {
                 $this->aliases = self::$internalSet;
-                $this->aliases = array_merge($this->aliases, self::$imapSet);
-                $this->aliases = array_merge($this->aliases, self::$mbregSet);
-                $this->aliases = array_merge($this->aliases, self::$timeSet);
                 $this->aliases = array_merge($this->aliases, self::$exifSet);
-                $this->aliases = array_merge($this->aliases, self::$snmpSet);
+                $this->aliases = array_merge($this->aliases, self::$ftpSet);
+                $this->aliases = array_merge($this->aliases, self::$imapSet);
                 $this->aliases = array_merge($this->aliases, self::$ldapSet);
+                $this->aliases = array_merge($this->aliases, self::$mbregSet);
                 $this->aliases = array_merge($this->aliases, self::$mysqliSet);
-                $this->aliases = array_merge($this->aliases, self::$pgSet);
                 $this->aliases = array_merge($this->aliases, self::$ociSet);
                 $this->aliases = array_merge($this->aliases, self::$odbcSet);
                 $this->aliases = array_merge($this->aliases, self::$opensslSet);
-                $this->aliases = array_merge($this->aliases, self::$sodiumSet);
-                $this->aliases = array_merge($this->aliases, self::$ftpSet);
-                $this->aliases = array_merge($this->aliases, self::$posixSet);
                 $this->aliases = array_merge($this->aliases, self::$pcntlSet);
+                $this->aliases = array_merge($this->aliases, self::$pgSet);
+                $this->aliases = array_merge($this->aliases, self::$posixSet);
+                $this->aliases = array_merge($this->aliases, self::$snmpSet);
+                $this->aliases = array_merge($this->aliases, self::$sodiumSet);
+                $this->aliases = array_merge($this->aliases, self::$timeSet);
 
                 break;
             }
 
             if ('@internal' === $set) {
                 $this->aliases = array_merge($this->aliases, self::$internalSet);
-            } elseif ('@IMAP' === $set) {
-                $this->aliases = array_merge($this->aliases, self::$imapSet);
-            } elseif ('@mbreg' === $set) {
-                $this->aliases = array_merge($this->aliases, self::$mbregSet);
-            } elseif ('@time' === $set) {
-                $this->aliases = array_merge($this->aliases, self::$timeSet);
             } elseif ('@exif' === $set) {
                 $this->aliases = array_merge($this->aliases, self::$exifSet);
-            } elseif ('@snmp' === $set) {
-                $this->aliases = array_merge($this->aliases, self::$snmpSet);
+            } elseif ('@ftp' === $set) {
+                $this->aliases = array_merge($this->aliases, self::$ftpSet);
+            } elseif ('@IMAP' === $set) {
+                $this->aliases = array_merge($this->aliases, self::$imapSet);
             } elseif ('@ldap' === $set) {
                 $this->aliases = array_merge($this->aliases, self::$ldapSet);
+            } elseif ('@mbreg' === $set) {
+                $this->aliases = array_merge($this->aliases, self::$mbregSet);
             } elseif ('@mysqli' === $set) {
                 $this->aliases = array_merge($this->aliases, self::$mysqliSet);
-            } elseif ('@pg' === $set) {
-                $this->aliases = array_merge($this->aliases, self::$pgSet);
             } elseif ('@oci' === $set) {
                 $this->aliases = array_merge($this->aliases, self::$ociSet);
             } elseif ('@odbc' === $set) {
                 $this->aliases = array_merge($this->aliases, self::$odbcSet);
             } elseif ('@openssl' === $set) {
                 $this->aliases = array_merge($this->aliases, self::$opensslSet);
-            } elseif ('@sodium' === $set) {
-                $this->aliases = array_merge($this->aliases, self::$sodiumSet);
-            } elseif ('@ftp' === $set) {
-                $this->aliases = array_merge($this->aliases, self::$ftpSet);
-            } elseif ('@posix' === $set) {
-                $this->aliases = array_merge($this->aliases, self::$posixSet);
             } elseif ('@pcntl' === $set) {
                 $this->aliases = array_merge($this->aliases, self::$pcntlSet);
+            } elseif ('@pg' === $set) {
+                $this->aliases = array_merge($this->aliases, self::$pgSet);
+            } elseif ('@posix' === $set) {
+                $this->aliases = array_merge($this->aliases, self::$posixSet);
+            } elseif ('@snmp' === $set) {
+                $this->aliases = array_merge($this->aliases, self::$snmpSet);
+            } elseif ('@sodium' === $set) {
+                $this->aliases = array_merge($this->aliases, self::$sodiumSet);
+            } elseif ('@time' === $set) {
+                $this->aliases = array_merge($this->aliases, self::$timeSet);
             }
         }
     }
@@ -358,30 +358,31 @@ mbereg_search_getregs();
         $sets = [
             '@all' => 'all listed sets',
             '@internal' => 'native functions',
-            '@IMAP' => 'IMAP functions',
-            '@mbreg' => 'from `ext-mbstring`',
-            '@time' => 'time functions',
             '@exif' => 'EXIF functions',
-            '@snmp' => 'SNMP functions',
+            '@ftp' => 'FTP functions',
+            '@IMAP' => 'IMAP functions',
             '@ldap' => 'LDAP functions',
+            '@mbreg' => 'from `ext-mbstring`',
             '@mysqli' => 'mysqli functions',
-            '@pg' => 'pg functions',
             '@oci' => 'oci functions',
             '@odbc' => 'odbc functions',
             '@openssl' => 'openssl functions',
-            '@sodium' => 'libsodium functions',
-            '@ftp' => 'FTP functions',
-            '@posix' => 'POSIX functions',
             '@pcntl' => 'PCNTL functions',
+            '@pg' => 'pg functions',
+            '@posix' => 'POSIX functions',
+            '@snmp' => 'SNMP functions',
+            '@sodium' => 'libsodium functions',
+            '@time' => 'time functions',
         ];
 
         $list = '';
         foreach ($sets as $set => $description) {
-            $list .= "* `{$set}` ({$description})\n";
+            $list .= sprintf("* `%s` (%s)\n", $set, $description);
         }
+        $list = sprintf("List of sets to fix. Defined sets are:\n\n%s", $list);
 
         return new FixerConfigurationResolver([
-            (new FixerOptionBuilder('sets', "List of sets to fix. Defined sets are:\n\n{$list}"))
+            (new FixerOptionBuilder('sets', $list))
                 ->setAllowedTypes(['array'])
                 ->setAllowedValues([new AllowedValueSubset(array_keys($sets))])
                 ->setDefault(['@internal', '@IMAP', '@pg'])
