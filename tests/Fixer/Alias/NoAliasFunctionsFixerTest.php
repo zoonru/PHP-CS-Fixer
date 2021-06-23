@@ -94,7 +94,7 @@ abstract class A
 
     /**
      * @param string                  $expected
-     * @param string|null             $input
+     * @param null|string             $input
      * @param array<string, string[]> $configuration
      *
      * @dataProvider provideFixWithConfigurationCases
@@ -230,31 +230,16 @@ abstract class A
 
     private function provideAllCases(): array
     {
-        $finalCases = [];
-        $sets = [
-            'internalSet',
-            'exifSet',
-            'ftpSet',
-            'imapSet',
-            'ldapSet',
-            'mbregSet',
-            'mysqliSet',
-            'ociSet',
-            'odbcSet',
-            'opensslSet',
-            'pcntlSet',
-            'pgSet',
-            'posixSet',
-            'snmpSet',
-            'sodiumSet',
-            // 'timeSet', // Exclude time set, tested manually
-        ];
-        foreach ($sets as $setStaticAttributeName) {
-            $reflectionProperty = new \ReflectionProperty(\PhpCsFixer\Fixer\Alias\NoAliasFunctionsFixer::class, $setStaticAttributeName);
-            $reflectionProperty->setAccessible(true);
+        $reflectionConstant = new \ReflectionClassConstant(\PhpCsFixer\Fixer\Alias\NoAliasFunctionsFixer::class, 'SETS');
+        /** @var array<string, string[]> $aliases */
+        $allAliases = $reflectionConstant->getValue();
 
-            /** @var string[] $aliases */
-            $aliases = $reflectionProperty->getValue();
+        $finalCases = [];
+        $sets = $allAliases;
+        unset($sets['@time']); // Tested manually
+        $sets = array_keys($sets);
+        foreach ($sets as $set) {
+            $aliases = $allAliases[$set];
 
             $cases = [];
             foreach ($aliases as $alias => $master) {
@@ -323,11 +308,7 @@ abstract class A
                 ];
             }
 
-            $setName = '@'.substr($setStaticAttributeName, 0, -3);
-            if ('@imap' === $setName) {
-                $setName = '@IMAP';
-            }
-            $finalCases[$setName] = $cases;
+            $finalCases[$set] = $cases;
         }
 
         return $finalCases;
