@@ -14,14 +14,26 @@ Configuration
 ``sets``
 ~~~~~~~~
 
-List of sets to fix. Defined sets are:\n\n* ``@all`` (all listed sets)\n*
-``@internal`` (native functions)\n* ``@exif`` (EXIF functions)\n* ``@ftp`` (FTP
-functions)\n* ``@IMAP`` (IMAP functions)\n* ``@ldap`` (LDAP functions)\n*
-``@mbreg`` (from ``ext-mbstring``)\n* ``@mysqli`` (mysqli functions)\n* ``@oci``
-(oci functions)\n* ``@odbc`` (odbc functions)\n* ``@openssl`` (openssl
-functions)\n* ``@pcntl`` (PCNTL functions)\n* ``@pg`` (pg functions)\n*
-``@posix`` (POSIX functions)\n* ``@snmp`` (SNMP functions)\n* ``@sodium``
-(libsodium functions)\n* ``@time`` (time functions)\n
+List of sets to fix. Defined sets are:
+
+* ``@all`` (all listed sets)
+* ``@internal`` (native functions)
+* ``@exif`` (EXIF functions)
+* ``@ftp`` (FTP functions)
+* ``@IMAP`` (IMAP functions)
+* ``@ldap`` (LDAP functions)
+* ``@mbreg`` (from ``ext-mbstring``)
+* ``@mysqli`` (mysqli functions)
+* ``@oci`` (oci functions)
+* ``@odbc`` (odbc functions)
+* ``@openssl`` (openssl functions)
+* ``@pcntl`` (PCNTL functions)
+* ``@pg`` (pg functions)
+* ``@posix`` (POSIX functions)
+* ``@snmp`` (SNMP functions)
+* ``@sodium`` (libsodium functions)
+* ``@time`` (time functions)
+
 
 Allowed values: a subset of ``['@all', '@internal', '@exif', '@ftp', '@IMAP', '@ldap', '@mbreg', '@mysqli', '@oci', '@odbc', '@openssl', '@pcntl', '@pg', '@posix', '@snmp', '@sodium', '@time']``
 
