@@ -651,6 +651,13 @@ class Foo
                 continue;
             }
 
+            // Do not fix else if
+            if ($tokens[$parenthesisEndIndex]->isGivenKind(T_ELSE)
+                && $tokenAfterParenthesis->isGivenKind(T_IF)
+            ) {
+                continue;
+            }
+
             // do not add braces for cases:
             // - structure without block, e.g. while ($iter->next());
             // - structure with block, e.g. while ($i) {...}, while ($i) : {...} endwhile;
