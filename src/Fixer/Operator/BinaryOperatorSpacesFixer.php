@@ -75,7 +75,7 @@ final class BinaryOperatorSpacesFixer extends AbstractFixer implements Configura
         '%',
         '<',
         '>',
-        '|',
+        //'|',
         '^',
         '+',
         '-',
