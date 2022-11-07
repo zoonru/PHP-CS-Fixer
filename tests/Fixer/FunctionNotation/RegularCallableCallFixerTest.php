@@ -33,7 +33,7 @@ final class RegularCallableCallFixerTest extends AbstractFixerTestCase
         $this->doTest($expected, $input);
     }
 
-    public function provideFixCases(): \Generator
+    public function provideFixCases(): iterable
     {
         yield 'call by name - list' => [
             '<?php
@@ -204,27 +204,46 @@ final class RegularCallableCallFixerTest extends AbstractFixerTestCase
             '<?php \pack(...$args);',
             '<?php \CALL_USER_FUNC_ARRAY("\\\\pack", $args);',
         ];
-    }
 
-    /**
-     * @dataProvider provideFix73Cases
-     * @requires PHP 7.3
-     */
-    public function testFix73(string $expected, string $input): void
-    {
-        $this->doTest($expected, $input);
-    }
-
-    public function provideFix73Cases(): \Generator
-    {
         yield [
             '<?php foo(1,);',
             '<?php call_user_func("foo", 1,);',
+        ];
+
+        yield 'empty string double quote' => [
+            '<?php call_user_func("", 1,);',
+        ];
+
+        yield 'empty string single quote' => [
+            '<?php call_user_func(\'    \', 1,);',
+        ];
+
+        yield 'string with padding' => [
+            '<?php call_user_func(" padded  ", 1,);',
+        ];
+
+        yield 'binary string lower double quote' => [
+            '<?php call_user_func(b"foo", 1,);',
+        ];
+
+        yield 'binary string upper single quote' => [
+            '<?php call_user_func(B"foo", 1,);',
+        ];
+
+        yield 'static property as first argument' => [
+            '<?php
+class Foo {
+  public static $factory;
+  public static function createFromFactory(...$args) {
+    return call_user_func_array(static::$factory, $args);
+  }
+}',
         ];
     }
 
     /**
      * @dataProvider provideFix81Cases
+     *
      * @requires PHP 8.1
      */
     public function testFix81(string $expected, ?string $input = null): void
@@ -232,7 +251,7 @@ final class RegularCallableCallFixerTest extends AbstractFixerTestCase
         $this->doTest($expected, $input);
     }
 
-    public function provideFix81Cases(): \Generator
+    public function provideFix81Cases(): iterable
     {
         yield [
             '<?php \call_user_func(...) ?>',

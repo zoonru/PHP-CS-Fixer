@@ -17,8 +17,6 @@ namespace PhpCsFixer\Tests\Fixer\Operator;
 use PhpCsFixer\Tests\Test\AbstractFixerTestCase;
 
 /**
- * @requires PHP 7.4
- *
  * @internal
  *
  * @covers \PhpCsFixer\Fixer\Operator\AssignNullCoalescingToCoalesceEqualFixer
@@ -33,7 +31,7 @@ final class AssignNullCoalescingToCoalesceEqualFixerTest extends AbstractFixerTe
         $this->doTest($expected, $input);
     }
 
-    public function provideFix74Cases(): \Generator
+    public function provideFix74Cases(): iterable
     {
         yield 'simple' => [
             '<?php $a ??= 1;',

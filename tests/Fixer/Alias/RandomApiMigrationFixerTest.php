@@ -38,7 +38,7 @@ final class RandomApiMigrationFixerTest extends AbstractFixerTestCase
     public function testConfigureCheckReplacementType(): void
     {
         $this->expectException(InvalidFixerConfigurationException::class);
-        $this->expectExceptionMessageMatches('#^\[random_api_migration\] Invalid configuration: Replacement for function "rand" must be a string, "NULL" given\.$#');
+        $this->expectExceptionMessageMatches('#^\[random_api_migration\] Invalid configuration: Replacement for function "rand" must be a string, "null" given\.$#');
 
         $this->fixer->configure(['replacements' => ['rand' => null]]);
     }
@@ -59,12 +59,13 @@ final class RandomApiMigrationFixerTest extends AbstractFixerTestCase
     }
 
     /**
+     * @param array<string, mixed> $config
+     *
      * @dataProvider provideFixCases
      */
     public function testFix(string $expected, ?string $input = null, array $config = []): void
     {
         $this->fixer->configure($config);
-
         $this->doTest($expected, $input);
     }
 
@@ -171,36 +172,21 @@ class srand extends SrandClass{
                 null,
                 ['replacements' => ['rand' => 'rand']],
             ],
-        ];
-    }
-
-    /**
-     * @requires PHP 7.3
-     * @dataProvider provideFix73Cases
-     */
-    public function testFix73(string $expected, string $input, array $config = []): void
-    {
-        $this->fixer->configure($config);
-
-        $this->doTest($expected, $input);
-    }
-
-    public function provideFix73Cases(): \Generator
-    {
-        yield [
-            '<?php $a = random_int(1,2,) + random_int(3,4,);',
-            '<?php $a = rand(1,2,) + mt_rand(3,4,);',
-            ['replacements' => ['rand' => 'random_int', 'mt_rand' => 'random_int']],
-        ];
-
-        yield [
-            '<?php mt_srand($a,);',
-            '<?php srand($a,);',
+            [
+                '<?php $a = random_int(1,2,) + random_int(3,4,);',
+                '<?php $a = rand(1,2,) + mt_rand(3,4,);',
+                ['replacements' => ['rand' => 'random_int', 'mt_rand' => 'random_int']],
+            ],
+            [
+                '<?php mt_srand($a,);',
+                '<?php srand($a,);',
+            ],
         ];
     }
 
     /**
      * @dataProvider provideFix81Cases
+     *
      * @requires PHP 8.1
      */
     public function testFix81(string $expected, string $input = null): void
@@ -208,7 +194,7 @@ class srand extends SrandClass{
         $this->doTest($expected, $input);
     }
 
-    public function provideFix81Cases(): \Generator
+    public function provideFix81Cases(): iterable
     {
         yield 'simple 8.1' => [
             '<?php $f = srand(...);',

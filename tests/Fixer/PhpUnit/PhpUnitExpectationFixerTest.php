@@ -28,11 +28,14 @@ use PhpCsFixer\WhitespacesFixerConfig;
 final class PhpUnitExpectationFixerTest extends AbstractFixerTestCase
 {
     /**
+     * @param array<string, mixed> $config
+     *
      * @dataProvider provideTestFixCases
      */
     public function testFix(string $expected, ?string $input = null, array $config = []): void
     {
         $this->fixer->configure($config);
+
         $this->doTest($expected, $input);
     }
 
@@ -343,75 +346,6 @@ final class MyTest extends \PHPUnit_Framework_TestCase
 }',
                 ['target' => PhpUnitTargetVersion::VERSION_NEWEST],
             ],
-        ];
-    }
-
-    /**
-     * @dataProvider provideMessyWhitespacesCases
-     */
-    public function testMessyWhitespaces(string $expected, ?string $input = null): void
-    {
-        $expected = str_replace(['    ', "\n"], ["\t", "\r\n"], $expected);
-        if (null !== $input) {
-            $input = str_replace(['    ', "\n"], ["\t", "\r\n"], $input);
-        }
-
-        $this->fixer->setWhitespacesConfig(new WhitespacesFixerConfig("\t", "\r\n"));
-
-        $this->doTest($expected, $input);
-    }
-
-    public function provideMessyWhitespacesCases(): array
-    {
-        $expectedTemplate =
-'
-        function testFnc%d()
-        {
-            aaa();
-            $this->expectException(\'RuntimeException\');
-            $this->expectExceptionMessage(\'msg\'/*B*/);
-            $this->expectExceptionCode(/*C*/123);
-            zzz();
-        }
-';
-        $inputTemplate =
-'
-        function testFnc%d()
-        {
-            aaa();
-            $this->setExpectedException(\'RuntimeException\', \'msg\'/*B*/, /*C*/123);
-            zzz();
-        }
-'
-;
-        $input = $expected = '<?php
-    final class MyTest extends \PHPUnit_Framework_TestCase
-    {
-    ';
-
-        for ($i = 0; $i < 8; ++$i) {
-            $expected .= sprintf($expectedTemplate, $i);
-            $input .= sprintf($inputTemplate, $i);
-        }
-
-        $expected .= "\n}";
-        $input .= "\n}";
-
-        return [[$expected, $input]];
-    }
-
-    /**
-     * @requires PHP 7.3
-     * @dataProvider provideFix73Cases
-     */
-    public function testFix73(string $expected, string $input): void
-    {
-        $this->doTest($expected, $input);
-    }
-
-    public function provideFix73Cases(): array
-    {
-        return [
             [
                 '<?php
     final class MyTest extends \PHPUnit_Framework_TestCase
@@ -461,6 +395,60 @@ final class MyTest extends \PHPUnit_Framework_TestCase
     }',
             ],
         ];
+    }
+
+    /**
+     * @dataProvider provideMessyWhitespacesCases
+     */
+    public function testMessyWhitespaces(string $expected, ?string $input = null): void
+    {
+        $expected = str_replace(['    ', "\n"], ["\t", "\r\n"], $expected);
+        if (null !== $input) {
+            $input = str_replace(['    ', "\n"], ["\t", "\r\n"], $input);
+        }
+
+        $this->fixer->setWhitespacesConfig(new WhitespacesFixerConfig("\t", "\r\n"));
+
+        $this->doTest($expected, $input);
+    }
+
+    public function provideMessyWhitespacesCases(): array
+    {
+        $expectedTemplate =
+'
+        function testFnc%d()
+        {
+            aaa();
+            $this->expectException(\'RuntimeException\');
+            $this->expectExceptionMessage(\'msg\'/*B*/);
+            $this->expectExceptionCode(/*C*/123);
+            zzz();
+        }
+';
+        $inputTemplate =
+'
+        function testFnc%d()
+        {
+            aaa();
+            $this->setExpectedException(\'RuntimeException\', \'msg\'/*B*/, /*C*/123);
+            zzz();
+        }
+'
+        ;
+        $input = $expected = '<?php
+    final class MyTest extends \PHPUnit_Framework_TestCase
+    {
+    ';
+
+        for ($i = 0; $i < 8; ++$i) {
+            $expected .= sprintf($expectedTemplate, $i);
+            $input .= sprintf($inputTemplate, $i);
+        }
+
+        $expected .= "\n}";
+        $input .= "\n}";
+
+        return [[$expected, $input]];
     }
 
     /**

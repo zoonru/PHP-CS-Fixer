@@ -27,6 +27,8 @@ use PhpCsFixer\Tokenizer\CT;
 final class TypeColonTransformerTest extends AbstractTransformerTestCase
 {
     /**
+     * @param array<int, int|string> $expectedTokens
+     *
      * @dataProvider provideProcessCases
      */
     public function testProcess(string $source, array $expectedTokens = []): void
@@ -80,27 +82,6 @@ final class TypeColonTransformerTest extends AbstractTransformerTestCase
                     $c = 1 ?: [];
                 ',
             ],
-        ];
-    }
-
-    /**
-     * @dataProvider provideProcessPhp74Cases
-     * @requires PHP 7.4
-     */
-    public function testProcessPhp74(string $source, array $expectedTokens = []): void
-    {
-        $this->doTest(
-            $source,
-            $expectedTokens,
-            [
-                CT::T_TYPE_COLON,
-            ]
-        );
-    }
-
-    public function provideProcessPhp74Cases(): array
-    {
-        return [
             [
                 '<?php fn(): array => [];',
                 [
@@ -117,6 +98,42 @@ final class TypeColonTransformerTest extends AbstractTransformerTestCase
                 '<?php $a=1; $f = fn () : array => [];',
                 [
                     15 => CT::T_TYPE_COLON,
+                ],
+            ],
+        ];
+    }
+
+    /**
+     * @param array<int, int> $expectedTokens
+     *
+     * @dataProvider provideProcess81Cases
+     *
+     * @requires PHP 8.1
+     */
+    public function testProcess81(string $source, array $expectedTokens = []): void
+    {
+        $this->doTest(
+            $source,
+            $expectedTokens,
+            [
+                CT::T_TYPE_COLON,
+            ]
+        );
+    }
+
+    public function provideProcess81Cases(): array
+    {
+        return [
+            [
+                '<?php enum Foo: int {}',
+                [
+                    4 => CT::T_TYPE_COLON,
+                ],
+            ],
+            [
+                '<?php enum Foo /** */ : int {}',
+                [
+                    7 => CT::T_TYPE_COLON,
                 ],
             ],
         ];

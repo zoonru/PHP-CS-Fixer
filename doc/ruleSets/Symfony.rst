@@ -24,6 +24,7 @@ Rules
 - `class_definition <./../rules/class_notation/class_definition.rst>`_
   config:
   ``['single_line' => true]``
+- `class_reference_name_casing <./../rules/casing/class_reference_name_casing.rst>`_
 - `clean_namespace <./../rules/namespace_notation/clean_namespace.rst>`_
 - `concat_space <./../rules/operator/concat_space.rst>`_
 - `echo_tag_syntax <./../rules/php_tag/echo_tag_syntax.rst>`_
@@ -36,6 +37,9 @@ Rules
 - `general_phpdoc_tag_rename <./../rules/phpdoc/general_phpdoc_tag_rename.rst>`_
   config:
   ``['replacements' => ['inheritDocs' => 'inheritDoc']]``
+- `global_namespace_import <./../rules/import/global_namespace_import.rst>`_
+  config:
+  ``['import_classes' => false, 'import_constants' => false, 'import_functions' => false]``
 - `include <./../rules/control_structure/include.rst>`_
 - `increment_style <./../rules/operator/increment_style.rst>`_
 - `integer_literal_case <./../rules/casing/integer_literal_case.rst>`_
@@ -57,7 +61,7 @@ Rules
 - `no_empty_statement <./../rules/semicolon/no_empty_statement.rst>`_
 - `no_extra_blank_lines <./../rules/whitespace/no_extra_blank_lines.rst>`_
   config:
-  ``['tokens' => ['case', 'continue', 'curly_brace_block', 'default', 'extra', 'parenthesis_brace_block', 'square_brace_block', 'switch', 'throw', 'use']]``
+  ``['tokens' => ['attribute', 'case', 'continue', 'curly_brace_block', 'default', 'extra', 'parenthesis_brace_block', 'square_brace_block', 'switch', 'throw', 'use']]``
 - `no_leading_namespace_whitespace <./../rules/namespace_notation/no_leading_namespace_whitespace.rst>`_
 - `no_mixed_echo_print <./../rules/alias/no_mixed_echo_print.rst>`_
 - `no_multiline_whitespace_around_double_arrow <./../rules/array_notation/no_multiline_whitespace_around_double_arrow.rst>`_
@@ -67,16 +71,18 @@ Rules
 - `no_superfluous_phpdoc_tags <./../rules/phpdoc/no_superfluous_phpdoc_tags.rst>`_
   config:
   ``['allow_mixed' => true, 'allow_unused_params' => true]``
-- `no_trailing_comma_in_list_call <./../rules/control_structure/no_trailing_comma_in_list_call.rst>`_
-- `no_trailing_comma_in_singleline_array <./../rules/array_notation/no_trailing_comma_in_singleline_array.rst>`_
+- `no_trailing_comma_in_singleline <./../rules/basic/no_trailing_comma_in_singleline.rst>`_
 - `no_unneeded_control_parentheses <./../rules/control_structure/no_unneeded_control_parentheses.rst>`_
   config:
-  ``['statements' => ['break', 'clone', 'continue', 'echo_print', 'return', 'switch_case', 'yield', 'yield_from']]``
+  ``['statements' => ['break', 'clone', 'continue', 'echo_print', 'others', 'return', 'switch_case', 'yield', 'yield_from']]``
 - `no_unneeded_curly_braces <./../rules/control_structure/no_unneeded_curly_braces.rst>`_
   config:
   ``['namespaces' => true]``
+- `no_unneeded_import_alias <./../rules/import/no_unneeded_import_alias.rst>`_
 - `no_unset_cast <./../rules/cast_notation/no_unset_cast.rst>`_
 - `no_unused_imports <./../rules/import/no_unused_imports.rst>`_
+- `no_useless_concat_operator <./../rules/operator/no_useless_concat_operator.rst>`_
+- `no_useless_nullsafe_operator <./../rules/operator/no_useless_nullsafe_operator.rst>`_
 - `no_whitespace_before_comma_in_array <./../rules/array_notation/no_whitespace_before_comma_in_array.rst>`_
 - `normalize_index_brace <./../rules/array_notation/normalize_index_brace.rst>`_
 - `object_operator_without_whitespace <./../rules/operator/object_operator_without_whitespace.rst>`_
@@ -91,6 +97,9 @@ Rules
 - `phpdoc_no_alias_tag <./../rules/phpdoc/phpdoc_no_alias_tag.rst>`_
 - `phpdoc_no_package <./../rules/phpdoc/phpdoc_no_package.rst>`_
 - `phpdoc_no_useless_inheritdoc <./../rules/phpdoc/phpdoc_no_useless_inheritdoc.rst>`_
+- `phpdoc_order <./../rules/phpdoc/phpdoc_order.rst>`_
+  config:
+  ``['order' => ['param', 'return', 'throws']]``
 - `phpdoc_return_self_reference <./../rules/phpdoc/phpdoc_return_self_reference.rst>`_
 - `phpdoc_scalar <./../rules/phpdoc/phpdoc_scalar.rst>`_
 - `phpdoc_separation <./../rules/phpdoc/phpdoc_separation.rst>`_
@@ -109,13 +118,18 @@ Rules
 - `phpdoc_var_without_name <./../rules/phpdoc/phpdoc_var_without_name.rst>`_
 - `protected_to_private <./../rules/class_notation/protected_to_private.rst>`_
 - `semicolon_after_instruction <./../rules/semicolon/semicolon_after_instruction.rst>`_
+- `simple_to_complex_string_variable <./../rules/string_notation/simple_to_complex_string_variable.rst>`_
 - `single_class_element_per_statement <./../rules/class_notation/single_class_element_per_statement.rst>`_
+- `single_import_per_statement <./../rules/import/single_import_per_statement.rst>`_
+- `single_line_comment_spacing <./../rules/comment/single_line_comment_spacing.rst>`_
 - `single_line_comment_style <./../rules/comment/single_line_comment_style.rst>`_
   config:
   ``['comment_types' => ['hash']]``
 - `single_line_throw <./../rules/function_notation/single_line_throw.rst>`_
 - `single_quote <./../rules/string_notation/single_quote.rst>`_
 - `single_space_after_construct <./../rules/language_construct/single_space_after_construct.rst>`_
+  config:
+  ``['constructs' => ['abstract', 'as', 'attribute', 'break', 'case', 'catch', 'class', 'clone', 'comment', 'const', 'const_import', 'continue', 'do', 'echo', 'else', 'elseif', 'enum', 'extends', 'final', 'finally', 'for', 'foreach', 'function', 'function_import', 'global', 'goto', 'if', 'implements', 'include', 'include_once', 'instanceof', 'insteadof', 'interface', 'match', 'named_argument', 'namespace', 'new', 'open_tag_with_echo', 'php_doc', 'php_open', 'print', 'private', 'protected', 'public', 'readonly', 'require', 'require_once', 'return', 'static', 'switch', 'throw', 'trait', 'try', 'type_colon', 'use', 'use_lambda', 'use_trait', 'var', 'while', 'yield', 'yield_from']]``
 - `space_after_semicolon <./../rules/semicolon/space_after_semicolon.rst>`_
   config:
   ``['remove_in_empty_for_expressions' => true]``

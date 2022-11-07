@@ -27,6 +27,8 @@ use PhpCsFixer\Tests\Test\AbstractFixerTestCase;
 final class PhpdocScalarFixerTest extends AbstractFixerTestCase
 {
     /**
+     * @param array<string, mixed> $config
+     *
      * @dataProvider provideFixCases
      */
     public function testFix(string $expected, ?string $input = null, array $config = []): void
@@ -35,7 +37,7 @@ final class PhpdocScalarFixerTest extends AbstractFixerTestCase
         $this->doTest($expected, $input);
     }
 
-    public static function provideFixCases(): \Generator
+    public static function provideFixCases(): iterable
     {
         yield 'basic fix' => [
             '<?php

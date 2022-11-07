@@ -158,7 +158,6 @@ final class PhpUnitConstructFixerTest extends AbstractFixerTestCase
     }
 
     /**
-     * @requires PHP 7.3
      * @dataProvider provideFix73Cases
      */
     public function testFix73(string $expected, string $input): void
@@ -188,6 +187,7 @@ final class PhpUnitConstructFixerTest extends AbstractFixerTestCase
 
     /**
      * @dataProvider provideFix81Cases
+     *
      * @requires PHP 8.1
      */
     public function testFix81(string $expected, ?string $input = null): void
@@ -195,13 +195,16 @@ final class PhpUnitConstructFixerTest extends AbstractFixerTestCase
         $this->doTest($expected, $input);
     }
 
-    public function provideFix81Cases(): \Generator
+    public function provideFix81Cases(): iterable
     {
         yield [
             self::generateTest('$this->assertEquals(...);'),
         ];
     }
 
+    /**
+     * @return list<array{string, string}>
+     */
     private function generateCases(string $expectedTemplate, string $inputTemplate): array
     {
         $functionTypes = ['Same' => true, 'NotSame' => false, 'Equals' => true, 'NotEquals' => false];

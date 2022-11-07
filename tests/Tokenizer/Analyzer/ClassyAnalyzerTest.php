@@ -35,7 +35,7 @@ final class ClassyAnalyzerTest extends TestCase
         self::assertClassyInvocation($source, $expected);
     }
 
-    public function provideIsClassyInvocationCases(): \Generator
+    public function provideIsClassyInvocationCases(): iterable
     {
         yield from [
             [
@@ -147,6 +147,7 @@ final class ClassyAnalyzerTest extends TestCase
      * @param array<int, bool> $expected
      *
      * @dataProvider provideIsClassyInvocation80Cases
+     *
      * @requires PHP 8.0
      */
     public function testIsClassyInvocation80(string $source, array $expected): void
@@ -154,7 +155,7 @@ final class ClassyAnalyzerTest extends TestCase
         self::assertClassyInvocation($source, $expected);
     }
 
-    public function provideIsClassyInvocation80Cases(): \Generator
+    public function provideIsClassyInvocation80Cases(): iterable
     {
         yield [
             '<?php function foo(): \Foo|int {}',
@@ -186,6 +187,7 @@ final class ClassyAnalyzerTest extends TestCase
      * @param array<int, bool> $expected
      *
      * @dataProvider provideIsClassyInvocation81Cases
+     *
      * @requires PHP 8.1
      */
     public function testIsClassyInvocation81(string $source, array $expected): void
@@ -193,7 +195,7 @@ final class ClassyAnalyzerTest extends TestCase
         self::assertClassyInvocation($source, $expected);
     }
 
-    public function provideIsClassyInvocation81Cases(): \Generator
+    public function provideIsClassyInvocation81Cases(): iterable
     {
         yield 'never' => [
             '<?php function foo(): never {}',
@@ -206,6 +208,9 @@ final class ClassyAnalyzerTest extends TestCase
         ];
     }
 
+    /**
+     * @param array<int, bool> $expected
+     */
     private static function assertClassyInvocation(string $source, array $expected): void
     {
         $tokens = Tokens::fromCode($source);

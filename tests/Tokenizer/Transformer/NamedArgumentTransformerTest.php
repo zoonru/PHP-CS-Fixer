@@ -26,7 +26,10 @@ use PhpCsFixer\Tokenizer\Tokens;
 final class NamedArgumentTransformerTest extends AbstractTransformerTestCase
 {
     /**
+     * @param array<int, int> $expectedTokens
+     *
      * @dataProvider provideProcessCases
+     *
      * @requires PHP 8.0
      */
     public function testProcess(string $source, array $expectedTokens): void
@@ -34,7 +37,7 @@ final class NamedArgumentTransformerTest extends AbstractTransformerTestCase
         $this->doTest($source, $expectedTokens);
     }
 
-    public function provideProcessCases(): \Generator
+    public function provideProcessCases(): iterable
     {
         yield 'function call' => [
             '<?php foo(test: 1);',
@@ -92,7 +95,7 @@ final class NamedArgumentTransformerTest extends AbstractTransformerTestCase
         static::assertNotChange($source);
     }
 
-    public function provideDoNotChangeCases(): \Generator
+    public function provideDoNotChangeCases(): iterable
     {
         yield 'switch/case/constants' => [
             '<?php

@@ -32,9 +32,9 @@ use PhpCsFixer\Tokenizer\TokensAnalyzer;
 final class PhpUnitDedicateAssertInternalTypeFixer extends AbstractPhpUnitFixer implements ConfigurableFixerInterface
 {
     /**
-     * @var array
+     * @var array<string, string>
      */
-    private $typeToDedicatedAssertMap = [
+    private array $typeToDedicatedAssertMap = [
         'array' => 'assertIsArray',
         'boolean' => 'assertIsBool',
         'bool' => 'assertIsBool',
@@ -103,7 +103,7 @@ final class MyTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritdoc}
      *
-     * Must run after PhpUnitDedicateAssertFixer.
+     * Must run after NoBinaryStringFixer, NoUselessConcatOperatorFixer, PhpUnitDedicateAssertFixer.
      */
     public function getPriority(): int
     {
@@ -133,7 +133,7 @@ final class MyTest extends \PHPUnit\Framework\TestCase
         $tokenAnalyzer = new TokensAnalyzer($tokens);
 
         for ($index = $startIndex; $index < $endIndex; ++$index) {
-            if (!$tokens[$index]->isClassy() || !$tokenAnalyzer->isAnonymousClass($index)) {
+            if (!$tokens[$index]->isGivenKind(T_CLASS) || !$tokenAnalyzer->isAnonymousClass($index)) {
                 continue;
             }
 
@@ -169,7 +169,7 @@ final class MyTest extends \PHPUnit\Framework\TestCase
             $expectedTypeTokenIndex = $tokens->getNextMeaningfulToken($bracketTokenIndex);
             $expectedTypeToken = $tokens[$expectedTypeTokenIndex];
 
-            if (!$expectedTypeToken->equals([T_CONSTANT_ENCAPSED_STRING])) {
+            if (!$expectedTypeToken->isGivenKind(T_CONSTANT_ENCAPSED_STRING)) {
                 continue;
             }
 

@@ -1132,6 +1132,7 @@ EOF;
 
     /**
      * @dataProvider provideFixPhp80Cases
+     *
      * @requires PHP 8.0
      */
     public function testFixPhp80(string $expected, ?string $input = null): void
@@ -1139,7 +1140,7 @@ EOF;
         $this->doTest($expected, $input);
     }
 
-    public function provideFixPhp80Cases(): \Generator
+    public function provideFixPhp80Cases(): iterable
     {
         yield [
             <<<'EOF'

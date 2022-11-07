@@ -28,6 +28,8 @@ use PhpCsFixer\Tokenizer\CT;
 final class TypeAlternationTransformerTest extends AbstractTransformerTestCase
 {
     /**
+     * @param array<int, int> $expectedTokens
+     *
      * @dataProvider provideProcessCases
      */
     public function testProcess(string $source, array $expectedTokens = []): void
@@ -90,7 +92,10 @@ final class TypeAlternationTransformerTest extends AbstractTransformerTestCase
     }
 
     /**
+     * @param array<int, int> $expectedTokens
+     *
      * @dataProvider provideProcess80Cases
+     *
      * @requires PHP 8.0
      */
     public function testProcess80(string $source, array $expectedTokens): void
@@ -98,7 +103,7 @@ final class TypeAlternationTransformerTest extends AbstractTransformerTestCase
         $this->doTest($source, $expectedTokens);
     }
 
-    public function provideProcess80Cases(): \Generator
+    public function provideProcess80Cases(): iterable
     {
         yield 'arrow function' => [
             '<?php $a = fn(int|null $item): int|null => $item * 2;',
@@ -312,10 +317,37 @@ class Number
                 35 => CT::T_TYPE_ALTERNATION,
             ],
         ];
+
+        yield [
+            '<?php
+
+use Psr\Log\LoggerInterface;
+function f( #[Target(\'xxx\')] LoggerInterface|A $logger) {}
+
+',
+            [
+                24 => CT::T_TYPE_ALTERNATION,
+            ],
+        ];
+
+        yield [
+            '<?php
+
+use Psr\Log\LoggerInterface;
+function f( #[Target(\'a\')] #[Target(\'b\')] #[Target(\'c\')] #[Target(\'d\')] LoggerInterface|X $logger) {}
+
+',
+            [
+                45 => CT::T_TYPE_ALTERNATION,
+            ],
+        ];
     }
 
     /**
+     * @param array<int, int> $expectedTokens
+     *
      * @dataProvider provideFix81Cases
+     *
      * @requires PHP 8.1
      */
     public function testFix81(array $expectedTokens, string $source): void
@@ -329,7 +361,7 @@ class Number
         );
     }
 
-    public function provideFix81Cases(): \Generator
+    public function provideFix81Cases(): iterable
     {
         yield 'readonly' => [
             [
@@ -359,7 +391,10 @@ class Foo
     }
 
     /**
+     * @param array<int, int> $expectedTokens
+     *
      * @dataProvider provideProcess81Cases
+     *
      * @requires PHP 8.1
      */
     public function testProcess81(string $source, array $expectedTokens): void
@@ -367,7 +402,7 @@ class Foo
         $this->doTest($source, $expectedTokens);
     }
 
-    public function provideProcess81Cases(): \Generator
+    public function provideProcess81Cases(): iterable
     {
         yield 'arrow function with intersection' => [
             '<?php $a = fn(int|null $item): int&null => $item * 2;',

@@ -31,7 +31,7 @@ final class TernaryToElvisOperatorFixerTest extends AbstractFixerTestCase
         $this->doTest($expected, $input);
     }
 
-    public function provideFixCases(): \Generator
+    public function provideFixCases(): iterable
     {
         $operators = ['+=', '-=', '*=', '**=', '/=', '.=', '%=', '&=', '|=', '^=', '<<=', '>>='];
 
@@ -437,6 +437,7 @@ EOT
 
     /**
      * @dataProvider provideFixPre80Cases
+     *
      * @requires PHP <8.0
      */
     public function testFixPre80(string $expected, string $input = null): void
@@ -444,7 +445,7 @@ EOT
         $this->doTest($expected, $input);
     }
 
-    public function provideFixPre80Cases(): \Generator
+    public function provideFixPre80Cases(): iterable
     {
         yield [
             '<?php $foo = $a->{$b} ? $bar{0} : $foo;',
@@ -493,6 +494,7 @@ EOT
 
     /**
      * @dataProvider provideDoNotFix80Cases
+     *
      * @requires PHP 8.0
      */
     public function test80DoNotFix(string $input): void

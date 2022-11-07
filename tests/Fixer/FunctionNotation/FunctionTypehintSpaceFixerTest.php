@@ -185,21 +185,6 @@ final class FunctionTypehintSpaceFixerTest extends AbstractFixerTestCase
             ],
             ['<?php use function some\test\{fn_a, fn_b, fn_c};'],
             ['<?php use function some\test\{fn_a, fn_b, fn_c} ?>'],
-        ];
-    }
-
-    /**
-     * @dataProvider provideFix74Cases
-     * @requires PHP 7.4
-     */
-    public function testFix74(string $expected, ?string $input = null): void
-    {
-        $this->doTest($expected, $input);
-    }
-
-    public function provideFix74Cases(): array
-    {
-        return [
             [
                 '<?php $foo = fn(Bar\Baz $param) => null;',
                 '<?php $foo = fn(Bar\Baz$param) => null;',
@@ -248,6 +233,7 @@ final class FunctionTypehintSpaceFixerTest extends AbstractFixerTestCase
 
     /**
      * @dataProvider provideFix80Cases
+     *
      * @requires PHP 8.0
      */
     public function testFix80(string $expected, string $input): void
@@ -255,7 +241,7 @@ final class FunctionTypehintSpaceFixerTest extends AbstractFixerTestCase
         $this->doTest($expected, $input);
     }
 
-    public function provideFix80Cases(): \Generator
+    public function provideFix80Cases(): iterable
     {
         yield [
             '<?php function foo(mixed $a){}',

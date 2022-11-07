@@ -33,7 +33,7 @@ final class NoTrailingWhitespaceFixerTest extends AbstractFixerTestCase
         $this->doTest($expected, $input);
     }
 
-    public function provideFixCases(): \Generator
+    public function provideFixCases(): iterable
     {
         yield from [
             [
@@ -138,6 +138,7 @@ EOT;
 
     /**
      * @dataProvider provideFix80Cases
+     *
      * @requires PHP 8.0
      */
     public function testFix80(string $expected, string $input = null): void
@@ -145,7 +146,7 @@ EOT;
         $this->doTest($expected, $input);
     }
 
-    public function provideFix80Cases(): \Generator
+    public function provideFix80Cases(): iterable
     {
         yield [
             '<?php class Foo {

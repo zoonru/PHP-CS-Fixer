@@ -27,6 +27,8 @@ use PhpCsFixer\Tokenizer\CT;
 final class ClassConstantTransformerTest extends AbstractTransformerTestCase
 {
     /**
+     * @param array<int, int> $expectedTokens
+     *
      * @dataProvider provideProcessCases
      */
     public function testProcess(string $source, array $expectedTokens = []): void

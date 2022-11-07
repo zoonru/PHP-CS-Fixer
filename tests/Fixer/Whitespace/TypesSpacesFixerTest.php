@@ -24,6 +24,8 @@ use PhpCsFixer\Tests\Test\AbstractFixerTestCase;
 final class TypesSpacesFixerTest extends AbstractFixerTestCase
 {
     /**
+     * @param array<string, mixed> $configuration
+     *
      * @dataProvider provideFixCases
      */
     public function testFix(string $expected, ?string $input = null, array $configuration = []): void
@@ -32,7 +34,7 @@ final class TypesSpacesFixerTest extends AbstractFixerTestCase
         $this->doTest($expected, $input);
     }
 
-    public function provideFixCases(): \Generator
+    public function provideFixCases(): iterable
     {
         yield [
             '<?php try {} catch (ErrorA|ErrorB $e) {}',
@@ -55,10 +57,43 @@ final class TypesSpacesFixerTest extends AbstractFixerTestCase
             '<?php try {} catch (ErrorA    |    ErrorB $e) {}',
             ['space' => 'single'],
         ];
+
+        yield [
+            '<?php
+                try {} catch (ErrorA | ErrorB $e) {}
+                try {} catch (ErrorA | ErrorB $e) {}
+                try {} catch (ErrorA | ErrorB $e) {}
+                try {} catch (ErrorA | ErrorB $e) {}
+                try {} catch (ErrorA | ErrorB $e) {}
+                try {} catch (ErrorA | ErrorB $e) {}
+                try {} catch (ErrorA | ErrorB $e) {}
+                try {} catch (ErrorA | ErrorB $e) {}
+                try {} catch (ErrorA | ErrorB $e) {}
+                try {} catch (ErrorA | ErrorB $e) {}
+                try {} catch (ErrorA | ErrorB $e) {}
+            ',
+            '<?php
+                try {} catch (ErrorA|ErrorB $e) {}
+                try {} catch (ErrorA|ErrorB $e) {}
+                try {} catch (ErrorA|ErrorB $e) {}
+                try {} catch (ErrorA|ErrorB $e) {}
+                try {} catch (ErrorA|ErrorB $e) {}
+                try {} catch (ErrorA|ErrorB $e) {}
+                try {} catch (ErrorA|ErrorB $e) {}
+                try {} catch (ErrorA|ErrorB $e) {}
+                try {} catch (ErrorA|ErrorB $e) {}
+                try {} catch (ErrorA|ErrorB $e) {}
+                try {} catch (ErrorA|ErrorB $e) {}
+            ',
+            ['space' => 'single'],
+        ];
     }
 
     /**
+     * @param array<string, mixed> $configuration
+     *
      * @dataProvider provideFix80Cases
+     *
      * @requires PHP 8.0
      */
     public function testFix80(string $expected, ?string $input = null, array $configuration = []): void
@@ -67,12 +102,13 @@ final class TypesSpacesFixerTest extends AbstractFixerTestCase
         $this->doTest($expected, $input);
     }
 
-    public function provideFix80Cases(): \Generator
+    public function provideFix80Cases(): iterable
     {
         yield [
             '<?php function foo(TypeA|TypeB $x) {}',
             '<?php function foo(TypeA | TypeB $x) {}',
         ];
+
         yield [
             '<?php function foo(TypeA|TypeB|TypeC|TypeD $x, TypeE|TypeF $y, TypeA|TypeB $z) {}',
             '<?php function foo(TypeA | TypeB    |    TypeC | TypeD $x, TypeE    |    TypeF $y, TypeA| TypeB $z) {}',
@@ -144,10 +180,99 @@ TypeB $x) {}',
                 ) {}
             }',
         ];
+
+        yield [
+            '<?php
+                function foo(TypeA | TypeB $x) {}
+                try {} catch (ErrorA|ErrorB $e) {}
+            ',
+            '<?php
+                function foo(TypeA |TypeB $x) {}
+                try {} catch (ErrorA| ErrorB $e) {}
+            ',
+            [
+                'space' => 'single',
+                'space_multiple_catch' => 'none',
+            ],
+        ];
+
+        yield [
+            '<?php
+                function foo(TypeA|TypeB $x) {}
+                try {} catch (ErrorA | ErrorB $e) {}
+            ',
+            '<?php
+                function foo(TypeA | TypeB $x) {}
+                try {} catch (ErrorA|ErrorB $e) {}
+            ',
+            [
+                'space' => 'none',
+                'space_multiple_catch' => 'single',
+            ],
+        ];
+
+        yield [
+            '<?php
+                function foo(TypeA|TypeB $x) {}
+                try {} catch (ErrorA|ErrorB $e) {}
+            ',
+            '<?php
+                function foo(TypeA| TypeB $x) {}
+                try {} catch (ErrorA |ErrorB $e) {}
+            ',
+            [
+                'space' => 'none',
+                'space_multiple_catch' => 'none',
+            ],
+        ];
+
+        yield [
+            '<?php
+                function foo(TypeA | TypeB $x) {}
+                try {} catch (ErrorA | ErrorB $e) {}
+            ',
+            '<?php
+                function foo(TypeA |TypeB $x) {}
+                try {} catch (ErrorA|ErrorB $e) {}
+            ',
+            [
+                'space' => 'single',
+                'space_multiple_catch' => 'single',
+            ],
+        ];
+
+        yield [
+            '<?php
+                function foo(TypeA | TypeB $x) {}
+                try {} catch (ErrorA | ErrorB $e) {}
+            ',
+            '<?php
+                function foo(TypeA|TypeB $x) {}
+                try {} catch (ErrorA|ErrorB $e) {}
+            ',
+            [
+                'space' => 'single',
+            ],
+        ];
+
+        yield [
+            '<?php
+                function foo(TypeA|TypeB $x) {}
+                try {} catch (ErrorA|ErrorB $e) {}
+            ',
+            '<?php
+                function foo(TypeA  | TypeB $x) {}
+                try {} catch (ErrorA  | ErrorB $e) {}
+            ',
+            [
+                'space' => 'none',
+            ],
+        ];
     }
 
     /**
      * @dataProvider provideFix81Cases
+     *
      * @requires PHP 8.1
      */
     public function testFix81(string $expected, string $input): void
@@ -155,7 +280,7 @@ TypeB $x) {}',
         $this->doTest($expected, $input);
     }
 
-    public function provideFix81Cases(): \Generator
+    public function provideFix81Cases(): iterable
     {
         yield [
             '<?php class Foo {

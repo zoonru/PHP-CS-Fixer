@@ -32,6 +32,8 @@ use PhpCsFixer\Tokenizer\Tokens;
 final class ControlCaseStructuresAnalyzerTest extends TestCase
 {
     /**
+     * @param array<int, AbstractControlCaseStructuresAnalysis> $expectedAnalyses
+     *
      * @dataProvider provideFindControlStructuresCases
      */
     public function testFindControlStructures(array $expectedAnalyses, string $source): void
@@ -46,7 +48,7 @@ final class ControlCaseStructuresAnalyzerTest extends TestCase
         }
     }
 
-    public function provideFindControlStructuresCases(): \Generator
+    public function provideFindControlStructuresCases(): iterable
     {
         yield 'two cases' => [
             [1 => new SwitchAnalysis(1, 7, 46, [new CaseAnalysis(9, 12), new CaseAnalysis(36, 39)], null)],
@@ -318,9 +320,11 @@ endswitch ?>',
     }
 
     /**
-     * @param int[] $types
+     * @param array<int, AbstractControlCaseStructuresAnalysis> $expectedAnalyses
+     * @param list<int>                                         $types
      *
      * @requires PHP 8.1
+     *
      * @dataProvider provideFindControlStructuresPhp81Cases
      */
     public function testFindControlStructuresPhp81(array $expectedAnalyses, string $source, array $types): void
@@ -335,7 +339,7 @@ endswitch ?>',
         }
     }
 
-    public function provideFindControlStructuresPhp81Cases(): \Generator
+    public function provideFindControlStructuresPhp81Cases(): iterable
     {
         $switchAnalysis = new SwitchAnalysis(1, 6, 26, [new CaseAnalysis(8, 11)], new DefaultAnalysis(18, 19));
         $enumAnalysis = new EnumAnalysis(28, 35, 51, [new CaseAnalysis(37, 41), new CaseAnalysis(46, 49)]);

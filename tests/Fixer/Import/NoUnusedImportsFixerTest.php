@@ -1348,6 +1348,7 @@ use /**/A\B/**/;
 
     /**
      * @requires PHP 8.0
+     *
      * @dataProvider providePhp80Cases
      */
     public function testFix80(string $expected, ?string $input = null): void
@@ -1355,7 +1356,7 @@ use /**/A\B/**/;
         $this->doTest($expected, $input);
     }
 
-    public function providePhp80Cases(): \Generator
+    public function providePhp80Cases(): iterable
     {
         yield [
             '<?php
@@ -1407,10 +1408,19 @@ use Symfony\\Component\\Routing\\Annotation\\Route;
 class Foo {}
 ",
         ];
+
+        yield 'attribute 2' => [
+            '<?php
+
+use Psr\Log\LoggerInterface;
+function f( #[Target(\'xxx\')] LoggerInterface|null $logger) {}
+',
+        ];
     }
 
     /**
      * @requires PHP 8.1
+     *
      * @dataProvider providePhp81Cases
      */
     public function testFix81(string $expected, ?string $input = null): void
@@ -1418,7 +1428,7 @@ class Foo {}
         $this->doTest($expected, $input);
     }
 
-    public function providePhp81Cases(): \Generator
+    public function providePhp81Cases(): iterable
     {
         yield 'final const' => [
             '<?php
@@ -1485,6 +1495,7 @@ const D = new Foo7(1,2);
 
     /**
      * @requires PHP 8.1
+     *
      * @dataProvider provideFixPhp81Cases
      */
     public function testFixPhp81(string $expected): void

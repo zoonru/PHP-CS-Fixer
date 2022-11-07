@@ -42,7 +42,6 @@ final class ReturnTypeDeclarationFixerTest extends AbstractFixerTestCase
     public function testFixWithDefaultConfiguration(string $expected, ?string $input = null): void
     {
         $this->fixer->configure([]);
-
         $this->doTest($expected, $input);
     }
 
@@ -109,6 +108,10 @@ string {}',
                     function foo9(int $a):string {}
                 ',
             ],
+            [
+                '<?php fn(): int => 1;',
+                '<?php fn():int => 1;',
+            ],
         ];
     }
 
@@ -149,26 +152,8 @@ string {}',
     }
 
     /**
-     * @dataProvider provideFixWithSpaceBeforeNonePhp74Cases
-     * @requires PHP 7.4
-     */
-    public function testFixWithDefaultConfigurationPhp74(string $expected, ?string $input = null): void
-    {
-        $this->doTest($expected, $input);
-    }
-
-    public function provideFixWithSpaceBeforeNonePhp74Cases(): array
-    {
-        return [
-            [
-                '<?php fn(): int => 1;',
-                '<?php fn():int => 1;',
-            ],
-        ];
-    }
-
-    /**
      * @dataProvider provideFix80Cases
+     *
      * @requires PHP 8.0
      */
     public function testFix80(string $expected, string $input): void
@@ -176,7 +161,7 @@ string {}',
         $this->doTest($expected, $input);
     }
 
-    public function provideFix80Cases(): \Generator
+    public function provideFix80Cases(): iterable
     {
         yield [
             '<?php function foo(): mixed{}',
@@ -186,6 +171,24 @@ string {}',
         yield [
             '<?php class A { public function foo(): static{}}',
             '<?php class A { public function foo()   :static{}}',
+        ];
+    }
+
+    /**
+     * @dataProvider provideFix81Cases
+     *
+     * @requires PHP 8.1
+     */
+    public function testFix81(string $expected, string $input): void
+    {
+        $this->doTest($expected, $input);
+    }
+
+    public function provideFix81Cases(): iterable
+    {
+        yield [
+            '<?php enum Foo: int {}',
+            '<?php enum Foo   :   int {}',
         ];
     }
 }

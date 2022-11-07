@@ -33,6 +33,8 @@ final class MethodArgumentSpaceFixerTest extends AbstractFixerTestCase
     protected $fixer;
 
     /**
+     * @param array<string, mixed> $configuration
+     *
      * @dataProvider provideFixCases
      */
     public function testFix(string $expected, ?string $input = null, array $configuration = []): void
@@ -60,6 +62,8 @@ final class MethodArgumentSpaceFixerTest extends AbstractFixerTestCase
     }
 
     /**
+     * @param array<string, mixed> $configuration
+     *
      * @dataProvider provideFixCases
      */
     public function testFixWithDifferentLineEndings(string $expected, ?string $input = null, array $configuration = []): void
@@ -169,6 +173,32 @@ $var2 = some_function(
                 '<?php xyz($a=10,$b=20 ,         $this->foo() ,$c=30);',
                 ['keep_multiple_spaces_after_comma' => true],
             ],
+            'test named class constructor call' => [
+                '<?php new Foo($a=10, $b=20, $this->foo(), $c=30);',
+                '<?php new Foo($a=10,$b=20 ,$this->foo() ,$c=30);',
+            ],
+            'test named class constructor call with multiple spaces' => [
+                '<?php new Foo($a=10, $b=20, $c=30);',
+                '<?php new Foo($a=10 , $b=20 ,          $c=30);',
+            ],
+            'test named class constructor call with multiple spaces (kmsac)' => [
+                '<?php new Foo($a=10, $b=20,          $c=30);',
+                '<?php new Foo($a=10 , $b=20 ,          $c=30);',
+                ['keep_multiple_spaces_after_comma' => true],
+            ],
+            'test anonymous class constructor call' => [
+                '<?php new class ($a=10, $b=20, $this->foo(), $c=30) {};',
+                '<?php new class ($a=10,$b=20 ,$this->foo() ,$c=30) {};',
+            ],
+            'test anonymous class constructor call with multiple spaces' => [
+                '<?php new class ($a=10, $b=20, $c=30) extends Foo {};',
+                '<?php new class ($a=10 , $b=20 ,          $c=30) extends Foo {};',
+            ],
+            'test anonymous class constructor call with multiple spaces (kmsac)' => [
+                '<?php new class ($a=10, $b=20,          $c=30) {};',
+                '<?php new class ($a=10 , $b=20 ,          $c=30) {};',
+                ['keep_multiple_spaces_after_comma' => true],
+            ],
             'test receiving data in list context with omitted values' => [
                 '<?php list($a, $b, , , $c) = foo();',
                 '<?php list($a, $b,, ,$c) = foo();',
@@ -226,6 +256,20 @@ list(
                     $b=20,
                     $c=30
                 );
+                }',
+            ],
+            'multi line anonymous class constructor call' => [
+                '<?php if (1) {
+                new class (
+                    $a=10,
+                    $b=20,
+                    $c=30
+                ) {};
+                }',
+                '<?php if (1) {
+                new class (
+                    $a=10 ,
+                $b=20,$c=30) {};
                 }',
             ],
             'skip arrays but replace arg methods' => [
@@ -783,6 +827,33 @@ INPUT
                 ,
                 ['on_multiline' => 'ensure_single_line'],
             ],
+            'ensure_single_line_methods_in_anonymous_class' => [
+                <<<'EXPECTED'
+<?php
+new class {
+    public static function foo1($a, $b, $c) {}
+    private function foo2($a, $b, $c) {}
+};
+EXPECTED
+                ,
+                <<<'INPUT'
+<?php
+new class {
+    public static function foo1(
+        $a,
+        $b,
+        $c
+    ) {}
+    private function foo2(
+        $a,
+        $b,
+        $c
+    ) {}
+};
+INPUT
+                ,
+                ['on_multiline' => 'ensure_single_line'],
+            ],
             'ensure_single_line_keep_spaces_after_comma' => [
                 <<<'EXPECTED'
 <?php
@@ -838,37 +909,61 @@ $example = function () use ($message1, $message2) {
 $example = function () use ($message1,$message2) {
 };',
             ],
+            'test first element in same line, space before comma and inconsistent indent' => [
+                '<?php foo(
+    "aaa
+    bbb",
+    $c,
+    $d,
+    $e,
+    $f
+);
+',
+                '<?php foo("aaa
+    bbb",
+    $c, $d ,
+        $e,
+        $f);
+',
+            ],
+            'test first element in same line, space before comma and inconsistent indent with comments' => [
+                '<?php foo(
+    "aaa
+    bbb", // comment1
+    $c, /** comment2 */
+    $d,
+    $e/* comment3 */,
+    $f
+);# comment4
+',
+                '<?php foo("aaa
+    bbb", // comment1
+    $c, /** comment2 */$d ,
+        $e/* comment3 */,
+        $f);# comment4
+',
+            ],
         ];
     }
 
     /**
-     * @dataProvider provideFix56Cases
+     * @param array<string, mixed> $config
+     *
+     * @dataProvider provideFix2Cases
      */
-    public function testFix56(string $expected, string $input): void
-    {
-        $this->doTest($expected, $input);
-    }
-
-    public function provideFix56Cases(): \Generator
-    {
-        yield [
-            '<?php function A($c, ...$a){}',
-            '<?php function A($c ,...$a){}',
-        ];
-    }
-
-    /**
-     * @dataProvider provideFix73Cases
-     * @requires PHP 7.3
-     */
-    public function testFix73(string $expected, ?string $input = null, array $config = []): void
+    public function testFix2(string $expected, ?string $input = null, array $config = []): void
     {
         $this->fixer->configure($config);
         $this->doTest($expected, $input);
     }
 
-    public function provideFix73Cases(): \Generator
+    public function provideFix2Cases(): iterable
     {
+        yield [
+            '<?php function A($c, ...$a){}',
+            '<?php function A($c ,...$a){}',
+        ];
+
         yield [
             <<<'EXPECTED'
 <?php
@@ -928,20 +1023,7 @@ functionCall(
             '<?php foo(1, 2, 3, );',
             '<?php foo(1,2,3,);',
         ];
-    }
 
-    /**
-     * @dataProvider provideFix74Cases
-     * @requires PHP 7.4
-     */
-    public function testFix74(string $expected, ?string $input = null, array $config = []): void
-    {
-        $this->fixer->configure($config);
-        $this->doTest($expected, $input);
-    }
-
-    public function provideFix74Cases(): \Generator
-    {
         yield [
             '<?php
 $fn = fn(
@@ -960,6 +1042,7 @@ $fn = fn(
 
     /**
      * @dataProvider provideFix81Cases
+     *
      * @requires PHP 8.1
      */
     public function testFix81(string $expected, ?string $input = null): void
@@ -967,7 +1050,7 @@ $fn = fn(
         $this->doTest($expected, $input);
     }
 
-    public function provideFix81Cases(): \Generator
+    public function provideFix81Cases(): iterable
     {
         yield [
             '<?php

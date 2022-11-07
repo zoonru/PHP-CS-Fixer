@@ -25,17 +25,6 @@ final class LowercaseCastFixerTest extends AbstractFixerTestCase
 {
     /**
      * @dataProvider provideFixCases
-     * @dataProvider provideFixDeprecatedCases
-     * @requires PHP < 7.4
-     */
-    public function testFix(string $expected, ?string $input = null): void
-    {
-        $this->doTest($expected, $input);
-    }
-
-    /**
-     * @dataProvider provideFixCases
-     * @requires PHP 7.4
      */
     public function testFix74(string $expected, ?string $input = null): void
     {
@@ -44,7 +33,7 @@ final class LowercaseCastFixerTest extends AbstractFixerTestCase
 
     /**
      * @dataProvider provideFixDeprecatedCases
-     * @requires PHP 7.4
+     *
      * @group legacy
      */
     public function testFix74Deprecated(string $expected, ?string $input = null): void
@@ -58,7 +47,7 @@ final class LowercaseCastFixerTest extends AbstractFixerTestCase
         $this->doTest($expected, $input);
     }
 
-    public function provideFixCases(): \Generator
+    public function provideFixCases(): iterable
     {
         $types = ['boolean', 'bool', 'integer', 'int', 'double', 'float', 'float', 'string', 'array', 'object', 'binary'];
 
@@ -73,12 +62,15 @@ final class LowercaseCastFixerTest extends AbstractFixerTestCase
         }
     }
 
-    public function provideFixDeprecatedCases(): \Generator
+    public function provideFixDeprecatedCases(): iterable
     {
         return $this->createCasesFor('real');
     }
 
-    private function createCasesFor(string $type): \Generator
+    /**
+     * @return iterable<array{0: non-empty-string, 1?: non-empty-string}>
+     */
+    private function createCasesFor(string $type): iterable
     {
         yield [
             sprintf('<?php $b= (%s)$d;', $type),

@@ -34,6 +34,7 @@ final class ClassDefinitionFixerTest extends AbstractFixerTestCase
             'single_item_single_line' => false,
             'single_line' => false,
             'space_before_parenthesis' => false,
+            'inline_constructor_arguments' => true,
         ];
 
         $fixer = new ClassDefinitionFixer();
@@ -54,7 +55,6 @@ final class ClassDefinitionFixerTest extends AbstractFixerTestCase
     public function testFixingAnonymousClasses(string $expected, string $input, array $config = []): void
     {
         $this->fixer->configure($config);
-
         $this->doTest($expected, $input);
     }
 
@@ -64,17 +64,17 @@ final class ClassDefinitionFixerTest extends AbstractFixerTestCase
     public function testFixingClasses(string $expected, string $input): void
     {
         $this->fixer->configure([]);
-
         $this->doTest($expected, $input);
     }
 
     /**
+     * @param array<string, mixed> $config
+     *
      * @dataProvider provideClassesWithConfigCases
      */
     public function testFixingClassesWithConfig(string $expected, string $input, array $config): void
     {
         $this->fixer->configure($config);
-
         $this->doTest($expected, $input);
     }
 
@@ -84,7 +84,6 @@ final class ClassDefinitionFixerTest extends AbstractFixerTestCase
     public function testFixingInterfaces(string $expected, string $input): void
     {
         $this->fixer->configure([]);
-
         $this->doTest($expected, $input);
     }
 
@@ -94,7 +93,6 @@ final class ClassDefinitionFixerTest extends AbstractFixerTestCase
     public function testFixingTraits(string $expected, string $input): void
     {
         $this->fixer->configure([]);
-
         $this->doTest($expected, $input);
     }
 
@@ -102,7 +100,7 @@ final class ClassDefinitionFixerTest extends AbstractFixerTestCase
     {
         $this->expectException(InvalidFixerConfigurationException::class);
         $this->expectExceptionMessageMatches(
-            '/^\[class_definition\] Invalid configuration: The option "a" does not exist\. Defined options are: "multi_line_extends_each_single_line", "single_item_single_line", "single_line", "space_before_parenthesis"\.$/'
+            '/^\[class_definition\] Invalid configuration: The option "a" does not exist\. Defined options are: "inline_constructor_arguments", "multi_line_extends_each_single_line", "single_item_single_line", "single_line", "space_before_parenthesis"\.$/'
         );
 
         $fixer = new ClassDefinitionFixer();
@@ -154,8 +152,28 @@ final class ClassDefinitionFixerTest extends AbstractFixerTestCase
                 "<?php \$a = new\n class  (  ){};",
             ],
             [
+                '<?php $a = new class(  ) {};',
+                "<?php \$a = new\n class  (  ){};",
+                ['inline_constructor_arguments' => false],
+            ],
+            [
+                '<?php $a = new class implements Foo {};',
+                "<?php \$a = new\n class    implements Foo {};",
+                ['inline_constructor_arguments' => false],
+            ],
+            [
+                '<?php $a = new class( $this->foo() , bar ( $a) ) {};',
+                "<?php \$a = new\n class  ( \$this->foo() , bar ( \$a) ){};",
+                ['inline_constructor_arguments' => false],
+            ],
+            [
                 '<?php $a = new class(10, 1, /**/ 2) {};',
                 '<?php $a = new class(  10, 1,/**/2  ){};',
+            ],
+            [
+                '<?php $a = new class(  10, 1,/**/2  ) {};',
+                '<?php $a = new class(  10, 1,/**/2  ){};',
+                ['inline_constructor_arguments' => false],
             ],
             [
                 '<?php $a = new class(2) {};',
@@ -164,6 +182,21 @@ final class ClassDefinitionFixerTest extends AbstractFixerTestCase
             [
                 '<?php $a = new class($this->prop) {};',
                 '<?php $a = new class(   $this->prop   ){};',
+            ],
+            [
+                '<?php $a = new class(   $this->prop   ) {};',
+                '<?php $a = new class(   $this->prop   ){};',
+                ['inline_constructor_arguments' => false],
+            ],
+            [
+                "<?php \$a = new class(\n\t\$a,\n\t\$b,\n\t\$c,\n\t\$d) implements A, B {};",
+                "<?php \$a = new class(\n\t\$a,\n\t\$b,\n\t\$c,\n\t\$d) implements  A, \t B{};",
+                ['inline_constructor_arguments' => false],
+            ],
+            [
+                "<?php \$a = new class(\n\t\$a,\n\t\$b,\n\t\$c,\n\t\$d) implements A, B {};",
+                "<?php \$a = new   class  (\n\t\$a,\n\t\$b,\n\t\$c,\n\t\$d)    implements  A, \t B{};",
+                ['inline_constructor_arguments' => false],
             ],
             [
                 '<?php $a = new class($this->prop, $v[3], 4) {};',
@@ -177,7 +210,7 @@ $instance = new class extends \Foo implements
     \Serializable
 {};',
                 '<?php
-$instance = new class extends \Foo implements
+$instance = new class   extends \Foo  implements
 \ArrayAccess,\Countable,\Serializable{};',
             ],
             'PSR-12 Implements Parenthesis on the next line.' => [
@@ -273,6 +306,11 @@ A#
                 '<?php $z = new class () {};',
                 '<?php $z = new class   ()  {};',
                 ['space_before_parenthesis' => true],
+            ],
+            'space_before_parenthesis and inline_constructor_arguments' => [
+                '<?php $z = new class ( static::foo($this->bar())  ,baz() ) {};',
+                '<?php $z = new class   ( static::foo($this->bar())  ,baz() )  {};',
+                ['space_before_parenthesis' => true, 'inline_constructor_arguments' => false],
             ],
         ];
     }
@@ -379,7 +417,7 @@ TestInterface3, /**/     TestInterface4   ,
     }
 
     /**
-     * @param string $source PHP source code
+     * @param array<string, mixed> $expected
      *
      * @dataProvider provideClassyDefinitionInfoCases
      */
@@ -466,7 +504,7 @@ TestInterface3, /**/     TestInterface4   ,
     }
 
     /**
-     * @param string $source PHP source code
+     * @param array<string, mixed> $expected
      *
      * @dataProvider provideClassyImplementsInfoCases
      */
@@ -475,7 +513,7 @@ TestInterface3, /**/     TestInterface4   ,
         $this->doTestClassyInheritanceInfo($source, $label, $expected);
     }
 
-    public function provideClassyImplementsInfoCases(): \Generator
+    public function provideClassyImplementsInfoCases(): iterable
     {
         yield from [
             '1' => [
@@ -587,7 +625,6 @@ namespace {
     public function testFix(string $expected, ?string $input = null): void
     {
         $this->fixer->configure([]);
-
         $this->doTest($expected, $input);
     }
 
@@ -624,22 +661,6 @@ $a = new class implements
 {
 }?>',
             ],
-        ];
-    }
-
-    /**
-     * @dataProvider providePHP73Cases
-     * @requires PHP 7.3
-     */
-    public function testFixPHP73(string $expected, ?string $input = null): void
-    {
-        $this->fixer->configure([]);
-        $this->doTest($expected, $input);
-    }
-
-    public function providePHP73Cases(): array
-    {
-        return [
             [
                 '<?php new class(1, 2, 3, ) {};',
                 '<?php new class(1, 2, 3,) {};',
@@ -662,7 +683,6 @@ $a = new class implements
     {
         $this->fixer->setWhitespacesConfig(new WhitespacesFixerConfig("\t", "\r\n"));
         $this->fixer->configure([]);
-
         $this->doTest($expected, $input);
     }
 
@@ -676,6 +696,37 @@ $a = new class implements
         ];
     }
 
+    /**
+     * @dataProvider provideFix81Cases
+     *
+     * @requires PHP 8.1
+     */
+    public function testFix81(string $expected, ?string $input = null): void
+    {
+        $this->doTest($expected, $input);
+    }
+
+    public function provideFix81Cases(): iterable
+    {
+        yield [
+            "<?php enum SomeEnum implements SomeInterface, D\n{};",
+            "<?php enum SomeEnum \timplements    SomeInterface, D {};",
+        ];
+
+        yield [
+            "<?php enum SomeEnum : int\n{}",
+            '<?php enum   SomeEnum  :  int   {}',
+        ];
+
+        yield [
+            "<?php enum SomeEnum\n{}",
+            "<?php enum\tSomeEnum{}",
+        ];
+    }
+
+    /**
+     * @param array<string, mixed> $expected
+     */
     private static function assertConfigurationSame(array $expected, ClassDefinitionFixer $fixer): void
     {
         $reflectionProperty = new \ReflectionProperty($fixer, 'configuration');
@@ -684,6 +735,9 @@ $a = new class implements
         static::assertSame($expected, $reflectionProperty->getValue($fixer));
     }
 
+    /**
+     * @param array<string, mixed> $expected
+     */
     private function doTestClassyInheritanceInfo(string $source, string $label, array $expected): void
     {
         Tokens::clearCache();

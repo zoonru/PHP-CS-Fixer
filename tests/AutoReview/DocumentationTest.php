@@ -34,7 +34,6 @@ use Symfony\Component\Finder\Finder;
  * @covers \PhpCsFixer\Documentation\RuleSetDocumentationGenerator
  *
  * @group auto-review
- * @requires PHP 7.3
  */
 final class DocumentationTest extends TestCase
 {
@@ -93,7 +92,7 @@ final class DocumentationTest extends TestCase
         static::assertSame($expected, $actual);
     }
 
-    public function provideFixerCases(): \Generator
+    public function provideFixerCases(): iterable
     {
         foreach ($this->getFixers() as $fixer) {
             yield $fixer->getName() => [$fixer];
@@ -121,9 +120,6 @@ final class DocumentationTest extends TestCase
         );
     }
 
-    /**
-     * @requires PHP 7.4
-     */
     public function testRuleSetsDocumentationIsUpToDate(): void
     {
         $locator = new DocumentationLocator();
@@ -151,9 +147,6 @@ final class DocumentationTest extends TestCase
         );
     }
 
-    /**
-     * @requires PHP 7.4
-     */
     public function testRuleSetsDocumentationDirectoryHasNoExtraFiles(): void
     {
         $generator = new DocumentationLocator();
@@ -181,9 +174,6 @@ final class DocumentationTest extends TestCase
         );
     }
 
-    /**
-     * @requires PHP 7.4
-     */
     public function testListingDocumentationIsUpToDate(): void
     {
         $locator = new DocumentationLocator();
@@ -205,6 +195,9 @@ final class DocumentationTest extends TestCase
         static::assertSame($expectedString, file_get_contents($actualFilePath), $message);
     }
 
+    /**
+     * @return list<FixerInterface>
+     */
     private function getFixers(): array
     {
         $factory = new FixerFactory();

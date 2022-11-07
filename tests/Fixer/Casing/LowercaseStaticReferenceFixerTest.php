@@ -178,30 +178,18 @@ final class LowercaseStaticReferenceFixerTest extends AbstractFixerTestCase
             [
                 '<?php class Foo extends Bar { public function baz() : ?Self\Qux {} }',
             ],
-        ];
-    }
-
-    /**
-     * @dataProvider provideFix74Cases
-     * @requires PHP 7.4
-     */
-    public function testFix74(string $expected, ?string $input = null): void
-    {
-        $this->doTest($expected, $input);
-    }
-
-    public function provideFix74Cases(): \Generator
-    {
-        yield [
-            '<?php class Foo {
+            [
+                '<?php class Foo {
                 private STATIC int $baz1;
                 private STATIC ?int $baz2;
             }',
+            ],
         ];
     }
 
     /**
      * @dataProvider provideFix80Cases
+     *
      * @requires PHP 8.0
      */
     public function testFix80(string $expected, ?string $input = null): void
@@ -209,7 +197,7 @@ final class LowercaseStaticReferenceFixerTest extends AbstractFixerTestCase
         $this->doTest($expected, $input);
     }
 
-    public function provideFix80Cases(): \Generator
+    public function provideFix80Cases(): iterable
     {
         yield ['<?php $foo?->Self();'];
 
@@ -259,6 +247,7 @@ class Foo
 
     /**
      * @dataProvider provideFix81Cases
+     *
      * @requires PHP 8.1
      */
     public function testFix81(string $expected, ?string $input = null): void
@@ -266,7 +255,7 @@ class Foo
         $this->doTest($expected, $input);
     }
 
-    public static function provideFix81Cases(): \Generator
+    public static function provideFix81Cases(): iterable
     {
         yield [
             '<?php class A { final const PARENT = 42; }',

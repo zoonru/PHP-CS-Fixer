@@ -16,6 +16,7 @@ namespace PhpCsFixer\Tests\Tokenizer;
 
 use PhpCsFixer\Tests\Test\Assert\AssertTokensTrait;
 use PhpCsFixer\Tests\TestCase;
+use PhpCsFixer\Tokenizer\CT;
 use PhpCsFixer\Tokenizer\Token;
 use PhpCsFixer\Tokenizer\Tokens;
 
@@ -47,8 +48,9 @@ final class TokensTest extends TestCase
     }
 
     /**
-     * @param Token[]         $sequence
-     * @param null|array|bool $caseSensitive
+     * @param null|array<int, Token>                       $expected
+     * @param list<array{0: int, 1?: string}|string|Token> $sequence
+     * @param bool|list<bool>                              $caseSensitive
      *
      * @dataProvider provideFindSequenceCases
      */
@@ -277,14 +279,17 @@ final class TokensTest extends TestCase
     }
 
     /**
+     * @param array<mixed> $sequence
+     *
      * @dataProvider provideFindSequenceExceptionCases
      */
     public function testFindSequenceException(string $message, array $sequence): void
     {
+        $tokens = Tokens::fromCode('<?php $x = 1;');
+
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage($message);
 
-        $tokens = Tokens::fromCode('<?php $x = 1;');
         $tokens->findSequence($sequence);
     }
 
@@ -343,74 +348,89 @@ PHP;
     /**
      * @dataProvider provideMonolithicPhpDetectionCases
      */
-    public function testMonolithicPhpDetection(string $source, bool $isMonolithic): void
+    public function testMonolithicPhpDetection(bool $isMonolithic, string $source): void
     {
         $tokens = Tokens::fromCode($source);
         static::assertSame($isMonolithic, $tokens->isMonolithicPhp());
     }
 
-    public function provideMonolithicPhpDetectionCases(): array
+    public function provideMonolithicPhpDetectionCases(): iterable
     {
-        return [
-            ["<?php\n", true],
-            ["<?php\n?>", true],
-            ['', false],
-            [' ', false],
-            ["#!/usr/bin/env php\n<?php\n", false],
-            [" <?php\n", false],
-            ["<?php\n?> ", false],
-            ["<?php\n?><?php\n", false],
-        ];
-    }
+        yield [true, "<?php\n"];
 
-    /**
-     * @dataProvider provideShortOpenTagMonolithicPhpDetectionCases
-     */
-    public function testShortOpenTagMonolithicPhpDetection(string $source, bool $monolithic): void
-    {
-        if (!ini_get('short_open_tag')) {
-            $monolithic = false;
-        }
+        yield [true, "<?php\n?>"];
 
-        $tokens = Tokens::fromCode($source);
-        static::assertSame($monolithic, $tokens->isMonolithicPhp());
-    }
+        yield [false, "#!\n<?php\n"];
 
-    public function provideShortOpenTagMonolithicPhpDetectionCases(): array
-    {
-        return [
-            ["<?\n", true],
-            ["<?\n?>", true],
-            [" <?\n", false],
-            ["<?\n?> ", false],
-            ["<?\n?><?\n", false],
-            ["<?\n?><?php\n", false],
-            ["<?\n?><?=' ';\n", false],
-            ["<?php\n?><?\n", false],
-            ["<?=' '\n?><?\n", false],
-        ];
-    }
+        yield [false, "#!/usr/bin/bash\ncat <?php\n"];
 
-    /**
-     * @dataProvider provideShortOpenTagEchoMonolithicPhpDetectionCases
-     */
-    public function testShortOpenTagEchoMonolithicPhpDetection(string $source, bool $monolithic): void
-    {
-        $tokens = Tokens::fromCode($source);
-        static::assertSame($monolithic, $tokens->isMonolithicPhp());
-    }
+        yield [false, "#!/usr/bin/env bash\ncat <?php\n"];
 
-    public function provideShortOpenTagEchoMonolithicPhpDetectionCases(): array
-    {
-        return [
-            ["<?=' ';\n", true],
-            ["<?=' '?>", true],
-            [" <?=' ';\n", false],
-            ["<?=' '?> ", false],
-            ["<?php\n?><?=' ';\n", false],
-            ["<?=' '\n?><?php\n", false],
-            ["<?=' '\n?><?=' ';\n", false],
-        ];
+        yield [true, "#!/usr/bin/php\n<?php\n"];
+
+        yield [true, "#!/usr/bin/php7.4-cli\n<?php\n"];
+
+        yield [false, "#!/usr/bin/php\n\n<?php\n"]; // empty line after shebang would be printed to console before PHP executes
+
+        yield [true, "#!/usr/bin/php8\n<?php\n"];
+
+        yield [true, "#!/usr/bin/env php\n<?php\n"];
+
+        yield [true, "#!/usr/bin/env php7.4\n<?php\n"];
+
+        yield [true, "#!/usr/bin/env php7.4-cli\n<?php\n"];
+
+        yield [false, "#!/usr/bin/env this-is\ntoo-much\n<?php\n"];
+
+        yield [false, "#!/usr/bin/php\nFoo bar<?php\n"];
+
+        yield [false, "#!/usr/bin/env php -n \nFoo bar\n<?php\n"];
+
+        yield [false, ''];
+
+        yield [false, ' '];
+
+        yield [false, " <?php\n"];
+
+        yield [false, "<?php\n?> "];
+
+        yield [false, "<?php\n?><?php\n"];
+
+        yield [false, 'Hello<?php echo "World!"; ?>'];
+
+        yield [false, '<?php echo "Hello"; ?> World!'];
+        // short open tag
+        yield [(bool) \ini_get('short_open_tag'), "<?\n"];
+
+        yield [(bool) \ini_get('short_open_tag'), "<?\n?>"];
+
+        yield [false, " <?\n"];
+
+        yield [false, "<?\n?> "];
+
+        yield [false, "<?\n?><?\n"];
+
+        yield [false, "<?\n?><?php\n"];
+
+        yield [false, "<?\n?><?=' ';\n"];
+
+        yield [false, "<?php\n?><?\n"];
+
+        yield [false, "<?=' '\n?><?\n"];
+        // short open tag echo
+        yield [true, "<?=' ';\n"];
+
+        yield [true, "<?=' '?>"];
+
+        yield [false, " <?=' ';\n"];
+
+        yield [false, "<?=' '?> "];
+
+        yield [false, "<?php\n?><?=' ';\n"];
+
+        yield [false, "<?=' '\n?><?php\n"];
+
+        yield [false, "<?=' '\n?><?=' ';\n"];
     }
 
     public function testTokenKindsFound(): void
@@ -603,6 +623,8 @@ PHP;
 
     /**
      * @param ?int $expectedIndex
+     * @param -1|1 $direction
+     * @param list<array{int}|string|Token> $findTokens
      *
      * @dataProvider provideTokenOfKindSiblingCases
      */
@@ -665,6 +687,8 @@ PHP;
 
     /**
      * @dataProvider provideFindBlockEndCases
+     *
+     * @param Tokens::BLOCK_TYPE_* $type
      */
     public function testFindBlockEnd(int $expectedIndex, string $source, int $type, int $searchIndex): void
     {
@@ -692,7 +716,10 @@ PHP;
 
     /**
      * @requires PHP 8.0
+     *
      * @dataProvider provideFindBlockEnd80Cases
+     *
+     * @param Tokens::BLOCK_TYPE_* $type
      */
     public function testFindBlockEnd80(int $expectedIndex, string $source, int $type, int $searchIndex): void
     {
@@ -716,21 +743,24 @@ PHP;
 
     public function testFindBlockEndInvalidType(): void
     {
+        Tokens::clearCache();
+        $tokens = Tokens::fromCode('<?php ');
+
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessageMatches('/^Invalid param type: "-1"\.$/');
 
-        Tokens::clearCache();
-        $tokens = Tokens::fromCode('<?php ');
+        // @phpstan-ignore-next-line
         $tokens->findBlockEnd(-1, 0);
     }
 
     public function testFindBlockEndInvalidStart(): void
     {
+        Tokens::clearCache();
+        $tokens = Tokens::fromCode('<?php ');
+
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessageMatches('/^Invalid param \$startIndex - not a proper block "start"\.$/');
 
-        Tokens::clearCache();
-        $tokens = Tokens::fromCode('<?php ');
         $tokens->findBlockEnd(Tokens::BLOCK_TYPE_DYNAMIC_VAR_BRACE, 0);
     }
 
@@ -1083,12 +1113,13 @@ echo $a;',
         static::assertSame($expected, $tokens->generateCode());
     }
 
-    public function provideRemoveTrailingWhitespaceCases(): \Generator
+    public function provideRemoveTrailingWhitespaceCases(): iterable
     {
         $leadingCases = $this->provideRemoveLeadingWhitespaceCases();
 
         foreach ($leadingCases as $leadingCase) {
             $leadingCase[0] -= 2;
+
             yield $leadingCase;
         }
     }
@@ -1160,6 +1191,8 @@ $bar;',
     }
 
     /**
+     * @param null|array{type: Tokens::BLOCK_TYPE_*, isStart: bool} $expected
+     *
      * @dataProvider provideDetectBlockTypeCases
      */
     public function testDetectBlockType(?array $expected, string $code, int $index): void
@@ -1168,7 +1201,7 @@ $bar;',
         static::assertSame($expected, Tokens::detectBlockType($tokens[$index]));
     }
 
-    public function provideDetectBlockTypeCases(): \Generator
+    public function provideDetectBlockTypeCases(): iterable
     {
         yield [
             [
@@ -1214,9 +1247,8 @@ $bar;',
     }
 
     /**
-     * @param int          $indexStart start overriding index
-     * @param int          $indexEnd   end overriding index
-     * @param array<Token> $items      tokens to insert
+     * @param list<Token>       $expected
+     * @param array<int, Token> $items
      *
      * @dataProvider provideOverrideRangeCases
      */
@@ -1229,7 +1261,7 @@ $bar;',
         self::assertTokens(Tokens::fromArray($expected), $tokens);
     }
 
-    public function provideOverrideRangeCases(): \Generator
+    public function provideOverrideRangeCases(): iterable
     {
         // typically done by transformers, here we test the reverse
 
@@ -1338,6 +1370,8 @@ $bar;',
     }
 
     /**
+     * @param -1|1 $direction
+     *
      * @dataProvider provideGetMeaningfulTokenSiblingCases
      */
     public function testGetMeaningfulTokenSibling(?int $expectIndex, int $index, int $direction, string $source): void
@@ -1348,7 +1382,7 @@ $bar;',
         static::assertSame($expectIndex, $tokens->getMeaningfulTokenSibling($index, $direction));
     }
 
-    public function provideGetMeaningfulTokenSiblingCases(): \Generator
+    public function provideGetMeaningfulTokenSiblingCases(): iterable
     {
         yield [null, 0, 1, '<?php '];
 
@@ -1359,12 +1393,17 @@ $bar;',
         }
 
         yield '>>' => [4, 3, 1, '<?php /**/ foo();'];
+
         yield '@ end' => [null, 6, 1, '<?php /**/ foo();'];
+
         yield 'over end' => [null, 888, 1, '<?php /**/ foo();'];
 
         yield [0, 3, -1, '<?php /**/ foo();'];
+
         yield [4, 5, -1, '<?php /**/ foo();'];
+
         yield [5, 6, -1, '<?php /**/ foo();'];
+
         yield [null, 0, -1, '<?php /**/ foo();'];
     }
 
@@ -1390,7 +1429,7 @@ EOF;
         static::assertTokens(Tokens::fromCode($expected), $tokens);
     }
 
-    public function provideInsertSlicesAtMultiplePlacesCases(): \Generator
+    public function provideInsertSlicesAtMultiplePlacesCases(): iterable
     {
         yield 'one slice count' => [
             <<<'EOF'
@@ -1442,6 +1481,8 @@ EOF
     }
 
     /**
+     * @param array<int, list<Token>|Token|Tokens> $slices
+     *
      * @dataProvider provideInsertSlicesCases
      */
     public function testInsertSlices(Tokens $expected, Tokens $tokens, array $slices): void
@@ -1551,6 +1592,74 @@ EOF
         ];
     }
 
+    public function testBlockEdgeCachingOffsetSet(): void
+    {
+        $tokens = $this->getBlockEdgeCachingTestTokens();
+
+        $endIndex = $tokens->findBlockEnd(Tokens::BLOCK_TYPE_ARRAY_SQUARE_BRACE, 5);
+        static::assertSame(9, $endIndex);
+
+        $tokens->offsetSet(5, new Token('('));
+        $tokens->offsetSet(9, new Token('('));
+
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Invalid param $startIndex - not a proper block "start".');
+
+        $tokens->findBlockEnd(Tokens::BLOCK_TYPE_ARRAY_SQUARE_BRACE, 5);
+    }
+
+    public function testBlockEdgeCachingClearAt(): void
+    {
+        $tokens = $this->getBlockEdgeCachingTestTokens();
+
+        $endIndex = $tokens->findBlockEnd(Tokens::BLOCK_TYPE_ARRAY_SQUARE_BRACE, 5);
+        static::assertSame(9, $endIndex);
+
+        $tokens->clearAt(7); // note: offsetUnset doesn't work here
+        $endIndex = $tokens->findBlockEnd(Tokens::BLOCK_TYPE_ARRAY_SQUARE_BRACE, 5);
+        static::assertSame(9, $endIndex);
+
+        $tokens->clearEmptyTokens();
+        $endIndex = $tokens->findBlockEnd(Tokens::BLOCK_TYPE_ARRAY_SQUARE_BRACE, 5);
+        static::assertSame(8, $endIndex);
+    }
+
+    public function testBlockEdgeCachingInsertSlices(): void
+    {
+        $tokens = $this->getBlockEdgeCachingTestTokens();
+
+        $endIndex = $tokens->findBlockEnd(Tokens::BLOCK_TYPE_ARRAY_SQUARE_BRACE, 5);
+        static::assertSame(9, $endIndex);
+
+        $tokens->insertSlices([6 => [new Token([T_COMMENT, '/* A */'])], new Token([T_COMMENT, '/* B */'])]);
+
+        $endIndex = $tokens->findBlockEnd(Tokens::BLOCK_TYPE_ARRAY_SQUARE_BRACE, 5);
+        static::assertSame(11, $endIndex);
+    }
+
+    private function getBlockEdgeCachingTestTokens(): Tokens
+    {
+        Tokens::clearCache();
+
+        return Tokens::fromArray([
+            new Token([T_OPEN_TAG, '<?php ']),
+            new Token([T_VARIABLE, '$a']),
+            new Token([T_WHITESPACE, ' ']),
+            new Token('='),
+            new Token([T_WHITESPACE, ' ']),
+            new Token([CT::T_ARRAY_SQUARE_BRACE_OPEN, '[']),
+            new Token([T_WHITESPACE, ' ']),
+            new Token([T_COMMENT, '/* foo */']),
+            new Token([T_WHITESPACE, ' ']),
+            new Token([CT::T_ARRAY_SQUARE_BRACE_CLOSE, ']']),
+            new Token(';'),
+            new Token([T_WHITESPACE, "\n"]),
+        ]);
+    }
+
+    /**
+     * @param Tokens::BLOCK_TYPE_* $type
+     */
     private static function assertFindBlockEnd(int $expectedIndex, string $source, int $type, int $searchIndex): void
     {
         Tokens::clearCache();
@@ -1616,9 +1725,6 @@ EOF
         foreach ($expected as $index => $expectedToken) {
             $token = $tokens[$index];
             $expectedPrototype = $expectedToken->getPrototype();
-            if (\is_array($expectedPrototype)) {
-                unset($expectedPrototype[2]); // don't compare token lines as our token mutations don't deal with line numbers
-            }
 
             static::assertTrue($token->equals($expectedPrototype), sprintf('The token at index %d should be %s, got %s', $index, json_encode($expectedPrototype), $token->toJson()));
         }

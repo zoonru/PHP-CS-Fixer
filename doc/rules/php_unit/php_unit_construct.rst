@@ -5,9 +5,13 @@ Rule ``php_unit_construct``
 PHPUnit assertion method calls like ``->assertSame(true, $foo)`` should be
 written with dedicated method like ``->assertTrue($foo)``.
 
-.. warning:: Using this rule is risky.
+Warning
+-------
 
-   Fixer could be risky if one is overriding PHPUnit's native methods.
+Using this rule is risky
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+Fixer could be risky if one is overriding PHPUnit's native methods.
 
 Configuration
 -------------
@@ -17,7 +21,7 @@ Configuration
 
 List of assertion methods to fix.
 
-Allowed values: a subset of ``['assertSame', 'assertEquals', 'assertNotEquals', 'assertNotSame']``
+Allowed values: a subset of ``['assertEquals', 'assertNotEquals', 'assertNotSame', 'assertSame']``
 
 Default value: ``['assertEquals', 'assertSame', 'assertNotEquals', 'assertNotSame']``
 

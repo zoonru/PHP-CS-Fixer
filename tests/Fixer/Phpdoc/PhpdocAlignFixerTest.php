@@ -775,6 +775,8 @@ EOF;
     }
 
     /**
+     * @param array<string, mixed> $config
+     *
      * @dataProvider provideMessyWhitespacesCases
      */
     public function testMessyWhitespaces(array $config, string $expected, string $input, WhitespacesFixerConfig $whitespacesFixerConfig): void
@@ -1103,6 +1105,138 @@ EOF;
         $this->doTest($expected, $input);
     }
 
+    public function testAlignsStaticAndNonStaticMethods(): void
+    {
+        $this->fixer->configure(['tags' => ['method', 'property']]);
+
+        $expected = <<<'EOF'
+<?php
+    /**
+     * @property        string      $foo             Desc1
+     * @property        int         $bar             Desc2
+     * @method                      foo(string $foo) DescriptionFoo
+     * @method          static      bar(string $foo) DescriptionBar
+     * @method          string|null baz(bool $baz)   DescriptionBaz
+     * @method   static int|false   qux(float $qux)  DescriptionQux
+     * @method   static static      quux(int $quux)  DescriptionQuux
+     * @method   static $this       quuz(bool $quuz) DescriptionQuuz
+     */
+EOF;
+
+        $input = <<<'EOF'
+<?php
+    /**
+     * @property    string   $foo     Desc1
+     * @property  int   $bar   Desc2
+     * @method     foo(string $foo)    DescriptionFoo
+     * @method  static     bar(string $foo) DescriptionBar
+     * @method    string|null    baz(bool $baz)  DescriptionBaz
+     * @method static     int|false qux(float $qux) DescriptionQux
+     * @method static   static    quux(int $quux) DescriptionQuux
+     * @method static  $this     quuz(bool $quuz) DescriptionQuuz
+     */
+EOF;
+
+        $this->doTest($expected, $input);
+    }
+
+    public function testAlignsStaticAndNonStaticMethodsLeftAlign(): void
+    {
+        $this->fixer->configure(['tags' => ['method', 'property'], 'align' => PhpdocAlignFixer::ALIGN_LEFT]);
+
+        $expected = <<<'EOF'
+<?php
+    /**
+     * @property string $foo Desc1
+     * @property int $bar Desc2
+     * @method foo(string $foo) DescriptionFoo
+     * @method static bar(string $foo) DescriptionBar
+     * @method string|null baz(bool $baz) DescriptionBaz
+     * @method static int|false qux(float $qux) DescriptionQux
+     * @method static static quux(int $quux) DescriptionQuux
+     * @method static $this quuz(bool $quuz) DescriptionQuuz
+     */
+EOF;
+
+        $input = <<<'EOF'
+<?php
+    /**
+     * @property    string   $foo     Desc1
+     * @property  int   $bar   Desc2
+     * @method     foo(string $foo)    DescriptionFoo
+     * @method  static     bar(string $foo) DescriptionBar
+     * @method    string|null    baz(bool $baz)  DescriptionBaz
+     * @method static     int|false qux(float $qux) DescriptionQux
+     * @method static   static    quux(int $quux) DescriptionQuux
+     * @method static  $this     quuz(bool $quuz) DescriptionQuuz
+     */
+EOF;
+
+        $this->doTest($expected, $input);
+    }
+
+    public function testAlignsReturnStatic(): void
+    {
+        $this->fixer->configure(['tags' => ['param', 'return', 'throws']]);
+
+        $expected = <<<'EOF'
+<?php
+    /**
+     * @param  string    $foobar Desc1
+     * @param  int       &$baz   Desc2
+     * @param  ?Qux      $qux    Desc3
+     * @param  int|float $quux   Desc4
+     * @return static    DescriptionReturn
+     * @throws Exception DescriptionException
+     */
+EOF;
+
+        $input = <<<'EOF'
+<?php
+    /**
+     * @param    string   $foobar     Desc1
+     * @param  int   &$baz   Desc2
+     * @param ?Qux       $qux   Desc3
+     * @param    int|float $quux   Desc4
+     * @return  static     DescriptionReturn
+     * @throws   Exception       DescriptionException
+     */
+EOF;
+
+        $this->doTest($expected, $input);
+    }
+
+    public function testAlignsReturnStaticLeftAlign(): void
+    {
+        $this->fixer->configure(['tags' => ['param', 'return', 'throws'], 'align' => PhpdocAlignFixer::ALIGN_LEFT]);
+
+        $expected = <<<'EOF'
+<?php
+    /**
+     * @param string $foobar Desc1
+     * @param int &$baz Desc2
+     * @param ?Qux $qux Desc3
+     * @param int|float $quux Desc4
+     * @return static DescriptionReturn
+     * @throws Exception DescriptionException
+     */
+EOF;
+
+        $input = <<<'EOF'
+<?php
+    /**
+     * @param    string   $foobar     Desc1
+     * @param  int   &$baz   Desc2
+     * @param ?Qux       $qux   Desc3
+     * @param    int|float $quux   Desc4
+     * @return  static     DescriptionReturn
+     * @throws   Exception       DescriptionException
+     */
+EOF;
+
+        $this->doTest($expected, $input);
+    }
+
     public function testDoesNotAlignWithEmptyConfig(): void
     {
         $this->fixer->configure(['tags' => []]);
@@ -1124,12 +1258,13 @@ EOF;
     }
 
     /**
+     * @param array<string, mixed> $config
+     *
      * @dataProvider provideVariadicCases
      */
     public function testVariadicParams(array $config, string $expected, string $input): void
     {
         $this->fixer->configure($config);
-
         $this->doTest($expected, $input);
     }
 
@@ -1246,12 +1381,13 @@ class Foo {}
     }
 
     /**
+     * @param array<string, mixed> $config
+     *
      * @dataProvider provideInvalidPhpdocCases
      */
     public function testInvalidPhpdocsAreUnchanged(array $config, string $input): void
     {
         $this->fixer->configure($config);
-
         $this->doTest($input);
     }
 

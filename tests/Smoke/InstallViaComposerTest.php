@@ -24,7 +24,9 @@ use Symfony\Component\Filesystem\Filesystem;
  * @internal
  *
  * @coversNothing
+ *
  * @group covers-nothing
+ *
  * @large
  */
 final class InstallViaComposerTest extends AbstractSmokeTest
@@ -32,7 +34,7 @@ final class InstallViaComposerTest extends AbstractSmokeTest
     /**
      * @var string[]
      */
-    private $stepsToVerifyInstallation = [
+    private array $stepsToVerifyInstallation = [
         // Confirm we can install.
         'composer install -q',
         // Ensure that autoloader works.
@@ -166,6 +168,9 @@ final class InstallViaComposerTest extends AbstractSmokeTest
         $fs->remove($tmpArtifactPath);
     }
 
+    /**
+     * @param list<string> $commands
+     */
     private static function assertCommandsWork(array $commands, string $cwd): void
     {
         foreach ($commands as $command) {

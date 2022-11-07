@@ -28,16 +28,17 @@ use PhpCsFixer\Tests\Test\AbstractFixerTestCase;
 final class ErrorSuppressionFixerTest extends AbstractFixerTestCase
 {
     /**
+     * @param array<string, mixed> $config
+     *
      * @dataProvider provideFixCases
      */
     public function testFix(string $expected, ?string $input = null, array $config = []): void
     {
         $this->fixer->configure($config);
-
         $this->doTest($expected, $input);
     }
 
-    public function provideFixCases(): \Generator
+    public function provideFixCases(): iterable
     {
         yield from [
             [
@@ -114,11 +115,16 @@ Trigger_Error/**/("This is a deprecation warning.", E_USER_DEPRECATED/***/); ?>'
                 '<?php trigger_error("This is a deprecation warning.", E_USER_DEPRECATED); @trigger_error("This is not a deprecation warning.", E_USER_WARNING); ?>',
                 [ErrorSuppressionFixer::OPTION_MUTE_DEPRECATION_ERROR => true, ErrorSuppressionFixer::OPTION_NOISE_REMAINING_USAGES => true, ErrorSuppressionFixer::OPTION_NOISE_REMAINING_USAGES_EXCLUDE => ['trigger_error']],
             ],
+            [
+                '<?php @trigger_error("This is a deprecation warning.", E_USER_DEPRECATED, );',
+                '<?php trigger_error("This is a deprecation warning.", E_USER_DEPRECATED, );',
+            ],
         ];
     }
 
     /**
      * @dataProvider provideFixPre80Cases
+     *
      * @requires PHP <8.0
      */
     public function testFixPre80(string $expected, string $input = null): void
@@ -126,7 +132,7 @@ Trigger_Error/**/("This is a deprecation warning.", E_USER_DEPRECATED/***/); ?>'
         $this->doTest($expected, $input);
     }
 
-    public function provideFixPre80Cases(): \Generator
+    public function provideFixPre80Cases(): iterable
     {
         yield [
             '<?php \A\B/* */\trigger_error("This is not a deprecation warning.", E_USER_DEPRECATED); ?>',
@@ -134,18 +140,8 @@ Trigger_Error/**/("This is a deprecation warning.", E_USER_DEPRECATED/***/); ?>'
     }
 
     /**
-     * @requires PHP 7.3
-     */
-    public function testFix73(): void
-    {
-        $this->doTest(
-            '<?php @trigger_error("This is a deprecation warning.", E_USER_DEPRECATED, );',
-            '<?php trigger_error("This is a deprecation warning.", E_USER_DEPRECATED, );'
-        );
-    }
-
-    /**
      * @dataProvider provideFix81Cases
+     *
      * @requires PHP 8.1
      */
     public function testFix81(string $expected, string $input = null): void
@@ -153,7 +149,7 @@ Trigger_Error/**/("This is a deprecation warning.", E_USER_DEPRECATED/***/); ?>'
         $this->doTest($expected, $input);
     }
 
-    public function provideFix81Cases(): \Generator
+    public function provideFix81Cases(): iterable
     {
         yield [
             '<?php $a = trigger_error(...);',

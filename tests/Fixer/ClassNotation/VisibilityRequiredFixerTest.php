@@ -668,7 +668,6 @@ AB# <- this is the name
     public function testKeepingComment(): void
     {
         $this->fixer->configure(['elements' => ['property', 'method', 'const']]);
-
         $this->doTest(
             '<?php
                 class Foo
@@ -720,15 +719,14 @@ AB# <- this is the name
     }
 
     /**
-     * @requires PHP 7.4
-     * @dataProvider provideFix74Cases
+     * @dataProvider provideFixCases
      */
-    public function testFix74(string $expected, ?string $input = null): void
+    public function testFix(string $expected, ?string $input = null): void
     {
         $this->doTest($expected, $input);
     }
 
-    public function provideFix74Cases(): \Generator
+    public function provideFixCases(): iterable
     {
         yield [
             '<?php class Foo { private int $foo; }',
@@ -768,6 +766,7 @@ AB# <- this is the name
 
     /**
      * @requires PHP 8.0
+     *
      * @dataProvider provideFix80Cases
      */
     public function testFix80(string $expected, ?string $input = null): void
@@ -775,7 +774,7 @@ AB# <- this is the name
         $this->doTest($expected, $input);
     }
 
-    public function provideFix80Cases(): \Generator
+    public function provideFix80Cases(): iterable
     {
         yield [
             '<?php class Foo { private int|float|null $foo; }',
@@ -801,6 +800,7 @@ AB# <- this is the name
 
     /**
      * @dataProvider provideFix81Cases
+     *
      * @requires PHP 8.1
      */
     public function testFix81(string $expected, ?string $input = null): void
@@ -808,7 +808,7 @@ AB# <- this is the name
         $this->doTest($expected, $input);
     }
 
-    public function provideFix81Cases(): \Generator
+    public function provideFix81Cases(): iterable
     {
         yield [
             '<?php class Foo { public Foo1&Bar $foo; }',
@@ -874,6 +874,41 @@ class Foo
     final const B = "2";
 }
 ',
+        ];
+
+        yield [
+            '<?php
+enum Foo {
+    case CAT;
+    public function test(): self { return $this; }
+}
+
+var_dump(Foo::CAT->test());',
+            '<?php
+enum Foo {
+    case CAT;
+    function test(): self { return $this; }
+}
+
+var_dump(Foo::CAT->test());',
+        ];
+    }
+
+    /**
+     * @requires PHP 8.2
+     *
+     * @dataProvider provideFix82Cases
+     */
+    public function testFix82(string $expected, ?string $input = null): void
+    {
+        $this->doTest($expected, $input);
+    }
+
+    public function provideFix82Cases(): iterable
+    {
+        yield [
+            '<?php trait Foo { public const Bar = 1; }',
+            '<?php trait Foo { const Bar = 1; }',
         ];
     }
 }

@@ -31,7 +31,7 @@ final class SemicolonAfterInstructionFixerTest extends AbstractFixerTestCase
         $this->doTest($expected, $input);
     }
 
-    public function provideFixCases(): \Generator
+    public function provideFixCases(): iterable
     {
         yield from [
             'comment' => [
@@ -84,6 +84,7 @@ A is equal to 5
 
     /**
      * @dataProvider provideFixPre80Cases
+     *
      * @requires PHP <8.0
      */
     public function testFixPre80(string $expected, string $input = null): void
@@ -91,7 +92,7 @@ A is equal to 5
         $this->doTest($expected, $input);
     }
 
-    public function provideFixPre80Cases(): \Generator
+    public function provideFixPre80Cases(): iterable
     {
         yield [
             '<?php $a = [1,2,3]; echo $a{1}; ?>',
@@ -101,7 +102,7 @@ A is equal to 5
 
     public function testOpenWithEcho(): void
     {
-        if (!ini_get('short_open_tag')) {
+        if (!\ini_get('short_open_tag')) {
             static::markTestSkipped('The short_open_tag option is required to be enabled.');
         }
 

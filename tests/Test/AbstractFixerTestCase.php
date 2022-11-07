@@ -57,9 +57,9 @@ abstract class AbstractFixerTestCase extends TestCase
     /**
      * do not modify this structure without prior discussion.
      *
-     * @var array<string,array>
+     * @var array<string, array<string, bool>>
      */
-    private $allowedRequiredOptions = [
+    private array $allowedRequiredOptions = [
         'header_comment' => ['header' => true],
     ];
 
@@ -68,7 +68,7 @@ abstract class AbstractFixerTestCase extends TestCase
      *
      * @var array<string,bool>
      */
-    private $allowedFixersWithoutDefaultCodeSample = [
+    private array $allowedFixersWithoutDefaultCodeSample = [
         'general_phpdoc_annotation_remove' => true,
         'general_phpdoc_tag_rename' => true,
     ];
@@ -132,7 +132,7 @@ abstract class AbstractFixerTestCase extends TestCase
 
             static::assertNotEmpty($code, sprintf('[%s] Sample #%d', $fixerName, $sampleCounter));
 
-            if (!($this->fixer instanceof SingleBlankLineAtEofFixer)) {
+            if (!$this->fixer instanceof SingleBlankLineAtEofFixer) {
                 static::assertStringEndsWith("\n", $code, sprintf('[%s] Sample #%d must end with linebreak', $fixerName, $sampleCounter));
             }
 
@@ -214,16 +214,17 @@ abstract class AbstractFixerTestCase extends TestCase
 
     final public function testDeprecatedFixersHaveCorrectSummary(): void
     {
-        $reflection = new \ReflectionClass($this->fixer);
-        $comment = $reflection->getDocComment();
-
         static::assertStringNotContainsString(
             'DEPRECATED',
             $this->fixer->getDefinition()->getSummary(),
             'Fixer cannot contain word "DEPRECATED" in summary'
         );
 
+        $reflection = new \ReflectionClass($this->fixer);
+        $comment = $reflection->getDocComment();
+
         if ($this->fixer instanceof DeprecatedFixerInterface) {
+            static::assertIsString($comment, sprintf('Missing class PHPDoc for deprecated fixer "%s".', $this->fixer->getName()));
             static::assertStringContainsString('@deprecated', $comment);
         } elseif (\is_string($comment)) {
             static::assertStringNotContainsString('@deprecated', $comment);
@@ -248,7 +249,7 @@ abstract class AbstractFixerTestCase extends TestCase
 
         // if there is no `insertAt`, it's not a candidate
         if (!\in_array('insertAt', $usedMethods, true)) {
-            $this->addToAssertionCount(1);
+            $this->expectNotToPerformAssertions();
 
             return;
         }
@@ -310,7 +311,7 @@ abstract class AbstractFixerTestCase extends TestCase
     final public function testFixerConfigurationDefinitions(): void
     {
         if (!$this->fixer instanceof ConfigurableFixerInterface) {
-            $this->addToAssertionCount(1); // not applied to the fixer without configuration
+            $this->expectNotToPerformAssertions(); // not applied to the fixer without configuration
 
             return;
         }
@@ -379,7 +380,7 @@ abstract class AbstractFixerTestCase extends TestCase
             throw new \InvalidArgumentException('Input parameter must not be equal to expected parameter.');
         }
 
-        $file = $file ?? $this->getTestFile();
+        $file ??= $this->getTestFile();
         $fileIsSupported = $this->fixer->supports($file);
 
         if (null !== $input) {
@@ -471,6 +472,11 @@ abstract class AbstractFixerTestCase extends TestCase
         static::assertSame(substr_count(strtolower($haystack), strtolower($needle)), substr_count($haystack, $needle), $message);
     }
 
+    /**
+     * @param list<array{0: int, 1?: string}> $sequence
+     *
+     * @return list<array<int, Token>>
+     */
     private function findAllTokenSequences(Tokens $tokens, array $sequence): array
     {
         $lastIndex = 0;

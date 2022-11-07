@@ -51,11 +51,6 @@ final class NoTrailingCommaInSinglelineArrayFixerTest extends AbstractFixerTestC
     $test = array("foo", <<<TWIG
         foo
 TWIG
-        , $twig);',
-                '<?php
-    $test = array("foo", <<<TWIG
-        foo
-TWIG
         , $twig, );',
             ],
             [
@@ -67,11 +62,6 @@ TWIG
         , $twig, );',
             ],
             [
-                '<?php
-    $test = array("foo", <<<\'TWIG\'
-        foo
-TWIG
-        , $twig);',
                 '<?php
     $test = array("foo", <<<\'TWIG\'
         foo
@@ -102,11 +92,6 @@ TWIG
     $test = ["foo", <<<TWIG
         foo
 TWIG
-        , $twig];',
-                '<?php
-    $test = ["foo", <<<TWIG
-        foo
-TWIG
         , $twig, ];',
             ],
             [
@@ -122,11 +107,6 @@ TWIG
     $test = ["foo", <<<\'TWIG\'
         foo
 TWIG
-        , $twig];',
-                '<?php
-    $test = ["foo", <<<\'TWIG\'
-        foo
-TWIG
         , $twig, ];',
             ],
             [
@@ -137,21 +117,6 @@ TWIG
 TWIG
         , $twig, ];',
             ],
-        ];
-    }
-
-    /**
-     * @dataProvider provideFixPhp74Cases
-     * @requires PHP 7.4
-     */
-    public function testFixPhp74(string $expected, ?string $input = null): void
-    {
-        $this->doTest($expected, $input);
-    }
-
-    public function provideFixPhp74Cases(): array
-    {
-        return [
             [
                 '<?php $x = array(...$foo);',
                 '<?php $x = array(...$foo, );',

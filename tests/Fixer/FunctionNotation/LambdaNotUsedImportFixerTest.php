@@ -122,7 +122,7 @@ $a = function() use ($b) { new class(){ public function foo($b){echo $b;}}; }; /
         $this->doTest($expected);
     }
 
-    public function provideDoNotFixCases(): \Generator
+    public function provideDoNotFixCases(): iterable
     {
         yield from [
             'reference' => [
@@ -182,6 +182,7 @@ $foo();
 
     /**
      * @dataProvider provideFix80Cases
+     *
      * @requires PHP 8.0
      */
     public function testFix80(string $expected, string $input): void
@@ -189,7 +190,7 @@ $foo();
         $this->doTest($expected, $input);
     }
 
-    public function provideFix80Cases(): \Generator
+    public function provideFix80Cases(): iterable
     {
         yield 'simple' => [
             '<?php $foo = function() {};',

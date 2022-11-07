@@ -20,7 +20,7 @@ cd "$(dirname "$0")"
 
 mkdir -p bin
 
-VERSION_CB="2.21.7"
+VERSION_CB="2.22.2"
 VERSION_SC="stable"
 
 echo λλλ checkbashisms
@@ -42,5 +42,5 @@ fi
 bin/shellcheck --version
 
 echo λλλ composer packages
-composer update -v
+composer install -v
 composer info -D | sort

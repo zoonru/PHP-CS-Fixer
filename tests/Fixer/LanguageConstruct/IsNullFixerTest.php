@@ -207,21 +207,6 @@ FIXED;
                 '<?php null !== ($a ?? null);',
                 '<?php !is_null($a ?? null);',
             ],
-        ];
-    }
-
-    /**
-     * @requires PHP 7.3
-     * @dataProvider provideFix73Cases
-     */
-    public function testFix73(string $expected, string $input): void
-    {
-        $this->doTest($expected, $input);
-    }
-
-    public function provideFix73Cases(): array
-    {
-        return [
             [
                 '<?php null === $x;',
                 '<?php is_null($x, );',
@@ -251,6 +236,10 @@ FIXED;
             [
                 '<?php $a === (null === ($a ? $x : $y ));',
                 '<?php $a === is_null($a ? $x : $y, );',
+            ],
+            [
+                '<?php $a === (int) (null === $x) + (int) (null !== $y);',
+                '<?php $a === (int) is_null($x) + (int) !is_null($y);',
             ],
         ];
     }

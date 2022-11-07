@@ -21,6 +21,7 @@ use PhpCsFixer\Fixer\PhpUnit\PhpUnitTargetVersion;
 use PhpCsFixer\FixerConfiguration\DeprecatedFixerOptionInterface;
 use PhpCsFixer\FixerFactory;
 use PhpCsFixer\RuleSet\RuleSet;
+use PhpCsFixer\RuleSet\RuleSetDescriptionInterface;
 use PhpCsFixer\RuleSet\RuleSets;
 use PhpCsFixer\Tests\TestCase;
 
@@ -34,7 +35,17 @@ use PhpCsFixer\Tests\TestCase;
 final class RuleSetTest extends TestCase
 {
     /**
-     * @param array|bool $ruleConfig
+     * Options for which order of array elements matters.
+     *
+     * @var string[]
+     */
+    private const ORDER_MATTERS = [
+        'ordered_imports.imports_order',
+        'phpdoc_order.order',
+    ];
+
+    /**
+     * @param array<string, mixed>|bool $ruleConfig
      *
      * @dataProvider provideAllRulesFromSetsCases
      */
@@ -66,7 +77,7 @@ final class RuleSetTest extends TestCase
     }
 
     /**
-     * @param array|bool $ruleConfig
+     * @param array<string, mixed>|bool $ruleConfig
      *
      * @dataProvider provideAllRulesFromSetsCases
      */
@@ -79,7 +90,7 @@ final class RuleSetTest extends TestCase
         $fixer = current($factory->getFixers());
 
         if (!$fixer instanceof ConfigurableFixerInterface || \is_bool($ruleConfig)) {
-            $this->addToAssertionCount(1);
+            $this->expectNotToPerformAssertions();
 
             return;
         }
@@ -95,8 +106,8 @@ final class RuleSetTest extends TestCase
         }
 
         static::assertNotSame(
-            $this->sortNestedArray($defaultConfig),
-            $this->sortNestedArray($ruleConfig),
+            $this->sortNestedArray($defaultConfig, $ruleName),
+            $this->sortNestedArray($ruleConfig, $ruleName),
             sprintf('Rule "%s" (in RuleSet "%s") has default config passed.', $ruleName, $setName)
         );
     }
@@ -115,7 +126,7 @@ final class RuleSetTest extends TestCase
         static::assertNotInstanceOf(DeprecatedFixerInterface::class, $fixer, sprintf('RuleSet "%s" contains deprecated rule "%s".', $setName, $ruleName));
     }
 
-    public function provideAllRulesFromSetsCases(): \Generator
+    public function provideAllRulesFromSetsCases(): iterable
     {
         foreach (RuleSets::getSetDefinitionNames() as $setName) {
             $ruleSet = new RuleSet([$setName => true]);
@@ -150,6 +161,7 @@ final class RuleSetTest extends TestCase
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Missing value for "braces" rule/set.');
 
+        // @phpstan-ignore-next-line
         new RuleSet(['braces']);
     }
 
@@ -256,6 +268,8 @@ final class RuleSetTest extends TestCase
     }
 
     /**
+     * @param array<string, array<string, mixed>|bool> $set
+     *
      * @dataProvider provideSafeSetCases
      */
     public function testRiskyRulesInSet(array $set, bool $safe): void
@@ -288,7 +302,7 @@ final class RuleSetTest extends TestCase
         );
     }
 
-    public function provideSafeSetCases(): \Generator
+    public function provideSafeSetCases(): iterable
     {
         foreach (RuleSets::getSetDefinitionNames() as $name) {
             yield $name => [
@@ -326,57 +340,53 @@ final class RuleSetTest extends TestCase
         $ruleSet->getRuleConfiguration('_not_exists');
     }
 
-    public function testDuplicateRuleConfigurationInSetDefinitions(): void
+    /**
+     * @dataProvider provideAllSetCases
+     */
+    public function testDuplicateRuleConfigurationInSetDefinitions(RuleSetDescriptionInterface $set): void
     {
-        $resolvedSets = [];
-        $setDefinitions = RuleSets::getSetDefinitions();
+        $rules = [];
+        $setRules = [];
 
-        foreach ($setDefinitions as $setName => $setDefinition) {
-            $resolvedSets[$setName] = ['rules' => [], 'sets' => []];
-
-            foreach ($setDefinition->getRules() as $name => $value) {
-                if (str_starts_with($name, '@')) {
-                    $resolvedSets[$setName]['sets'][$name] = $this->expendSet($setDefinitions, $resolvedSets, $name, $value);
-                } else {
-                    $resolvedSets[$setName]['rules'][$name] = $value;
-                }
+        foreach ($set->getRules() as $ruleName => $ruleConfig) {
+            if (str_starts_with($ruleName, '@')) {
+                $setRules = array_merge($setRules, $this->resolveSet($ruleName, $ruleConfig));
+            } else {
+                $rules[$ruleName] = $ruleConfig;
             }
         }
 
         $duplicates = [];
 
-        foreach ($resolvedSets as $name => $resolvedSet) {
-            foreach ($resolvedSet['rules'] as $ruleName => $config) {
-                if (\count($resolvedSet['sets']) < 1) {
-                    continue;
-                }
-
-                $setDuplicates = $this->findInSets($resolvedSet['sets'], $ruleName, $config);
-
-                if (\count($setDuplicates) > 0) {
-                    if (!isset($duplicates[$name])) {
-                        $duplicates[$name] = [];
-                    }
-
-                    $duplicates[$name][$ruleName] = $setDuplicates;
-                }
+        foreach ($rules as $ruleName => $ruleConfig) {
+            if (!\array_key_exists($ruleName, $setRules)) {
+                continue;
             }
+
+            if ($ruleConfig !== $setRules[$ruleName]) {
+                continue;
+            }
+
+            $duplicates[] = $ruleName;
         }
 
-        if (\count($duplicates) > 0) {
-            $message = '';
-
-            foreach ($duplicates as $setName => $rules) {
-                $message .= sprintf("\n\"%s\" defines rules the same as it extends from:", $setName);
-
-                foreach ($rules as $ruleName => $otherSets) {
-                    $message .= sprintf("\n- \"%s\" is also in \"%s\"", $ruleName, implode(', ', $otherSets));
-                }
-            }
-
-            static::fail($message);
-        } else {
+        if (0 === \count($duplicates)) {
             $this->addToAssertionCount(1);
+
+            return;
+        }
+
+        static::fail(sprintf(
+            '"%s" defines rules the same as it extends from: %s',
+            $set->getName(),
+            implode(', ', $duplicates),
+        ));
+    }
+
+    public function provideAllSetCases(): iterable
+    {
+        foreach (RuleSets::getSetDefinitions() as $name => $set) {
+            yield $name => [$set];
         }
     }
 
@@ -392,7 +402,7 @@ final class RuleSetTest extends TestCase
         );
     }
 
-    public static function providePhpUnitTargetVersionHasSetCases(): \Generator
+    public static function providePhpUnitTargetVersionHasSetCases(): iterable
     {
         foreach ((new \ReflectionClass(PhpUnitTargetVersion::class))->getConstants() as $constant) {
             if ('newest' === $constant) {
@@ -408,7 +418,7 @@ final class RuleSetTest extends TestCase
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Rule/set name must not be empty.');
 
-        new RuleSet(['' => 'foo']);
+        new RuleSet(['' => true]);
     }
 
     public function testInvalidConfig(): void
@@ -416,75 +426,94 @@ final class RuleSetTest extends TestCase
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('[@Symfony:risky] Set must be enabled (true) or disabled (false). Other values are not allowed. To disable the set, use "FALSE" instead of "NULL".');
 
+        // @phpstan-ignore-next-line
         new RuleSet(['@Symfony:risky' => null]);
     }
 
-    private function sortNestedArray(array $array): array
+    /**
+     * @param array<array-key, mixed> $array
+     *
+     * @return array<array-key, mixed> $array
+     */
+    private function sortNestedArray(array $array, string $ruleName): array
     {
-        foreach ($array as $key => $element) {
-            if (!\is_array($element)) {
-                continue;
-            }
-            $array[$key] = $this->sortNestedArray($element);
-        }
-
-        // sort by key if associative, by values otherwise
-        if (array_keys($array) === range(0, \count($array) - 1)) {
-            sort($array);
-        } else {
-            ksort($array);
-        }
+        $this->doSort($array, $ruleName);
 
         return $array;
     }
 
-    private function findInSets(array $sets, string $ruleName, $config): array
+    /**
+     * Sorts an array of fixer definition recursively.
+     *
+     * Sometimes keys are all string, sometimes they are integers - we need to account for that.
+     *
+     * @param array<array-key, mixed> $data
+     */
+    private function doSort(array &$data, string $path): void
     {
-        $duplicates = [];
-
-        foreach ($sets as $setName => $setRules) {
-            if (\array_key_exists($ruleName, $setRules['rules'])) {
-                if ($config === $setRules['rules'][$ruleName]) {
-                    $duplicates[] = $setName;
-                }
-
-                break; // do not check below, config for the rule has been changed
-            }
-
-            if (isset($setRules['sets']) && \count($setRules['sets']) > 0) {
-                $subSetDuplicates = $this->findInSets($setRules['sets'], $ruleName, $config);
-
-                if (\count($subSetDuplicates) > 0) {
-                    $duplicates = array_merge($duplicates, $subSetDuplicates);
-                }
-            }
+        // if order matters do not sort!
+        if (\in_array($path, self::ORDER_MATTERS, true)) {
+            return;
         }
 
-        return $duplicates;
+        $keys = array_keys($data);
+
+        if ($this->allInteger($keys)) {
+            sort($data);
+        } else {
+            ksort($data);
+        }
+
+        foreach ($data as $key => $value) {
+            if (\is_array($value)) {
+                $this->doSort(
+                    $data[$key],
+                    $path.('' !== $path ? '.' : '').$key
+                );
+            }
+        }
     }
 
     /**
-     * @param array|bool $setValue
-     *
-     * @return mixed
+     * @param array<int|string,mixed> $values
      */
-    private function expendSet(array $setDefinitions, array $resolvedSets, string $setName, $setValue)
+    private function allInteger(array $values): bool
     {
-        $rules = $setDefinitions[$setName]->getRules();
-
-        foreach ($rules as $name => $value) {
-            if (str_starts_with($name, '@')) {
-                $resolvedSets[$setName]['sets'][$name] = $this->expendSet($setDefinitions, $resolvedSets, $name, $setValue);
-            } elseif (false === $setValue) {
-                $resolvedSets[$setName]['rules'][$name] = false;
-            } else {
-                $resolvedSets[$setName]['rules'][$name] = $value;
+        foreach ($values as $value) {
+            if (!\is_int($value)) {
+                return false;
             }
         }
 
-        return $resolvedSets[$setName];
+        return true;
     }
 
+    /**
+     * @return array<string, array<string, mixed>|bool>
+     */
+    private function resolveSet(string $setName, bool $setValue): array
+    {
+        $rules = RuleSets::getSetDefinition($setName)->getRules();
+
+        foreach ($rules as $name => $value) {
+            if (str_starts_with($name, '@')) {
+                $set = $this->resolveSet($name, $setValue);
+                unset($rules[$name]);
+                $rules = array_merge($rules, $set);
+            } elseif (!$setValue) {
+                $rules[$name] = false;
+            } else {
+                $rules[$name] = $value;
+            }
+        }
+
+        return $rules;
+    }
+
+    /**
+     * @param array<string, array<string, mixed>|bool> $expected
+     * @param array<string, array<string, mixed>|bool> $actual
+     */
     private static function assertSameRules(array $expected, array $actual): void
     {
         ksort($expected);

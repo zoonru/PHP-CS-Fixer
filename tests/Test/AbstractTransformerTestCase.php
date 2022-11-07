@@ -92,7 +92,7 @@ abstract class AbstractTransformerTestCase extends TestCase
     public function testTransformDoesNotChangeSimpleCode(): void
     {
         if (\PHP_VERSION_ID < $this->transformer->getRequiredPhpVersionId()) {
-            $this->addToAssertionCount(1);
+            $this->expectNotToPerformAssertions();
 
             return;
         }
@@ -107,6 +107,10 @@ abstract class AbstractTransformerTestCase extends TestCase
         static::assertFalse($tokens->isChanged());
     }
 
+    /**
+     * @param array<int, int|string> $expectedTokens
+     * @param list<int>              $observedKindsOrPrototypes
+     */
     protected function doTest(string $source, array $expectedTokens, array $observedKindsOrPrototypes = []): void
     {
         Tokens::clearCache();
@@ -135,7 +139,10 @@ abstract class AbstractTransformerTestCase extends TestCase
             static::assertStringStartsWith('CT::', CT::getName($customTokenOfTransformer));
         }
 
-        $customTokensOfTransformerList = implode(', ', array_map(static function (int $ct): string { return CT::getName($ct); }, $customTokensOfTransformer));
+        $customTokensOfTransformerList = implode(', ', array_map(
+            static fn (int $ct): string => CT::getName($ct),
+            $customTokensOfTransformer,
+        ));
 
         foreach ($tokens->observedModificationsPerTransformer as $appliedTransformerName => $modificationsOfTransformer) {
             foreach ($modificationsOfTransformer as $modification) {
@@ -186,6 +193,9 @@ abstract class AbstractTransformerTestCase extends TestCase
         }
     }
 
+    /**
+     * @param list<array{0: int, 1?: string}> $prototypes
+     */
     private function countTokenPrototypes(Tokens $tokens, array $prototypes): int
     {
         $count = 0;

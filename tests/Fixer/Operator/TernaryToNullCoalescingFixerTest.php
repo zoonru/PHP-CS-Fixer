@@ -33,7 +33,7 @@ final class TernaryToNullCoalescingFixerTest extends AbstractFixerTestCase
         $this->doTest($expected, $input);
     }
 
-    public function provideFixCases(): \Generator
+    public function provideFixCases(): iterable
     {
         yield from [
             // Do not fix cases.
@@ -179,6 +179,7 @@ null
 
     /**
      * @dataProvider provideFixPre80Cases
+     *
      * @requires PHP <8.0
      */
     public function testFixPre80(string $expected, string $input = null): void
@@ -186,7 +187,7 @@ null
         $this->doTest($expected, $input);
     }
 
-    public function provideFixPre80Cases(): \Generator
+    public function provideFixPre80Cases(): iterable
     {
         yield ['<?php $x = $a ? $a : isset($b) ? $b : isset($c) ? $c : "";'];
 

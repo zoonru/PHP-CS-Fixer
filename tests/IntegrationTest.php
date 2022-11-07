@@ -25,6 +25,7 @@ use PhpCsFixer\Tests\Test\InternalIntegrationCaseFactory;
  * @internal
  *
  * @coversNothing
+ *
  * @group covers-nothing
  */
 final class IntegrationTest extends AbstractIntegrationTestCase
@@ -94,8 +95,8 @@ final class IntegrationTest extends AbstractIntegrationTestCase
             if (!\is_int($phpUpperLimit)) {
                 throw new \InvalidArgumentException(sprintf(
                     'Expected int value like 50509 for "php<", got "%s". IN "%s".',
-                    \is_object($phpUpperLimit) ? \get_class($phpUpperLimit) : \gettype($phpUpperLimit).'#'.$phpUpperLimit,
-                    $case->getFileName()
+                    get_debug_type($phpUpperLimit).'#'.$phpUpperLimit,
+                    $case->getFileName(),
                 ));
             }
 

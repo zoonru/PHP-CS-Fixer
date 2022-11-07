@@ -1120,7 +1120,7 @@ switch ($foo) {
         $this->doTest($expected, $input);
     }
 
-    public function provideTestFixWithDifferentLineEndingCases(): \Generator
+    public function provideTestFixWithDifferentLineEndingCases(): iterable
     {
         foreach ($this->provideFixCases() as $case) {
             $case[0] = str_replace("\n", "\r\n", $case[0]);
@@ -1221,6 +1221,7 @@ switch ($foo) {
 
     /**
      * @dataProvider provideFix80Cases
+     *
      * @requires PHP 8.0
      */
     public function testFix80(string $expected, ?string $input = null): void
@@ -1228,7 +1229,7 @@ switch ($foo) {
         $this->doTest($expected, $input);
     }
 
-    public function provideFix80Cases(): \Generator
+    public function provideFix80Cases(): iterable
     {
         yield [
             '<?php
@@ -1285,6 +1286,7 @@ switch ($foo) {
 
     /**
      * @dataProvider provideFix81Cases
+     *
      * @requires PHP 8.1
      */
     public function testFix81(string $expected, ?string $input = null): void
@@ -1292,7 +1294,7 @@ switch ($foo) {
         $this->doTest($expected, $input);
     }
 
-    public function provideFix81Cases(): \Generator
+    public function provideFix81Cases(): iterable
     {
         yield 'enums' => [
             '<?php

@@ -27,6 +27,8 @@ final class PhpdocLineSpanFixerTest extends AbstractFixerTestCase
 {
     /**
      * @dataProvider provideFixCases
+     *
+     * @param array<string, mixed> $config
      */
     public function testFix(string $expected, ?string $input = null, array $config = []): void
     {
@@ -512,22 +514,6 @@ class Foo
                     'property' => 'single',
                 ],
             ],
-        ];
-    }
-
-    /**
-     * @requires PHP 7.4
-     * @dataProvider provideFixPhp74Cases
-     */
-    public function testFixPhp74(string $expected, string $input = null, array $config = []): void
-    {
-        $this->fixer->configure($config);
-        $this->doTest($expected, $input);
-    }
-
-    public function provideFixPhp74Cases(): array
-    {
-        return [
             'It can handle properties with type declaration' => [
                 '<?php
 
@@ -574,8 +560,159 @@ class Foo
     }
 
     /**
+     * @dataProvider provideFix80Cases
+     *
+     * @requires PHP 8.0
+     *
+     * @param array<string, mixed> $config
+     */
+    public function testFix80(string $expected, string $input = null, array $config = []): void
+    {
+        $this->fixer->configure($config);
+        $this->doTest($expected, $input);
+    }
+
+    public function provideFix80Cases(): iterable
+    {
+        yield 'It detects attributes between docblock and token' => [
+            '<?php
+
+class Foo
+{
+    /** @var string[] */
+    #[Attribute1]
+    private array $foo1;
+
+    /** @var string[] */
+    #[Attribute1]
+    #[Attribute2]
+    private array $foo2;
+
+    /** @var string[] */
+    #[Attribute1, Attribute2]
+    public array $foo3;
+}',
+            '<?php
+
+class Foo
+{
+    /**
+     * @var string[]
+     */
+    #[Attribute1]
+    private array $foo1;
+
+    /**
+     * @var string[]
+     */
+    #[Attribute1]
+    #[Attribute2]
+    private array $foo2;
+
+    /**
+     * @var string[]
+     */
+    #[Attribute1, Attribute2]
+    public array $foo3;
+}',
+            [
+                'property' => 'single',
+            ],
+        ];
+
+        yield 'It handles class constants correctly' => [
+            '<?php
+class Foo
+{
+    /**
+     * 0
+     */
+    #[Attribute1]
+    const B0 = "0";
+
+    /**
+     * 1
+     */
+    #[Attribute1]
+    #[Attribute2]
+    public const B1 = "1";
+
+    /**
+     * 2
+     */
+    #[Attribute1, Attribute2]
+    public const B2 = "2";
+}
+',
+            '<?php
+class Foo
+{
+    /** 0 */
+    #[Attribute1]
+    const B0 = "0";
+
+    /** 1 */
+    #[Attribute1]
+    #[Attribute2]
+    public const B1 = "1";
+
+    /** 2 */
+    #[Attribute1, Attribute2]
+    public const B2 = "2";
+}
+',
+        ];
+
+        yield 'It handles class functions correctly' => [
+            '<?php
+                class Foo
+                {
+                    /**
+                     * @return void
+                     */
+                    #[Attribute1]
+                    public function hello1() {}
+
+                    /**
+                     * @return void
+                     */
+                    #[Attribute1]
+                    #[Attribute2]
+                    public function hello2() {}
+
+                    /**
+                     * @return void
+                     */
+                    #[Attribute1, Attribute2]
+                    public function hello3() {}
+                }
+            ',
+            '<?php
+                class Foo
+                {
+                    /** @return void */
+                    #[Attribute1]
+                    public function hello1() {}
+
+                    /** @return void */
+                    #[Attribute1]
+                    #[Attribute2]
+                    public function hello2() {}
+
+                    /** @return void */
+                    #[Attribute1, Attribute2]
+                    public function hello3() {}
+                }
+            ',
+        ];
+    }
+
+    /**
      * @dataProvider provideFix81Cases
+     *
      * @requires PHP 8.1
+     *
+     * @param array<string, mixed> $config
      */
     public function testFix81(string $expected, string $input = null, array $config = []): void
     {
@@ -583,9 +720,9 @@ class Foo
         $this->doTest($expected, $input);
     }
 
-    public function provideFix81Cases(): \Generator
+    public function provideFix81Cases(): iterable
     {
-        yield 'readonly' => [
+        yield 'It handles readonly properties correctly' => [
             '<?php
 
 class Foo
@@ -623,7 +760,7 @@ class Foo
             ],
         ];
 
-        yield [
+        yield 'It handles class constant correctly' => [
             '<?php
 class Foo
 {
@@ -664,6 +801,100 @@ class Foo
     final const B3 = "3";
 }
 ',
+        ];
+
+        yield 'It handles enum functions correctly' => [
+            '<?php
+                enum Foo
+                {
+                    /**
+                     * @return void
+                     */
+                    public function hello() {}
+                }
+            ',
+            '<?php
+                enum Foo
+                {
+                    /** @return void */
+                    public function hello() {}
+                }
+            ',
+        ];
+
+        yield 'It handles enum function with attributes correctly' => [
+            '<?php
+                enum Foo
+                {
+                    /**
+                     * @return void
+                     */
+                    #[Attribute1]
+                    public function hello1() {}
+
+                    /**
+                     * @return void
+                     */
+                    #[Attribute1]
+                    #[Attribute2]
+                    public function hello2() {}
+
+                    /**
+                     * @return void
+                     */
+                    #[Attribute1, Attribute2]
+                    public function hello3() {}
+                }
+            ',
+            '<?php
+                enum Foo
+                {
+                    /** @return void */
+                    #[Attribute1]
+                    public function hello1() {}
+
+                    /** @return void */
+                    #[Attribute1]
+                    #[Attribute2]
+                    public function hello2() {}
+
+                    /** @return void */
+                    #[Attribute1, Attribute2]
+                    public function hello3() {}
+                }
+            ',
+        ];
+    }
+
+    /**
+     * @dataProvider provideFix82Cases
+     *
+     * @requires PHP 8.2
+     */
+    public function testFix82(string $expected, ?string $input = null): void
+    {
+        $this->doTest($expected, $input);
+    }
+
+    public function provideFix82Cases(): iterable
+    {
+        yield 'constant in trait' => [
+            <<<'PHP'
+                <?php
+                trait Foo {
+                    /**
+                     * @var string
+                     */
+                    const Foo = 'foo';
+                }
+                PHP,
+            <<<'PHP'
+                <?php
+                trait Foo {
+                    /** @var string */
+                    const Foo = 'foo';
+                }
+                PHP,
         ];
     }
 }

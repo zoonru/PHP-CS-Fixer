@@ -25,10 +25,7 @@ use PhpCsFixer\WhitespacesFixerConfig;
  */
 final class NoExtraBlankLinesFixerTest extends AbstractFixerTestCase
 {
-    /**
-     * @var string
-     */
-    private $template = <<<'EOF'
+    private string $template = <<<'EOF'
 <?php
 use \DateTime;
 
@@ -96,7 +93,8 @@ class Test {
 EOF;
 
     /**
-     * @param int[] $lineNumberRemoved Line numbers expected to be removed after fixing
+     * @param list<int>    $lineNumberRemoved Line numbers expected to be removed after fixing
+     * @param list<string> $config
      *
      * @dataProvider provideWithConfigCases
      */
@@ -107,7 +105,7 @@ EOF;
         $this->doTest($this->removeLinesFromString($this->template, $lineNumberRemoved), $this->template);
     }
 
-    public function provideWithConfigCases(): array
+    public function provideWithConfigCases(): iterable
     {
         $tests = [
             [
@@ -140,14 +138,16 @@ EOF;
             ],
         ];
 
+        yield from $tests;
+
         $all = [[], []];
+
         foreach ($tests as $test) {
             $all[0] = array_merge($test[0], $all[0]);
             $all[1] = array_merge($test[1], $all[1]);
         }
-        $tests[] = $all;
 
-        return $tests;
+        yield $all;
     }
 
     public function testFix(): void
@@ -420,7 +420,7 @@ EOF
         $this->doTest($expected, $input);
     }
 
-    public function provideLineBreakCases(): array
+    public function provideLineBreakCases(): iterable
     {
         $input = '<?php //
 
@@ -437,25 +437,27 @@ $a = 1;
 $b = 1;
 ';
 
-        return [
-            [
-                "<?php\r\n//a\r\n\r\n\$a =1;",
-                "<?php\r\n//a\r\n\r\n\r\n\r\n\$a =1;",
-            ],
-            [
-                $expected,
-                $input,
-            ],
-            [
-                str_replace("\n", "\r\n", $expected),
-                str_replace("\n", "\r\n", $input),
-            ],
-            [
-                str_replace("\n", "\r", $input),
-            ],
-            [
-                str_replace("\n", "\r", $expected),
-            ],
+        yield [
+            "<?php\r\n//a\r\n\r\n\$a =1;",
+            "<?php\r\n//a\r\n\r\n\r\n\r\n\$a =1;",
+        ];
+
+        yield [
+            $expected,
+            $input,
+        ];
+
+        yield [
+            str_replace("\n", "\r\n", $expected),
+            str_replace("\n", "\r\n", $input),
+        ];
+
+        yield [
+            str_replace("\n", "\r", $input),
+        ];
+
+        yield [
+            str_replace("\n", "\r", $expected),
         ];
     }
 
@@ -473,10 +475,11 @@ $b = 1;
     public function testBetweenUse(string $expected, ?string $input = null): void
     {
         $this->fixer->configure(['tokens' => ['use']]);
+
         $this->doTest($expected, $input);
     }
 
-    public function provideBetweenUseCases(): \Generator
+    public function provideBetweenUseCases(): iterable
     {
         yield from [
             ['<?php use A\B;'],
@@ -558,6 +561,7 @@ use const some\Z\{ConstX,ConstY,ConstZ,};
     public function testRemoveLinesBetweenUseStatements(string $expected, ?string $input = null): void
     {
         $this->fixer->configure(['tokens' => ['use']]);
+
         $this->doTest($expected, $input);
     }
 
@@ -631,45 +635,49 @@ use const some\a\{ConstA, ConstB, ConstC};
     public function testWithoutUses(string $expected): void
     {
         $this->fixer->configure(['tokens' => ['use']]);
+
         $this->doTest($expected);
     }
 
-    public function provideWithoutUsesCases(): array
+    public function provideWithoutUsesCases(): iterable
     {
-        return [
-            [
-                '<?php
+        yield [
+            '<?php
 
 $c = 1;
 
 $a = new Baz();
 $a = new Qux();',
-            ],
-            [
-                '<?php use A\B;',
-            ],
-            [
-                '<?php use A\B?>',
-            ],
-            [
-                '<?php use A\B;?>',
-            ],
+        ];
+
+        yield [
+            '<?php use A\B;',
+        ];
+
+        yield [
+            '<?php use A\B?>',
+        ];
+
+        yield [
+            '<?php use A\B;?>',
         ];
     }
 
     /**
      * @dataProvider provideRemoveBetweenUseTraitsCases
+     *
      * @group legacy
      */
     public function testRemoveBetweenUseTraits(string $expected, string $input): void
     {
         $this->expectDeprecation('Option "tokens: use_trait" used in `no_extra_blank_lines` rule is deprecated, use the rule `class_attributes_separation` with `elements: trait_import` instead.');
+
         $this->fixer->configure(['tokens' => ['use_trait']]);
 
         $this->doTest($expected, $input);
     }
 
-    public function provideRemoveBetweenUseTraitsCases(): \Generator
+    public function provideRemoveBetweenUseTraitsCases(): iterable
     {
         yield [
             '<?php
@@ -784,22 +792,27 @@ class Foo
         $this->doTest($expected, $input);
     }
 
-    public function provideOneAndInLineCases(): \Generator
+    public function provideOneAndInLineCases(): iterable
     {
-        yield from [
-            [
-                "<?php\n\n\$a = function() use (\$b) { while(3<1)break; \$c = \$b[1]; while(\$b<1)continue; if (true) throw \$e; return 1; };\n\n",
-            ],
-            [
-                "<?php throw new \\Exception('do not import.');\n",
-                "<?php throw new \\Exception('do not import.');\n\n",
-            ],
-            [
-                "<?php\n\n\$a = \$b[0];\n\n",
-            ],
-            [
-                "<?php\n\n\$a->{'Test'};\nfunction test(){}\n",
-            ],
+        yield [
+            "<?php\n\n\$a = function() use (\$b) { while(3<1)break; \$c = \$b[1]; while(\$b<1)continue; if (true) throw \$e; return 1; };\n\n",
+        ];
+
+        yield [
+            "<?php throw new \\Exception('do not import.');\n",
+            "<?php throw new \\Exception('do not import.');\n\n",
+        ];
+
+        yield [
+            "<?php\n\n\$a = \$b[0];\n\n",
+        ];
+
+        yield [
+            "<?php\n\n\$a->{'Test'};\nfunction test(){}\n",
+        ];
+
+        yield [
+            "<?php\n\n\$a = new class { public function a () { while(4<1)break; while(3<1)continue; if (true) throw \$e; return 1; }};\n\n",
         ];
 
         if (\PHP_VERSION_ID < 80000) {
@@ -807,18 +820,17 @@ class Foo
                 "<?php\n\n\$a = \$b{0};\n\n",
             ];
         }
-
-        yield [
-            "<?php\n\n\$a = new class { public function a () { while(4<1)break; while(3<1)continue; if (true) throw \$e; return 1; }};\n\n",
-        ];
     }
 
     /**
+     * @param array<string, mixed> $config
+     *
      * @dataProvider provideBraceCases
      */
     public function testBraces(array $config, string $expected, ?string $input = null): void
     {
         $this->fixer->configure($config);
+
         $this->doTest($expected, $input);
     }
 
@@ -911,6 +923,8 @@ class Foo
     }
 
     /**
+     * @param array<string, mixed> $config
+     *
      * @dataProvider provideMessyWhitespacesCases
      */
     public function testMessyWhitespaces(array $config, string $expected, ?string $input = null): void
@@ -921,38 +935,42 @@ class Foo
         $this->doTest($expected, $input);
     }
 
-    public function provideMessyWhitespacesCases(): array
+    public function provideMessyWhitespacesCases(): iterable
     {
-        return [
-            [
-                [],
-                "<?php\r\nuse AAA;\r\n\r\nuse BBB;\r\n\r\n",
-                "<?php\r\nuse AAA;\r\n\r\n\r\n\r\nuse BBB;\r\n\r\n",
-            ],
-            [
-                ['tokens' => ['parenthesis_brace_block']],
-                "<?php is_int(\r\n1);",
-                "<?php is_int(\r\n\r\n\r\n\r\n1);",
-            ],
-            [
-                ['tokens' => ['square_brace_block']],
-                "<?php \$c = \$b[0];\r\n\r\n\r\n\$a = [\r\n   1,\r\n2];\r\necho 1;\r\n\$b = [];\r\n\r\n\r\n//a\r\n",
-                "<?php \$c = \$b[0];\r\n\r\n\r\n\$a = [\r\n\r\n   1,\r\n2];\r\necho 1;\r\n\$b = [];\r\n\r\n\r\n//a\r\n",
-            ],
-            [
-                ['tokens' => ['square_brace_block']],
-                "<?php \$c = \$b[0];\r\n\r\n\r\n\$a = [\r\n\t1,\r\n2];",
-                "<?php \$c = \$b[0];\r\n\r\n\r\n\$a = [\r\n\r\n\t1,\r\n2];",
-            ],
+        yield [
+            [],
+            "<?php\r\nuse AAA;\r\n\r\nuse BBB;\r\n\r\n",
+            "<?php\r\nuse AAA;\r\n\r\n\r\n\r\nuse BBB;\r\n\r\n",
+        ];
+
+        yield [
+            ['tokens' => ['parenthesis_brace_block']],
+            "<?php is_int(\r\n1);",
+            "<?php is_int(\r\n\r\n\r\n\r\n1);",
+        ];
+
+        yield [
+            ['tokens' => ['square_brace_block']],
+            "<?php \$c = \$b[0];\r\n\r\n\r\n\$a = [\r\n   1,\r\n2];\r\necho 1;\r\n\$b = [];\r\n\r\n\r\n//a\r\n",
+            "<?php \$c = \$b[0];\r\n\r\n\r\n\$a = [\r\n\r\n   1,\r\n2];\r\necho 1;\r\n\$b = [];\r\n\r\n\r\n//a\r\n",
+        ];
+
+        yield [
+            ['tokens' => ['square_brace_block']],
+            "<?php \$c = \$b[0];\r\n\r\n\r\n\$a = [\r\n\t1,\r\n2];",
+            "<?php \$c = \$b[0];\r\n\r\n\r\n\$a = [\r\n\r\n\t1,\r\n2];",
         ];
     }
 
     /**
+     * @param list<string> $config
+     *
      * @dataProvider provideSwitchCases
      */
     public function testInSwitchStatement(array $config, string $expected, ?string $input = null): void
     {
         $this->fixer->configure(['tokens' => $config]);
+
         $this->doTest($expected, $input);
     }
 
@@ -1086,19 +1104,23 @@ class Foo {}'
     }
 
     /**
+     * @param array<string, mixed> $config
+     *
      * @dataProvider provideFix80Cases
+     *
      * @requires PHP 8.0
      */
-    public function testFix80(string $expected): void
+    public function testFix80(array $config, string $expected, string $input = null): void
     {
-        $this->fixer->configure(['tokens' => ['throw']]);
+        $this->fixer->configure($config);
 
-        $this->doTest($expected);
+        $this->doTest($expected, $input);
     }
 
-    public function provideFix80Cases(): \Generator
+    public function provideFix80Cases(): iterable
     {
         yield [
+            ['tokens' => ['throw']],
             '<?php
                 $a = $bar ?? throw new \Exception();
 
@@ -1109,6 +1131,7 @@ class Foo {}'
         ];
 
         yield [
+            ['tokens' => ['throw']],
             '<?php
                 $a = $bar ?? throw new \Exception();
 
@@ -1116,12 +1139,114 @@ class Foo {}'
                 var_dump($a);
             ',
         ];
+
+        yield [
+            ['tokens' => ['attribute']],
+            '<?php
+#[Attr]
+#[AttrFoo1]
+#[AttrFoo2]
+function foo(){}
+            ',
+            '<?php
+#[Attr]
+
+
+
+#[AttrFoo1]
+
+
+#[AttrFoo2]
+
+function foo(){}
+            ',
+        ];
     }
 
+    /**
+     * @dataProvider provideFix81Cases
+     *
+     * @requires PHP 8.1
+     */
+    public function testFix81(string $expected, string $input = null): void
+    {
+        $this->fixer->configure(['tokens' => ['case']]);
+
+        $this->doTest($expected, $input);
+    }
+
+    public function provideFix81Cases(): iterable
+    {
+        yield [
+            '<?php
+enum test
+{
+    case Baz;
+
+    public function foo() {
+        switch (bar()) {
+            case 1: echo 1; break;
+            case 2: echo 2; break;
+        }
+    }
+
+    case Bad;
+}
+',
+            '<?php
+enum test
+{
+    case Baz;
+
+    public function foo() {
+        switch (bar()) {
+            case 1: echo 1; break;
+
+
+            case 2: echo 2; break;
+        }
+    }
+
+    case Bad;
+}
+',
+        ];
+
+        $expectedTemplate = '<?php
+enum Foo
+{
+    case CASE_1;
+
+    %s
+}'
+        ;
+
+        $enumAttributes = [
+            'case CASE_2;',
+            'const CONST_1 = self::CASE_1;',
+            'private const CONST_1 = self::CASE_1;',
+            'public function bar(): void {}',
+            'protected function bar(): void {}',
+            'private function bar(): void {}',
+            'static function bar(): void {}',
+            'final function bar(): void {}',
+        ];
+
+        foreach ($enumAttributes as $enumAttribute) {
+            yield [
+                sprintf($expectedTemplate, $enumAttribute),
+            ];
+        }
+    }
+
+    /**
+     * @param list<int> $lineNumbers
+     */
     private function removeLinesFromString(string $input, array $lineNumbers): string
     {
         sort($lineNumbers);
         $lines = explode("\n", $input);
+
         foreach ($lineNumbers as $lineNumber) {
             --$lineNumber;
 

@@ -113,6 +113,8 @@ final class AliasedFixerOptionTest extends TestCase
     }
 
     /**
+     * @param null|list<string> $allowedTypes
+     *
      * @dataProvider provideGetAllowedTypesCases
      */
     public function testGetAllowedTypes(?array $allowedTypes): void
@@ -132,6 +134,8 @@ final class AliasedFixerOptionTest extends TestCase
     }
 
     /**
+     * @param list<(callable(mixed): bool)|null|scalar>|null $allowedValues
+     *
      * @dataProvider provideGetAllowedValuesCases
      */
     public function testGetAllowedValues(?array $allowedValues): void
@@ -152,7 +156,7 @@ final class AliasedFixerOptionTest extends TestCase
 
     public function testGetAllowedValuesClosure(): void
     {
-        $option = new AliasedFixerOption(new FixerOption('foo', 'Bar.', true, null, null, [static function (): void {}]), 'baz');
+        $option = new AliasedFixerOption(new FixerOption('foo', 'Bar.', true, null, null, [static fn () => true]), 'baz');
         $allowedTypes = $option->getAllowedValues();
         static::assertIsArray($allowedTypes);
         static::assertCount(1, $allowedTypes);
@@ -165,7 +169,7 @@ final class AliasedFixerOptionTest extends TestCase
         $option = new AliasedFixerOption(new FixerOption('foo', 'Bar.'), 'baz');
         static::assertNull($option->getNormalizer());
 
-        $option = new AliasedFixerOption(new FixerOption('foo', 'Bar.', true, null, null, null, static function (): void {}), 'baz');
+        $option = new AliasedFixerOption(new FixerOption('foo', 'Bar.', true, null, null, null, static fn () => null), 'baz');
         static::assertInstanceOf(\Closure::class, $option->getNormalizer());
     }
 

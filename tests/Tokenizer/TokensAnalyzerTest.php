@@ -30,6 +30,8 @@ use PhpCsFixer\Tokenizer\TokensAnalyzer;
 final class TokensAnalyzerTest extends TestCase
 {
     /**
+     * @param array<int, array{classIndex: int, type: string}> $expectedElements
+     *
      * @dataProvider provideGetClassyElementsCases
      */
     public function testGetClassyElements(array $expectedElements, string $source): void
@@ -52,7 +54,7 @@ final class TokensAnalyzerTest extends TestCase
         );
     }
 
-    public function provideGetClassyElementsCases(): \Generator
+    public function provideGetClassyElementsCases(): iterable
     {
         yield 'trait import' => [
             [
@@ -191,9 +193,6 @@ PHP
         ];
     }
 
-    /**
-     * @requires PHP 7.4
-     */
     public function testGetClassyElementsWithNullableProperties(): void
     {
         $source = <<<'PHP'
@@ -445,9 +444,6 @@ PHP;
         );
     }
 
-    /**
-     * @requires PHP 7.4
-     */
     public function testGetClassyElements74(): void
     {
         $source = <<<'PHP'
@@ -487,7 +483,10 @@ PHP;
     }
 
     /**
+     * @param array<int, array{classIndex: int, type: string}> $expected
+     *
      * @dataProvider provideGetClassyElements81Cases
+     *
      * @requires PHP 8.1
      */
     public function testGetClassyElements81(array $expected, string $source): void
@@ -507,7 +506,7 @@ PHP;
         static::assertSame($expected, $elements);
     }
 
-    public function provideGetClassyElements81Cases(): \Generator
+    public function provideGetClassyElements81Cases(): iterable
     {
         yield [
             [
@@ -553,9 +552,173 @@ class Foo
 }
             ',
         ];
+
+        yield 'enum final const' => [
+            [
+                11 => [
+                    'classIndex' => 1,
+                    'type' => 'const', // A
+                ],
+                24 => [
+                    'classIndex' => 1,
+                    'type' => 'const', // B
+                ],
+            ],
+            '<?php
+enum Foo
+{
+    final public const A = "1";
+    public final const B = "2";
+}
+            ',
+        ];
+
+        yield 'enum case' => [
+            [
+                12 => [
+                    'classIndex' => 1,
+                    'type' => 'const', // Spades
+                ],
+                21 => [
+                    'classIndex' => 1,
+                    'type' => 'case', // Hearts
+                ],
+                32 => [
+                    'classIndex' => 1,
+                    'type' => 'method', // function tests
+                ],
+                81 => [
+                    'classIndex' => 75,
+                    'type' => 'method', // function bar123
+                ],
+                135 => [
+                    'classIndex' => 127,
+                    'type' => 'method', // function bar7
+                ],
+            ],
+            '<?php
+enum Foo: string
+{
+    private const Spades = 123;
+
+    case Hearts = "H";
+
+    private function test($foo) {
+        switch ($foo) {
+            case 1:
+            // case 2
+            case 3:
+                echo 123;
+            break;
+        }
+
+        return new class {
+            public function bar123($foo) {
+                switch ($foo) {
+                    case 1:
+                    // case 2
+                    case 3:
+                        echo 123;
+                };
+            }
+        };
+    }
+}
+
+class Bar {
+    public function bar7($foo) {
+        switch ($foo) {
+            case 1:
+            // case 2
+            case 3:
+                echo 123;
+        };
+    }
+}
+',
+        ];
+
+        yield 'enum' => [
+            [
+                10 => [
+                    'classIndex' => 1,
+                    'type' => 'case',
+                ],
+                19 => [
+                    'classIndex' => 1,
+                    'type' => 'case',
+                ],
+                28 => [
+                    'classIndex' => 1,
+                    'type' => 'method',
+                ],
+            ],
+            '<?php
+enum Foo: string
+{
+    case Bar = "bar";
+    case Baz = "baz";
+    function qux() {
+        switch (true) {
+            case "x": break;
+        }
+    }
+}
+            ',
+        ];
     }
 
     /**
+     * @param array<int, array{classIndex: int, type: string}> $expected
+     *
+     * @dataProvider provideGetClassyElements82Cases
+     *
+     * @requires PHP 8.2
+     */
+    public function testGetClassyElements82(array $expected, string $source): void
+    {
+        $tokens = Tokens::fromCode($source);
+        $tokensAnalyzer = new TokensAnalyzer($tokens);
+        $elements = $tokensAnalyzer->getClassyElements();
+
+        array_walk(
+            $expected,
+            static function (array &$element, $index) use ($tokens): void {
+                $element['token'] = $tokens[$index];
+                ksort($element);
+            },
+        );
+
+        static::assertSame($expected, $elements);
+    }
+
+    public function provideGetClassyElements82Cases(): iterable
+    {
+        yield 'constant in trait' => [
+            [
+                7 => [
+                    'classIndex' => 1,
+                    'type' => 'const',
+                ],
+                18 => [
+                    'classIndex' => 1,
+                    'type' => 'const',
+                ],
+            ],
+            <<<'PHP'
+                <?php
+                trait Foo
+                {
+                    const BAR = 0;
+                    final const BAZ = 1;
+                }
+                PHP,
+        ];
+    }
+
+    /**
+     * @param array<int, bool> $expected
+     *
      * @dataProvider provideIsAnonymousClassCases
      */
     public function testIsAnonymousClass(array $expected, string $source): void
@@ -567,7 +730,7 @@ class Foo
         }
     }
 
-    public function provideIsAnonymousClassCases(): \Generator
+    public function provideIsAnonymousClassCases(): iterable
     {
         yield [
             [1 => false],
@@ -610,9 +773,18 @@ class Foo
                 '<?php $object = new #[A] #[B] #[C]#[D]/* */ /** */#[E]class(){};',
             ];
         }
+
+        if (\PHP_VERSION_ID >= 80100) {
+            yield [
+                [1 => false],
+                '<?php enum foo {}',
+            ];
+        }
     }
 
     /**
+     * @param array<int, bool> $expected
+     *
      * @dataProvider provideIsLambdaCases
      */
     public function testIsLambda(array $expected, string $source): void
@@ -711,8 +883,9 @@ preg_replace_callback(
     }
 
     /**
+     * @param array<int, bool> $expected
+     *
      * @dataProvider provideIsLambda74Cases
-     * @requires PHP 7.4
      */
     public function testIsLambda74(array $expected, string $source): void
     {
@@ -723,7 +896,7 @@ preg_replace_callback(
         }
     }
 
-    public function provideIsLambda74Cases(): \Generator
+    public function provideIsLambda74Cases(): iterable
     {
         yield [
             [5 => true],
@@ -737,7 +910,10 @@ preg_replace_callback(
     }
 
     /**
+     * @param array<int, bool> $expected
+     *
      * @dataProvider provideIsLambda80Cases
+     *
      * @requires PHP 8.0
      */
     public function testIsLambda80(array $expected, string $source): void
@@ -795,6 +971,8 @@ $a(1,2);',
     }
 
     /**
+     * @param array<int, bool> $expected
+     *
      * @dataProvider provideIsConstantInvocationCases
      */
     public function testIsConstantInvocation(array $expected, string $source): void
@@ -838,7 +1016,7 @@ $a(1,2);',
                 '<?php echo FOO[BAR];',
             ],
             [
-                [1 => false, 3 => true, 6 => false,  8 => true],
+                [1 => false, 3 => true, 6 => false, 8 => true],
                 '<?php func(FOO, Bar\BAZ);',
             ],
             [
@@ -846,7 +1024,7 @@ $a(1,2);',
                 '<?php if (FOO && BAR) {}',
             ],
             [
-                [3 => true, 7 => false, 9 => false,  11 => true],
+                [3 => true, 7 => false, 9 => false, 11 => true],
                 '<?php return FOO * X\Y\BAR;',
             ],
             [
@@ -1007,7 +1185,10 @@ abstract class Baz
     }
 
     /**
+     * @param array<int, bool> $expected
+     *
      * @dataProvider provideIsConstantInvocationPhp80Cases
+     *
      * @requires PHP 8.0
      */
     public function testIsConstantInvocationPhp80(array $expected, string $source): void
@@ -1015,7 +1196,7 @@ abstract class Baz
         $this->doIsConstantInvocationTest($expected, $source);
     }
 
-    public function provideIsConstantInvocationPhp80Cases(): \Generator
+    public function provideIsConstantInvocationPhp80Cases(): iterable
     {
         yield 'abstract method return alternation' => [
             [6 => false, 16 => false, 21 => false, 23 => false],
@@ -1082,10 +1263,42 @@ abstract class Baz
             [3 => false, 5 => false, 12 => false],
             '<?php #[\A\Foo()] function foo() {}',
         ];
+
+        yield 'multiple type catch with variable' => [
+            [5 => false, 15 => false, 18 => false],
+            '<?php try { foo(); } catch(\InvalidArgumentException|\LogicException $e) {}',
+        ];
+
+        yield 'multiple type catch without variable 1' => [
+            [5 => false, 15 => false, 18 => false],
+            '<?php try { foo(); } catch(\InvalidArgumentException|\LogicException) {}',
+        ];
+
+        yield 'multiple type catch without variable 2' => [
+            [5 => false, 15 => false, 17 => false, 19 => false, 21 => false, 24 => false, 27 => false],
+            '<?php try { foo(); } catch(\D|Z|A\B|\InvalidArgumentException|\LogicException) {}',
+        ];
+
+        yield 'multiple type catch without variable 3' => [
+            [5 => false, 14 => false, 16 => false, 19 => false, 22 => false],
+            '<?php try { foo(); } catch(A\B|\InvalidArgumentException|\LogicException) {}',
+        ];
+
+        yield 'attribute before' => [
+            [4 => false, 6 => false, 8 => false, 13 => false, 17 => false, 23 => false, 25 => false],
+            '<?php
+
+use Psr\Log\LoggerInterface;
+function f( #[Target(\'xxx\')] LoggerInterface|null $logger) {}
+',
+        ];
     }
 
     /**
+     * @param array<int, bool> $expected
+     *
      * @dataProvider provideIsConstantInvocationPhp81Cases
+     *
      * @requires PHP 8.1
      */
     public function testIsConstantInvocationPhp81(array $expected, string $source): void
@@ -1093,7 +1306,7 @@ abstract class Baz
         $this->doIsConstantInvocationTest($expected, $source);
     }
 
-    public function provideIsConstantInvocationPhp81Cases(): \Generator
+    public function provideIsConstantInvocationPhp81Cases(): iterable
     {
         yield [
             [5 => false, 15 => false],
@@ -1161,6 +1374,8 @@ abstract class Baz
     }
 
     /**
+     * @param array<int, bool> $expected
+     *
      * @dataProvider provideIsUnarySuccessorOperatorCases
      */
     public function testIsUnarySuccessorOperator(array $expected, string $source): void
@@ -1220,6 +1435,8 @@ abstract class Baz
     }
 
     /**
+     * @param array<int, bool> $expected
+     *
      * @dataProvider provideIsUnaryPredecessorOperatorCases
      */
     public function testIsUnaryPredecessorOperator(array $expected, string $source): void
@@ -1303,6 +1520,8 @@ abstract class Baz
     }
 
     /**
+     * @param array<int, bool> $expected
+     *
      * @dataProvider provideIsBinaryOperatorCases
      */
     public function testIsBinaryOperator(array $expected, string $source): void
@@ -1319,7 +1538,7 @@ abstract class Baz
         }
     }
 
-    public function provideIsBinaryOperatorCases(): \Generator
+    public function provideIsBinaryOperatorCases(): iterable
     {
         yield from [
             [
@@ -1445,6 +1664,10 @@ $b;',
                 [9 => false],
                 '<?php $a = "{$value}-{$theSwitch}";',
             ],
+            [
+                [3 => false],
+                '<?=$path?>-<?=$id?>',
+            ],
         ];
 
         $operators = [
@@ -1545,10 +1768,9 @@ $b;',
     }
 
     /**
-     * @param int[] $tokenIndexes
+     * @param list<int> $tokenIndexes
      *
      * @dataProvider provideIsArray71Cases
-     * @requires PHP 7.1
      */
     public function testIsArray71(string $source, array $tokenIndexes): void
     {
@@ -1583,8 +1805,9 @@ $b;',
     }
 
     /**
+     * @param array<int, bool> $expected
+     *
      * @dataProvider provideIsBinaryOperator71Cases
-     * @requires PHP 7.1
      */
     public function testIsBinaryOperator71(array $expected, string $source): void
     {
@@ -1600,34 +1823,13 @@ $b;',
         }
     }
 
-    public function provideIsBinaryOperator71Cases(): \Generator
+    public function provideIsBinaryOperator71Cases(): iterable
     {
         yield [
             [11 => false],
             '<?php try {} catch (A | B $e) {}',
         ];
-    }
 
-    /**
-     * @dataProvider provideIsBinaryOperator74Cases
-     * @requires PHP 7.4
-     */
-    public function testIsBinaryOperator74(array $expected, string $source): void
-    {
-        $tokensAnalyzer = new TokensAnalyzer(Tokens::fromCode($source));
-
-        foreach ($expected as $index => $isBinary) {
-            static::assertSame($isBinary, $tokensAnalyzer->isBinaryOperator($index));
-
-            if ($isBinary) {
-                static::assertFalse($tokensAnalyzer->isUnarySuccessorOperator($index));
-                static::assertFalse($tokensAnalyzer->isUnaryPredecessorOperator($index));
-            }
-        }
-    }
-
-    public function provideIsBinaryOperator74Cases(): \Generator
-    {
         yield [
             [3 => true],
             '<?php $a ??= $b;',
@@ -1635,7 +1837,10 @@ $b;',
     }
 
     /**
+     * @param array<int, bool> $expected
+     *
      * @dataProvider provideIsBinaryOperator80Cases
+     *
      * @requires PHP 8.0
      */
     public function testIsBinaryOperator80(array $expected, string $source): void
@@ -1652,7 +1857,7 @@ $b;',
         }
     }
 
-    public static function provideIsBinaryOperator80Cases(): iterable
+    public function provideIsBinaryOperator80Cases(): iterable
     {
         yield [
             [6 => false],
@@ -1672,6 +1877,35 @@ $b;',
         yield [
             [6 => false],
             '<?php function foo(callable|int $x) {}',
+        ];
+    }
+
+    /**
+     * @param array<int, bool> $expected
+     *
+     * @dataProvider provideIsBinaryOperator81Cases
+     *
+     * @requires PHP 8.1
+     */
+    public function testIsBinaryOperator81(array $expected, string $source): void
+    {
+        $tokensAnalyzer = new TokensAnalyzer(Tokens::fromCode($source));
+
+        foreach ($expected as $index => $isBinary) {
+            static::assertSame($isBinary, $tokensAnalyzer->isBinaryOperator($index));
+
+            if ($isBinary) {
+                static::assertFalse($tokensAnalyzer->isUnarySuccessorOperator($index));
+                static::assertFalse($tokensAnalyzer->isUnaryPredecessorOperator($index));
+            }
+        }
+    }
+
+    public function provideIsBinaryOperator81Cases(): iterable
+    {
+        yield 'type intersection' => [
+            [6 => false],
+            '<?php function foo(array&string $x) {}',
         ];
     }
 
@@ -1728,7 +1962,7 @@ $b;',
         static::assertSame($isBlockMultiline, $tokensAnalyzer->isBlockMultiline($tokens, $tokenIndex));
     }
 
-    public static function provideIsBlockMultilineCases(): \Generator
+    public static function provideIsBlockMultilineCases(): iterable
     {
         yield [
             false,
@@ -1763,6 +1997,8 @@ $b;',
     }
 
     /**
+     * @param array{visibility: ?int, static: bool, abstract: bool, final: bool} $expected
+     *
      * @dataProvider provideGetFunctionPropertiesCases
      */
     public function testGetFunctionProperties(string $source, int $index, array $expected): void
@@ -1909,6 +2145,8 @@ SRC;
     }
 
     /**
+     * @param array<int, list<int>>|list<int> $expected
+     *
      * @dataProvider provideGetImportUseIndexesCases
      */
     public function testGetImportUseIndexes(array $expected, string $input, bool $perNamespace = false): void
@@ -2147,6 +2385,9 @@ class MyTestWithAnonymousClass extends TestCase
         return $cases;
     }
 
+    /**
+     * @param array<int, bool> $expected
+     */
     private function doIsConstantInvocationTest(array $expected, string $source): void
     {
         $tokens = Tokens::fromCode($source);

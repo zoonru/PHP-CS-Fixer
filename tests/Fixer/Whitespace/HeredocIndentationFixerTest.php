@@ -27,25 +27,9 @@ use PhpCsFixer\WhitespacesFixerConfig;
 final class HeredocIndentationFixerTest extends AbstractFixerTestCase
 {
     /**
-     * @requires PHP <7.3
-     */
-    public function testDoNotFix(): void
-    {
-        $this->doTest(
-            <<<'TEST'
-<?php
-    foo(<<<EOD
-abc
-    def
-EOD
-    );
-TEST
-        );
-    }
-
-    /**
+     * @param array<string, mixed> $config
+     *
      * @dataProvider provideFixCases
-     * @requires PHP 7.3
      */
     public function testFix(string $expected, ?string $input = null, array $config = []): void
     {
@@ -307,9 +291,6 @@ INPUT
         ];
     }
 
-    /**
-     * @requires PHP 7.3
-     */
     public function testFixWithTabIndentation(): void
     {
         $this->fixer->setWhitespacesConfig(new WhitespacesFixerConfig("\t"));

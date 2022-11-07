@@ -214,12 +214,12 @@ $foo
 
     $user->setFoo(1)
         ->setBar([
-                1 => 1,
-                ])
+            1 => 1,
+            ])
         ->setBaz(true)
         ->setX(array(
-    2 => 2,
-))
+            2 => 2,
+        ))
         ->setY();
 ',
                 '<?php
@@ -233,6 +233,203 @@ $foo
     2 => 2,
 ))
                     ->setY();
+',
+            ],
+            [
+                '<?php
+
+    $user->setEmail("voff.web@gmail.com", )
+        ->setPassword("233434" ,)
+        ->setEmailConfirmed(false , )
+        ->setEmailConfirmationCode("123456",    );
+',
+                '<?php
+
+    $user->setEmail("voff.web@gmail.com", )
+
+     ->setPassword("233434" ,)
+        ->setEmailConfirmed(false , )
+->setEmailConfirmationCode("123456",    );
+',
+            ],
+            [
+                '<?php
+
+                $obj = (new Foo)
+                    ->setBar((new Bar)
+                        ->baz());
+',
+                '<?php
+
+                $obj = (new Foo)
+        ->setBar((new Bar)
+                            ->baz());
+',
+            ],
+            [
+                '<?php
+
+                $obj
+                    ->foo("bar", function ($baz) {
+                                    return $baz
+                                        ->on("table1", "table2");
+                                })
+                    ->where("a", "b");
+',
+                '<?php
+
+                $obj
+        ->foo("bar", function ($baz) {
+                        return $baz
+                                    ->on("table1", "table2");
+                    })
+                ->where("a", "b");
+',
+            ],
+            [
+                '<?php
+
+                $obj
+                    ->foo("baz", fn ($bar) => $bar
+                        ->baz("foobar"))
+                    ->baz();
+',
+                '<?php
+
+                $obj
+                                        ->foo("baz", fn ($bar) => $bar
+        ->baz("foobar"))
+                                ->baz();
+',
+            ],
+            [
+                '<?php
+
+                $obj
+                    ->foo("baz", fn (string $bar) => otherFunc($bar)
+                        ->baz("foobar"))
+                    ->baz();
+',
+                '<?php
+
+                $obj
+                                        ->foo("baz", fn (string $bar) => otherFunc($bar)
+                            ->baz("foobar"))
+                                ->baz();
+',
+            ],
+            [
+                '<?php
+
+                $obj
+                    ->foo("baz", fn (SomeClass $bar) => $bar
+                        ->baz("foobar"))
+                    ->baz();
+',
+                '<?php
+
+                $obj
+                                        ->foo("baz", fn (SomeClass $bar) => $bar
+        ->baz("foobar"))
+                                ->baz();
+',
+            ],
+            [
+                '<?php
+
+                $obj
+                    ->foo("baz", fn (?AnotherClass $bar) => $bar
+                        ->baz("foobar"))
+                    ->baz();
+',
+                '<?php
+
+                $obj
+                                        ->foo("baz", fn (?AnotherClass $bar) => $bar
+        ->baz("foobar"))
+                                ->baz();
+',
+            ],
+            [
+                '<?php
+
+                $obj
+        /*buahaha*/
+                    ->foo("baz", fn ($bar) => $bar
+                        ->baz/*buahaha*/("foobar"))
+                    ->/**buahaha*/baz();
+',
+                '<?php
+
+                $obj
+        /*buahaha*/                                ->foo("baz", fn ($bar) => $bar
+        ->baz/*buahaha*/("foobar"))
+                                ->/**buahaha*/baz();
+',
+            ],
+            [
+                '<?php
+
+                $obj
+                    ->      foo("baz", fn ($bar) => $bar
+                        ->baz              ("foobar"))
+                    ->       baz  ();
+',
+                '<?php
+
+                $obj
+                                        ->      foo("baz", fn ($bar) => $bar
+        ->baz              ("foobar"))
+                                ->       baz  ();
+',
+            ],
+            [
+                '<?php
+
+    $user->setEmail("voff.web@gmail.com", )
+        ->setPassword("233434" ,)
+        ->setEmailConfirmed(false , )
+        ->setEmailConfirmationCode("123456",    );
+',
+                '<?php
+
+    $user->setEmail("voff.web@gmail.com", )
+
+     ->setPassword("233434" ,)
+        ->setEmailConfirmed(false , )
+->setEmailConfirmationCode("123456",    );
+',
+            ],
+            [
+                '<?php return $foo
+->bar;',
+            ],
+            [
+                '<?php return $foo
+->bar;
+
+    if (foo()) {
+        echo 123;
+    }
+',
+            ],
+            [
+                '<?php return $foo
+->bar?>
+
+<?php
+if (foo()) {
+    echo 123;
+}
+',
+            ],
+            [
+                '<?php return [$foo
+->bar,
+1,
+2,
+abc(),
+];
 ',
             ],
         ];
@@ -255,30 +452,6 @@ $foo
                 "<?php\r\n\$user->setEmail('voff.web@gmail.com')\r\n\r\n     ->setPassword('233434')\r\n\t\t\t->setEmailConfirmed(false)\r\n\t\t      ->setEmailConfirmationCode('123456')\r\n->setHashsalt('1234')\r\n\t\t->setTncAccepted(true);",
             ],
         ];
-    }
-
-    /**
-     * @requires PHP 7.3
-     */
-    public function testFix73(): void
-    {
-        $this->doTest(
-            '<?php
-
-    $user->setEmail("voff.web@gmail.com", )
-        ->setPassword("233434" ,)
-        ->setEmailConfirmed(false , )
-        ->setEmailConfirmationCode("123456",    );
-',
-            '<?php
-
-    $user->setEmail("voff.web@gmail.com", )
-
-     ->setPassword("233434" ,)
-        ->setEmailConfirmed(false , )
-->setEmailConfirmationCode("123456",    );
-'
-        );
     }
 
     /**

@@ -33,51 +33,60 @@ final class NoTrailingWhitespaceInStringFixerTest extends AbstractFixerTestCase
         $this->doTest($expected, $input);
     }
 
-    public function provideFixCases(): array
+    public function provideFixCases(): iterable
     {
-        return [
-            [
-                "<?php \$a = ' foo\r bar\r\n\nbaz\n  ';",
-                "<?php \$a = ' foo  \r bar \r\n  \nbaz  \n  ';",
-            ],
-            [
-                "<?php \$a = \" foo\r bar\r\n\nbaz\n  \";",
-                "<?php \$a = \" foo  \r bar \r\n  \nbaz  \n  \";",
-            ],
-            [
-                "<?php \$a = \"  \$foo\n\";",
-                "<?php \$a = \"  \$foo  \n\";",
-            ],
-            [
-                " foo\r bar\r\nbaz\n",
-                " foo  \r bar \r\nbaz  \n  ",
-            ],
-            [
-                "\n<?php foo() ?>\n  foo",
-                "  \n<?php foo() ?>  \n  foo",
-            ],
-            [
-                "<?php foo() ?>\n<?php foo() ?>\n",
-                "<?php foo() ?>  \n<?php foo() ?>  \n",
-            ],
-            [
-                "<?php foo() ?>\n\nfoo",
-                "<?php foo() ?>\n  \nfoo",
-            ],
-            [
-                "<?php foo() ?>foo\n",
-                "<?php foo() ?>foo  \n",
-            ],
-            [
-                '',
-                ' ',
-            ],
-            [
-                '<?php echo 1; ?>',
-                '<?php echo 1; ?> ',
-            ],
-            [
-                '
+        yield [
+            "<?php \$a = ' foo\r bar\r\n\nbaz\n  ';",
+            "<?php \$a = ' foo  \r bar \r\n  \nbaz  \n  ';",
+        ];
+
+        yield [
+            "<?php \$a = \" foo\r bar\r\n\nbaz\n  \";",
+            "<?php \$a = \" foo  \r bar \r\n  \nbaz  \n  \";",
+        ];
+
+        yield [
+            "<?php \$a = \"  \$foo\n\";",
+            "<?php \$a = \"  \$foo  \n\";",
+        ];
+
+        yield [
+            " foo\r bar\r\nbaz\n",
+            " foo  \r bar \r\nbaz  \n  ",
+        ];
+
+        yield [
+            "\n<?php foo() ?>\n  foo",
+            "  \n<?php foo() ?>  \n  foo",
+        ];
+
+        yield [
+            "<?php foo() ?>\n<?php foo() ?>\n",
+            "<?php foo() ?>  \n<?php foo() ?>  \n",
+        ];
+
+        yield [
+            "<?php foo() ?>\n\nfoo",
+            "<?php foo() ?>\n  \nfoo",
+        ];
+
+        yield [
+            "<?php foo() ?>foo\n",
+            "<?php foo() ?>foo  \n",
+        ];
+
+        yield [
+            '',
+            ' ',
+        ];
+
+        yield [
+            '<?php echo 1; ?>',
+            '<?php echo 1; ?> ',
+        ];
+
+        yield [
+            '
 <?php
 $a = <<<EOD
   foo
@@ -88,7 +97,7 @@ $b
    baz
 EOD;
                 ',
-                '
+            '
 <?php
 $a = <<<EOD
   foo  '.'
@@ -99,9 +108,10 @@ $b
    baz  '.'
 EOD;
                 ',
-            ],
-            [
-                '
+        ];
+
+        yield [
+            '
 <?php
 $a = <<<\'EOD\'
   foo
@@ -110,7 +120,7 @@ bar
    baz
 EOD;
                 ',
-                '
+            '
 <?php
 $a = <<<\'EOD\'
   foo  '.'
@@ -119,16 +129,10 @@ bar
    baz  '.'
 EOD;
                 ',
-            ],
         ];
-    }
 
-    /**
-     * @requires PHP 7.3
-     */
-    public function testFix73(): void
-    {
-        $expected = '
+        yield [
+            '
 <?php
     $a = <<<\'EOD\'
       foo
@@ -136,8 +140,8 @@ EOD;
 
        baz
     EOD;
-';
-        $input = '
+',
+            '
 <?php
     $a = <<<\'EOD\'
       foo  '.'
@@ -145,8 +149,12 @@ EOD;
         '.'
        baz  '.'
     EOD;
-';
+',
+        ];
 
-        $this->doTest($expected, $input);
+        yield 'binary string' => [
+            "<?php \$a = b\"  \$foo\n\";",
+            "<?php \$a = b\"  \$foo  \n\";",
+        ];
     }
 }

@@ -119,7 +119,9 @@ abstract class AbstractIntegrationTestCase extends TestCase
      * @dataProvider provideIntegrationCases
      *
      * @see doTest()
+     *
      * @large
+     *
      * @group legacy
      */
     public function testIntegration(IntegrationCase $case): void
@@ -259,7 +261,7 @@ abstract class AbstractIntegrationTestCase extends TestCase
                 "Expected changes do not match result for \"%s\" in \"%s\".\nFixers applied:\n%s.",
                 $case->getTitle(),
                 $case->getFileName(),
-                null === $changed ? '[None]' : implode(',', $changed['appliedFixers'])
+                implode(',', $changed['appliedFixers'])
             )
         );
 

@@ -27,6 +27,7 @@ final class OctalNotationFixerTest extends AbstractFixerTestCase
 {
     /**
      * @dataProvider provideFix81Cases
+     *
      * @requires PHP 8.1
      */
     public function testFix81(string $expected, ?string $input = null): void
@@ -34,7 +35,7 @@ final class OctalNotationFixerTest extends AbstractFixerTestCase
         $this->doTest($expected, $input);
     }
 
-    public static function provideFix81Cases(): \Generator
+    public static function provideFix81Cases(): iterable
     {
         yield [
             '<?php

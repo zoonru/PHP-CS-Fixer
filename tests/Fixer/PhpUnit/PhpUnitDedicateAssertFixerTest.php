@@ -26,6 +26,8 @@ use PhpCsFixer\Tests\Test\AbstractFixerTestCase;
 final class PhpUnitDedicateAssertFixerTest extends AbstractFixerTestCase
 {
     /**
+     * @param array<string, mixed> $config
+     *
      * @dataProvider provideTestFixCases
      */
     public function testFix(string $expected, ?string $input = null, array $config = []): void
@@ -34,7 +36,7 @@ final class PhpUnitDedicateAssertFixerTest extends AbstractFixerTestCase
         $this->doTest($expected, $input);
     }
 
-    public function provideTestFixCases(): \Generator
+    public function provideTestFixCases(): iterable
     {
         yield from [
             [
@@ -94,13 +96,13 @@ final class PhpUnitDedicateAssertFixerTest extends AbstractFixerTestCase
                     $this->assertInfinite($a);
                     $this->assertFinite($a, "my message");
                     $this->assertInfinite($a);
-                    $this->assertFinite($a, "my message");
+                    $this->assertFinite($a, b"my message");
                 '),
                 self::generateTest('
                     $this->assertTrue(is_infinite($a));
                     $this->assertFalse(is_infinite($a), "my message");
                     $this->assertTrue(\is_infinite($a));
-                    $this->assertFalse(\is_infinite($a), "my message");
+                    $this->assertFalse(\is_infinite($a), b"my message");
                 '),
             ],
             [
@@ -159,7 +161,7 @@ $this->assertTrue(is_readable($a));
             ],
         ];
 
-        foreach (['array', 'bool', 'callable', 'double', 'float', 'int', 'integer', 'long', 'numeric', 'object', 'resource', 'real', 'scalar', 'string'] as $type) {
+        foreach (['array', 'bool', 'callable', 'double', 'float', 'int', 'integer', 'long', 'numeric', 'object', 'real', 'scalar', 'string'] as $type) {
             yield [
                 self::generateTest(sprintf('$this->assertInternalType(\'%s\', $a);', $type)),
                 self::generateTest(sprintf('$this->assertTrue(is_%s($a));', $type)),
@@ -267,6 +269,55 @@ $a#
             self::generateTest('self::assertStringEndsNotWith($needle, $haystack);'),
             self::generateTest('self::assertFalse(str_ends_with($haystack, $needle));'),
         ];
+
+        yield '$a instanceof class' => [
+            self::generateTest('
+                $this->assertInstanceOf(SomeClass::class, $x);
+                $this->assertInstanceOf(SomeClass::class, $y, $message);
+            '),
+            self::generateTest('
+                $this->assertTrue($x instanceof SomeClass);
+                $this->assertTrue($y instanceof SomeClass, $message);
+            '),
+        ];
+
+        yield '$a instanceof class\a\b' => [
+            self::generateTest('
+                $this->assertInstanceOf(\PhpCsFixer\Tests\Fixtures\Test\AbstractFixerTest\SimpleFixer::class, $ii);
+            '),
+            self::generateTest('
+                $this->assertTrue($ii instanceof \PhpCsFixer\Tests\Fixtures\Test\AbstractFixerTest\SimpleFixer);
+            '),
+        ];
+
+        yield '$a instanceof $b' => [
+            self::generateTest('
+                $this->assertInstanceOf($tty, $abc/* 1 *//* 2 */);
+                $this->assertInstanceOf($oo, $def, $message);
+            '),
+            self::generateTest('
+                $this->assertTrue($abc instanceof /* 1 */$tty /* 2 */);
+                $this->assertTrue($def instanceof $oo, $message);
+            '),
+        ];
+
+        yield 'do not fix instance of' => [
+            self::generateTest('
+                $this->assertTrue($gg instanceof $ijl . "X", $something);
+                $this->assertTrue($ff instanceof $klh . $b(1,2,$message), $noMsg);
+            '),
+        ];
+
+        yield '!$a instanceof class' => [
+            self::generateTest('
+                $this->assertNotInstanceOf(SomeClass::class, $x);
+                $this->assertNotInstanceOf(SomeClass::class, $y, $message);
+            '),
+            self::generateTest('
+                $this->assertTrue(!$x instanceof SomeClass);
+                $this->assertTrue(!$y instanceof SomeClass, $message);
+            '),
+        ];
     }
 
     /**
@@ -278,7 +329,7 @@ $a#
         $this->doTest($expected);
     }
 
-    public function provideNotFixCases(): \Generator
+    public function provideNotFixCases(): iterable
     {
         yield 'not a method call' => [
             self::generateTest('echo $this->assertTrue;'),
@@ -306,6 +357,13 @@ $a#
 
         yield 'not in class' => [
             '<?php self::assertTrue(is_null($a));',
+        ];
+
+        // Do not replace is_resource() by assertIsResource().
+        // is_resource() also checks if the resource is open or closed,
+        // while assertIsResource() does not.
+        yield 'Do not replace is_resource' => [
+            self::generateTest('self::assertTrue(is_resource($resource));'),
         ];
     }
 
@@ -433,8 +491,12 @@ $a# 5
 )# 7
 ;# 8'),
             ],
-            'do not fix 1' => [
+            [
+                self::generateTest('$this->assertCount($b, $a);'),
                 self::generateTest('$this->assertSame($b, %s($a));'),
+            ],
+            'do not fix 1' => [
+                self::generateTest('$this->assertSame($b[1], %s($a));'),
             ],
             'do not fix 2' => [
                 self::generateTest('$this->assertSame(b(), %s($a));'),
@@ -486,7 +548,7 @@ $a# 5
         $this->doTest($expected, $input);
     }
 
-    public function provideTestAssertCountCasingCases(): \Generator
+    public function provideTestAssertCountCasingCases(): iterable
     {
         yield [
             self::generateTest('$this->assertCount(1, $a);'),
@@ -500,7 +562,6 @@ $a# 5
     }
 
     /**
-     * @requires PHP 7.3
      * @dataProvider provideFix73Cases
      */
     public function testFix73(string $expected, string $input): void
@@ -509,7 +570,7 @@ $a# 5
         $this->doTest($expected, $input);
     }
 
-    public function provideFix73Cases(): \Generator
+    public function provideFix73Cases(): iterable
     {
         yield [
             self::generateTest('$this->assertNan($a, );'),
@@ -554,6 +615,7 @@ $a# 5
 
     /**
      * @dataProvider provideFix81Cases
+     *
      * @requires PHP 8.1
      */
     public function testFix81(string $expected, ?string $input = null): void
@@ -562,7 +624,7 @@ $a# 5
         $this->doTest($expected, $input);
     }
 
-    public function provideFix81Cases(): \Generator
+    public function provideFix81Cases(): iterable
     {
         yield [
             self::generateTest('$a = $this->assertTrue(...);'),

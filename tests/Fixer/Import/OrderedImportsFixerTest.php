@@ -552,12 +552,13 @@ B#
     }
 
     /**
+     * @param array<string, mixed> $config
+     *
      * @dataProvider provideFixCases
      */
     public function testFix(string $expected, ?string $input = null, array $config = []): void
     {
         $this->fixer->configure($config);
-
         $this->doTest($expected, $input);
     }
 
@@ -1114,6 +1115,8 @@ use function some\a\{fn_a, fn_b, fn_c,};
     }
 
     /**
+     * @param array<string, mixed> $configuration
+     *
      * @dataProvider provideInvalidSortAlgorithmCases
      */
     public function testInvalidSortAlgorithm(array $configuration, string $expectedValue): void

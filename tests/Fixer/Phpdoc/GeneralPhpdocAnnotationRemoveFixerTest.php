@@ -20,11 +20,14 @@ use PhpCsFixer\Tests\Test\AbstractFixerTestCase;
  * @internal
  *
  * @author Gert de Pagter
+ *
  * @covers \PhpCsFixer\Fixer\Phpdoc\GeneralPhpdocAnnotationRemoveFixer
  */
 final class GeneralPhpdocAnnotationRemoveFixerTest extends AbstractFixerTestCase
 {
     /**
+     * @param array<string, mixed> $config
+     *
      * @dataProvider provideFixCases
      */
     public function testFix(string $expected, ?string $input = null, array $config = []): void
@@ -177,6 +180,38 @@ while ($something = myFunction($foo)) {}
 while ($something = myFunction($foo)) {}
 ',
                 ['annotations' => ['noinspection']],
+            ],
+
+            [
+                '<?php
+/**
+* @internal
+* @AuThOr Jane Doe
+*/
+function foo() {}',
+                '<?php
+/**
+* @internal
+* @author John Doe
+* @AuThOr Jane Doe
+*/
+function foo() {}',
+                ['annotations' => ['author'], 'case_sensitive' => true],
+            ],
+            [
+                '<?php
+/**
+* @internal
+*/
+function foo() {}',
+                '<?php
+/**
+* @internal
+* @author John Doe
+* @AuThOr Jane Doe
+*/
+function foo() {}',
+                ['annotations' => ['author'], 'case_sensitive' => false],
             ],
         ];
     }

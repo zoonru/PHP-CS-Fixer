@@ -26,18 +26,18 @@ use PhpCsFixer\Tests\Test\AbstractFixerTestCase;
 final class OperatorLinebreakFixerTest extends AbstractFixerTestCase
 {
     /**
+     * @param array<string, mixed> $configuration
+     *
      * @dataProvider provideFixCases
      */
-    public function testFix(string $expected, ?string $input = null, ?array $configuration = null): void
+    public function testFix(string $expected, ?string $input = null, array $configuration = []): void
     {
-        if (null !== $configuration) {
-            $this->fixer->configure($configuration);
-        }
+        $this->fixer->configure($configuration);
 
         $this->doTest($expected, $input);
     }
 
-    public static function provideFixCases(): \Generator
+    public static function provideFixCases(): iterable
     {
         foreach (static::pairs() as $key => $value) {
             yield sprintf('%s when position is "beginning"', $key) => $value;
@@ -203,24 +203,7 @@ endwhile;
             null,
             ['position' => 'beginning'],
         ];
-    }
 
-    /**
-     * @dataProvider provideFix71Cases
-     *
-     * @requires     PHP 7.1
-     */
-    public function testFix71(string $expected, ?string $input = null, ?array $configuration = null): void
-    {
-        if (null !== $configuration) {
-            $this->fixer->configure($configuration);
-        }
-
-        $this->doTest($expected, $input);
-    }
-
-    public static function provideFix71Cases(): \Generator
-    {
         yield 'nullable type when position is "end"' => [
             '<?php
                 function foo(
@@ -233,7 +216,10 @@ endwhile;
         ];
     }
 
-    private static function pairs(): \Generator
+    /**
+     * @return iterable<array{0: string, 1: null|string, 2?: array<string, mixed>}>
+     */
+    private static function pairs(): iterable
     {
         yield 'handle equal sign' => [
             '<?php

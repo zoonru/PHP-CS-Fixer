@@ -44,20 +44,8 @@ final class TrailingCommaInMultilineFixerTest extends AbstractFixerTestCase
         $this->fixer->configure($configuration);
     }
 
-    public static function provideInvalidConfigurationCases(): \Generator
+    public static function provideInvalidConfigurationCases(): iterable
     {
-        if (\PHP_VERSION_ID < 70300) {
-            yield [
-                '[trailing_comma_in_multiline] Invalid configuration for env: "after_heredoc" option can only be enabled with PHP 7.3+.',
-                ['after_heredoc' => true],
-            ];
-
-            yield [
-                '[trailing_comma_in_multiline] Invalid configuration for env: "arguments" option can only be enabled with PHP 7.3+.',
-                ['elements' => [TrailingCommaInMultilineFixer::ELEMENTS_ARGUMENTS]],
-            ];
-        }
-
         yield [
             '[trailing_comma_in_multiline] Invalid configuration for env: "parameters" option can only be enabled with PHP 8.0+.',
             ['elements' => [TrailingCommaInMultilineFixer::ELEMENTS_PARAMETERS]],
@@ -65,10 +53,14 @@ final class TrailingCommaInMultilineFixerTest extends AbstractFixerTestCase
     }
 
     /**
+     * @param array<string, mixed> $config
+     *
      * @dataProvider provideFixCases
      */
-    public function testFix(string $expected, ?string $input = null): void
+    public function testFix(string $expected, ?string $input = null, array $config = []): void
     {
+        $this->fixer->configure($config);
+
         $this->doTest($expected, $input);
     }
 
@@ -88,19 +80,15 @@ final class TrailingCommaInMultilineFixerTest extends AbstractFixerTestCase
             ["<?php \$x = array(\narray('foo'),\n);", "<?php \$x = array(\narray('foo')\n);"],
             ["<?php \$x = array(\n /* He */ \n);"],
             [
-                "<?php \$x = array('a', 'b', 'c',\n  'd', 'q', 'z', );",
                 "<?php \$x = array('a', 'b', 'c',\n  'd', 'q', 'z');",
             ],
             [
-                "<?php \$x = array('a', 'b', 'c',\n'd', 'q', 'z', );",
                 "<?php \$x = array('a', 'b', 'c',\n'd', 'q', 'z');",
             ],
             [
-                "<?php \$x = array('a', 'b', 'c',\n'd', 'q', 'z', );",
                 "<?php \$x = array('a', 'b', 'c',\n'd', 'q', 'z' );",
             ],
             [
-                "<?php \$x = array('a', 'b', 'c',\n'd', 'q', 'z',\t);",
                 "<?php \$x = array('a', 'b', 'c',\n'd', 'q', 'z'\t);",
             ],
             ["<?php \$x = array(\n<<<EOT\noet\nEOT\n);"],
@@ -397,23 +385,8 @@ while(
 $a
 )
 )
-) {}'],
-        ];
-    }
-
-    /**
-     * @dataProvider provideFix73Cases
-     * @requires PHP 7.3
-     */
-    public function testFix73(string $expected, ?string $input = null, array $config = []): void
-    {
-        $this->fixer->configure($config);
-        $this->doTest($expected, $input);
-    }
-
-    public static function provideFix73Cases(): array
-    {
-        return [
+) {}',
+            ],
             [
                 "<?php foo('a', 'b', 'c', 'd', 'q', 'z');",
                 null,
@@ -453,8 +426,8 @@ $a
                 ['elements' => [TrailingCommaInMultilineFixer::ELEMENTS_ARRAYS]],
             ],
             [
-                "<?php \$var = foo('a', 'b', 'c',\n  'd', 'q', 'z', );",
                 "<?php \$var = foo('a', 'b', 'c',\n  'd', 'q', 'z');",
+                null,
                 ['elements' => [TrailingCommaInMultilineFixer::ELEMENTS_ARGUMENTS]],
             ],
             [
@@ -463,13 +436,13 @@ $a
                 ['elements' => [TrailingCommaInMultilineFixer::ELEMENTS_ARGUMENTS]],
             ],
             [
-                "<?php \$var = \$foonction('a', 'b', 'c',\n  'd', 'q', 'z', );",
                 "<?php \$var = \$foonction('a', 'b', 'c',\n  'd', 'q', 'z');",
+                null,
                 ['elements' => [TrailingCommaInMultilineFixer::ELEMENTS_ARGUMENTS]],
             ],
             [
-                "<?php \$var = \$fMap[100]('a', 'b', 'c',\n  'd', 'q', 'z', );",
                 "<?php \$var = \$fMap[100]('a', 'b', 'c',\n  'd', 'q', 'z');",
+                null,
                 ['elements' => [TrailingCommaInMultilineFixer::ELEMENTS_ARGUMENTS]],
             ],
             [
@@ -561,11 +534,25 @@ INPUT
                 ,
                 ['after_heredoc' => true],
             ],
+            [
+                '<?php $a = new class() {function A() { return new static(
+1,
+2,
+); }};',
+                '<?php $a = new class() {function A() { return new static(
+1,
+2
+); }};',
+                ['elements' => [TrailingCommaInMultilineFixer::ELEMENTS_ARGUMENTS]],
+            ],
         ];
     }
 
     /**
+     * @param array<string, mixed> $config
+     *
      * @dataProvider provideFix80Cases
+     *
      * @requires PHP 8.0
      */
     public function testFix80(string $expected, ?string $input = null, array $config = []): void
@@ -574,55 +561,102 @@ INPUT
         $this->doTest($expected, $input);
     }
 
-    public static function provideFix80Cases(): array
+    public static function provideFix80Cases(): iterable
     {
-        return [
-            [
-                '<?php function foo($x, $y) {}',
-                null,
-                ['elements' => [TrailingCommaInMultilineFixer::ELEMENTS_PARAMETERS]],
-            ],
-            [
-                '<?php function foo(
-                        $x,
-                        $y
-                    ) {}',
-                null, // do not fix if not configured
-                ['elements' => [TrailingCommaInMultilineFixer::ELEMENTS_ARRAYS, TrailingCommaInMultilineFixer::ELEMENTS_ARGUMENTS]],
-            ],
-            [
-                '<?php function foo(
-                        $x,
-                        $y,
-                    ) {}',
-                '<?php function foo(
-                        $x,
-                        $y
-                    ) {}',
-                ['elements' => [TrailingCommaInMultilineFixer::ELEMENTS_PARAMETERS]],
-            ],
-            [
-                '<?php $x = function(
-                        $x,
-                        $y,
-                    ) {};',
-                '<?php $x = function(
-                        $x,
-                        $y
-                    ) {};',
-                ['elements' => [TrailingCommaInMultilineFixer::ELEMENTS_PARAMETERS]],
-            ],
-            [
-                '<?php $x = fn(
-                        $x,
-                        $y,
-                    ) => $x + $y;',
-                '<?php $x = fn(
-                        $x,
-                        $y
-                    ) => $x + $y;',
-                ['elements' => [TrailingCommaInMultilineFixer::ELEMENTS_PARAMETERS]],
-            ],
+        yield [
+            '<?php function foo($x, $y) {}',
+            null,
+            ['elements' => [TrailingCommaInMultilineFixer::ELEMENTS_PARAMETERS]],
+        ];
+
+        yield [
+            '<?php function foo(
+                    $x,
+                    $y
+                ) {}',
+            null, // do not fix if not configured
+            ['elements' => [TrailingCommaInMultilineFixer::ELEMENTS_ARRAYS, TrailingCommaInMultilineFixer::ELEMENTS_ARGUMENTS]],
+        ];
+
+        yield [
+            '<?php function foo(
+                    $x,
+                    $y,
+                ) {}',
+            '<?php function foo(
+                    $x,
+                    $y
+                ) {}',
+            ['elements' => [TrailingCommaInMultilineFixer::ELEMENTS_PARAMETERS]],
+        ];
+
+        yield [
+            '<?php $x = function(
+                    $x,
+                    $y,
+                ) {};',
+            '<?php $x = function(
+                    $x,
+                    $y
+                ) {};',
+            ['elements' => [TrailingCommaInMultilineFixer::ELEMENTS_PARAMETERS]],
+        ];
+
+        yield [
+            '<?php $x = fn(
+                    $x,
+                    $y,
+                ) => $x + $y;',
+            '<?php $x = fn(
+                    $x,
+                    $y
+                ) => $x + $y;',
+            ['elements' => [TrailingCommaInMultilineFixer::ELEMENTS_PARAMETERS]],
+        ];
+
+        yield 'match' => [
+            '<?php
+$m = match ($a) {
+    200, 300 => null,
+    400 => 1,
+    500 => function() {return 2;},
+    600 => static function() {return 4;},
+    default => 3,
+};
+
+$z = match ($a) {
+    1 => 0,
+    2 => 1,
+};
+
+$b = match($c) {19 => 28, default => 333};
+            ',
+            '<?php
+$m = match ($a) {
+    200, 300 => null,
+    400 => 1,
+    500 => function() {return 2;},
+    600 => static function() {return 4;},
+    default => 3
+};
+
+$z = match ($a) {
+    1 => 0,
+    2 => 1
+};
+
+$b = match($c) {19 => 28, default => 333};
+            ',
+            ['elements' => ['match']],
+        ];
+
+        yield 'match with last comma in the same line as closing brace' => [
+            '<?php
+$x = match ($a) { 1 => 0,
+                  2 => 1 };
+            ',
+            null,
+            ['elements' => ['match']],
         ];
     }
 }

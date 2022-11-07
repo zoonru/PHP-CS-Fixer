@@ -25,7 +25,10 @@ use PhpCsFixer\Tokenizer\CT;
 final class FirstClassCallableTransformerTest extends AbstractTransformerTestCase
 {
     /**
+     * @param array<int, int> $expectedTokens
+     *
      * @dataProvider provideProcessCases
+     *
      * @requires PHP 8.1
      */
     public function testProcess(array $expectedTokens, string $source): void
@@ -33,7 +36,7 @@ final class FirstClassCallableTransformerTest extends AbstractTransformerTestCas
         $this->doTest($source, $expectedTokens, [CT::T_FIRST_CLASS_CALLABLE]);
     }
 
-    public function provideProcessCases(): \Generator
+    public function provideProcessCases(): iterable
     {
         yield 'set' => [
             [

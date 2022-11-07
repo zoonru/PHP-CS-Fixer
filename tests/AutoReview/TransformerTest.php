@@ -24,6 +24,7 @@ use PhpCsFixer\Tokenizer\Transformers;
  * @internal
  *
  * @coversNothing
+ *
  * @group auto-review
  * @group covers-nothing
  */
@@ -49,7 +50,7 @@ final class TransformerTest extends TestCase
         $priority = $transformer->getPriority();
 
         if (0 === $priority) {
-            $this->addToAssertionCount(1);
+            $this->expectNotToPerformAssertions();
 
             return;
         }

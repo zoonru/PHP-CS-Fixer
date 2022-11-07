@@ -25,6 +25,7 @@ final class CleanNamespaceFixerTest extends AbstractFixerTestCase
 {
     /**
      * @requires PHP <8.0
+     *
      * @dataProvider provideFixCases
      */
     public function testFix(string $expected, string $input): void
@@ -32,7 +33,7 @@ final class CleanNamespaceFixerTest extends AbstractFixerTestCase
         $this->doTest($expected, $input);
     }
 
-    public function provideFixCases(): \Generator
+    public function provideFixCases(): iterable
     {
         yield [
             '<?php use function FooLibrary\Bar\Baz\ClassA as Foo ?>',

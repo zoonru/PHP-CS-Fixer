@@ -26,7 +26,10 @@ use PhpCsFixer\Tokenizer\Tokens;
 final class AttributeTransformerTest extends AbstractTransformerTestCase
 {
     /**
+     * @param array<int, int> $expectedTokens
+     *
      * @dataProvider provideProcessCases
+     *
      * @requires PHP 8.0
      */
     public function testProcess(string $source, array $expectedTokens): void
@@ -34,7 +37,7 @@ final class AttributeTransformerTest extends AbstractTransformerTestCase
         $this->doTest($source, $expectedTokens);
     }
 
-    public function provideProcessCases(): \Generator
+    public function provideProcessCases(): iterable
     {
         yield ['<?php class Foo {
     #[Listens(ProductCreatedEvent::class)]
@@ -186,7 +189,7 @@ class User
         }
     }
 
-    public function provideNotChangeCases(): \Generator
+    public function provideNotChangeCases(): iterable
     {
         yield [
             '<?php

@@ -28,9 +28,9 @@ use PhpCsFixer\WhitespacesFixerConfig;
  */
 final class BracesFixerTest extends AbstractFixerTestCase
 {
-    private static $configurationOopPositionSameLine = ['position_after_functions_and_oop_constructs' => BracesFixer::LINE_SAME];
-    private static $configurationCtrlStructPositionNextLine = ['position_after_control_structures' => BracesFixer::LINE_NEXT];
-    private static $configurationAnonymousPositionNextLine = ['position_after_anonymous_constructs' => BracesFixer::LINE_NEXT];
+    private const CONFIGURATION_OOP_POSITION_SAME_LINE = ['position_after_functions_and_oop_constructs' => BracesFixer::LINE_SAME];
+    private const CONFIGURATION_CTRL_STRUCT_POSITION_NEXT_LINE = ['position_after_control_structures' => BracesFixer::LINE_NEXT];
+    private const CONFIGURATION_ANONYMOUS_POSITION_NEXT_LINE = ['position_after_anonymous_constructs' => BracesFixer::LINE_NEXT];
 
     public function testInvalidConfigurationClassyConstructs(): void
     {
@@ -41,6 +41,8 @@ final class BracesFixerTest extends AbstractFixerTestCase
     }
 
     /**
+     * @param array<string, mixed> $configuration
+     *
      * @dataProvider provideFixControlContinuationBracesCases
      */
     public function testFixControlContinuationBraces(string $expected, ?string $input = null, array $configuration = []): void
@@ -50,7 +52,7 @@ final class BracesFixerTest extends AbstractFixerTestCase
         $this->doTest($expected, $input);
     }
 
-    public function provideFixControlContinuationBracesCases()
+    public function provideFixControlContinuationBracesCases(): iterable
     {
         return [
             [
@@ -208,7 +210,7 @@ final class BracesFixerTest extends AbstractFixerTestCase
         while (false);
     };',
                 null,
-                self::$configurationOopPositionSameLine,
+                self::CONFIGURATION_OOP_POSITION_SAME_LINE,
             ],
             [
                 '<?php
@@ -222,7 +224,7 @@ final class BracesFixerTest extends AbstractFixerTestCase
         $a = 1;
         while (false);
     };',
-                self::$configurationAnonymousPositionNextLine,
+                self::CONFIGURATION_ANONYMOUS_POSITION_NEXT_LINE,
             ],
             [
                 '<?php
@@ -231,7 +233,7 @@ final class BracesFixerTest extends AbstractFixerTestCase
         for ($i=0;$i<5;++$i);
     };',
                 null,
-                self::$configurationOopPositionSameLine,
+                self::CONFIGURATION_OOP_POSITION_SAME_LINE,
             ],
             [
                 '<?php
@@ -245,7 +247,7 @@ final class BracesFixerTest extends AbstractFixerTestCase
         $a = 1;
         for ($i=0;$i<5;++$i);
     };',
-                self::$configurationAnonymousPositionNextLine,
+                self::CONFIGURATION_ANONYMOUS_POSITION_NEXT_LINE,
             ],
             [
                 '<?php
@@ -268,7 +270,7 @@ final class BracesFixerTest extends AbstractFixerTestCase
             $a = 1;
         }
     }',
-                self::$configurationOopPositionSameLine,
+                self::CONFIGURATION_OOP_POSITION_SAME_LINE,
             ],
             [
                 '<?php
@@ -284,7 +286,7 @@ final class BracesFixerTest extends AbstractFixerTestCase
     else {
         $b = 2;
     }',
-                self::$configurationOopPositionSameLine,
+                self::CONFIGURATION_OOP_POSITION_SAME_LINE,
             ],
             [
                 '<?php
@@ -303,7 +305,7 @@ final class BracesFixerTest extends AbstractFixerTestCase
     else {
         $b = 2;
     }',
-                self::$configurationCtrlStructPositionNextLine,
+                self::CONFIGURATION_CTRL_STRUCT_POSITION_NEXT_LINE,
             ],
             [
                 '<?php
@@ -323,7 +325,7 @@ final class BracesFixerTest extends AbstractFixerTestCase
     catch (\Exception $e) {
         // do nothing
     }',
-                self::$configurationOopPositionSameLine,
+                self::CONFIGURATION_OOP_POSITION_SAME_LINE,
             ],
             [
                 '<?php
@@ -348,7 +350,7 @@ final class BracesFixerTest extends AbstractFixerTestCase
     catch (\Exception $e) {
         // do nothing
     }',
-                self::$configurationCtrlStructPositionNextLine,
+                self::CONFIGURATION_CTRL_STRUCT_POSITION_NEXT_LINE,
             ],
             [
                 '<?php
@@ -364,7 +366,7 @@ final class BracesFixerTest extends AbstractFixerTestCase
     {
         echo 2;
     }',
-                self::$configurationOopPositionSameLine,
+                self::CONFIGURATION_OOP_POSITION_SAME_LINE,
             ],
             [
                 '<?php
@@ -382,7 +384,7 @@ final class BracesFixerTest extends AbstractFixerTestCase
     {
         echo 2;
     }',
-                self::$configurationOopPositionSameLine,
+                self::CONFIGURATION_OOP_POSITION_SAME_LINE,
             ],
             [
                 '<?php
@@ -404,7 +406,7 @@ final class BracesFixerTest extends AbstractFixerTestCase
         ){
         }
     }',
-                self::$configurationOopPositionSameLine,
+                self::CONFIGURATION_OOP_POSITION_SAME_LINE,
             ],
             [
                 '<?php
@@ -416,7 +418,7 @@ final class BracesFixerTest extends AbstractFixerTestCase
     }
                 ',
                 null,
-                self::$configurationOopPositionSameLine,
+                self::CONFIGURATION_OOP_POSITION_SAME_LINE,
             ],
             [
                 '<?php
@@ -426,7 +428,7 @@ final class BracesFixerTest extends AbstractFixerTestCase
         } while (true);
     }',
                 null,
-                self::$configurationOopPositionSameLine,
+                self::CONFIGURATION_OOP_POSITION_SAME_LINE,
             ],
             [
                 '<?php
@@ -434,7 +436,7 @@ final class BracesFixerTest extends AbstractFixerTestCase
     }',
                 '<?php
     if /* 1 */ (2) {}',
-                self::$configurationOopPositionSameLine,
+                self::CONFIGURATION_OOP_POSITION_SAME_LINE,
             ],
             [
                 '<?php
@@ -444,15 +446,17 @@ final class BracesFixerTest extends AbstractFixerTestCase
                     }
                 ',
                 null,
-                self::$configurationOopPositionSameLine,
+                self::CONFIGURATION_OOP_POSITION_SAME_LINE,
             ],
             [
+                '<?php class A {
+    /** */
+}',
                 '<?php class A
 /** */
 {
 }',
-                null,
-                self::$configurationOopPositionSameLine,
+                self::CONFIGURATION_OOP_POSITION_SAME_LINE,
             ],
             [
                 '<?php
@@ -792,14 +796,48 @@ echo 2;
             ],
             [
                 '<?php $arr = [true, false]; ?>
-<?php foreach ($arr as $index => $item) if ($item): ?>
+<?php foreach ($arr as $index => $item) {
+    if ($item): ?>
     <?php echo $index; ?>
-<?php endif; ?>',
+<?php endif;
+} ?>',
+            ],
+            [
+                '<?php
+do {
+    foo();
+} // comment
+while (false);
+',
+            ],
+            [
+                '<?php
+
+if (true) {
+    ?>
+<hr />
+    <?php
+    if (true) {
+        echo \'x\';
+    }
+    ?>
+<hr />
+    <?php
+}',
+            ],
+            [
+                '<?php
+
+    function foo()
+    {
+    }',
             ],
         ];
     }
 
     /**
+     * @param array<string, mixed> $configuration
+     *
      * @dataProvider provideFixMissingBracesAndIndentCases
      */
     public function testFixMissingBracesAndIndent(string $expected, ?string $input = null, array $configuration = []): void
@@ -809,7 +847,7 @@ echo 2;
         $this->doTest($expected, $input);
     }
 
-    public function provideFixMissingBracesAndIndentCases()
+    public function provideFixMissingBracesAndIndentCases(): iterable
     {
         return [
             [
@@ -1120,10 +1158,6 @@ if (1) {
                 '<?php
     class ClassName
     {
-
-
-
-
         /**
          * comment
          */
@@ -1483,9 +1517,8 @@ class Foo
     class C
     {
         public function __construct(
-        )
-        //comment
-        {
+        ) {
+            //comment
         }
     }',
                 '<?php
@@ -1502,7 +1535,7 @@ if (true):
     $foo = 0;
 endif;',
                 null,
-                self::$configurationOopPositionSameLine,
+                self::CONFIGURATION_OOP_POSITION_SAME_LINE,
             ],
             [
                 '<?php
@@ -1510,13 +1543,13 @@ if (true)  :
     $foo = 0;
 endif;',
                 null,
-                self::$configurationOopPositionSameLine,
+                self::CONFIGURATION_OOP_POSITION_SAME_LINE,
             ],
             [
                 '<?php
     if (true) : $foo = 1; endif;',
                 null,
-                self::$configurationOopPositionSameLine,
+                self::CONFIGURATION_OOP_POSITION_SAME_LINE,
             ],
             [
                 '<?php
@@ -1525,7 +1558,7 @@ if (true) {
 }',
                 '<?php
 if (true)$foo = 1;',
-                self::$configurationOopPositionSameLine,
+                self::CONFIGURATION_OOP_POSITION_SAME_LINE,
             ],
             [
                 '<?php
@@ -1534,7 +1567,7 @@ if (true) {
 }',
                 '<?php
 if (true)    $foo = 2;',
-                self::$configurationOopPositionSameLine,
+                self::CONFIGURATION_OOP_POSITION_SAME_LINE,
             ],
             [
                 '<?php
@@ -1543,7 +1576,7 @@ if (true) {
 }',
                 '<?php
 if (true){$foo = 3;}',
-                self::$configurationOopPositionSameLine,
+                self::CONFIGURATION_OOP_POSITION_SAME_LINE,
             ],
             [
                 '<?php
@@ -1554,7 +1587,7 @@ if (true) {
 }',
                 '<?php
 if(true) { echo 1; } else echo 2;',
-                self::$configurationOopPositionSameLine,
+                self::CONFIGURATION_OOP_POSITION_SAME_LINE,
             ],
             [
                 '<?php
@@ -1565,7 +1598,7 @@ if (true) {
 }',
                 '<?php
 if(true) echo 3; else { echo 4; }',
-                self::$configurationOopPositionSameLine,
+                self::CONFIGURATION_OOP_POSITION_SAME_LINE,
             ],
             [
                 '<?php
@@ -1576,7 +1609,7 @@ if (true) {
 }',
                 '<?php
 if (true) echo 5; else echo 6;',
-                self::$configurationOopPositionSameLine,
+                self::CONFIGURATION_OOP_POSITION_SAME_LINE,
             ],
             [
                 '<?php
@@ -1588,7 +1621,7 @@ if (true) {
 }',
                 '<?php
 if (true) while (true) { $foo = 1; $bar = 2;}',
-                self::$configurationOopPositionSameLine,
+                self::CONFIGURATION_OOP_POSITION_SAME_LINE,
             ],
             [
                 '<?php
@@ -1603,7 +1636,7 @@ if (true) {
 }',
                 '<?php
 if (true) if (true) echo 1; else echo 2; else echo 3;',
-                self::$configurationOopPositionSameLine,
+                self::CONFIGURATION_OOP_POSITION_SAME_LINE,
             ],
             [
                 '<?php
@@ -1620,7 +1653,7 @@ if (true) {
 
     if ($a && ($b || $c)) $d = 1;
 }',
-                self::$configurationOopPositionSameLine,
+                self::CONFIGURATION_OOP_POSITION_SAME_LINE,
             ],
             [
                 '<?php
@@ -1633,7 +1666,7 @@ for ($i = 1; $i < 10; ++$i) {
                 '<?php
 for ($i = 1; $i < 10; ++$i) echo $i;
 for ($i = 1; $i < 10; ++$i) { echo $i; }',
-                self::$configurationOopPositionSameLine,
+                self::CONFIGURATION_OOP_POSITION_SAME_LINE,
             ],
             [
                 '<?php
@@ -1644,7 +1677,7 @@ for ($i = 1; $i < 5; ++$i) {
 }',
                 '<?php
 for ($i = 1; $i < 5; ++$i) for ($i = 1; $i < 10; ++$i) { echo $i; }',
-                self::$configurationOopPositionSameLine,
+                self::CONFIGURATION_OOP_POSITION_SAME_LINE,
             ],
             [
                 '<?php
@@ -1653,13 +1686,13 @@ do {
 } while (false);',
                 '<?php
 do { echo 1; } while (false);',
-                self::$configurationOopPositionSameLine,
+                self::CONFIGURATION_OOP_POSITION_SAME_LINE,
             ],
             [
                 '<?php
 while ($foo->next());',
                 null,
-                self::$configurationOopPositionSameLine,
+                self::CONFIGURATION_OOP_POSITION_SAME_LINE,
             ],
             [
                 '<?php
@@ -1668,7 +1701,7 @@ foreach ($foo as $bar) {
 }',
                 '<?php
 foreach ($foo as $bar) echo $bar;',
-                self::$configurationOopPositionSameLine,
+                self::CONFIGURATION_OOP_POSITION_SAME_LINE,
             ],
             [
                 '<?php
@@ -1677,7 +1710,7 @@ if (true) {
 }',
                 '<?php
 if (true) {$a = 1;}',
-                self::$configurationOopPositionSameLine,
+                self::CONFIGURATION_OOP_POSITION_SAME_LINE,
             ],
             [
                 '<?php
@@ -1688,7 +1721,7 @@ if (true) {
 if (true) {
  $a = 1;
 }',
-                self::$configurationOopPositionSameLine,
+                self::CONFIGURATION_OOP_POSITION_SAME_LINE,
             ],
             [
                 '<?php
@@ -1709,7 +1742,7 @@ if (true) {
                         }
         $d = 4;
 }',
-                self::$configurationOopPositionSameLine,
+                self::CONFIGURATION_OOP_POSITION_SAME_LINE,
             ],
             [
                 '<?php
@@ -1720,7 +1753,7 @@ if (true) {
     $b = 2;
 }',
                 null,
-                self::$configurationOopPositionSameLine,
+                self::CONFIGURATION_OOP_POSITION_SAME_LINE,
             ],
             [
                 '<?php
@@ -1730,7 +1763,7 @@ if (1) {
     // comment at end
 }',
                 null,
-                self::$configurationOopPositionSameLine,
+                self::CONFIGURATION_OOP_POSITION_SAME_LINE,
             ],
             [
                 '<?php
@@ -1746,7 +1779,40 @@ if (1) {
     $d = "d";
 }',
                 null,
-                self::$configurationOopPositionSameLine,
+                self::CONFIGURATION_OOP_POSITION_SAME_LINE,
+            ],
+            [
+                '<?php
+if (1) {
+    if (2) {
+        $a = "a";
+    } elseif (3) {
+        $b = "b";
+    // comment line 1
+    // comment line 2
+    // comment line 3
+    // comment line 4
+    } else {
+        $c = "c";
+    }
+    $d = "d";
+}',
+                '<?php
+if (1) {
+    if (2) {
+        $a = "a";
+    } elseif (3) {
+        $b = "b";
+        // comment line 1
+        // comment line 2
+// comment line 3
+            // comment line 4
+    } else {
+        $c = "c";
+    }
+    $d = "d";
+}',
+                self::CONFIGURATION_OOP_POSITION_SAME_LINE,
             ],
             [
                 '<?php
@@ -1757,7 +1823,7 @@ foreach ($numbers as $num) {
     $b = "b";
 }',
                 null,
-                self::$configurationOopPositionSameLine,
+                self::CONFIGURATION_OOP_POSITION_SAME_LINE,
             ],
             [
                 '<?php
@@ -1771,7 +1837,7 @@ if (1) {
     }
 }',
                 null,
-                self::$configurationOopPositionSameLine,
+                self::CONFIGURATION_OOP_POSITION_SAME_LINE,
             ],
             [
                 '<?php
@@ -1783,7 +1849,7 @@ if (1) {
     ticks = 1  ) {
   $ticks = 1;
     }',
-                self::$configurationOopPositionSameLine,
+                self::CONFIGURATION_OOP_POSITION_SAME_LINE,
             ],
             [
                 '<?php
@@ -1800,7 +1866,7 @@ if (1) {
     {
         bar();
     }',
-                self::$configurationOopPositionSameLine,
+                self::CONFIGURATION_OOP_POSITION_SAME_LINE,
             ],
             [
                 '<?php
@@ -1812,7 +1878,7 @@ if (1) {
     {
         foo();
     }',
-                self::$configurationOopPositionSameLine,
+                self::CONFIGURATION_OOP_POSITION_SAME_LINE,
             ],
             [
                 '<?php
@@ -1825,7 +1891,7 @@ if (1) {
         echo $test;
     }
     while ($test = $this->getTest());',
-                self::$configurationOopPositionSameLine,
+                self::CONFIGURATION_OOP_POSITION_SAME_LINE,
             ],
             [
                 '<?php
@@ -1837,15 +1903,11 @@ if (1) {
     {
         echo $test;
     }while ($test = $this->getTest());',
-                self::$configurationOopPositionSameLine,
+                self::CONFIGURATION_OOP_POSITION_SAME_LINE,
             ],
             [
                 '<?php
     class ClassName {
-
-
-
-
         /**
          * comment
          */
@@ -1865,15 +1927,11 @@ if (1) {
 
 
     }',
-                self::$configurationOopPositionSameLine,
+                self::CONFIGURATION_OOP_POSITION_SAME_LINE,
             ],
             [
                 '<?php
     class ClassName {
-
-
-
-
         /**
          * comment
          */
@@ -1893,7 +1951,7 @@ if (1) {
 
 
     }',
-                self::$configurationOopPositionSameLine + self::$configurationCtrlStructPositionNextLine,
+                self::CONFIGURATION_OOP_POSITION_SAME_LINE + self::CONFIGURATION_CTRL_STRUCT_POSITION_NEXT_LINE,
             ],
             [
                 '<?php
@@ -1905,7 +1963,7 @@ if (1) {
         }
     }',
                 null,
-                self::$configurationOopPositionSameLine,
+                self::CONFIGURATION_OOP_POSITION_SAME_LINE,
             ],
             [
                 '<?php
@@ -1928,7 +1986,7 @@ if (1) {
             // do nothing
         }
     }',
-                self::$configurationOopPositionSameLine + self::$configurationCtrlStructPositionNextLine,
+                self::CONFIGURATION_OOP_POSITION_SAME_LINE + self::CONFIGURATION_CTRL_STRUCT_POSITION_NEXT_LINE,
             ],
             [
                 '<?php
@@ -1940,7 +1998,7 @@ if (1) {
     {
         public function setConfig(ConfigInterface $config);
     }',
-                self::$configurationOopPositionSameLine,
+                self::CONFIGURATION_OOP_POSITION_SAME_LINE,
             ],
             [
                 '<?php
@@ -1952,7 +2010,7 @@ if (1) {
     {
         public function setConfig(ConfigInterface $config);
     }',
-                self::$configurationOopPositionSameLine + self::$configurationCtrlStructPositionNextLine,
+                self::CONFIGURATION_OOP_POSITION_SAME_LINE + self::CONFIGURATION_CTRL_STRUCT_POSITION_NEXT_LINE,
             ],
             [
                 '<?php
@@ -1964,7 +2022,7 @@ function bar()
 {
     $a = 1; //comment
 }',
-                self::$configurationOopPositionSameLine,
+                self::CONFIGURATION_OOP_POSITION_SAME_LINE,
             ],
             [
                 '<?php
@@ -1980,7 +2038,7 @@ function & lambda()
     return function () {
     };
 }',
-                self::$configurationOopPositionSameLine,
+                self::CONFIGURATION_OOP_POSITION_SAME_LINE,
             ],
             [
                 '<?php
@@ -1997,7 +2055,7 @@ function & lambda()
     return function () {
     };
 }',
-                self::$configurationOopPositionSameLine + self::$configurationAnonymousPositionNextLine,
+                self::CONFIGURATION_OOP_POSITION_SAME_LINE + self::CONFIGURATION_ANONYMOUS_POSITION_NEXT_LINE,
             ],
             [
                 '<?php
@@ -2013,7 +2071,7 @@ function & lambda()
     return function () {
     };
 }',
-                self::$configurationOopPositionSameLine + self::$configurationCtrlStructPositionNextLine,
+                self::CONFIGURATION_OOP_POSITION_SAME_LINE + self::CONFIGURATION_CTRL_STRUCT_POSITION_NEXT_LINE,
             ],
             [
                 '<?php
@@ -2025,7 +2083,7 @@ function nested()
 {
     $a = "a{$b->c()}d";
 }',
-                self::$configurationOopPositionSameLine,
+                self::CONFIGURATION_OOP_POSITION_SAME_LINE,
             ],
             [
                 '<?php
@@ -2037,7 +2095,7 @@ function nested()
 {
     $a = "a{$b->c()}d";
 }',
-                self::$configurationOopPositionSameLine + self::$configurationCtrlStructPositionNextLine,
+                self::CONFIGURATION_OOP_POSITION_SAME_LINE + self::CONFIGURATION_CTRL_STRUCT_POSITION_NEXT_LINE,
             ],
             [
                 '<?php
@@ -2059,7 +2117,7 @@ function foo()
     $p = array($q->{$r}, $s->{$t});
     $u->{$v}->w = 1;
 }',
-                self::$configurationOopPositionSameLine,
+                self::CONFIGURATION_OOP_POSITION_SAME_LINE,
             ],
             [
                 '<?php
@@ -2081,7 +2139,7 @@ function foo()
     $p = array($q->{$r}, $s->{$t});
     $u->{$v}->w = 1;
 }',
-                self::$configurationOopPositionSameLine + self::$configurationCtrlStructPositionNextLine,
+                self::CONFIGURATION_OOP_POSITION_SAME_LINE + self::CONFIGURATION_CTRL_STRUCT_POSITION_NEXT_LINE,
             ],
             [
                 '<?php
@@ -2093,7 +2151,7 @@ function mixed()
 {
     $a = $b->{"a{$c}d"}();
 }',
-                self::$configurationOopPositionSameLine,
+                self::CONFIGURATION_OOP_POSITION_SAME_LINE,
             ],
             [
                 '<?php
@@ -2105,7 +2163,7 @@ function mixedComplex()
 {
     $a = $b->{"a{$c->{\'foo-bar\'}()}d"}();
 }',
-                self::$configurationOopPositionSameLine,
+                self::CONFIGURATION_OOP_POSITION_SAME_LINE,
             ],
             [
                 '<?php
@@ -2117,7 +2175,7 @@ function mixedComplex()
 {
     $a = ${"b{$foo}"}->{"a{$c->{\'foo-bar\'}()}d"}();
 }',
-                self::$configurationOopPositionSameLine,
+                self::CONFIGURATION_OOP_POSITION_SAME_LINE,
             ],
             [
                 '<?php
@@ -2128,7 +2186,7 @@ function mixedComplex()
     endif;
 ',
                 null,
-                self::$configurationOopPositionSameLine,
+                self::CONFIGURATION_OOP_POSITION_SAME_LINE,
             ],
             [
                 '<?php
@@ -2139,7 +2197,7 @@ function mixedComplex()
     endif;
 ',
                 null,
-                self::$configurationOopPositionSameLine + self::$configurationCtrlStructPositionNextLine,
+                self::CONFIGURATION_OOP_POSITION_SAME_LINE + self::CONFIGURATION_CTRL_STRUCT_POSITION_NEXT_LINE,
             ],
             [
                 '<?php
@@ -2147,7 +2205,7 @@ function mixedComplex()
         echo 1;
     }',
                 null,
-                self::$configurationOopPositionSameLine,
+                self::CONFIGURATION_OOP_POSITION_SAME_LINE,
             ],
             [
                 '<?php
@@ -2170,14 +2228,14 @@ function mixedComplex()
             print("bar");
         }
     }',
-                self::$configurationOopPositionSameLine,
+                self::CONFIGURATION_OOP_POSITION_SAME_LINE,
             ],
             [
                 '<?php
     if (true)
+    // foo
+    // bar
     {
-        // foo
-        // bar
         if (true)
         {
             print("foo");
@@ -2195,7 +2253,7 @@ function mixedComplex()
             print("bar");
         }
     }',
-                self::$configurationOopPositionSameLine + self::$configurationCtrlStructPositionNextLine,
+                self::CONFIGURATION_OOP_POSITION_SAME_LINE + self::CONFIGURATION_CTRL_STRUCT_POSITION_NEXT_LINE,
             ],
             [
                 '<?php
@@ -2217,14 +2275,14 @@ function mixedComplex()
             print("bar");
         }
     }',
-                self::$configurationOopPositionSameLine,
+                self::CONFIGURATION_OOP_POSITION_SAME_LINE,
             ],
             [
                 '<?php if (true) {
     echo "s";
 } ?>x',
                 '<?php if (true) echo "s" ?>x',
-                self::$configurationOopPositionSameLine,
+                self::CONFIGURATION_OOP_POSITION_SAME_LINE,
             ],
             [
                 '<?php
@@ -2254,7 +2312,7 @@ function mixedComplex()
                 });
         }
     }',
-                self::$configurationOopPositionSameLine,
+                self::CONFIGURATION_OOP_POSITION_SAME_LINE,
             ],
             [
                 '<?php
@@ -2285,7 +2343,7 @@ function mixedComplex()
                 });
         }
     }',
-                self::$configurationOopPositionSameLine + self::$configurationCtrlStructPositionNextLine,
+                self::CONFIGURATION_OOP_POSITION_SAME_LINE + self::CONFIGURATION_CTRL_STRUCT_POSITION_NEXT_LINE,
             ],
             [
                 '<?php
@@ -2317,7 +2375,7 @@ function mixedComplex()
                 });
         }
     }',
-                self::$configurationOopPositionSameLine + self::$configurationCtrlStructPositionNextLine + self::$configurationAnonymousPositionNextLine,
+                self::CONFIGURATION_OOP_POSITION_SAME_LINE + self::CONFIGURATION_CTRL_STRUCT_POSITION_NEXT_LINE + self::CONFIGURATION_ANONYMOUS_POSITION_NEXT_LINE,
             ],
             [
                 '<?php
@@ -2340,7 +2398,7 @@ if(true)
     else
         echo 3;
 ',
-                self::$configurationOopPositionSameLine,
+                self::CONFIGURATION_OOP_POSITION_SAME_LINE,
             ],
             [
                 '<?php
@@ -2365,7 +2423,7 @@ if(true)
         echo 3;
 echo 4;
 ',
-                self::$configurationOopPositionSameLine,
+                self::CONFIGURATION_OOP_POSITION_SAME_LINE,
             ],
             [
                 '<?php
@@ -2380,7 +2438,7 @@ if (true) {
 }',
                 '<?php
 if(true) if(true) echo 1; elseif(true) echo 2; else echo 3;',
-                self::$configurationOopPositionSameLine,
+                self::CONFIGURATION_OOP_POSITION_SAME_LINE,
             ],
             [
                 '<?php
@@ -2395,7 +2453,7 @@ if (true) {
 }',
                 '<?php
 if(true) if(true) echo 1; else echo 2; else echo 3;',
-                self::$configurationOopPositionSameLine,
+                self::CONFIGURATION_OOP_POSITION_SAME_LINE,
             ],
             [
                 '<?php
@@ -2411,7 +2469,7 @@ foreach ($data as $val)
     if ($val === "errors") {
         echo "!";
     }',
-                self::$configurationOopPositionSameLine,
+                self::CONFIGURATION_OOP_POSITION_SAME_LINE,
             ],
             [
                 '<?php
@@ -2430,7 +2488,7 @@ if (1)
         if ($val === "errors") {
             echo "!";
         }',
-                self::$configurationOopPositionSameLine,
+                self::CONFIGURATION_OOP_POSITION_SAME_LINE,
             ],
 
             [
@@ -2448,7 +2506,7 @@ if (1)
         echo "Hello";
       }
     }',
-                self::$configurationOopPositionSameLine,
+                self::CONFIGURATION_OOP_POSITION_SAME_LINE,
             ],
             [
                 '<?php
@@ -2465,7 +2523,7 @@ class Foo
     echo "Hello";
   }
 }',
-                self::$configurationOopPositionSameLine,
+                self::CONFIGURATION_OOP_POSITION_SAME_LINE,
             ],
             [
                 '<?php
@@ -2482,7 +2540,7 @@ class Foo
     echo "Hello";
   }
 }',
-                self::$configurationOopPositionSameLine + self::$configurationCtrlStructPositionNextLine,
+                self::CONFIGURATION_OOP_POSITION_SAME_LINE + self::CONFIGURATION_CTRL_STRUCT_POSITION_NEXT_LINE,
             ],
             [
                 '<?php
@@ -2496,7 +2554,7 @@ class Foo
                 public $bar;
                 public $baz;
     }',
-                self::$configurationOopPositionSameLine,
+                self::CONFIGURATION_OOP_POSITION_SAME_LINE,
             ],
             [
                 '<?php
@@ -2508,15 +2566,14 @@ class Foo
     {
         return \Foo::{$foo}($bar);
     }',
-                self::$configurationOopPositionSameLine,
+                self::CONFIGURATION_OOP_POSITION_SAME_LINE,
             ],
             [
                 '<?php
     class C {
         public function __construct(
-        )
-        //comment
-        {
+        ) {
+            //comment
         }
     }',
                 '<?php
@@ -2526,28 +2583,24 @@ class Foo
         //comment
         {}
     }',
-                self::$configurationOopPositionSameLine,
+                self::CONFIGURATION_OOP_POSITION_SAME_LINE,
             ],
             [
                 '<?php
-class Something # a
-{
-    public function sth() //
-    {
+class Something { # a
+    public function sth() { //
         return function (int $foo) use ($bar) {
             return $bar;
         };
     }
 }
 
-function C() /**/ //    # /**/
-{
+function C() { /**/ //    # /**/
 }
 
-function D() /**
+function D() { /**
 *
 */
-{
 }',
                 '<?php
 class Something # a
@@ -2567,12 +2620,44 @@ function D() /**
 */
 {
 }',
-                self::$configurationOopPositionSameLine,
+                self::CONFIGURATION_OOP_POSITION_SAME_LINE,
+            ],
+            [
+                '<?php
+class Foo
+{
+    #[Baz]
+    public function bar()
+    {
+    }
+}',
+                '<?php
+class Foo
+{
+ #[Baz]
+       public function bar()
+ {
+   }
+}',
+            ],
+            [
+                '<?php
+class Foo
+{
+    public function bar($arg1,
+                        $arg2,
+                   $arg3)
+    {
+    }
+}',
+                null,
             ],
         ];
     }
 
     /**
+     * @param array<string, mixed> $configuration
+     *
      * @dataProvider provideFixClassyBracesCases
      */
     public function testFixClassyBraces(string $expected, ?string $input = null, array $configuration = []): void
@@ -2582,7 +2667,7 @@ function D() /**
         $this->doTest($expected, $input);
     }
 
-    public function provideFixClassyBracesCases()
+    public function provideFixClassyBracesCases(): iterable
     {
         return [
             [
@@ -2649,7 +2734,7 @@ function foo()
                     }',
                 '<?php
                     class FooA {}',
-                self::$configurationOopPositionSameLine,
+                self::CONFIGURATION_OOP_POSITION_SAME_LINE,
             ],
             [
                 '<?php
@@ -2657,7 +2742,7 @@ function foo()
                     }',
                 '<?php
                     class FooB{}',
-                self::$configurationOopPositionSameLine,
+                self::CONFIGURATION_OOP_POSITION_SAME_LINE,
             ],
             [
                 '<?php
@@ -2666,7 +2751,7 @@ function foo()
                 '<?php
                     class FooC
 {}',
-                self::$configurationOopPositionSameLine,
+                self::CONFIGURATION_OOP_POSITION_SAME_LINE,
             ],
             [
                 '<?php
@@ -2674,7 +2759,7 @@ function foo()
                     }',
                 '<?php
                     interface FooD {}',
-                self::$configurationOopPositionSameLine,
+                self::CONFIGURATION_OOP_POSITION_SAME_LINE,
             ],
             [
                 '<?php
@@ -2683,7 +2768,7 @@ function foo()
                 }',
                 '<?php
                 class TestClass extends BaseTestClass implements TestInterface { private $foo;}',
-                self::$configurationOopPositionSameLine,
+                self::CONFIGURATION_OOP_POSITION_SAME_LINE,
             ],
             [
                 '<?php
@@ -2700,7 +2785,7 @@ abstract class Foo
         return true;
     }
 }',
-                self::$configurationOopPositionSameLine,
+                self::CONFIGURATION_OOP_POSITION_SAME_LINE,
             ],
             [
                 '<?php
@@ -2712,7 +2797,7 @@ function foo()
 {
     return "$c ($d)";
 }',
-                self::$configurationOopPositionSameLine,
+                self::CONFIGURATION_OOP_POSITION_SAME_LINE,
             ],
             [
                 '<?php
@@ -2730,7 +2815,7 @@ function foo()
     }',
                 '<?php
     trait TFoo {public $a;}',
-                self::$configurationOopPositionSameLine,
+                self::CONFIGURATION_OOP_POSITION_SAME_LINE,
             ],
             [
                 '<?php
@@ -2748,12 +2833,14 @@ function foo()
     }',
                 '<?php
     trait TFoo {public $a;}',
-                self::$configurationOopPositionSameLine,
+                self::CONFIGURATION_OOP_POSITION_SAME_LINE,
             ],
         ];
     }
 
     /**
+     * @param array<string, mixed> $configuration
+     *
      * @dataProvider provideFixAnonFunctionInShortArraySyntaxCases
      */
     public function testFixAnonFunctionInShortArraySyntax(string $expected, ?string $input = null, array $configuration = []): void
@@ -2763,7 +2850,7 @@ function foo()
         $this->doTest($expected, $input);
     }
 
-    public function provideFixAnonFunctionInShortArraySyntaxCases()
+    public function provideFixAnonFunctionInShortArraySyntaxCases(): iterable
     {
         return [
             [
@@ -2828,7 +2915,7 @@ function foo()
             ],
         ];
     }',
-                self::$configurationOopPositionSameLine,
+                self::CONFIGURATION_OOP_POSITION_SAME_LINE,
             ],
             [
                 '<?php
@@ -2862,12 +2949,14 @@ function foo()
             ],
         ];
     }',
-                self::$configurationOopPositionSameLine + self::$configurationAnonymousPositionNextLine,
+                self::CONFIGURATION_OOP_POSITION_SAME_LINE + self::CONFIGURATION_ANONYMOUS_POSITION_NEXT_LINE,
             ],
         ];
     }
 
     /**
+     * @param array<string, mixed> $configuration
+     *
      * @dataProvider provideFixCommentBeforeBraceCases
      */
     public function testFixCommentBeforeBrace(string $expected, ?string $input = null, array $configuration = []): void
@@ -2877,7 +2966,7 @@ function foo()
         $this->doTest($expected, $input);
     }
 
-    public function provideFixCommentBeforeBraceCases()
+    public function provideFixCommentBeforeBraceCases(): iterable
     {
         return [
             [
@@ -2908,7 +2997,7 @@ function foo()
             [
                 '<?php ',
                 null,
-                self::$configurationOopPositionSameLine,
+                self::CONFIGURATION_OOP_POSITION_SAME_LINE,
             ],
             [
                 '<?php
@@ -2920,7 +3009,7 @@ function foo()
     {
         echo 1;
     }',
-                self::$configurationOopPositionSameLine,
+                self::CONFIGURATION_OOP_POSITION_SAME_LINE,
             ],
             [
                 '<?php
@@ -2932,7 +3021,7 @@ function foo()
     {
         echo 1;
     };',
-                self::$configurationOopPositionSameLine,
+                self::CONFIGURATION_OOP_POSITION_SAME_LINE,
             ],
             [
                 '<?php
@@ -2958,13 +3047,17 @@ function foo()
             [
                 '<?php
 if ($a) { //
+    ?><?php ++$a;
+} ?>',
+                '<?php
+if ($a) { //
 ?><?php ++$a;
 } ?>',
             ],
             [
                 '<?php
 if ($a) { /* */ /* */ /* */ /* */ /* */
-?><?php ++$a;
+    ?><?php ++$a;
 } ?>',
             ],
             [
@@ -2988,12 +3081,14 @@ if ($a) { /* */ /* */ /* */ /* */ /* */
     {
         private $x;
     };',
-                self::$configurationOopPositionSameLine,
+                self::CONFIGURATION_OOP_POSITION_SAME_LINE,
             ],
         ];
     }
 
     /**
+     * @param array<string, mixed> $configuration
+     *
      * @dataProvider provideFixWhitespaceBeforeBraceCases
      */
     public function testFixWhitespaceBeforeBrace(string $expected, ?string $input = null, array $configuration = []): void
@@ -3003,7 +3098,7 @@ if ($a) { /* */ /* */ /* */ /* */ /* */
         $this->doTest($expected, $input);
     }
 
-    public function provideFixWhitespaceBeforeBraceCases()
+    public function provideFixWhitespaceBeforeBraceCases(): iterable
     {
         return [
             [
@@ -3079,7 +3174,7 @@ if ($a) { /* */ /* */ /* */ /* */ /* */
     {
         echo 1;
     }',
-                self::$configurationOopPositionSameLine,
+                self::CONFIGURATION_OOP_POSITION_SAME_LINE,
             ],
             [
                 '<?php
@@ -3090,7 +3185,7 @@ if ($a) { /* */ /* */ /* */ /* */ /* */
     if (true){
         echo 1;
     }',
-                self::$configurationOopPositionSameLine,
+                self::CONFIGURATION_OOP_POSITION_SAME_LINE,
             ],
             [
                 '<?php
@@ -3101,7 +3196,7 @@ if ($a) { /* */ /* */ /* */ /* */ /* */
     if (true)           {
         echo 1;
     }',
-                self::$configurationOopPositionSameLine,
+                self::CONFIGURATION_OOP_POSITION_SAME_LINE,
             ],
             [
                 '<?php
@@ -3111,7 +3206,7 @@ if ($a) { /* */ /* */ /* */ /* */ /* */
     while ($file = $this->getFile())
     {
     }',
-                self::$configurationOopPositionSameLine,
+                self::CONFIGURATION_OOP_POSITION_SAME_LINE,
             ],
             [
                 '<?php
@@ -3135,7 +3230,7 @@ if ($a) { /* */ /* */ /* */ /* */ /* */
             echo 3;
             echo 4;
     }',
-                self::$configurationOopPositionSameLine,
+                self::CONFIGURATION_OOP_POSITION_SAME_LINE,
             ],
             [
                 '<?php
@@ -3147,7 +3242,7 @@ if ($a) { /* */ /* */ /* */ /* */ /* */
     {
         echo 1;
     }',
-                self::$configurationAnonymousPositionNextLine,
+                self::CONFIGURATION_ANONYMOUS_POSITION_NEXT_LINE,
             ],
             [
                 '<?php
@@ -3158,7 +3253,7 @@ if ($a) { /* */ /* */ /* */ /* */ /* */
     if (true){
         echo 1;
     }',
-                self::$configurationAnonymousPositionNextLine,
+                self::CONFIGURATION_ANONYMOUS_POSITION_NEXT_LINE,
             ],
             [
                 '<?php
@@ -3169,7 +3264,7 @@ if ($a) { /* */ /* */ /* */ /* */ /* */
     if (true)           {
         echo 1;
     }',
-                self::$configurationAnonymousPositionNextLine,
+                self::CONFIGURATION_ANONYMOUS_POSITION_NEXT_LINE,
             ],
             [
                 '<?php
@@ -3179,7 +3274,7 @@ if ($a) { /* */ /* */ /* */ /* */ /* */
     while ($file = $this->getFile())
     {
     }',
-                self::$configurationAnonymousPositionNextLine,
+                self::CONFIGURATION_ANONYMOUS_POSITION_NEXT_LINE,
             ],
             [
                 '<?php
@@ -3203,12 +3298,14 @@ if ($a) { /* */ /* */ /* */ /* */ /* */
             echo 3;
             echo 4;
     }',
-                self::$configurationAnonymousPositionNextLine,
+                self::CONFIGURATION_ANONYMOUS_POSITION_NEXT_LINE,
             ],
         ];
     }
 
     /**
+     * @param array<string, mixed> $configuration
+     *
      * @dataProvider provideFixFunctionsCases
      */
     public function testFixFunctions(string $expected, ?string $input = null, array $configuration = []): void
@@ -3218,7 +3315,7 @@ if ($a) { /* */ /* */ /* */ /* */ /* */
         $this->doTest($expected, $input);
     }
 
-    public function provideFixFunctionsCases()
+    public function provideFixFunctionsCases(): iterable
     {
         return [
             [
@@ -3341,7 +3438,7 @@ class Foo
             ],
             [
                 '<?php
-    $fnc = function ($a, $b) /* random comment */ {
+    $fnc = function ($a, $b) { /* random comment */
         return 0;
     };',
                 '<?php
@@ -3352,7 +3449,7 @@ class Foo
             ],
             [
                 '<?php
-    $fnc = function ($a, $b) /** random comment */ {
+    $fnc = function ($a, $b) { /** random comment */
         return 0;
     };',
                 '<?php
@@ -3366,7 +3463,7 @@ class Foo
     function download() {
     }',
                 null,
-                self::$configurationOopPositionSameLine,
+                self::CONFIGURATION_OOP_POSITION_SAME_LINE,
             ],
             [
                 '<?php
@@ -3393,7 +3490,7 @@ class Foo
     {
     }
 }',
-                self::$configurationOopPositionSameLine,
+                self::CONFIGURATION_OOP_POSITION_SAME_LINE,
             ],
             [
                 '<?php
@@ -3402,7 +3499,7 @@ class Foo
     });
 ',
                 null,
-                self::$configurationOopPositionSameLine,
+                self::CONFIGURATION_OOP_POSITION_SAME_LINE,
             ],
             [
                 '<?php
@@ -3411,7 +3508,7 @@ class Foo
                 '<?php
     filter(function   ($a)
     {});',
-                self::$configurationOopPositionSameLine,
+                self::CONFIGURATION_OOP_POSITION_SAME_LINE,
             ],
             [
                 '<?php
@@ -3419,7 +3516,7 @@ class Foo
     });',
                 '<?php
     filter(function   ($b){});',
-                self::$configurationOopPositionSameLine,
+                self::CONFIGURATION_OOP_POSITION_SAME_LINE,
             ],
             [
                 '<?php
@@ -3430,7 +3527,7 @@ class Foo
     }, $collection));',
                 '<?php
     foo(array_map(function ($object) use ($x, $y) { return array_filter($object->bar(), function ($o) { return $o->isBaz(); }); }, $collection));',
-                self::$configurationOopPositionSameLine,
+                self::CONFIGURATION_OOP_POSITION_SAME_LINE,
             ],
             [
                 '<?php
@@ -3443,7 +3540,7 @@ class Foo
     }, $collection));',
                 '<?php
     foo(array_map(function ($object) use ($x, $y) { return array_filter($object->bar(), function ($o) { return $o->isBaz(); }); }, $collection));',
-                self::$configurationOopPositionSameLine + self::$configurationAnonymousPositionNextLine,
+                self::CONFIGURATION_OOP_POSITION_SAME_LINE + self::CONFIGURATION_ANONYMOUS_POSITION_NEXT_LINE,
             ],
             [
                 '<?php
@@ -3460,7 +3557,7 @@ class Foo
         return 1;
     }
 }',
-                self::$configurationOopPositionSameLine,
+                self::CONFIGURATION_OOP_POSITION_SAME_LINE,
             ],
             [
                 '<?php
@@ -3477,7 +3574,7 @@ class Foo
         return 1;
     }
 }',
-                self::$configurationOopPositionSameLine + self::$configurationCtrlStructPositionNextLine,
+                self::CONFIGURATION_OOP_POSITION_SAME_LINE + self::CONFIGURATION_CTRL_STRUCT_POSITION_NEXT_LINE,
             ],
             [
                 '<?php
@@ -3494,7 +3591,7 @@ class Foo
         return 1;
     }
 }',
-                self::$configurationOopPositionSameLine + self::$configurationAnonymousPositionNextLine,
+                self::CONFIGURATION_OOP_POSITION_SAME_LINE + self::CONFIGURATION_ANONYMOUS_POSITION_NEXT_LINE,
             ],
             [
                 '<?php
@@ -3502,7 +3599,7 @@ class Foo
         return 1;
     });',
                 null,
-                self::$configurationOopPositionSameLine,
+                self::CONFIGURATION_OOP_POSITION_SAME_LINE,
             ],
             [
                 '<?php
@@ -3513,7 +3610,7 @@ class Foo
         }
     );',
                 null,
-                self::$configurationOopPositionSameLine,
+                self::CONFIGURATION_OOP_POSITION_SAME_LINE,
             ],
             [
                 '<?php
@@ -3525,7 +3622,7 @@ class Foo
     {
         return 0;
     };',
-                self::$configurationOopPositionSameLine,
+                self::CONFIGURATION_OOP_POSITION_SAME_LINE,
             ],
             [
                 '<?php
@@ -3537,11 +3634,11 @@ class Foo
     {
         return 0;
     };',
-                self::$configurationOopPositionSameLine,
+                self::CONFIGURATION_OOP_POSITION_SAME_LINE,
             ],
             [
                 '<?php
-    $fnc = function ($a, $b) /* random comment */ {
+    $fnc = function ($a, $b) { /* random comment */
         return 0;
     };',
                 '<?php
@@ -3549,11 +3646,11 @@ class Foo
     {
         return 0;
     };',
-                self::$configurationOopPositionSameLine,
+                self::CONFIGURATION_OOP_POSITION_SAME_LINE,
             ],
             [
                 '<?php
-    $fnc = function ($a, $b) /** random comment */ {
+    $fnc = function ($a, $b) { /** random comment */
         return 0;
     };',
                 '<?php
@@ -3561,12 +3658,14 @@ class Foo
     {
         return 0;
     };',
-                self::$configurationOopPositionSameLine,
+                self::CONFIGURATION_OOP_POSITION_SAME_LINE,
             ],
         ];
     }
 
     /**
+     * @param array<string, mixed> $configuration
+     *
      * @dataProvider provideFixMultiLineStructuresCases
      */
     public function testFixMultiLineStructures(string $expected, ?string $input = null, array $configuration = []): void
@@ -3576,7 +3675,7 @@ class Foo
         $this->doTest($expected, $input);
     }
 
-    public function provideFixMultiLineStructuresCases()
+    public function provideFixMultiLineStructuresCases(): iterable
     {
         return [
             [
@@ -3591,7 +3690,7 @@ class Foo
     )
     {
     }',
-                self::$configurationCtrlStructPositionNextLine,
+                self::CONFIGURATION_CTRL_STRUCT_POSITION_NEXT_LINE,
             ],
             [
                 '<?php
@@ -3605,7 +3704,7 @@ class Foo
     )
     {
     }',
-                self::$configurationCtrlStructPositionNextLine,
+                self::CONFIGURATION_CTRL_STRUCT_POSITION_NEXT_LINE,
             ],
             [
                 '<?php
@@ -3621,7 +3720,7 @@ class Foo
     )
     {
     };',
-                self::$configurationAnonymousPositionNextLine,
+                self::CONFIGURATION_ANONYMOUS_POSITION_NEXT_LINE,
             ],
             [
                 '<?php
@@ -3643,7 +3742,7 @@ class Foo
         {
         }
     }',
-                self::$configurationCtrlStructPositionNextLine,
+                self::CONFIGURATION_CTRL_STRUCT_POSITION_NEXT_LINE,
             ],
             [
                 '<?php
@@ -3657,7 +3756,7 @@ class Foo
     )
     {
     }',
-                self::$configurationCtrlStructPositionNextLine,
+                self::CONFIGURATION_CTRL_STRUCT_POSITION_NEXT_LINE,
             ],
             [
                 '<?php
@@ -3679,12 +3778,14 @@ class Foo
     )
     {
     }',
-                self::$configurationCtrlStructPositionNextLine,
+                self::CONFIGURATION_CTRL_STRUCT_POSITION_NEXT_LINE,
             ],
         ];
     }
 
     /**
+     * @param array<string, mixed> $configuration
+     *
      * @dataProvider provideFixSpaceAroundTokenCases
      */
     public function testFixSpaceAroundToken(string $expected, ?string $input = null, array $configuration = []): void
@@ -3694,7 +3795,7 @@ class Foo
         $this->doTest($expected, $input);
     }
 
-    public function provideFixSpaceAroundTokenCases()
+    public function provideFixSpaceAroundTokenCases(): iterable
     {
         return [
             [
@@ -3795,7 +3896,7 @@ declare   (   ticks   =   1   )   {
     }catch (Exception $e){
         log($e);
     }',
-                self::$configurationOopPositionSameLine,
+                self::CONFIGURATION_OOP_POSITION_SAME_LINE,
             ],
             [
                 '<?php
@@ -3806,7 +3907,7 @@ declare   (   ticks   =   1   )   {
     do{
         echo 1;
     }while($test);',
-                self::$configurationOopPositionSameLine,
+                self::CONFIGURATION_OOP_POSITION_SAME_LINE,
             ],
             [
                 '<?php
@@ -3819,7 +3920,7 @@ declare   (   ticks   =   1   )   {
         && true === true
     )     {
     }',
-                self::$configurationOopPositionSameLine,
+                self::CONFIGURATION_OOP_POSITION_SAME_LINE,
             ],
             [
                 '<?php
@@ -3832,7 +3933,7 @@ declare   (   ticks   =   1   )   {
     }
     if ($this->tesT ($test)) {
     }',
-                self::$configurationOopPositionSameLine,
+                self::CONFIGURATION_OOP_POSITION_SAME_LINE,
             ],
             [
                 '<?php
@@ -3845,7 +3946,7 @@ declare   (   ticks   =   1   )   {
     }elseif(false){
     }else{
     }',
-                self::$configurationOopPositionSameLine,
+                self::CONFIGURATION_OOP_POSITION_SAME_LINE,
             ],
             [
                 '<?php
@@ -3853,7 +3954,7 @@ declare   (   ticks   =   1   )   {
     };',
                 '<?php
     $foo = function& ()use($bar){};',
-                self::$configurationOopPositionSameLine,
+                self::CONFIGURATION_OOP_POSITION_SAME_LINE,
             ],
             [
                 '<?php
@@ -3865,7 +3966,7 @@ declare(strict_types=1);
 while (true) {
 }',
                 null,
-                self::$configurationOopPositionSameLine,
+                self::CONFIGURATION_OOP_POSITION_SAME_LINE,
             ],
             [
                 '<?php
@@ -3874,12 +3975,14 @@ declare(ticks   =   1) {
                 '<?php
 declare   (   ticks   =   1   )   {
 }',
-                self::$configurationOopPositionSameLine,
+                self::CONFIGURATION_OOP_POSITION_SAME_LINE,
             ],
         ];
     }
 
     /**
+     * @param array<string, mixed> $configuration
+     *
      * @dataProvider provideFinallyCases
      */
     public function testFinally(string $expected, ?string $input = null, array $configuration = []): void
@@ -3889,7 +3992,7 @@ declare   (   ticks   =   1   )   {
         $this->doTest($expected, $input);
     }
 
-    public function provideFinallyCases()
+    public function provideFinallyCases(): iterable
     {
         return [
             [
@@ -3939,7 +4042,7 @@ declare   (   ticks   =   1   )   {
     finally     {
         echo "finish!";
     }',
-                self::$configurationOopPositionSameLine,
+                self::CONFIGURATION_OOP_POSITION_SAME_LINE,
             ],
             [
                 '<?php
@@ -3971,12 +4074,14 @@ declare   (   ticks   =   1   )   {
     finally     {
         echo "finish!";
     }',
-                self::$configurationOopPositionSameLine + self::$configurationCtrlStructPositionNextLine,
+                self::CONFIGURATION_OOP_POSITION_SAME_LINE + self::CONFIGURATION_CTRL_STRUCT_POSITION_NEXT_LINE,
             ],
         ];
     }
 
     /**
+     * @param array<string, mixed> $configuration
+     *
      * @dataProvider provideFunctionImportCases
      */
     public function testFunctionImport(string $expected, ?string $input = null, array $configuration = []): void
@@ -3986,7 +4091,7 @@ declare   (   ticks   =   1   )   {
         $this->doTest($expected, $input);
     }
 
-    public function provideFunctionImportCases()
+    public function provideFunctionImportCases(): iterable
     {
         return [
             [
@@ -4001,7 +4106,7 @@ declare   (   ticks   =   1   )   {
     if (true) {
     }',
                 null,
-                self::$configurationOopPositionSameLine,
+                self::CONFIGURATION_OOP_POSITION_SAME_LINE,
             ],
             [
                 '<?php
@@ -4013,7 +4118,7 @@ declare   (   ticks   =   1   )   {
     use function Foo\bar;
     if (true) {
     }',
-                self::$configurationOopPositionSameLine + self::$configurationCtrlStructPositionNextLine,
+                self::CONFIGURATION_OOP_POSITION_SAME_LINE + self::CONFIGURATION_CTRL_STRUCT_POSITION_NEXT_LINE,
             ],
             [
                 '<?php
@@ -4025,8 +4130,9 @@ declare   (   ticks   =   1   )   {
     }
 
     /**
+     * @param array<string, mixed> $configuration
+     *
      * @dataProvider provideFix70Cases
-     * @requires PHP 7.0
      */
     public function testFix70(string $expected, ?string $input = null, array $configuration = []): void
     {
@@ -4035,7 +4141,7 @@ declare   (   ticks   =   1   )   {
         $this->doTest($expected, $input);
     }
 
-    public function provideFix70Cases()
+    public function provideFix70Cases(): iterable
     {
         return [
             [
@@ -4173,6 +4279,12 @@ if (1) {
             [
                 '<?php
 use function some\a\{
+    test1,
+    test2
+};
+test();',
+                '<?php
+use function some\a\{
      test1,
     test2
  };
@@ -4200,7 +4312,7 @@ use const some\a\{ConstA, ConstB, ConstC};
         // foo
         $foo = new class($a) extends Foo { public function bar() {} };
     }',
-                self::$configurationOopPositionSameLine,
+                self::CONFIGURATION_OOP_POSITION_SAME_LINE,
             ],
             [
                 '<?php
@@ -4219,7 +4331,7 @@ use const some\a\{ConstA, ConstB, ConstC};
         // foo
         $foo = new class($a) extends Foo { public function bar() {} };
     }',
-                self::$configurationCtrlStructPositionNextLine,
+                self::CONFIGURATION_CTRL_STRUCT_POSITION_NEXT_LINE,
             ],
             [
                 '<?php
@@ -4236,7 +4348,7 @@ use const some\a\{ConstA, ConstB, ConstC};
         // foo
         $foo = new class($a) extends Foo { public function bar() {} };
     }',
-                self::$configurationOopPositionSameLine + self::$configurationCtrlStructPositionNextLine,
+                self::CONFIGURATION_OOP_POSITION_SAME_LINE + self::CONFIGURATION_CTRL_STRUCT_POSITION_NEXT_LINE,
             ],
             [
                 '<?php
@@ -4256,7 +4368,7 @@ use const some\a\{ConstA, ConstB, ConstC};
         // foo
         $foo = new class($a) extends Foo { public function bar() {} };
     }',
-                self::$configurationAnonymousPositionNextLine,
+                self::CONFIGURATION_ANONYMOUS_POSITION_NEXT_LINE,
             ],
             [
                 '<?php
@@ -4274,7 +4386,7 @@ use const some\a\{ConstA, ConstB, ConstC};
         // foo
         $foo = new class($a) extends Foo { public function bar() {} };
     }',
-                self::$configurationOopPositionSameLine + self::$configurationAnonymousPositionNextLine,
+                self::CONFIGURATION_OOP_POSITION_SAME_LINE + self::CONFIGURATION_ANONYMOUS_POSITION_NEXT_LINE,
             ],
             [
                 '<?php
@@ -4285,7 +4397,7 @@ use const some\a\{ConstA, ConstB, ConstC};
     }, 3);',
                 '<?php
     foo(1, new class implements Logger { public function log($message) { log($message); } }, 3);',
-                self::$configurationOopPositionSameLine,
+                self::CONFIGURATION_OOP_POSITION_SAME_LINE,
             ],
             [
                 '<?php
@@ -4297,7 +4409,7 @@ use const some\a\{ConstA, ConstB, ConstC};
     }, 3);',
                 '<?php
     foo(1, new class implements Logger { public function log($message) { log($message); } }, 3);',
-                self::$configurationCtrlStructPositionNextLine,
+                self::CONFIGURATION_CTRL_STRUCT_POSITION_NEXT_LINE,
             ],
             [
                 '<?php
@@ -4309,7 +4421,7 @@ use const some\a\{ConstA, ConstB, ConstC};
     }, 3);',
                 '<?php
     foo(1, new class implements Logger { public function log($message) { log($message); } }, 3);',
-                self::$configurationOopPositionSameLine + self::$configurationAnonymousPositionNextLine,
+                self::CONFIGURATION_OOP_POSITION_SAME_LINE + self::CONFIGURATION_ANONYMOUS_POSITION_NEXT_LINE,
             ],
             [
                 '<?php
@@ -4317,7 +4429,7 @@ $message = (new class() implements FooInterface {
 });',
                 '<?php
 $message = (new class() implements FooInterface{});',
-                self::$configurationOopPositionSameLine,
+                self::CONFIGURATION_OOP_POSITION_SAME_LINE,
             ],
             [
                 '<?php
@@ -4325,7 +4437,7 @@ $message = (new class() implements FooInterface {
 });',
                 '<?php
 $message = (new class() implements FooInterface{});',
-                self::$configurationCtrlStructPositionNextLine,
+                self::CONFIGURATION_CTRL_STRUCT_POSITION_NEXT_LINE,
             ],
             [
                 '<?php
@@ -4334,26 +4446,26 @@ $message = (new class() implements FooInterface
 });',
                 '<?php
 $message = (new class() implements FooInterface{});',
-                self::$configurationOopPositionSameLine + self::$configurationAnonymousPositionNextLine,
+                self::CONFIGURATION_OOP_POSITION_SAME_LINE + self::CONFIGURATION_ANONYMOUS_POSITION_NEXT_LINE,
             ],
             [
                 '<?php $message = (new class() {
 });',
                 '<?php $message = (new class() {});',
-                self::$configurationOopPositionSameLine,
+                self::CONFIGURATION_OOP_POSITION_SAME_LINE,
             ],
             [
                 '<?php $message = (new class() {
 });',
                 '<?php $message = (new class() {});',
-                self::$configurationCtrlStructPositionNextLine,
+                self::CONFIGURATION_CTRL_STRUCT_POSITION_NEXT_LINE,
             ],
             [
                 '<?php $message = (new class()
 {
 });',
                 '<?php $message = (new class() {});',
-                self::$configurationOopPositionSameLine + self::$configurationAnonymousPositionNextLine,
+                self::CONFIGURATION_OOP_POSITION_SAME_LINE + self::CONFIGURATION_ANONYMOUS_POSITION_NEXT_LINE,
             ],
             [
                 '<?php
@@ -4371,7 +4483,7 @@ if (1) {
     public function bar() { echo 1; }
   });
 }',
-                self::$configurationOopPositionSameLine,
+                self::CONFIGURATION_OOP_POSITION_SAME_LINE,
             ],
             [
                 '<?php
@@ -4391,7 +4503,7 @@ if (1) {
     public function bar() { echo 1; }
   });
 }',
-                self::$configurationCtrlStructPositionNextLine,
+                self::CONFIGURATION_CTRL_STRUCT_POSITION_NEXT_LINE,
             ],
             [
                 '<?php
@@ -4410,7 +4522,7 @@ if (1) {
     public function bar() { echo 1; }
   });
 }',
-                self::$configurationOopPositionSameLine + self::$configurationAnonymousPositionNextLine,
+                self::CONFIGURATION_OOP_POSITION_SAME_LINE + self::CONFIGURATION_ANONYMOUS_POSITION_NEXT_LINE,
             ],
             [
                 '<?php
@@ -4429,7 +4541,7 @@ if (1) {
     public function bar() { echo 1; }
   });
 }',
-                self::$configurationOopPositionSameLine + self::$configurationAnonymousPositionNextLine,
+                self::CONFIGURATION_OOP_POSITION_SAME_LINE + self::CONFIGURATION_ANONYMOUS_POSITION_NEXT_LINE,
             ],
             [
                 '<?php
@@ -4450,7 +4562,7 @@ if (1) {
     public function bar() { echo 1; }
   });
 }',
-                self::$configurationCtrlStructPositionNextLine + self::$configurationAnonymousPositionNextLine,
+                self::CONFIGURATION_CTRL_STRUCT_POSITION_NEXT_LINE + self::CONFIGURATION_ANONYMOUS_POSITION_NEXT_LINE,
             ],
             [
                 '<?php
@@ -4470,7 +4582,7 @@ if (1) {
     public function bar() { echo 1; }
   });
 }',
-                self::$configurationOopPositionSameLine + self::$configurationCtrlStructPositionNextLine + self::$configurationAnonymousPositionNextLine,
+                self::CONFIGURATION_OOP_POSITION_SAME_LINE + self::CONFIGURATION_CTRL_STRUCT_POSITION_NEXT_LINE + self::CONFIGURATION_ANONYMOUS_POSITION_NEXT_LINE,
             ],
             [
                 '<?php
@@ -4492,7 +4604,7 @@ if (1) {
         }
     }
                 ',
-                self::$configurationOopPositionSameLine,
+                self::CONFIGURATION_OOP_POSITION_SAME_LINE,
             ],
             [
                 '<?php
@@ -4514,7 +4626,7 @@ if (1) {
         }
     }
                 ',
-                self::$configurationOopPositionSameLine + self::$configurationCtrlStructPositionNextLine,
+                self::CONFIGURATION_OOP_POSITION_SAME_LINE + self::CONFIGURATION_CTRL_STRUCT_POSITION_NEXT_LINE,
             ],
             [
                 '<?php
@@ -4543,7 +4655,7 @@ if (1) {
     function a() {
     }
                 ',
-                self::$configurationOopPositionSameLine,
+                self::CONFIGURATION_OOP_POSITION_SAME_LINE,
             ],
             [
                 '<?php
@@ -4574,7 +4686,7 @@ if (1) {
     function a() {
     }
                 ',
-                self::$configurationOopPositionSameLine + self::$configurationAnonymousPositionNextLine,
+                self::CONFIGURATION_OOP_POSITION_SAME_LINE + self::CONFIGURATION_ANONYMOUS_POSITION_NEXT_LINE,
             ],
             [
                 '<?php
@@ -4593,7 +4705,7 @@ if (1) {
             return function (int $foo) use ($bar): string { return $bar; };
         }
     }',
-                self::$configurationOopPositionSameLine,
+                self::CONFIGURATION_OOP_POSITION_SAME_LINE,
             ],
             [
                 '<?php
@@ -4613,37 +4725,52 @@ if (1) {
             return function (int $foo) use ($bar): string { return $bar; };
         }
     }',
-                self::$configurationOopPositionSameLine + self::$configurationAnonymousPositionNextLine,
+                self::CONFIGURATION_OOP_POSITION_SAME_LINE + self::CONFIGURATION_ANONYMOUS_POSITION_NEXT_LINE,
             ],
             [
+                '<?php
+use function some\a\{
+    test1,
+    test2
+};
+test();',
                 '<?php
 use function some\a\{
      test1,
     test2
  };
 test();',
-                null,
-                self::$configurationOopPositionSameLine,
+                self::CONFIGURATION_OOP_POSITION_SAME_LINE,
             ],
             [
+                '<?php
+use function some\a\{
+    test1,
+    test2
+};
+test();',
                 '<?php
 use function some\a\{
      test1,
     test2
  };
 test();',
-                null,
-                self::$configurationOopPositionSameLine + self::$configurationCtrlStructPositionNextLine,
+                self::CONFIGURATION_OOP_POSITION_SAME_LINE + self::CONFIGURATION_CTRL_STRUCT_POSITION_NEXT_LINE,
             ],
             [
+                '<?php
+use function some\a\{
+    test1,
+    test2
+};
+test();',
                 '<?php
 use function some\a\{
      test1,
     test2
  };
 test();',
-                null,
-                self::$configurationOopPositionSameLine + self::$configurationAnonymousPositionNextLine,
+                self::CONFIGURATION_OOP_POSITION_SAME_LINE + self::CONFIGURATION_ANONYMOUS_POSITION_NEXT_LINE,
             ],
             [
                 '<?php
@@ -4652,7 +4779,7 @@ use function some\a\{fn_a, fn_b, fn_c};
 use const some\a\{ConstA, ConstB, ConstC};
 ',
                 null,
-                self::$configurationOopPositionSameLine,
+                self::CONFIGURATION_OOP_POSITION_SAME_LINE,
             ],
             [
                 '<?php
@@ -4661,7 +4788,7 @@ use function some\a\{fn_a, fn_b, fn_c};
 use const some\a\{ConstA, ConstB, ConstC};
 ',
                 null,
-                self::$configurationOopPositionSameLine + self::$configurationCtrlStructPositionNextLine,
+                self::CONFIGURATION_OOP_POSITION_SAME_LINE + self::CONFIGURATION_CTRL_STRUCT_POSITION_NEXT_LINE,
             ],
             [
                 '<?php
@@ -4670,7 +4797,7 @@ use function some\a\{fn_a, fn_b, fn_c};
 use const some\a\{ConstA, ConstB, ConstC};
 ',
                 null,
-                self::$configurationOopPositionSameLine + self::$configurationAnonymousPositionNextLine,
+                self::CONFIGURATION_OOP_POSITION_SAME_LINE + self::CONFIGURATION_ANONYMOUS_POSITION_NEXT_LINE,
             ],
             [
                 '<?php
@@ -4717,6 +4844,8 @@ $foo = new class () extends \Exception { protected $message = "Surprise"; };
     }
 
     /**
+     * @param array<string, mixed> $configuration
+     *
      * @dataProvider providePreserveLineAfterControlBraceCases
      */
     public function testPreserveLineAfterControlBrace(string $expected, ?string $input = null, array $configuration = []): void
@@ -4726,7 +4855,7 @@ $foo = new class () extends \Exception { protected $message = "Surprise"; };
         $this->doTest($expected, $input);
     }
 
-    public function providePreserveLineAfterControlBraceCases()
+    public function providePreserveLineAfterControlBraceCases(): iterable
     {
         return [
             [
@@ -4749,8 +4878,9 @@ if (1 === 1) {//a
     $a = "b"; /*d*/
 }//c
 echo $a;
-if ($a === 3) /**/
-{echo 1;}
+if ($a === 3) { /**/
+    echo 1;
+}
 ',
                 '<?php
 if ($test) // foo
@@ -4767,7 +4897,6 @@ if ($a === 3) /**/
             [
                 '<?php
 if (true) {
-
     //  The blank line helps with legibility in nested control structures
     if (true) {
         // if body
@@ -4777,9 +4906,32 @@ if (true) {
 }',
             ],
             [
+                "<?php if (true) {\n    // CRLF newline\n}",
                 "<?php if (true) {\r\n\r\n// CRLF newline\n}",
             ],
             [
+                '<?php
+if (true) {
+    //  The blank line helps with legibility in nested control structures
+    if (true) {
+        // if body
+    }
+
+    // if body
+}',
+                null,
+                self::CONFIGURATION_OOP_POSITION_SAME_LINE,
+            ],
+            [
+                '<?php
+if (true) {
+    //  The blank line helps with legibility in nested control structures
+    if (true) {
+        // if body
+    }
+
+    // if body
+}',
                 '<?php
 if (true) {
 
@@ -4790,14 +4942,12 @@ if (true) {
 
     // if body
 }',
-                null,
-                self::$configurationOopPositionSameLine,
+                self::CONFIGURATION_OOP_POSITION_SAME_LINE,
             ],
             [
                 '<?php
 if (true)
 {
-
     //  The blank line helps with legibility in nested control structures
     if (true)
     {
@@ -4816,18 +4966,18 @@ if (true) {
 
     // if body
 }',
-                self::$configurationOopPositionSameLine + self::$configurationCtrlStructPositionNextLine,
+                self::CONFIGURATION_OOP_POSITION_SAME_LINE + self::CONFIGURATION_CTRL_STRUCT_POSITION_NEXT_LINE,
             ],
             [
-                "<?php if (true) {\r\n\r\n// CRLF newline\n}",
-                null,
-                self::$configurationOopPositionSameLine,
+                "<?php if (true) {\n    // CRLF newline\n}",
+                "<?php if (true) {\r\n\r\n    // CRLF newline\n}",
+                self::CONFIGURATION_OOP_POSITION_SAME_LINE,
             ],
             [
                 "<?php if (true)
-{\r\n\r\n// CRLF newline\n}",
+{\n    // CRLF newline\n}",
                 "<?php if (true){\r\n\r\n// CRLF newline\n}",
-                self::$configurationOopPositionSameLine + self::$configurationCtrlStructPositionNextLine,
+                self::CONFIGURATION_OOP_POSITION_SAME_LINE + self::CONFIGURATION_CTRL_STRUCT_POSITION_NEXT_LINE,
             ],
         ];
     }
@@ -4844,7 +4994,7 @@ if (true) {
         $this->doTest($expected, $input);
     }
 
-    public function provideFixWithAllowOnelineLambdaCases()
+    public function provideFixWithAllowOnelineLambdaCases(): iterable
     {
         return [
             [
@@ -4886,7 +5036,7 @@ if (true) {
         $this->doTest($expected, $input);
     }
 
-    public function provideDoWhileLoopInsideAnIfWithoutBracketsCases()
+    public function provideDoWhileLoopInsideAnIfWithoutBracketsCases(): iterable
     {
         return [
             [
@@ -4906,6 +5056,8 @@ if (true)
     }
 
     /**
+     * @param array<string, mixed> $configuration
+     *
      * @dataProvider provideMessyWhitespacesCases
      */
     public function testMessyWhitespaces(string $expected, ?string $input = null, array $configuration = []): void
@@ -4917,7 +5069,7 @@ if (true)
         $this->doTest($expected, $input);
     }
 
-    public function provideMessyWhitespacesCases()
+    public function provideMessyWhitespacesCases(): iterable
     {
         return [
             [
@@ -4947,7 +5099,7 @@ if (true) {'."\r\n"
 .'}',
                 '<?php
 if(true) if(true) echo 1; elseif(true) echo 2; else echo 3;',
-                self::$configurationOopPositionSameLine,
+                self::CONFIGURATION_OOP_POSITION_SAME_LINE,
             ],
             [
                 '<?php
@@ -4967,7 +5119,7 @@ if (true)'
 .'}',
                 '<?php
 if(true) if(true) echo 1; elseif(true) echo 2; else echo 3;',
-                self::$configurationOopPositionSameLine + self::$configurationCtrlStructPositionNextLine,
+                self::CONFIGURATION_OOP_POSITION_SAME_LINE + self::CONFIGURATION_CTRL_STRUCT_POSITION_NEXT_LINE,
             ],
         ];
     }
@@ -4980,7 +5132,7 @@ if(true) if(true) echo 1; elseif(true) echo 2; else echo 3;',
         $this->doTest($expected, $input);
     }
 
-    public function provideNowdocInTemplatesCases()
+    public function provideNowdocInTemplatesCases(): iterable
     {
         return [
             [
@@ -4989,7 +5141,7 @@ if(true) if(true) echo 1; elseif(true) echo 2; else echo 3;',
 if (true) {
     $var = <<<'NOWDOC'
 NOWDOC;
-?>
+    ?>
 <?php
 }
 
@@ -5013,7 +5165,7 @@ EOT
 if (true) {
     $var = <<<HEREDOC
 HEREDOC;
-?>
+    ?>
 <?php
 }
 
@@ -5043,7 +5195,7 @@ EOT
         $this->doTest(str_replace('//', '#', $expected), null === $input ? null : str_replace('//', '#', $input));
     }
 
-    public function provideFixCommentsCases()
+    public function provideFixCommentsCases(): iterable
     {
         return [
             [
@@ -5253,7 +5405,7 @@ function example()
         $this->doTest($expected, $input);
     }
 
-    public function provideIndentCommentCases()
+    public function provideIndentCommentCases(): iterable
     {
         yield [
             "<?php
@@ -5339,7 +5491,7 @@ return foo($i);
         $this->doTest($expected, $input);
     }
 
-    public function provideFixAlternativeSyntaxCases()
+    public function provideFixAlternativeSyntaxCases(): iterable
     {
         yield [
             '<?php if (foo()) {
@@ -5358,19 +5510,28 @@ return foo($i);
         ];
 
         yield [
+            '<?php if ($a) {
+    foreach ($b as $c): ?> X <?php endforeach;
+} ?>',
             '<?php if ($a) foreach ($b as $c): ?> X <?php endforeach; ?>',
         ];
 
         yield [
-            '<?php if ($a) while ($b): ?> X <?php endwhile; ?>',
+            '<?php if ($a) {
+    while ($b): ?> X <?php endwhile;
+} ?>',
         ];
 
         yield [
-            '<?php if ($a) for (;;): ?> X <?php endfor; ?>',
+            '<?php if ($a) {
+    for (;;): ?> X <?php endfor;
+} ?>',
         ];
 
         yield [
-            '<?php if ($a) switch ($a): case 1: ?> X <?php endswitch; ?>',
+            '<?php if ($a) {
+    switch ($a): case 1: ?> X <?php endswitch;
+} ?>',
         ];
 
         yield [
@@ -5382,6 +5543,47 @@ return foo($i);
         ];
 
         yield [
+            '<?php
+if ($a) {
+    foreach ($b as $c): ?>
+    <?php if ($a) {
+        for (;;): ?>
+        <?php if ($a) {
+            foreach ($b as $c): ?>
+            <?php if ($a) {
+                for (;;): ?>
+                <?php if ($a) {
+                    while ($b): ?>
+                    <?php if ($a) {
+                        while ($b): ?>
+                        <?php if ($a) {
+                            foreach ($b as $c): ?>
+                            <?php if ($a) {
+                                for (;;): ?>
+                                <?php if ($a) {
+                                    while ($b): ?>
+                                    <?php if ($a) {
+                                        while ($b): ?>
+                                    <?php endwhile;
+                                    } ?>
+                                <?php endwhile;
+                                } ?>
+                            <?php endfor;
+                            } ?>
+                        <?php endforeach;
+                        } ?>
+                    <?php endwhile;
+                    } ?>
+                <?php endwhile;
+                } ?>
+            <?php endfor;
+            } ?>
+        <?php endforeach;
+        } ?>
+    <?php endfor;
+    } ?>
+<?php endforeach;
+} ?>',
             '<?php
 if ($a) foreach ($b as $c): ?>
     <?php if ($a) for (;;): ?>
@@ -5404,6 +5606,84 @@ if ($a) foreach ($b as $c): ?>
     <?php endfor; ?>
 <?php endforeach; ?>',
         ];
+
+        yield [
+            '<?php
+switch (n) {
+    case label1:
+        echo 1;
+        echo 2;
+        break;
+    default:
+        echo 3;
+        echo 4;
+}',
+            '<?php
+switch (n)
+{
+ case label1:
+    echo 1;
+        echo 2;
+        break;
+    default:
+        echo 3;
+        echo 4;
+}',
+        ];
+
+        yield [
+            '<?php
+switch ($foo) {
+    case \'bar\': if (5) {
+        echo 6;
+    }
+}',
+            '<?php
+switch ($foo)
+{
+case \'bar\': if (5) echo 6;
+}',
+        ];
+
+        yield [
+            '<?php
+
+class mySillyClass
+{
+    public function mrMethod()
+    {
+        switch ($i) {
+            case 0:
+                echo "i equals 0";
+                break;
+            case 1:
+                echo "i equals 1";
+                break;
+            case 2:
+                echo "i equals 2";
+                break;
+        }
+    }
+}',
+            '<?php
+
+class mySillyClass
+{
+public function mrMethod() {
+switch ($i) {
+case 0:
+echo "i equals 0";
+break;
+case 1:
+echo "i equals 1";
+break;
+case 2:
+echo "i equals 2";
+break;
+}
+}
+}',
+        ];
     }
 
     /**
@@ -5416,7 +5696,7 @@ if ($a) foreach ($b as $c): ?>
         $this->doTest($expected, $input);
     }
 
-    public function provideFix80Cases()
+    public function provideFix80Cases(): iterable
     {
         yield 'match' => [
             '<?php echo match ($x) {
@@ -5426,6 +5706,49 @@ if ($a) foreach ($b as $c): ?>
 {
     1, 2 => "Same for 1 and 2",
 };',
+        ];
+    }
+
+    /**
+     * @requires PHP 8.1
+     *
+     * @dataProvider provideFix81Cases
+     */
+    public function testFix81(string $expected, string $input): void
+    {
+        $this->doTest($expected, $input);
+    }
+
+    public function provideFix81Cases(): iterable
+    {
+        yield 'enum' => [
+            '<?php
+ enum Foo
+ {
+     case Bar;
+
+     public function abc()
+     {
+     }
+ }',
+            '<?php
+ enum Foo {
+     case Bar;
+
+     public function abc() {
+     }
+ }',
+        ];
+
+        yield 'backed-enum' => [
+            '<?php
+ enum Foo: string
+ {
+     case Bar = "bar";
+ }',
+            '<?php
+ enum Foo: string {
+ case Bar = "bar";}',
         ];
     }
 }

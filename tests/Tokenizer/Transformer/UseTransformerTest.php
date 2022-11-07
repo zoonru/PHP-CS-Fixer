@@ -27,7 +27,7 @@ use PhpCsFixer\Tokenizer\CT;
 final class UseTransformerTest extends AbstractTransformerTestCase
 {
     /**
-     * @param array<int, int> $expectedTokens index => kind
+     * @param array<int, int> $expectedTokens
      *
      * @dataProvider provideProcessCases
      */
@@ -149,6 +149,7 @@ use C\{D,E,};
      * @param array<int, int> $expectedTokens index => kind
      *
      * @requires PHP 8.1
+     *
      * @dataProvider provideProcessPhp81Cases
      */
     public function testProcessPhp81(string $source, array $expectedTokens = []): void

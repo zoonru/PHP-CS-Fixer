@@ -27,7 +27,7 @@ Assumptions
 -----------
 
 * You are familiar with Test Driven Development.
-* Forked FriendsOfPHP/PHP-CS-Fixer into your own GitHub Account.
+* Forked PHP-CS-Fixer/PHP-CS-Fixer into your own GitHub Account.
 * Cloned your forked repository locally.
 * Installed the dependencies of PHP CS Fixer using Composer_.
 * You have read `CONTRIBUTING.md`_.
@@ -36,7 +36,7 @@ Step by step
 ------------
 
 For this step-by-step, we are going to create a simple fixer that
-removes all comments from the code that are preceded by ';' (semicolon).
+removes all comments from the code that are preceded by `;` (semicolon).
 
 We are calling it ``remove_comments`` (code name), or,
 ``RemoveCommentsFixer`` (class name).
@@ -263,10 +263,10 @@ First, we need to create one method to describe what this fixer does:
        public function getDefinition()
        {
            return new FixerDefinition(
-               'Removes all comments of the code that are preceded by ";" (semicolon).', // Trailing dot is important. We thrive to use English grammar properly.
+               'Removes all comments of the code that are preceded by `;` (semicolon).', // Trailing dot is important. We thrive to use English grammar properly.
                [
                    new CodeSample(
-                       '<?php echo 123; /* Comment */'
+                       "<?php echo 123; /* Comment */\n"
                    ),
                ]
            );
@@ -279,7 +279,7 @@ Execute the following command in your command shell:
 
 .. code-block:: console
 
-   $ php dev-tools/doc.php
+   php dev-tools/doc.php
 
 Next, we must filter what type of tokens we want to fix. Here, we are interested in code that contains ``T_COMMENT`` tokens:
 
@@ -319,7 +319,7 @@ For now, let us just make a fixer that applies no modification:
        }
    }
 
-Run ``$ phpunit tests/Fixer/Comment/RemoveCommentsFixerTest.php``.
+Run ``phpunit tests/Fixer/Comment/RemoveCommentsFixerTest.php``.
 You are going to see that the tests fail.
 
 Break
@@ -442,10 +442,10 @@ So the fixer in the end looks like this:
        public function getDefinition()
        {
            return new FixerDefinition(
-               'Removes all comments of the code that are preceded by ";" (semicolon).', // Trailing dot is important. We thrive to use English grammar properly.
+               'Removes all comments of the code that are preceded by `;` (semicolon).', // Trailing dot is important. We thrive to use English grammar properly.
                [
                    new CodeSample(
-                       '<?php echo 123; /* Comment */'
+                       "<?php echo 123; /* Comment */\n"
                    ),
                ]
            );
@@ -487,7 +487,7 @@ itself. Thus, on the command line call:
 
 .. code-block:: console
 
-   $ php php-cs-fixer fix
+   php php-cs-fixer fix
 
 This will fix all the coding style mistakes.
 

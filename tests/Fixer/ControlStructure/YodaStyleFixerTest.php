@@ -27,6 +27,8 @@ use PhpCsFixer\Tests\Test\AbstractFixerTestCase;
 final class YodaStyleFixerTest extends AbstractFixerTestCase
 {
     /**
+     * @param array<string, mixed> $extraConfig
+     *
      * @dataProvider provideFixCases
      */
     public function testFix(string $expected, ?string $input = null, array $extraConfig = []): void
@@ -37,6 +39,8 @@ final class YodaStyleFixerTest extends AbstractFixerTestCase
 
     /**
      * Test with the inverse config.
+     *
+     * @param array<string, mixed> $extraConfig
      *
      * @dataProvider provideFixCases
      */
@@ -51,7 +55,7 @@ final class YodaStyleFixerTest extends AbstractFixerTestCase
         }
     }
 
-    public function provideFixCases(): \Generator
+    public function provideFixCases(): iterable
     {
         yield from [
             [
@@ -239,7 +243,7 @@ if ($a = $obj instanceof A === true) {
             ['<?php return $foo->$a === $foo->$b->$c;'],
             ['<?php return $x === 2 - 1;'],
             ['<?php return $x === 2-1;'],
-            // https://github.com/FriendsOfPHP/PHP-CS-Fixer/pull/693
+            // https://github.com/PHP-CS-Fixer/PHP-CS-Fixer/pull/693
             ['<?php return array(2) == $o;'],
             ['<?php return $p == array(2);'],
             ['<?php return $p == array("2");'],
@@ -649,17 +653,8 @@ $a#4
             ];
         }
 
-        $assignmentOperators = ['=', '**=', '*=', '|=', '+=', '-=', '^=',  '<<=', '>>=', '&=', '.=', '/=', '%='];
-
-        if (\PHP_VERSION_ID >= 70400) {
-            $assignmentOperators[] = '??=';
-        }
-
-        $logicalOperators = ['xor', 'or', 'and',  '||', '&&'];
-
-        if (\PHP_VERSION_ID >= 70400) {
-            $logicalOperators[] = '??';
-        }
+        $assignmentOperators = ['=', '**=', '*=', '|=', '+=', '-=', '^=', '<<=', '>>=', '&=', '.=', '/=', '%=', '??='];
+        $logicalOperators = ['xor', 'or', 'and', '||', '&&', '??'];
 
         foreach (array_merge($assignmentOperators, $logicalOperators) as $operator) {
             yield [
@@ -794,6 +789,8 @@ switch ($a) {
     }
 
     /**
+     * @param array<mixed> $config
+     *
      * @dataProvider provideInvalidConfigurationCases
      */
     public function testInvalidConfig(array $config, string $expectedMessage): void
@@ -819,7 +816,6 @@ switch ($a) {
 
     /**
      * @dataProvider providePHP71Cases
-     * @requires PHP 7.1
      */
     public function testPHP71Cases(string $expected, ?string $input = null): void
     {
@@ -831,7 +827,6 @@ switch ($a) {
      * Test with the inverse config.
      *
      * @dataProvider providePHP71Cases
-     * @requires PHP 7.1
      */
     public function testPHP71CasesInverse(string $expected, ?string $input = null): void
     {
@@ -889,6 +884,8 @@ switch ($a) {
     }
 
     /**
+     * @param array<string, mixed> $config
+     *
      * @dataProvider provideFixWithConfigCases
      */
     public function testWithConfig(array $config, string $expected): void
@@ -897,7 +894,7 @@ switch ($a) {
         $this->doTest($expected);
     }
 
-    public function provideFixWithConfigCases(): \Generator
+    public function provideFixWithConfigCases(): iterable
     {
         yield [
             [
@@ -929,14 +926,13 @@ while (2 !== $b = array_pop($c));
 
     /**
      * @dataProvider provideFixPhp74Cases
-     * @requires PHP 7.4
      */
     public function testFixPhp74(string $expected, ?string $input): void
     {
         $this->doTest($expected, $input);
     }
 
-    public function provideFixPhp74Cases(): \Generator
+    public function provideFixPhp74Cases(): iterable
     {
         yield [
             '<?php if (1_000 === $b);',
@@ -947,19 +943,18 @@ while (2 !== $b = array_pop($c));
     /**
      * Test with the inverse config.
      *
+     * @param array<string, mixed> $configuration
+     *
      * @dataProvider providePHP74Cases
-     * @requires PHP 7.4
      */
-    public function testPHP74CasesInverse(string $expected, ?string $input = null, ?array $configuration = null): void
+    public function testPHP74CasesInverse(string $expected, ?string $input = null, array $configuration = []): void
     {
-        if (null !== $configuration) {
-            $this->fixer->configure($configuration);
-        }
+        $this->fixer->configure($configuration);
 
         $this->doTest($expected, $input);
     }
 
-    public function providePHP74Cases(): \Generator
+    public function providePHP74Cases(): iterable
     {
         yield [
             '<?php fn() => $c === array(1) ? $b : $d;',
@@ -985,7 +980,7 @@ while (2 !== $b = array_pop($c));
         $this->doTest($expected, $input);
     }
 
-    public function provideFixPrePHP80Cases(): \Generator
+    public function provideFixPrePHP80Cases(): iterable
     {
         yield [
             '<?php return \A/*5*/\/*6*/B\/*7*/C::MY_CONST === \A/*1*//*1*//*1*//*1*//*1*/\/*2*/B/*3*/\C/*4*/::$myVariable;',
@@ -1012,7 +1007,10 @@ while (2 !== $b = array_pop($c));
     }
 
     /**
+     * @param array<string, mixed> $config
+     *
      * @dataProvider provideFix80Cases
+     *
      * @requires PHP 8.0
      */
     public function testFix80(string $expected, ?string $input = null, array $config = []): void
@@ -1021,7 +1019,7 @@ while (2 !== $b = array_pop($c));
         $this->doTest($expected, $input);
     }
 
-    public function provideFix80Cases(): \Generator
+    public function provideFix80Cases(): iterable
     {
         yield [
             '<?php
@@ -1059,6 +1057,7 @@ if ($a = $obj instanceof (foo()) === true) {
 
     /**
      * @dataProvider provideFix81Cases
+     *
      * @requires PHP 8.1
      */
     public function testFix81(string $expected, string $input = null): void
@@ -1066,7 +1065,7 @@ if ($a = $obj instanceof (foo()) === true) {
         $this->doTest($expected, $input);
     }
 
-    public function provideFix81Cases(): \Generator
+    public function provideFix81Cases(): iterable
     {
         yield 'does not make a lot of sense but is valid syntax, do not break 1' => [
             '<?php $b = strlen( ... ) === $a;',

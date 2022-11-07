@@ -1923,28 +1923,6 @@ function bar() {} }',
                 '<?php class Foo { private /* foo */function bar() {} }',
                 '<?php class Foo { private  /* foo */function bar() {} }',
             ],
-        ];
-    }
-
-    /**
-     * @requires PHP 7.1
-     *
-     * @dataProvider provideFixWithPrivatePhp71Cases
-     */
-    public function testFixWithPrivatePhp71(string $expected, ?string $input = null): void
-    {
-        $this->fixer->configure([
-            'constructs' => [
-                'private',
-            ],
-        ]);
-
-        $this->doTest($expected, $input);
-    }
-
-    public function provideFixWithPrivatePhp71Cases(): array
-    {
-        return [
             [
                 '<?php class Foo { private CONST BAR = 9000; }',
                 '<?php class Foo { private  CONST BAR = 9000; }',
@@ -2023,28 +2001,6 @@ function bar() {} }',
                 '<?php class Foo { protected /* foo */function bar() {} }',
                 '<?php class Foo { protected  /* foo */function bar() {} }',
             ],
-        ];
-    }
-
-    /**
-     * @requires PHP 7.1
-     *
-     * @dataProvider provideFixWithProtectedPhp71Cases
-     */
-    public function testFixWithProtectedPhp71(string $expected, ?string $input = null): void
-    {
-        $this->fixer->configure([
-            'constructs' => [
-                'protected',
-            ],
-        ]);
-
-        $this->doTest($expected, $input);
-    }
-
-    public function provideFixWithProtectedPhp71Cases(): array
-    {
-        return [
             [
                 '<?php class Foo { protected CONST BAR = 9000; }',
                 '<?php class Foo { protected  CONST BAR = 9000; }',
@@ -2921,6 +2877,12 @@ baz(); }',
             [
                 "<?php\n",
             ],
+            [
+                "<?php \necho 1;",
+            ],
+            [
+                "<?php    \n\necho 1;",
+            ],
         ];
     }
 
@@ -2939,7 +2901,7 @@ baz(); }',
         $this->doTest($expected, $input);
     }
 
-    public function provideCommentsCases(): \Generator
+    public function provideCommentsCases(): iterable
     {
         yield [
             '<?php
@@ -3050,6 +3012,7 @@ namespace/* comment */ Foo;',
 
     /**
      * @dataProvider provideFix80Cases
+     *
      * @requires PHP 8.0
      */
     public function testFix80(string $expected, string $input): void
@@ -3057,7 +3020,7 @@ namespace/* comment */ Foo;',
         $this->doTest($expected, $input);
     }
 
-    public function provideFix80Cases(): \Generator
+    public function provideFix80Cases(): iterable
     {
         yield 'match 1' => [
             '<?php echo match ($x) {
@@ -3123,6 +3086,7 @@ class Point {
 
     /**
      * @dataProvider provideFix81Cases
+     *
      * @requires PHP 8.1
      */
     public function testFix81(string $expected, string $input): void
@@ -3130,7 +3094,7 @@ class Point {
         $this->doTest($expected, $input);
     }
 
-    public function provideFix81Cases(): \Generator
+    public function provideFix81Cases(): iterable
     {
         yield 'readonly' => [
             '<?php
@@ -3224,7 +3188,7 @@ class    Test {
         $this->doTest($expected, $input);
     }
 
-    public function provideFixWithSwitchCases(): \Generator
+    public function provideFixWithSwitchCases(): iterable
     {
         yield [
             '<?php
@@ -3235,6 +3199,77 @@ class    Test {
                 switch($a){ case 1: echo 123; }
                 switch  ($b){ case 1: echo 123; }
             ',
+        ];
+    }
+
+    /**
+     * @dataProvider provideTypeColonCases
+     */
+    public function testTypeColon(string $expected, string $input): void
+    {
+        $this->fixer->configure([
+            'constructs' => [
+                'type_colon',
+            ],
+        ]);
+
+        $this->doTest($expected, $input);
+    }
+
+    public function provideTypeColonCases(): iterable
+    {
+        yield [
+            '<?php function foo(): array { return []; }',
+            "<?php function foo():\narray { return []; }",
+        ];
+
+        yield [
+            '<?php interface F { public function foo(): array; }',
+            "<?php interface F { public function foo():\tarray; }",
+        ];
+
+        yield [
+            '<?php $a=1; $f = function () use($a): array {};',
+            '<?php $a=1; $f = function () use($a):array {};',
+        ];
+
+        yield [
+            '<?php fn()        : array => [];',
+            '<?php fn()        :      array => [];',
+        ];
+
+        yield [
+            '<?php $a=1; $f = fn (): array => [];',
+            '<?php $a=1; $f = fn ():      array => [];',
+        ];
+    }
+
+    /**
+     * @dataProvider provideEnumTypeColonCases
+     *
+     * @requires PHP 8.1
+     */
+    public function testEnumTypeColon(string $expected, string $input): void
+    {
+        $this->fixer->configure([
+            'constructs' => [
+                'type_colon',
+            ],
+        ]);
+
+        $this->doTest($expected, $input);
+    }
+
+    public function provideEnumTypeColonCases(): iterable
+    {
+        yield [
+            '<?php enum Foo: int {}',
+            "<?php enum Foo:\nint {}",
+        ];
+
+        yield [
+            '<?php enum Foo: string {}',
+            '<?php enum Foo:string {}',
         ];
     }
 }

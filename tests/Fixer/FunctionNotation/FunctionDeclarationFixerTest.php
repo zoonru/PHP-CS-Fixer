@@ -33,6 +33,11 @@ final class FunctionDeclarationFixerTest extends AbstractFixerTestCase
      */
     private static $configurationClosureSpacingNone = ['closure_function_spacing' => FunctionDeclarationFixer::SPACING_NONE];
 
+    /**
+     * @var array<string,string>
+     */
+    private static $configurationArrowSpacingNone = ['closure_fn_spacing' => FunctionDeclarationFixer::SPACING_NONE];
+
     public function testInvalidConfigurationClosureFunctionSpacing(): void
     {
         $this->expectException(InvalidFixerConfigurationException::class);
@@ -43,13 +48,24 @@ final class FunctionDeclarationFixerTest extends AbstractFixerTestCase
         $this->fixer->configure(['closure_function_spacing' => 'neither']);
     }
 
+    public function testInvalidConfigurationClosureFnSpacing(): void
+    {
+        $this->expectException(InvalidFixerConfigurationException::class);
+        $this->expectExceptionMessageMatches(
+            '#^\[function_declaration\] Invalid configuration: The option "closure_fn_spacing" with value "neither" is invalid\. Accepted values are: "none", "one"\.$#'
+        );
+
+        $this->fixer->configure(['closure_fn_spacing' => 'neither']);
+    }
+
     /**
+     * @param array<string, mixed> $configuration
+     *
      * @dataProvider provideFixCases
      */
     public function testFix(string $expected, ?string $input = null, array $configuration = []): void
     {
         $this->fixer->configure($configuration);
-
         $this->doTest($expected, $input);
     }
 
@@ -364,23 +380,6 @@ foo#
             ['<?php use function Foo\bar; bar ( 1 );', null, self::$configurationClosureSpacingNone],
             ['<?php use function some\test\{fn_a, fn_b, fn_c};', null, self::$configurationClosureSpacingNone],
             ['<?php use function some\test\{fn_a, fn_b, fn_c} ?>', null, self::$configurationClosureSpacingNone],
-        ];
-    }
-
-    /**
-     * @dataProvider provideFix74Cases
-     * @requires PHP 7.4
-     */
-    public function test74(string $expected, ?string $input = null, array $configuration = []): void
-    {
-        $this->fixer->configure($configuration);
-
-        $this->doTest($expected, $input);
-    }
-
-    public function provideFix74Cases(): array
-    {
-        return [
             [
                 '<?php fn ($i) => null;',
                 '<?php fn($i) => null;',
@@ -400,32 +399,32 @@ foo#
             [
                 '<?php fn($i) => null;',
                 null,
-                self::$configurationClosureSpacingNone,
+                self::$configurationArrowSpacingNone,
             ],
             [
                 '<?php fn($a) => null;',
                 '<?php fn ($a)      => null;',
-                self::$configurationClosureSpacingNone,
+                self::$configurationArrowSpacingNone,
             ],
             [
                 '<?php $fn = fn() => null;',
                 '<?php $fn = fn ()=> null;',
-                self::$configurationClosureSpacingNone,
+                self::$configurationArrowSpacingNone,
             ],
             [
                 '<?php $fn("");',
                 null,
-                self::$configurationClosureSpacingNone,
+                self::$configurationArrowSpacingNone,
             ],
             [
                 '<?php fn&($a) => null;',
                 '<?php fn &(  $a   ) => null;',
-                self::$configurationClosureSpacingNone,
+                self::$configurationArrowSpacingNone,
             ],
             [
                 '<?php fn&($a,$b) => null;',
                 '<?php fn &(  $a,$b  ) => null;',
-                self::$configurationClosureSpacingNone,
+                self::$configurationArrowSpacingNone,
             ],
             [
                 '<?php $b = static fn ($a) => $a;',
@@ -434,32 +433,60 @@ foo#
             [
                 '<?php $b = static fn($a) => $a;',
                 '<?php $b = static     fn ( $a )   => $a;',
-                self::$configurationClosureSpacingNone,
+                self::$configurationArrowSpacingNone,
             ],
         ];
     }
 
     /**
+     * @param array<string, mixed> $configuration
+     *
      * @dataProvider provideFixPhp80Cases
+     *
      * @requires PHP 8.0
      */
     public function testFixPhp80(string $expected, ?string $input = null, array $configuration = []): void
     {
         $this->fixer->configure($configuration);
-
         $this->doTest($expected, $input);
     }
 
-    public function provideFixPhp80Cases(): \Generator
+    public function provideFixPhp80Cases(): iterable
     {
         yield [
-            '<?php function ($i,) {};',
+            '<?php function ($i) {};',
             '<?php function(   $i,   ) {};',
         ];
 
         yield [
+            '<?php function (
+                $a,
+                $b,
+                $c,
+            ) {};',
+            '<?php function(
+                $a,
+                $b,
+                $c,
+            ) {};',
+        ];
+
+        yield [
+            '<?php function foo(
+                $a,
+                $b,
+                $c,
+            ) {}',
+            '<?php function foo    (
+                $a,
+                $b,
+                $c,
+            ){}',
+        ];
+
+        yield [
             '<?php
-                    $b = static function ($a,$b,) {
+                    $b = static function ($a,$b) {
                         echo $a;
                     };
                 ',
@@ -471,9 +498,32 @@ foo#
         ];
 
         yield [
-            '<?php fn&($a,$b,) => null;',
+            '<?php fn&($a,$b) => null;',
             '<?php fn &(  $a,$b,   ) => null;',
-            self::$configurationClosureSpacingNone,
+            self::$configurationArrowSpacingNone,
+        ];
+
+        yield [
+            '<?php
+                function ($a) use ($b) {};
+                function ($y) use (
+                    $b,
+                    $c,
+                ) {};
+            ',
+            '<?php
+                function ($a) use ($b  ,  )     {};
+                function ($y) use (
+                    $b,
+                    $c,
+                ) {};
+            ',
+        ];
+
+        yield [
+            '<?php function ($i,) {};',
+            '<?php function(   $i,   ) {};',
+            ['trailing_comma_single_line' => true],
         ];
     }
 }

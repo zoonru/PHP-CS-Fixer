@@ -1438,7 +1438,6 @@ final class DoctrineAnnotationSpacesFixerTest extends AbstractDoctrineAnnotation
     }
 
     /**
-     * @requires PHP 7.4
      * @dataProvider provideElementDiscoveringCases
      */
     public function testElementDiscovering(string $element): void
@@ -1465,11 +1464,14 @@ final class DoctrineAnnotationSpacesFixerTest extends AbstractDoctrineAnnotation
         );
     }
 
-    public static function provideElementDiscoveringCases(): \Generator
+    public static function provideElementDiscoveringCases(): iterable
     {
         yield ['private $foo;'];
+
         yield ['private string $foo;'];
+
         yield ['private Foo\Bar $foo;'];
+
         yield ['private ?Foo\Bar $foo;'];
     }
 }

@@ -31,7 +31,7 @@ final class SingleLineThrowFixerTest extends AbstractFixerTestCase
         $this->doTest($expected, $input);
     }
 
-    public function provideFixCases(): \Generator
+    public function provideFixCases(): iterable
     {
         yield ['<?php throw new Exception; foo(
                     "Foo"
@@ -293,6 +293,7 @@ final class SingleLineThrowFixerTest extends AbstractFixerTestCase
 
     /**
      * @dataProvider provideFix80Cases
+     *
      * @requires PHP 8.0
      */
     public function testFix80(string $expected, ?string $input = null): void
@@ -300,7 +301,7 @@ final class SingleLineThrowFixerTest extends AbstractFixerTestCase
         $this->doTest($expected, $input);
     }
 
-    public static function provideFix80Cases(): \Generator
+    public static function provideFix80Cases(): iterable
     {
         yield [
             '<?php throw $this?->getExceptionFactory()?->createAnException("Foo");',
@@ -338,6 +339,31 @@ final class SingleLineThrowFixerTest extends AbstractFixerTestCase
                 1 => "a",
                 3 => "b"
             });',
+        ];
+
+        yield [
+            '<?php
+$var = [
+    $something[1] ?? throw new Exception(123)
+];
+',
+            '<?php
+$var = [
+    $something[1] ?? throw new Exception(
+
+    123
+
+    )
+];
+',
+        ];
+
+        yield [
+            '<?php
+$var = [
+    $something[1] ?? throw new Exception()
+];
+',
         ];
     }
 }

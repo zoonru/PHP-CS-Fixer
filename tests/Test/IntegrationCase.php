@@ -24,49 +24,39 @@ use PhpCsFixer\RuleSet\RuleSet;
 final class IntegrationCase
 {
     /**
-     * @var array
+     * @var array{indent: string, lineEnding: string}
      */
-    private $config;
+    private array $config;
+
+    private string $expectedCode;
+
+    private string $fileName;
+
+    private ?string $inputCode;
 
     /**
-     * @var string
-     */
-    private $expectedCode;
-
-    /**
-     * @var string
-     */
-    private $fileName;
-
-    /**
-     * @var null|string
-     */
-    private $inputCode;
-
-    /**
-     * Env requirements (possible keys: php).
+     * Env requirements (possible keys: 'php' or 'php<').
      *
-     * @var array
+     * @var array<string, int>|array{php: int}
      */
-    private $requirements;
+    private array $requirements;
 
-    /**
-     * @var RuleSet
-     */
-    private $ruleset;
+    private RuleSet $ruleset;
 
     /**
      * Settings how to perform the test (possible keys: none in base class, use as extension point for custom IntegrationTestCase).
      *
-     * @var array
+     * @var array{checkPriority: bool, deprecations: list<string>, isExplicitPriorityCheck?: bool}
      */
-    private $settings;
+    private array $settings;
+
+    private string $title;
 
     /**
-     * @var string
+     * @param array{checkPriority: bool, deprecations: list<string>, isExplicitPriorityCheck?: bool} $settings
+     * @param array<string, int>|array{php: int}                                                     $requirements
+     * @param array{indent: string, lineEnding: string}                                              $config
      */
-    private $title;
-
     public function __construct(
         string $fileName,
         string $title,
@@ -92,6 +82,9 @@ final class IntegrationCase
         return null !== $this->inputCode;
     }
 
+    /**
+     * @return array{indent: string, lineEnding: string}
+     */
     public function getConfig(): array
     {
         return $this->config;
@@ -112,10 +105,7 @@ final class IntegrationCase
         return $this->inputCode;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getRequirement(string $name)
+    public function getRequirement(string $name): int
     {
         if (!\array_key_exists($name, $this->requirements)) {
             throw new \InvalidArgumentException(sprintf(
@@ -128,6 +118,9 @@ final class IntegrationCase
         return $this->requirements[$name];
     }
 
+    /**
+     * @return array<string, int>|array{php: int}
+     */
     public function getRequirements(): array
     {
         return $this->requirements;
@@ -138,6 +131,9 @@ final class IntegrationCase
         return $this->ruleset;
     }
 
+    /**
+     * @return array{checkPriority: bool, deprecations: list<string>, isExplicitPriorityCheck?: bool}
+     */
     public function getSettings(): array
     {
         return $this->settings;

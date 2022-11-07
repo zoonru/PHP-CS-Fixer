@@ -22,6 +22,7 @@ use PhpCsFixer\Tests\Test\AbstractFixerTestCase;
  * @internal
  *
  * @covers \PhpCsFixer\Fixer\LanguageConstruct\GetClassToClassKeywordFixer
+ *
  * @requires PHP 8.0
  */
 final class GetClassToClassKeywordFixerTest extends AbstractFixerTestCase
@@ -34,7 +35,7 @@ final class GetClassToClassKeywordFixerTest extends AbstractFixerTestCase
         $this->doTest($expected, $input);
     }
 
-    public function provideFixCases()
+    public function provideFixCases(): iterable
     {
         yield [
             '

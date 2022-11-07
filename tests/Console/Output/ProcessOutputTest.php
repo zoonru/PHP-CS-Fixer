@@ -28,12 +28,14 @@ use Symfony\Component\EventDispatcher\EventDispatcher;
 final class ProcessOutputTest extends TestCase
 {
     /**
+     * @param list<array{0: FixerFileProcessedEvent::STATUS_*, 1?: int}> $statuses
+     *
      * @dataProvider provideProcessProgressOutputCases
      */
     public function testProcessProgressOutput(array $statuses, string $expectedOutput, int $width): void
     {
         $nbFiles = 0;
-        $this->foreachStatus($statuses, static function (int $status) use (&$nbFiles): void {
+        $this->foreachStatus($statuses, static function () use (&$nbFiles): void {
             ++$nbFiles;
         });
 
@@ -125,12 +127,12 @@ final class ProcessOutputTest extends TestCase
                     [FixerFileProcessedEvent::STATUS_NO_CHANGES],
                     [FixerFileProcessedEvent::STATUS_INVALID],
                     [FixerFileProcessedEvent::STATUS_NO_CHANGES, 40],
-                    [FixerFileProcessedEvent::STATUS_UNKNOWN],
+                    [FixerFileProcessedEvent::STATUS_INVALID],
                     [FixerFileProcessedEvent::STATUS_NO_CHANGES, 15],
                 ],
                 '...................E......EFFF.................................  63 / 189 ( 33%)'.PHP_EOL.
                 '.................S............................................. 126 / 189 ( 67%)'.PHP_EOL.
-                '....I.I........................................?............... 189 / 189 (100%)',
+                '....I.I........................................I............... 189 / 189 (100%)',
                 80,
             ],
             [
@@ -147,12 +149,12 @@ final class ProcessOutputTest extends TestCase
                     [FixerFileProcessedEvent::STATUS_NO_CHANGES],
                     [FixerFileProcessedEvent::STATUS_INVALID],
                     [FixerFileProcessedEvent::STATUS_NO_CHANGES, 40],
-                    [FixerFileProcessedEvent::STATUS_UNKNOWN],
+                    [FixerFileProcessedEvent::STATUS_INVALID],
                     [FixerFileProcessedEvent::STATUS_NO_CHANGES, 15],
                 ],
                 '...................E......EFFF.................................  63 / 189 ( 33%)'.PHP_EOL.
                 '.................S............................................. 126 / 189 ( 67%)'.PHP_EOL.
-                '....I.I........................................?............... 189 / 189 (100%)',
+                '....I.I........................................I............... 189 / 189 (100%)',
                 80,
             ],
             [
@@ -169,11 +171,11 @@ final class ProcessOutputTest extends TestCase
                     [FixerFileProcessedEvent::STATUS_NO_CHANGES],
                     [FixerFileProcessedEvent::STATUS_INVALID],
                     [FixerFileProcessedEvent::STATUS_NO_CHANGES, 40],
-                    [FixerFileProcessedEvent::STATUS_UNKNOWN],
+                    [FixerFileProcessedEvent::STATUS_INVALID],
                     [FixerFileProcessedEvent::STATUS_NO_CHANGES, 15],
                 ],
                 '...................E......EFFF..................................................S...................... 103 / 189 ( 54%)'.PHP_EOL.
-                '...........................I.I........................................?...............                  189 / 189 (100%)',
+                '...........................I.I........................................I...............                  189 / 189 (100%)',
                 120,
             ],
         ];
@@ -197,6 +199,10 @@ final class ProcessOutputTest extends TestCase
         $processOutput->__wakeup();
     }
 
+    /**
+     * @param list<array{0: FixerFileProcessedEvent::STATUS_*, 1?: int}> $statuses
+     * @param \Closure(FixerFileProcessedEvent::STATUS_*): void $action
+     */
     private function foreachStatus(array $statuses, \Closure $action): void
     {
         foreach ($statuses as $status) {

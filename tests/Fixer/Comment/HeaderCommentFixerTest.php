@@ -28,12 +28,13 @@ use PhpCsFixer\WhitespacesFixerConfig;
 final class HeaderCommentFixerTest extends AbstractFixerTestCase
 {
     /**
+     * @param array<string, mixed> $configuration
+     *
      * @dataProvider provideFixCases
      */
-    public function testFix(array $configuration, string $expected, string $input): void
+    public function testFix(array $configuration, string $expected, ?string $input = null): void
     {
         $this->fixer->configure($configuration);
-
         $this->doTest($expected, $input);
     }
 
@@ -548,6 +549,55 @@ declare(strict_types=1) ?>',
                 '<?php
 declare(strict_types=1) ?>',
             ],
+            [
+                [
+                    'header' => 'tmp',
+                    'location' => 'after_declare_strict',
+                ],
+                '#!/usr/bin/env php
+<?php
+declare(strict_types=1);
+
+/*
+ * tmp
+ */
+
+namespace A\B;
+
+echo 1;',
+                '#!/usr/bin/env php
+<?php
+declare(strict_types=1);namespace A\B;
+
+echo 1;',
+            ],
+            [
+                [
+                    'header' => 'tmp',
+                    'location' => 'after_open',
+                ],
+                'Short mixed file A
+Hello<?php echo "World!"; ?>',
+            ],
+            [
+                [
+                    'header' => 'tmp',
+                    'location' => 'after_open',
+                ],
+                'Short mixed file B
+<?php echo "Hello"; ?>World!',
+            ],
+            [
+                [
+                    'header' => 'tmp',
+                    'location' => 'after_open',
+                ],
+                'File with anything at the beginning and with multiple opening tags are not supported
+<?php
+echo 1;
+?>Hello World!<?php
+script_continues_here();',
+            ],
         ];
     }
 
@@ -568,6 +618,8 @@ echo 1;'
     }
 
     /**
+     * @param null|array<string, mixed> $configuration
+     *
      * @dataProvider provideMisconfigurationCases
      */
     public function testMisconfiguration(?array $configuration, string $exceptionMessage): void
@@ -679,6 +731,7 @@ echo 1;'
             ['<?= 1?>'],
             ["<?= 1?><?php\n"],
             ["<?= 1?>\n<?php\n"],
+            ["<?php\n// comment 1\n?><?php\n// comment 2\n"],
         ];
     }
 
@@ -690,13 +743,14 @@ echo 1;'
     }
 
     /**
+     * @param array<string, mixed> $configuration
+     *
      * @dataProvider provideMessyWhitespacesCases
      */
     public function testMessyWhitespaces(array $configuration, string $expected, ?string $input = null): void
     {
         $this->fixer->setWhitespacesConfig(new WhitespacesFixerConfig("\t", "\r\n"));
         $this->fixer->configure($configuration);
-
         $this->doTest($expected, $input);
     }
 
@@ -719,21 +773,18 @@ echo 1;'
     public function testConfigurationUpdatedWithWhitespsacesConfig(): void
     {
         $this->fixer->configure(['header' => 'Foo']);
-
         $this->doTest(
             "<?php\n\n/*\n * Foo\n */\n\necho 1;",
             "<?php\necho 1;"
         );
 
         $this->fixer->setWhitespacesConfig(new WhitespacesFixerConfig('    ', "\r\n"));
-
         $this->doTest(
             "<?php\r\n\r\n/*\r\n * Foo\r\n */\r\n\r\necho 1;",
             "<?php\r\necho 1;"
         );
 
         $this->fixer->configure(['header' => 'Bar']);
-
         $this->doTest(
             "<?php\r\n\r\n/*\r\n * Bar\r\n */\r\n\r\necho 1;",
             "<?php\r\necho 1;"
@@ -756,5 +807,42 @@ echo 1;'
             'header' => '/** test */',
             'comment_type' => HeaderCommentFixer::HEADER_PHPDOC,
         ]);
+    }
+
+    /**
+     * @param array<string, mixed> $configuration
+     *
+     * @dataProvider provideFix81Cases
+     *
+     * @requires PHP 8.1
+     */
+    public function testFix81(array $configuration, string $expected, ?string $input = null): void
+    {
+        $this->fixer->configure($configuration);
+
+        $this->doTest($expected, $input);
+    }
+
+    public function provideFix81Cases(): iterable
+    {
+        yield [
+            ['header' => 'tmp'],
+            '<?php
+
+/*
+ * tmp
+ */
+
+/**
+ * Foo class doc.
+ */
+enum Foo {}',
+            '<?php
+
+/**
+ * Foo class doc.
+ */
+enum Foo {}',
+        ];
     }
 }

@@ -26,12 +26,13 @@ use PhpCsFixer\Tests\Test\AbstractFixerTestCase;
 final class EscapeImplicitBackslashesFixerTest extends AbstractFixerTestCase
 {
     /**
+     * @param array<string, mixed> $configuration
+     *
      * @dataProvider provideTestFixCases
      */
     public function testFix(string $expected, ?string $input = null, array $configuration = []): void
     {
         $this->fixer->configure($configuration);
-
         $this->doTest($expected, $input);
     }
 

@@ -26,6 +26,8 @@ use PhpCsFixer\Tests\Test\AbstractFixerTestCase;
 final class PhpdocToCommentFixerTest extends AbstractFixerTestCase
 {
     /**
+     * @param array<string, mixed> $config
+     *
      * @dataProvider provideDocblocksCases
      * @dataProvider provideTraitsCases
      * @dataProvider provideFixCases
@@ -33,6 +35,7 @@ final class PhpdocToCommentFixerTest extends AbstractFixerTestCase
     public function testFix(string $expected, ?string $input = null, array $config = []): void
     {
         $this->fixer->configure($config);
+
         $this->doTest($expected, $input);
     }
 
@@ -52,6 +55,11 @@ final class PhpdocToCommentFixerTest extends AbstractFixerTestCase
  */
 class DocBlocks
 {
+    /**
+     * Do not convert this
+     */
+    use TestTrait;
+
     /**
      * Do not convert this
      */
@@ -739,21 +747,6 @@ $first = true;// needed because by default first docblock is never fixed.
 [$a] = $b;
                 ',
             ],
-        ];
-    }
-
-    /**
-     * @dataProvider provideFix74Cases
-     * @requires PHP 7.4
-     */
-    public function testFix74(string $expected, ?string $input = null): void
-    {
-        $this->doTest($expected, $input);
-    }
-
-    public function provideFix74Cases(): array
-    {
-        return [
             [
                 '<?php
                 class Foo {
@@ -804,6 +797,7 @@ $first = true;// needed because by default first docblock is never fixed.
 
     /**
      * @dataProvider provideFix80Cases
+     *
      * @requires PHP 8.0
      */
     public function testFix80(string $expected, ?string $input = null): void
@@ -811,11 +805,10 @@ $first = true;// needed because by default first docblock is never fixed.
         $this->doTest($expected, $input);
     }
 
-    public function provideFix80Cases(): array
+    public function provideFix80Cases(): iterable
     {
-        return [
-            [
-                '<?php
+        yield [
+            '<?php
 /**
  * @Annotation
  */
@@ -839,7 +832,7 @@ Class MyAnnotation3
      * end of class
      */
 }',
-                '<?php
+            '<?php
 /**
  * @Annotation
  */
@@ -863,9 +856,10 @@ Class MyAnnotation3
      * end of class
      */
 }',
-            ],
-            [
-                '<?php
+        ];
+
+        yield [
+            '<?php
 class Foo
 {
 	public function __construct(
@@ -875,7 +869,31 @@ class Foo
 	}
 }
 ',
-            ],
+        ];
+    }
+
+    /**
+     * @dataProvider provideFix81Cases
+     *
+     * @requires PHP 8.1
+     */
+    public function testFix81(string $expected): void
+    {
+        $this->doTest($expected);
+    }
+
+    public function provideFix81Cases(): iterable
+    {
+        yield 'enum' => [
+            '<?php
+declare(strict_types=1);
+
+namespace PhpCsFixer\Tests\Tokenizer\Analyzer;
+
+/** Before enum */
+enum Foo {
+    //
+}',
         ];
     }
 }

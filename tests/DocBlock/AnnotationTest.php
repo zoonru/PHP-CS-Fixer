@@ -99,7 +99,7 @@ final class AnnotationTest extends TestCase
         static::assertSame($content, (string) $annotation);
     }
 
-    public function provideGetContentCases(): \Generator
+    public function provideGetContentCases(): iterable
     {
         foreach (self::$content as $index => $content) {
             yield [$index, $content];
@@ -117,7 +117,7 @@ final class AnnotationTest extends TestCase
         static::assertSame($start, $annotation->getStart());
     }
 
-    public function provideStartCases(): \Generator
+    public function provideStartCases(): iterable
     {
         foreach (self::$start as $index => $start) {
             yield [$index, $start];
@@ -135,7 +135,7 @@ final class AnnotationTest extends TestCase
         static::assertSame($end, $annotation->getEnd());
     }
 
-    public function provideEndCases(): \Generator
+    public function provideEndCases(): iterable
     {
         foreach (self::$end as $index => $end) {
             yield [$index, $end];
@@ -153,7 +153,7 @@ final class AnnotationTest extends TestCase
         static::assertSame($tag, $annotation->getTag()->getName());
     }
 
-    public function provideGetTagCases(): \Generator
+    public function provideGetTagCases(): iterable
     {
         foreach (self::$tags as $index => $tag) {
             yield [$index, $tag];
@@ -174,7 +174,7 @@ final class AnnotationTest extends TestCase
         static::assertSame('', $doc->getLine($end)->getContent());
     }
 
-    public function provideRemoveCases(): \Generator
+    public function provideRemoveCases(): iterable
     {
         foreach (self::$start as $index => $start) {
             yield [$index, $start, self::$end[$index]];
@@ -370,8 +370,8 @@ final class AnnotationTest extends TestCase
                 '/** @var array<Foo::A*>|null',
             ],
             [
-                ['null', 'true', 'false', '1', '1.5', "'a'", '"b"'],
-                '/** @var null|true|false|1|1.5|\'a\'|"b"',
+                ['null', 'true', 'false', '1', '-1', '1.5', '-1.5', '.5', '1.', "'a'", '"b"'],
+                '/** @var null|true|false|1|-1|1.5|-1.5|.5|1.|\'a\'|"b"',
             ],
             [
                 ['int', '"a"', 'A<B<C, D>, E<F::*|G[]>>'],
@@ -438,6 +438,10 @@ final class AnnotationTest extends TestCase
                 '/** @param Closure(string) $function',
             ],
             [
+                ['closure()'],
+                '/** @param closure() $function',
+            ],
+            [
                 ['array  <  int   , callable  (  string  )  :   bool  >'],
                 '/** @param   array  <  int   , callable  (  string  )  :   bool  > $function',
             ],
@@ -473,6 +477,7 @@ final class AnnotationTest extends TestCase
             [['RUNTIMEEEEeXCEPTION'], [\Throwable::class], "*\t@throws\t  \t RUNTIMEEEEeXCEPTION\t\t\t\t\t\t\t\n\n\n", "*\t@throws\t  \t Throwable\t\t\t\t\t\t\t\n\n\n"],
             [['RUNTIMEEEEeXCEPTION'], [\Throwable::class], "*@throws\t  \t RUNTIMEEEEeXCEPTION\t\t\t\t\t\t\t\n\n\n", "*@throws\t  \t Throwable\t\t\t\t\t\t\t\n\n\n"],
             [['string'], ['string', 'null'], ' * @method string getString()', ' * @method string|null getString()'],
+            [['Foo', 'Bar'], ['Bar', 'Foo'], ' * @param Foo&Bar $x', ' * @param Bar&Foo $x'],
         ];
     }
 
@@ -495,6 +500,13 @@ final class AnnotationTest extends TestCase
             [['null', 'string'], '* @param StRiNg|NuLl $foo'],
             [['void'], '* @return Void'],
             [['bar', 'baz', 'foo', 'null', 'qux'], '* @return Foo|Bar|Baz|Qux|null'],
+            [['bool', 'int'], '* @param bool|int $foo'],
+            [['bool', 'int'], '* @param bool|int ...$foo'],
+            [['bool', 'int'], '* @param bool|int &$foo'],
+            [['bool', 'int'], '* @param bool|int &...$foo'],
+            [['bool', 'int'], '* @param bool|int&$foo'],
+            [['bool', 'int'], '* @param bool|int&...$foo'],
+            [['bar', 'baz', 'foo'], '* @param Foo|Bar&Baz&$param'],
         ];
     }
 
@@ -503,7 +515,7 @@ final class AnnotationTest extends TestCase
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('This tag does not support types');
 
-        $tag = new Annotation([new Line(' * @deprecated since 1.2')]);
+        $tag = new Annotation([new Line(' * @deprecated since Symfony 1.2')]);
 
         $tag->getTypes();
     }
@@ -529,49 +541,77 @@ final class AnnotationTest extends TestCase
     }
 
     /**
-     * @param Line[]                 $lines
      * @param NamespaceUseAnalysis[] $namespaceUses
      *
      * @dataProvider provideTypeExpressionCases
      */
-    public function testGetTypeExpression(array $lines, ?NamespaceAnalysis $namespace, array $namespaceUses, ?string $expectedCommonType): void
+    public function testGetTypeExpression(string $line, ?NamespaceAnalysis $namespace, array $namespaceUses, ?string $expectedCommonType): void
     {
-        $annotation = new Annotation($lines, $namespace, $namespaceUses);
+        $annotation = new Annotation([new Line($line)], $namespace, $namespaceUses);
         $result = $annotation->getTypeExpression();
 
         static::assertSame($expectedCommonType, $result->getCommonType());
     }
 
-    public function provideTypeExpressionCases(): \Generator
+    public function provideTypeExpressionCases(): iterable
     {
         $appNamespace = new NamespaceAnalysis('App', 'App', 0, 999, 0, 999);
         $useTraversable = new NamespaceUseAnalysis('Traversable', 'Traversable', false, 0, 999, NamespaceUseAnalysis::TYPE_CLASS);
 
-        yield [[new Line('* @param array|Traversable $foo')], null, [], 'iterable'];
-        yield [[new Line('* @param array|Traversable $foo')], $appNamespace, [], null];
-        yield [[new Line('* @param array|Traversable $foo')], $appNamespace, [$useTraversable], 'iterable'];
+        yield ['* @param array|Traversable $foo', null, [], 'iterable'];
+
+        yield ['* @param array|Traversable $foo', $appNamespace, [], null];
+
+        yield ['* @param array|Traversable $foo', $appNamespace, [$useTraversable], 'iterable'];
     }
 
     /**
-     * @param Line[] $lines
-     *
      * @dataProvider provideGetVariableCases
      */
-    public function testGetVariableName(array $lines, ?string $expectedVariableName): void
+    public function testGetVariableName(string $line, ?string $expectedVariableName): void
     {
-        $annotation = new Annotation($lines);
+        $annotation = new Annotation([new Line($line)]);
         static::assertSame($expectedVariableName, $annotation->getVariableName());
     }
 
-    public function provideGetVariableCases(): \Generator
+    public function provideGetVariableCases(): iterable
     {
-        yield [[new Line('* @param int $foo')], '$foo'];
-        yield [[new Line('* @param int $foo some description')], '$foo'];
-        yield [[new Line('/** @param int $foo*/')], '$foo'];
-        yield [[new Line('* @param int')], null];
-        yield [[new Line('* @var int $foo')], '$foo'];
-        yield [[new Line('* @var int $foo some description')], '$foo'];
-        yield [[new Line('/** @var int $foo*/')], '$foo'];
-        yield [[new Line('* @var int')], null];
+        yield ['* @param int $foo', '$foo'];
+
+        yield ['* @param int $foo some description', '$foo'];
+
+        yield ['/** @param int $foo*/', '$foo'];
+
+        yield ['* @param int', null];
+
+        yield ['* @var int $foo', '$foo'];
+
+        yield ['* @var int $foo some description', '$foo'];
+
+        yield ['/** @var int $foo*/', '$foo'];
+
+        yield ['* @var int', null];
+
+        yield ['* @param $foo', '$foo'];
+
+        yield ['* @param &$foo', '$foo'];
+
+        yield ['* @param & $foo', '$foo'];
+
+        yield ['* @param int &$foo', '$foo'];
+
+        yield ['* @param int & $foo', '$foo'];
+
+        yield ['* @param int ...$foo', '$foo'];
+
+        yield ['* @param int ... $foo', '$foo'];
+
+        yield ['* @param int&...$foo', '$foo'];
+
+        yield ['* @param int &...$foo', '$foo'];
+
+        yield ['* @param int & ...$foo', '$foo'];
+
+        yield ['* @param int & ... $foo', '$foo'];
     }
 }

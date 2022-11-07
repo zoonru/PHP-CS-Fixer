@@ -79,7 +79,6 @@ class T
     {
     }
 
-    /** @return static */
     public function something(): static
     {
     }
@@ -89,15 +88,15 @@ class T
 // nothing we can do
 
 // https://wiki.php.net/rfc/trailing_comma_in_parameter_list
-function foo(string $param = null, ): void
+function foo(string $param = null): void
 {
 }
-call_user_func('foo', 1, );
+call_user_func('foo', 1);
 
 // https://wiki.php.net/rfc/trailing_comma_in_closure_use_list
 $foo1a = function (): void {};
 $foo1b = function (): void {};
-$foo2 = function () use ($bar, $baz, ): void { echo $bar.$baz; };
+$foo2 = function () use ($bar, $baz): void { echo $bar.$baz; };
 
 // https://wiki.php.net/rfc/mixed_type_v2
 class T_Mixed
@@ -116,7 +115,7 @@ if (1) {
 }
 
 // https://wiki.php.net/rfc/non-capturing_catches
-// TODO: https://github.com/FriendsOfPHP/PHP-CS-Fixer/pull/5175 - when implementing new rule for fixing such cases, add exception variable in --INPUT-- section
+// TODO: https://github.com/PHP-CS-Fixer/PHP-CS-Fixer/pull/5175 - when implementing new rule for fixing such cases, add exception variable in --INPUT-- section
 try {
     foo();
 } catch (Exception) {
@@ -289,7 +288,7 @@ if (1) {
 }
 
 // https://wiki.php.net/rfc/non-capturing_catches
-// TODO: https://github.com/FriendsOfPHP/PHP-CS-Fixer/pull/5175 - when implementing new rule for fixing such cases, add exception variable in --INPUT-- section
+// TODO: https://github.com/PHP-CS-Fixer/PHP-CS-Fixer/pull/5175 - when implementing new rule for fixing such cases, add exception variable in --INPUT-- section
 try {
     foo();
 } catch (Exception) {

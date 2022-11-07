@@ -48,7 +48,7 @@ final class NativeConstantInvocationFixerTest extends AbstractFixerTestCase
         $this->expectException(InvalidConfigurationException::class);
         $this->expectExceptionMessage(sprintf(
             'Each element must be a non-empty, trimmed string, got "%s" instead.',
-            \is_object($element) ? \get_class($element) : \gettype($element)
+            get_debug_type($element)
         ));
 
         $this->fixer->configure([
@@ -68,7 +68,7 @@ final class NativeConstantInvocationFixerTest extends AbstractFixerTestCase
         $this->expectException(InvalidConfigurationException::class);
         $this->expectExceptionMessage(sprintf(
             'Each element must be a non-empty, trimmed string, got "%s" instead.',
-            \is_object($element) ? \get_class($element) : \gettype($element)
+            get_debug_type($element)
         ));
 
         $this->fixer->configure([
@@ -448,7 +448,6 @@ EOT;
     public function testFixStrictOption(): void
     {
         $this->fixer->configure(['strict' => true]);
-
         $this->doTest(
             '<?php
                 echo \PHP_VERSION . \PHP_EOL; // built-in constants to have backslash
@@ -489,16 +488,27 @@ echo M_PI;
     }
 
     /**
+     * @dataProvider provideFix80Cases
+     *
      * @requires PHP 8.0
      */
-    public function testFixPhp80(): void
+    public function testFixPhp80(string $expected): void
     {
         $this->fixer->configure(['strict' => true]);
-        $this->doTest(
+        $this->doTest($expected);
+    }
+
+    public function provideFix80Cases(): iterable
+    {
+        yield [
             '<?php
             try {
             } catch (\Exception) {
-            }'
-        );
+            }',
+        ];
+
+        yield ['<?php try { foo(); } catch(\InvalidArgumentException|\LogicException $e) {}'];
+
+        yield ['<?php try { foo(); } catch(\InvalidArgumentException|\LogicException) {}'];
     }
 }

@@ -30,6 +30,8 @@ use PhpCsFixer\Tests\Test\AbstractFixerTestCase;
 final class BinaryOperatorSpacesFixerTest extends AbstractFixerTestCase
 {
     /**
+     * @param array<string, mixed> $configuration
+     *
      * @dataProvider provideWithTabsCases
      */
     public function testWithTabs(string $expected, ?string $input = null, array $configuration = []): void
@@ -75,6 +77,8 @@ public function myFunction() {
     }
 
     /**
+     * @param array<string, mixed> $configuration
+     *
      * @dataProvider provideConfiguredCases
      */
     public function testConfigured(string $expected, ?string $input = null, array $configuration = []): void
@@ -129,7 +133,7 @@ $a//
             ],
             [
                 '<?php
-    $var = [];
+    $var = [1 => 2];
     foreach ([
                 1 => 2,
                 2 => 3,
@@ -137,7 +141,7 @@ $a//
         $var[] = [$i => $bar];
     }',
                 '<?php
-    $var = [];
+    $var = [1=>2];
     foreach ([
                 1=> 2,
                 2   =>3,
@@ -474,7 +478,7 @@ $a = $ae?? $b;
             ],
             'align array destruction' => [
                 '<?php
-                    $c = [$d] = $e[1];
+                    $c                 = [$d] = $e[1];
                     function A(){}[$a] = $a[$c];
                     $b                 = 1;
                 ',
@@ -708,6 +712,7 @@ $a
 $b;
 ',
             ],
+            ['<a href="test-<?=$path?>-<?=$id?>.html">Test</a>'],
         ];
     }
 
@@ -798,7 +803,7 @@ $b;
 
     for ($i = 0; $i < 10; $i++) {
         $aa = 2;
-        $a[$b] = array();
+        $a[$b] = array(12);
     }',
                 '<?php
     $ccc = 1;
@@ -845,7 +850,7 @@ $b;
 
     for ($i = 0; $i < 10; $i++) {
         $aa    = 2;
-        $a[$b] = array();
+        $a[$b] = array(12);
     }',
             ],
         ];
@@ -1344,7 +1349,7 @@ $b;
         $abc[$bcd = 1] = 1;
     }
 
-    while (false) {
+    while ($i = 1) {
         $aa    = 2;
         $a[$b] = array();
     }
@@ -1352,7 +1357,27 @@ $b;
     for ($i = 0; $i < 10; $i++) {
         $aa    = 2;
         $a[$b] = array();
-    }',
+    }
+
+    $z = 1;
+    switch($a = 0) {
+        case 1:
+            $b  = 1;
+            $cc = 3;
+        break;
+    }
+
+    foreach ($a as $b) {
+        $aa    = 2;
+        $a[$b] = array();
+    }
+
+    do {
+        $aa    = 23;
+        $a[$b] = array(66);
+    } while ($i = 1);
+    $a = 3;
+    ',
                 '<?php
     $ccc = 1;
     $bb = 1;
@@ -1391,7 +1416,7 @@ $b;
         $abc[$bcd = 1] = 1;
     }
 
-    while (false) {
+    while ($i = 1) {
         $aa = 2;
         $a[$b] = array();
     }
@@ -1399,7 +1424,211 @@ $b;
     for ($i = 0; $i < 10; $i++) {
         $aa = 2;
         $a[$b] = array();
-    }',
+    }
+
+    $z = 1;
+    switch($a = 0) {
+        case 1:
+            $b = 1;
+            $cc = 3;
+        break;
+    }
+
+    foreach ($a as $b) {
+        $aa    = 2;
+        $a[$b] = array();
+    }
+
+    do {
+        $aa = 23;
+        $a[$b] = array(66);
+    } while ($i = 1);
+    $a = 3;
+    ',
+            ],
+            [
+                '<?php
+m(
+    function ()
+    {
+        $d["a"]   = 1;
+        $d["abc"] = 2;
+    }
+);
+',
+                '<?php
+m(
+    function ()
+    {
+        $d["a"] = 1;
+        $d["abc"] = 2;
+    }
+);
+',
+            ],
+            [
+                '<?php
+
+class TaskObjectType
+{
+    public function configureOptions(OptionsResolver $resolver): void
+    {
+        $resolver->setDefaults(
+            [
+                "choices" => function (Options $options) {
+                    $choices   = TaskService::getFormMapperObjectList();
+                    $element   = null;
+                    $elementId = null;
+
+                    if (isset($options["task"]) && $options["task"]->getElement() === 42) {
+                        $element   = $options["task"]->getElement();
+                        $elementId = $options["task"]->getElementId();
+                    } elseif (isset($options["elementId"], $options["element"]) && $options["element"] === 42) {
+                        $element   = $options["element"];
+                        $elementId = $options["elementId"];
+                    };
+                },
+            ]
+        );
+    }
+}
+',
+                '<?php
+
+class TaskObjectType
+{
+    public function configureOptions(OptionsResolver $resolver): void
+    {
+        $resolver->setDefaults(
+            [
+                "choices" => function (Options $options) {
+                    $choices = TaskService::getFormMapperObjectList();
+                    $element = null;
+                    $elementId = null;
+
+                    if (isset($options["task"]) && $options["task"]->getElement() === 42) {
+                        $element = $options["task"]->getElement();
+                        $elementId = $options["task"]->getElementId();
+                    } elseif (isset($options["elementId"], $options["element"]) && $options["element"] === 42) {
+                        $element = $options["element"];
+                        $elementId = $options["elementId"];
+                    };
+                },
+            ]
+        );
+    }
+}
+',
+            ],
+            [
+                '<?php
+fn ($x = 1) => $x + 3;
+$f = 123;
+',
+            ],
+            [
+                '<?php
+if (($c = count($array)) > 100) {
+    $_data = \'100+\';
+} elseif (($c = count($array)) > 0) {
+    $_data = \'0+\';
+}
+',
+            ],
+            [
+                '<?php
+if (($c = count($array)) > 100) {
+    $closure = fn ($x = 1) => $x + 3;
+} elseif (($c = count($array)) > 0) {
+    $closure = fn ($x = 1) => $x ** 3;
+}
+',
+            ],
+            [
+                '<?php
+$suppliersTitles          = $container->getContainerSuppliers()->map(fn (ContainerSupplier $containerSupplier) => $containerSupplier->getSupplier()->getTitle());
+$suppliersClassifications = $container->getContainerSuppliers()->map(fn (ContainerSupplier $containerSupplier) => $containerSupplier->getSupplier()->getClassification());
+',
+                '<?php
+$suppliersTitles = $container->getContainerSuppliers()->map(fn (ContainerSupplier $containerSupplier) => $containerSupplier->getSupplier()->getTitle());
+$suppliersClassifications = $container->getContainerSuppliers()->map(fn (ContainerSupplier $containerSupplier) => $containerSupplier->getSupplier()->getClassification());
+',
+            ],
+            [
+                '<?php
+$a              = [$s = 5, $d => 5, $c => 9,];
+$ab             = [$bc = 1];
+$someOtherArray = [$bcd = 1];
+$a              = [$b];
+$ab             = [$bc];
+$abc            = [$bcd];
+',
+                '<?php
+$a = [$s = 5, $d => 5, $c => 9,];
+$ab = [$bc = 1];
+$someOtherArray = [$bcd = 1];
+$a = [$b];
+$ab = [$bc];
+$abc = [$bcd];
+',
+            ],
+            [
+                '<?php
+$result = false;
+
+$callback = static function () use (&$result) {
+    $result = true;
+};
+
+$this->query = $this->db->prepare(static function ($db) {
+   $sql = "INSERT INTO {$db->protectIdentifiers($db->DBPrefix)} ("
+          . $db->protectIdentifiers("name") . ", "
+          . $db->protectIdentifiers("email") . ", "
+          . $db->protectIdentifiers("country");
+});
+
+$classSet = Closure::bind(function ($key, $value) {
+    $this->{$key} = $value;
+}, $classObj, $className);
+',
+            ],
+            [
+                '<?php
+$obj = new class() extends SomeClass {
+    public $someProperty = null;
+};
+',
+            ],
+            [
+                '<?php
+$fabricator->setOverrides(["first" => "Bobby"], $persist = false);
+$bobbyUser = $fabricator->make();
+$bobbyUser = $fabricator->make();
+',
+            ],
+            [
+                '<?php
+$a = 1; if (true) {
+$bbb = 1;
+}
+',
+            ],
+            [
+                '<?php
+$fabricator->setOverrides(
+["first" => "Bobby"], $persist = false);
+$fabricator->setOverrides(["first" => "Bobby"], $persist = false
+);
+',
+            ],
+            [
+                '<?php
+$start = (
+    $input["start"] !== "" && ($date = DateTime::parse($input["start"]))
+        ? $date->setTimezone("UTC")
+        : $date->setTimezone("Europe/London")
+);
+',
             ],
         ];
     }
@@ -1947,6 +2176,142 @@ $b;
         self::STATUS_INVALID_7    => [(2+3)=> "III", "description" => "invalid file syntax, file ignored"],
     ];',
             ],
+            [
+                '<?php
+$b = [1 => function() {
+    foreach([$a => 2] as $b) {
+        $bv = [
+            $b  => 2,
+            $cc => 3,
+        ];
+    }}, 2 => 3];
+',
+                '<?php
+$b = [1 => function() {
+    foreach([$a => 2] as $b) {
+        $bv = [
+            $b => 2,
+            $cc => 3,
+        ];
+    }}, 2 => 3];
+',
+            ],
+            [
+                '<?php
+function asd() {
+      return [
+          "this"    => fn () => false,
+          "is"      => fn () => false,
+          "an"      => fn () => false,
+          "example" => fn () => false,
+          "array"   => fn () => false,
+      ];
+}
+',
+                '<?php
+function asd() {
+      return [
+          "this" => fn () => false,
+          "is" => fn () => false,
+          "an" => fn () => false,
+          "example" => fn () => false,
+          "array" => fn () => false,
+      ];
+}
+',
+            ],
+            [
+                '<?php
+collect()
+    ->map(fn ($arg) => [])
+    ->keyBy(fn ($arg) => []);
+',
+            ],
+            [
+                '<?php
+if ($this->save([
+    "bar"       => "baz",
+    "barbarbar" => "baz",
+])) {
+    // Do the work
+}
+',
+                '<?php
+if ($this->save([
+    "bar" => "baz",
+    "barbarbar" => "baz",
+])) {
+    // Do the work
+}
+',
+            ],
+            [
+                '<?php
+class test
+{
+    public function __construct()
+    {
+        $result = $this->test1(fn () => $this->test2($a));
+        foreach ($result as $k => $v)
+        {
+        }
+
+        $result = $this->test1(fn () => $this->test2($a, $b));
+        foreach ($result as $k => $v)
+        {
+        }
+    }
+}
+',
+            ],
+            [
+                '<?php
+$array = [
+    "foo"     => 123,
+    "longkey" => "test",
+    "baz"     => fn () => "value",
+];
+',
+                '<?php
+$array = [
+    "foo" => 123,
+    "longkey" => "test",
+    "baz" => fn () => "value",
+];
+',
+            ],
+            [
+                '<?php
+function foo () {
+    $this->query = $this->db->prepare(static fn ($db) => $db->table("user")->insert([
+        "name"    => "a",
+        "email"   => "b@example.com",
+        "country" => "JP",
+    ]));
+
+    foreach ($data as $name => $array) {
+        foreach ($array as $field => $value) {
+            yield $type => $case;
+        }
+    }
+}
+',
+                '<?php
+function foo () {
+    $this->query = $this->db->prepare(static fn ($db) => $db->table("user")->insert([
+        "name" => "a",
+        "email" => "b@example.com",
+        "country" => "JP",
+    ]));
+
+    foreach ($data as $name => $array) {
+        foreach ($array as $field => $value) {
+            yield $type => $case;
+        }
+    }
+}
+',
+            ],
         ];
     }
 
@@ -1980,14 +2345,13 @@ $b;
     }
 
     /**
+     * @param array<string, mixed> $configuration
+     *
      * @dataProvider provideFixPhp74Cases
-     * @requires PHP 7.4
      */
-    public function testFixPhp74(string $expected, ?string $input = null, ?array $configuration = null): void
+    public function testFixPhp74(string $expected, ?string $input = null, array $configuration = []): void
     {
-        if (null !== $configuration) {
-            $this->fixer->configure($configuration);
-        }
+        $this->fixer->configure($configuration);
 
         $this->doTest($expected, $input);
     }
@@ -2004,7 +2368,6 @@ $b;
                     $a = fn()    =>      null;
                     $b = fn()      =>  null;
                 ',
-                null,
                 ['operators' => ['=>' => BinaryOperatorSpacesFixer::ALIGN_SINGLE_SPACE_MINIMAL]],
             ],
             [
@@ -2031,6 +2394,27 @@ $b;
                 public function baz(
                     callable|array $a,
                     array|callable $b,
+                ) {}
+            }'
+        );
+    }
+
+    /**
+     * @requires PHP 8.1
+     */
+    public function testIntersectionTypesAreNotChanged(): void
+    {
+        $this->doTest(
+            '<?php
+            class Foo
+            {
+                private TypeA&TypeB & TypeC $prop;
+                public function bar(TypeA & TypeB&TypeC $x): TypeA&TypeB & TypeC&TypeD
+                {
+                }
+                public function baz(
+                    Countable&Traversable $a,
+                    Traversable&Countable $b,
                 ) {}
             }'
         );

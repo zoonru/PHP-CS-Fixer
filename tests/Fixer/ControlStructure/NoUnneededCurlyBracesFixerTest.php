@@ -31,7 +31,7 @@ final class NoUnneededCurlyBracesFixerTest extends AbstractFixerTestCase
         $this->doTest($expected, $input);
     }
 
-    public function provideFixCases(): \Generator
+    public function provideFixCases(): iterable
     {
         yield from [
             'simple sample, last token candidate' => [
@@ -110,42 +110,9 @@ final class NoUnneededCurlyBracesFixerTest extends AbstractFixerTestCase
                 ',
             ],
         ];
-    }
 
-    /**
-     * @dataProvider provideFixPre80Cases
-     * @requires PHP <8.0
-     */
-    public function testFixPre80(string $expected, string $input = null): void
-    {
-        $this->doTest($expected, $input);
-    }
-
-    public function provideFixPre80Cases(): \Generator
-    {
-        yield 'no fixes, offset access syntax with curly braces' => [
+        yield 'provideNoFix7Cases' => [
             '<?php
-                    echo ${$a};
-                    echo $a{1};
-                ',
-        ];
-    }
-
-    /**
-     * @requires PHP 7
-     *
-     * @dataProvider provideNoFix7Cases
-     */
-    public function testNoFix7(string $expected): void
-    {
-        $this->doTest($expected);
-    }
-
-    public function provideNoFix7Cases(): array
-    {
-        return [
-            [
-                '<?php
                     use some\a\{ClassA, ClassB, ClassC as C};
                     use function some\a\{fn_a, fn_b, fn_c};
                     use const some\a\{ConstA, ConstB, ConstC};
@@ -157,7 +124,26 @@ final class NoUnneededCurlyBracesFixerTest extends AbstractFixerTestCase
                         }
                     }
                 ',
-            ],
+        ];
+    }
+
+    /**
+     * @dataProvider provideFixPre80Cases
+     *
+     * @requires PHP <8.0
+     */
+    public function testFixPre80(string $expected, string $input = null): void
+    {
+        $this->doTest($expected, $input);
+    }
+
+    public function provideFixPre80Cases(): iterable
+    {
+        yield 'no fixes, offset access syntax with curly braces' => [
+            '<?php
+                    echo ${$a};
+                    echo $a{1};
+                ',
         ];
     }
 
@@ -170,7 +156,7 @@ final class NoUnneededCurlyBracesFixerTest extends AbstractFixerTestCase
         $this->doTest($expected, $input);
     }
 
-    public function provideFixNamespaceCases(): \Generator
+    public function provideFixNamespaceCases(): iterable
     {
         yield [
             '<?php

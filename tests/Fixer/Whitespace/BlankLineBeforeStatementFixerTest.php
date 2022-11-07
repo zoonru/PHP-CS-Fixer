@@ -1291,7 +1291,6 @@ function foo() {
     public function testFixWithMultipleConfigStatements(array $statements, string $expected, ?string $input = null): void
     {
         $this->fixer->configure(['statements' => $statements]);
-
         $this->doTest($expected, $input);
     }
 
@@ -1390,6 +1389,7 @@ do {
 
     /**
      * @dataProvider provideFix80Cases
+     *
      * @requires PHP 8.0
      */
     public function testFix80(string $expected, ?string $input = null): void
@@ -1401,7 +1401,7 @@ do {
         $this->doTest($expected, $input);
     }
 
-    public function provideFix80Cases(): \Generator
+    public function provideFix80Cases(): iterable
     {
         yield 'match' => [
             '<?php
@@ -1422,6 +1422,7 @@ do {
 
     /**
      * @dataProvider provideFix81Cases
+     *
      * @requires PHP 8.1
      */
     public function testFix81(string $expected, ?string $input = null): void
@@ -1433,7 +1434,7 @@ do {
         $this->doTest($expected, $input);
     }
 
-    public function provideFix81Cases(): \Generator
+    public function provideFix81Cases(): iterable
     {
         yield 'enum' => [
             '<?php

@@ -39,9 +39,11 @@ final class CommentsAnalyzerTest extends TestCase
     }
 
     /**
+     * @param list<int> $borders
+     *
      * @dataProvider provideCommentsCases
      */
-    public function testComments(string $code, int $index, ?array $borders): void
+    public function testComments(string $code, int $index, array $borders): void
     {
         $tokens = Tokens::fromCode($code);
         $analyzer = new CommentsAnalyzer();
@@ -238,6 +240,7 @@ $bar;',
             ['<?php class Foo { /* Before property */ public $bar; }'],
             ['<?php class Foo { /* Before property */ var $bar; }'],
             ['<?php class Foo { /* Before function */ function bar() {} }'],
+            ['<?php class Foo { /* Before use */ use Bar; }'],
             ['<?php class Foo { /* Before function */ final function bar() {} }'],
             ['<?php class Foo { /* Before function */ private function bar() {} }'],
             ['<?php class Foo { /* Before function */ protected function bar() {} }'],
@@ -307,7 +310,6 @@ $bar;',
 
     /**
      * @dataProvider providePhpdocCandidatePhp74Cases
-     * @requires PHP 7.4
      */
     public function testPhpdocCandidatePhp74(string $code): void
     {
@@ -327,6 +329,7 @@ $bar;',
 
     /**
      * @dataProvider providePhpdocCandidatePhp80Cases
+     *
      * @requires PHP 8.0
      */
     public function testPhpdocCandidatePhp80(string $code): void
@@ -352,6 +355,7 @@ Class MyAnnotation3 {}'],
 
     /**
      * @dataProvider providePhpdocCandidatePhp81Cases
+     *
      * @requires PHP 8.1
      */
     public function testPhpdocCandidatePhp81(string $code): void
@@ -363,7 +367,7 @@ Class MyAnnotation3 {}'],
         static::assertTrue($analyzer->isBeforeStructuralElement($tokens, $index));
     }
 
-    public function providePhpdocCandidatePhp81Cases(): \Generator
+    public function providePhpdocCandidatePhp81Cases(): iterable
     {
         yield 'public readonly' => [
             '<?php class Foo { /* */ public readonly int $a1; }',
@@ -391,6 +395,10 @@ Class MyAnnotation3 {}'],
                 /* */
                 final public const Y = "i";
             }',
+        ];
+
+        yield 'enum' => [
+            '<?php /* Before enum */ enum Foo {}',
         ];
     }
 }

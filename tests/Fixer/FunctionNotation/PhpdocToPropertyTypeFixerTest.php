@@ -24,17 +24,13 @@ use PhpCsFixer\Tests\Test\AbstractFixerTestCase;
 final class PhpdocToPropertyTypeFixerTest extends AbstractFixerTestCase
 {
     /**
+     * @param array<string, mixed> $config
+     *
      * @dataProvider provideFixCases
      */
     public function testFix(string $expected, ?string $input = null, array $config = []): void
     {
-        if (null !== $input && \PHP_VERSION_ID < 70400) {
-            $expected = $input;
-            $input = null;
-        }
-
         $this->fixer->configure($config);
-
         $this->doTest($expected, $input);
     }
 
@@ -463,6 +459,7 @@ final class PhpdocToPropertyTypeFixerTest extends AbstractFixerTestCase
 
     /**
      * @dataProvider provideFix81Cases
+     *
      * @requires PHP 8.1
      */
     public function testFix81(string $expected): void
@@ -470,7 +467,7 @@ final class PhpdocToPropertyTypeFixerTest extends AbstractFixerTestCase
         $this->doTest($expected);
     }
 
-    public function provideFix81Cases(): \Generator
+    public function provideFix81Cases(): iterable
     {
         yield 'readonly properties are always typed, make sure the fixer does not crash' => [
             '<?php class Foo { /** @var int */ private readonly string $foo; }',

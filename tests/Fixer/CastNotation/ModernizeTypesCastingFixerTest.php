@@ -34,7 +34,7 @@ final class ModernizeTypesCastingFixerTest extends AbstractFixerTestCase
         $this->doTest($expected, $input);
     }
 
-    public function provideFixCases(): \Generator
+    public function provideFixCases(): iterable
     {
         $multiLinePatternToFix = <<<'FIX'
 <?php $x =
@@ -169,38 +169,6 @@ OVERRIDDEN;
                 '<?php $foo = ((string) ($x + $y))[0];',
                 '<?php $foo = strval($x + $y)[0];',
             ],
-        ];
-    }
-
-    /**
-     * @dataProvider provideFixPre80Cases
-     * @requires PHP <8.0
-     */
-    public function testFixPre80(string $expected, string $input = null): void
-    {
-        $this->doTest($expected, $input);
-    }
-
-    public function provideFixPre80Cases(): \Generator
-    {
-        yield [
-            '<?php $foo = ((string) ($x + $y)){0};',
-            '<?php $foo = strval($x + $y){0};',
-        ];
-    }
-
-    /**
-     * @requires PHP 7.3
-     * @dataProvider provideFix73Cases
-     */
-    public function testFix73(string $expected, string $input): void
-    {
-        $this->doTest($expected, $input);
-    }
-
-    public function provideFix73Cases(): array
-    {
-        return [
             [
                 '<?php $a = (int) $b;',
                 '<?php $a = intval($b, );',
@@ -213,6 +181,24 @@ OVERRIDDEN;
                 '<?php $a = (string) ($b . $c);',
                 '<?php $a = strval($b . $c, );',
             ],
+        ];
+    }
+
+    /**
+     * @dataProvider provideFixPre80Cases
+     *
+     * @requires PHP <8.0
+     */
+    public function testFixPre80(string $expected, string $input = null): void
+    {
+        $this->doTest($expected, $input);
+    }
+
+    public function provideFixPre80Cases(): iterable
+    {
+        yield [
+            '<?php $foo = ((string) ($x + $y)){0};',
+            '<?php $foo = strval($x + $y){0};',
         ];
     }
 
@@ -246,6 +232,7 @@ intval#
 
     /**
      * @dataProvider provideFix81Cases
+     *
      * @requires PHP 8.1
      */
     public function testFix81(string $expected, ?string $input = null): void
@@ -253,7 +240,7 @@ intval#
         $this->doTest($expected, $input);
     }
 
-    public function provideFix81Cases(): \Generator
+    public function provideFix81Cases(): iterable
     {
         yield [
             '<?php $x = intval(...);',

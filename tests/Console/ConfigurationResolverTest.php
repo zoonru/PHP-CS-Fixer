@@ -297,7 +297,7 @@ final class ConfigurationResolverTest extends TestCase
         static::assertSame($expectedPaths, $resolver->getPath());
     }
 
-    public function providePathCases(): \Generator
+    public function providePathCases(): iterable
     {
         yield [
             ['Command'],
@@ -343,7 +343,7 @@ final class ConfigurationResolverTest extends TestCase
         $resolver->getPath();
     }
 
-    public function provideEmptyPathCases(): \Generator
+    public function provideEmptyPathCases(): iterable
     {
         yield [
             [''],
@@ -460,7 +460,8 @@ final class ConfigurationResolverTest extends TestCase
     }
 
     /**
-     * @param array|\Exception $expected
+     * @param \Exception|list<string> $expected
+     * @param list<string>            $path
      *
      * @dataProvider provideResolveIntersectionOfPathsCases
      */
@@ -648,6 +649,8 @@ final class ConfigurationResolverTest extends TestCase
     }
 
     /**
+     * @param array<string, mixed> $options
+     *
      * @dataProvider provideConfigFinderIsOverriddenCases
      */
     public function testConfigFinderIsOverridden(array $options, bool $expectedResult): void
@@ -968,29 +971,29 @@ final class ConfigurationResolverTest extends TestCase
         $resolver->getRules();
     }
 
-    public function provideRenamedRulesCases(): \Generator
+    public function provideRenamedRulesCases(): iterable
     {
         yield 'with config' => [
             'The rules contain unknown fixers: "blank_line_before_return" is renamed (did you mean "blank_line_before_statement"? (note: use configuration "[\'statements\' => [\'return\']]")).
-For more info about updating see: https://github.com/FriendsOfPHP/PHP-CS-Fixer/blob/v3.0.0/UPGRADE-v3.md#renamed-ruless.',
+For more info about updating see: https://github.com/PHP-CS-Fixer/PHP-CS-Fixer/blob/v3.0.0/UPGRADE-v3.md#renamed-ruless.',
             ['blank_line_before_return'],
         ];
 
         yield 'without config' => [
             'The rules contain unknown fixers: "final_static_access" is renamed (did you mean "self_static_accessor"?).
-For more info about updating see: https://github.com/FriendsOfPHP/PHP-CS-Fixer/blob/v3.0.0/UPGRADE-v3.md#renamed-ruless.',
+For more info about updating see: https://github.com/PHP-CS-Fixer/PHP-CS-Fixer/blob/v3.0.0/UPGRADE-v3.md#renamed-ruless.',
             ['final_static_access'],
         ];
 
         yield [
             'The rules contain unknown fixers: "hash_to_slash_comment" is renamed (did you mean "single_line_comment_style"? (note: use configuration "[\'comment_types\' => [\'hash\']]")).
-For more info about updating see: https://github.com/FriendsOfPHP/PHP-CS-Fixer/blob/v3.0.0/UPGRADE-v3.md#renamed-ruless.',
+For more info about updating see: https://github.com/PHP-CS-Fixer/PHP-CS-Fixer/blob/v3.0.0/UPGRADE-v3.md#renamed-ruless.',
             ['hash_to_slash_comment'],
         ];
 
         yield 'both renamed and unknown' => [
             'The rules contain unknown fixers: "final_static_access" is renamed (did you mean "self_static_accessor"?), "binary_operator_space" (did you mean "binary_operator_spaces"?).
-For more info about updating see: https://github.com/FriendsOfPHP/PHP-CS-Fixer/blob/v3.0.0/UPGRADE-v3.md#renamed-ruless.',
+For more info about updating see: https://github.com/PHP-CS-Fixer/PHP-CS-Fixer/blob/v3.0.0/UPGRADE-v3.md#renamed-ruless.',
             ['final_static_access', 'binary_operator_space'],
         ];
     }
@@ -1140,7 +1143,7 @@ For more info about updating see: https://github.com/FriendsOfPHP/PHP-CS-Fixer/b
     }
 
     /**
-     * @param array|bool $ruleConfig
+     * @param array<string, mixed>|bool $ruleConfig
      *
      * @dataProvider provideDeprecatedFixerConfiguredCases
      *
@@ -1207,6 +1210,10 @@ For more info about updating see: https://github.com/FriendsOfPHP/PHP-CS-Fixer/b
         return str_replace('/', \DIRECTORY_SEPARATOR, $path);
     }
 
+    /**
+     * @param array<string, array<string, mixed>|bool> $expected
+     * @param array<string, array<string, mixed>|bool> $actual
+     */
     private static function assertSameRules(array $expected, array $actual): void
     {
         ksort($expected);
@@ -1220,6 +1227,9 @@ For more info about updating see: https://github.com/FriendsOfPHP/PHP-CS-Fixer/b
         return realpath(__DIR__.\DIRECTORY_SEPARATOR.'..'.\DIRECTORY_SEPARATOR.'Fixtures'.\DIRECTORY_SEPARATOR.'ConfigurationResolverConfigFile'.\DIRECTORY_SEPARATOR).'/';
     }
 
+    /**
+     * @param array<string, mixed> $options
+     */
     private function createConfigurationResolver(array $options, Config $config = null, string $cwdPath = ''): ConfigurationResolver
     {
         if (null === $config) {

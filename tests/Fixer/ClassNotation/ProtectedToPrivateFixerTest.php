@@ -118,38 +118,24 @@ final class Foo
             [
                 '<?php $a = new class{protected function A(){ echo 123; }};',
             ],
-        ];
-    }
-
-    /**
-     * @dataProvider provideFix74Cases
-     * @requires PHP 7.4
-     */
-    public function test74Fix(string $expected, ?string $input = null): void
-    {
-        $this->doTest($expected, $input);
-    }
-
-    public function provideFix74Cases(): \Generator
-    {
-        yield [
-            '<?php final class Foo { private int $foo; }',
-            '<?php final class Foo { protected int $foo; }',
-        ];
-
-        yield [
-            '<?php final class Foo { private ?string $foo; }',
-            '<?php final class Foo { protected ?string $foo; }',
-        ];
-
-        yield [
-            '<?php final class Foo { private array $foo; }',
-            '<?php final class Foo { protected array $foo; }',
+            [
+                '<?php final class Foo { private int $foo; }',
+                '<?php final class Foo { protected int $foo; }',
+            ],
+            [
+                '<?php final class Foo { private ?string $foo; }',
+                '<?php final class Foo { protected ?string $foo; }',
+            ],
+            [
+                '<?php final class Foo { private array $foo; }',
+                '<?php final class Foo { protected array $foo; }',
+            ],
         ];
     }
 
     /**
      * @dataProvider provideFix80Cases
+     *
      * @requires PHP 8.0
      */
     public function testFix80(string $expected, ?string $input = null): void
@@ -157,7 +143,7 @@ final class Foo
         $this->doTest($expected, $input);
     }
 
-    public static function provideFix80Cases(): \Generator
+    public static function provideFix80Cases(): iterable
     {
         yield [
             '<?php
@@ -175,6 +161,7 @@ final class Foo2 {
 
     /**
      * @dataProvider provideFix81Cases
+     *
      * @requires PHP 8.1
      */
     public function testFix81(string $expected, ?string $input = null): void
@@ -182,7 +169,7 @@ final class Foo2 {
         $this->doTest($expected, $input);
     }
 
-    public static function provideFix81Cases(): \Generator
+    public static function provideFix81Cases(): iterable
     {
         yield [
             '<?php
@@ -193,7 +180,7 @@ final class Foo2 {
             ',
         ];
 
-        yield [
+        yield 'protected final const' => [
             // '<?php final class Foo { final private const Y = "i"; }', 'Fatal error: Private constant Foo::Y cannot be final as it is not visible to other classes on line 1.
             '<?php
                 final class Foo1 { final protected const Y = "abc"; }
@@ -202,8 +189,47 @@ final class Foo2 {
         ];
 
         yield [
+            '<?php final class Foo2 { private const X = "tty"; }',
+            '<?php final class Foo2 { protected const X = "tty"; }',
+        ];
+
+        yield [
             '<?php final class Foo { private Foo1&Bar $foo; }',
             '<?php final class Foo { protected Foo1&Bar $foo; }',
+        ];
+
+        // https://wiki.php.net/rfc/enumerations
+        // Methods may be public, private, or protected, although in practice private and protected are equivalent as inheritance is not allowed.
+
+        yield 'enum' => [
+            '<?php
+enum Foo: string
+{
+    private const Spades = 123;
+
+    case Hearts = "H";
+
+    private function test() {
+        echo 123;
+    }
+}
+
+Foo::Hearts->test();
+            ',
+            '<?php
+enum Foo: string
+{
+    protected const Spades = 123;
+
+    case Hearts = "H";
+
+    protected function test() {
+        echo 123;
+    }
+}
+
+Foo::Hearts->test();
+            ',
         ];
     }
 

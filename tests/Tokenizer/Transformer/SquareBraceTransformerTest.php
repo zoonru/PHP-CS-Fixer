@@ -29,7 +29,7 @@ use PhpCsFixer\Tokenizer\Transformer\SquareBraceTransformer;
 final class SquareBraceTransformerTest extends AbstractTransformerTestCase
 {
     /**
-     * @param int[] $inspectIndexes
+     * @param list<int> $inspectIndexes
      *
      * @dataProvider provideIsShortArrayCases
      */
@@ -79,6 +79,8 @@ final class SquareBraceTransformerTest extends AbstractTransformerTestCase
     }
 
     /**
+     * @param array<int, int> $expectedTokens
+     *
      * @dataProvider provideProcessCases
      */
     public function testProcess(string $source, array $expectedTokens = []): void

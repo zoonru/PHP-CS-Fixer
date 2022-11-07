@@ -31,7 +31,7 @@ final class StringLengthToEmptyFixerTest extends AbstractFixerTestCase
         $this->doTest($expected, $input);
     }
 
-    public function provideTestFixCases(): \Generator
+    public function provideTestFixCases(): iterable
     {
         yield [
             '<?php $a = \'\' === $b;',
@@ -273,18 +273,11 @@ $l = 0 === Foo::strlen($b);
             '<?php if (\'\' === ($value = foo())) { echo 2; }',
             '<?php if (0 === \strlen($value = foo())) { echo 2; }',
         ];
-    }
 
-    /**
-     * @requires PHP 7.3
-     */
-    public function testPhp73(): void
-    {
-        $this->doTest(
+        yield [
             '<?php
-$a02 = 0 === strlen($b) instanceof stdClass;
-$a02n = strlen($b) === 0 instanceof stdClass;
-'
-        );
+                $a02 = 0 === strlen($b) instanceof stdClass;
+                $a02n = strlen($b) === 0 instanceof stdClass;',
+        ];
     }
 }

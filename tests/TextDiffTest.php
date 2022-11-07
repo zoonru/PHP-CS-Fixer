@@ -24,6 +24,7 @@ use Symfony\Component\Console\Tester\CommandTester;
  * @internal
  *
  * @coversNothing
+ *
  * @group covers-nothing
  */
 final class TextDiffTest extends TestCase
@@ -61,7 +62,7 @@ final class TextDiffTest extends TestCase
         static::assertStringMatchesFormat($expected, $commandTester->getDisplay(false));
     }
 
-    public function provideDiffReportingCases(): \Generator
+    public function provideDiffReportingCases(): iterable
     {
         $expected = <<<'TEST'
 %A$output->writeln('<error>'.(int)$output.'</error>');%A
@@ -73,12 +74,14 @@ TEST;
 
         foreach (['txt', 'xml', 'junit'] as $format) {
             yield [$expected, $format, true];
+
             yield [$expected, $format, false];
         }
 
         $expected = substr(json_encode($expected), 1, -1);
 
         yield [$expected, 'json', true];
+
         yield [$expected, 'json', false];
     }
 

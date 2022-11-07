@@ -349,6 +349,8 @@ abstract class Foo {
     }
 
     /**
+     * @param array<string, mixed> $config
+     *
      * @dataProvider provideFixConfigCases
      */
     public function testFixConfig(string $expected, string $input, array $config): void
@@ -357,7 +359,7 @@ abstract class Foo {
         $this->doTest($expected, $input);
     }
 
-    public function provideFixConfigCases(): \Generator
+    public function provideFixConfigCases(): iterable
     {
         yield [
             '<?php
@@ -388,6 +390,7 @@ class Bar
 
     /**
      * @dataProvider provideFix81Cases
+     *
      * @requires PHP 8.1
      */
     public function testFix81(string $expected, ?string $input = null): void
@@ -395,7 +398,7 @@ class Bar
         $this->doTest($expected, $input);
     }
 
-    public static function provideFix81Cases(): \Generator
+    public static function provideFix81Cases(): iterable
     {
         yield [
             '<?php
@@ -438,6 +441,33 @@ final class Foo81 {
     final const XY = "i81";
 }
             ',
+        ];
+
+        yield 'enum' => [
+            '<?php
+
+enum Foo: string
+{
+    case Hearts = "H";
+
+    public function test() {
+        echo 123;
+    }
+}
+
+var_dump(Foo::Spades);',
+            '<?php
+
+enum Foo: string
+{
+    case Hearts = "H";
+
+    final public function test() {
+        echo 123;
+    }
+}
+
+var_dump(Foo::Spades);',
         ];
     }
 }

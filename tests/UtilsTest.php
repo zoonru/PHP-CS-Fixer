@@ -32,6 +32,9 @@ final class UtilsTest extends TestCase
 {
     use ExpectDeprecationTrait;
 
+    /**
+     * @var null|false|string
+     */
     private $originalValueOfFutureMode;
 
     protected function setUp(): void
@@ -112,7 +115,7 @@ final class UtilsTest extends TestCase
     }
 
     /**
-     * @param array|string $input token prototype
+     * @param array{int, string}|string $input token prototype
      *
      * @dataProvider provideCalculateTrailingWhitespaceIndentCases
      */
@@ -146,6 +149,9 @@ final class UtilsTest extends TestCase
     }
 
     /**
+     * @param list<mixed> $expected
+     * @param list<mixed> $elements
+     *
      * @dataProvider provideStableSortCases
      */
     public function testStableSort(
@@ -166,25 +172,25 @@ final class UtilsTest extends TestCase
             [
                 ['a', 'b', 'c', 'd', 'e'],
                 ['b', 'd', 'e', 'a', 'c'],
-                static function ($element) { return $element; },
+                static fn ($element) => $element,
                 'strcmp',
             ],
             [
                 ['b', 'd', 'e', 'a', 'c'],
                 ['b', 'd', 'e', 'a', 'c'],
-                static function (): string { return 'foo'; },
+                static fn (): string => 'foo',
                 'strcmp',
             ],
             [
                 ['b', 'd', 'e', 'a', 'c'],
                 ['b', 'd', 'e', 'a', 'c'],
-                static function ($element) { return $element; },
-                static function (): int { return 0; },
+                static fn ($element) => $element,
+                static fn (): int => 0,
             ],
             [
                 ['bar1', 'baz1', 'foo1', 'bar2', 'baz2', 'foo2'],
                 ['foo1', 'foo2', 'bar1', 'bar2', 'baz1', 'baz2'],
-                static function ($element) { return preg_replace('/([a-z]+)(\d+)/', '$2$1', $element); },
+                static fn ($element) => preg_replace('/([a-z]+)(\d+)/', '$2$1', $element),
                 'strcmp',
             ],
         ];
@@ -218,6 +224,8 @@ final class UtilsTest extends TestCase
     }
 
     /**
+     * @param list<string> $names
+     *
      * @dataProvider provideNaturalLanguageJoinWithBackticksCases
      */
     public function testNaturalLanguageJoinWithBackticks(string $joined, array $names): void

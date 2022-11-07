@@ -25,12 +25,13 @@ use PhpCsFixer\Tests\Test\AbstractFixerTestCase;
 final class FunctionToConstantFixerTest extends AbstractFixerTestCase
 {
     /**
+     * @param array<string, mixed> $config
+     *
      * @dataProvider provideTestCases
      */
     public function testFix(string $expected, ?string $input = null, array $config = []): void
     {
         $this->fixer->configure($config);
-
         $this->doTest($expected, $input);
     }
 
@@ -243,6 +244,8 @@ get_called_class#1
     }
 
     /**
+     * @param array<mixed> $config
+     *
      * @dataProvider provideInvalidConfigurationKeysCases
      */
     public function testInvalidConfigurationKeys(array $config): void
@@ -267,11 +270,13 @@ get_called_class#1
         $this->expectException(InvalidFixerConfigurationException::class);
         $this->expectExceptionMessageMatches('#^\[function_to_constant\] Invalid configuration: The option "0" does not exist\. Defined options are: "functions"\.$#');
 
+        // @phpstan-ignore-next-line
         $this->fixer->configure(['pi123']);
     }
 
     /**
      * @dataProvider provideFix81Cases
+     *
      * @requires PHP 8.1
      */
     public function testFix81(string $expected, string $input = null): void
@@ -279,7 +284,7 @@ get_called_class#1
         $this->doTest($expected, $input);
     }
 
-    public function provideFix81Cases(): \Generator
+    public function provideFix81Cases(): iterable
     {
         yield 'first callable class' => [
             '<?php $a = get_class(...);',

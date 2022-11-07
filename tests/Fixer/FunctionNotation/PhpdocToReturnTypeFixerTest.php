@@ -26,6 +26,8 @@ use PhpCsFixer\Tests\Test\AbstractFixerTestCase;
 final class PhpdocToReturnTypeFixerTest extends AbstractFixerTestCase
 {
     /**
+     * @param array<string, mixed> $config
+     *
      * @dataProvider provideFixCases
      */
     public function testFix(string $expected, ?string $input = null, ?int $versionSpecificFix = null, array $config = []): void
@@ -39,11 +41,10 @@ final class PhpdocToReturnTypeFixerTest extends AbstractFixerTestCase
         }
 
         $this->fixer->configure($config);
-
         $this->doTest($expected, $input);
     }
 
-    public function provideFixCases(): \Generator
+    public function provideFixCases(): iterable
     {
         yield from [
             'no phpdoc return' => [
@@ -331,31 +332,16 @@ final class PhpdocToReturnTypeFixerTest extends AbstractFixerTestCase
                     function bar() {}
                 ',
             ],
-        ];
-    }
-
-    /**
-     * @dataProvider provideFixPhp74Cases
-     * @requires PHP 7.4
-     */
-    public function testFixPhp74(string $expected, ?string $input = null): void
-    {
-        $this->doTest($expected, $input);
-    }
-
-    public function provideFixPhp74Cases(): array
-    {
-        return [
             'arrow function' => [
                 '<?php /** @return int */ fn(): int => 1;',
                 '<?php /** @return int */ fn() => 1;',
-                70400,
             ],
         ];
     }
 
     /**
      * @dataProvider provideFixPre80Cases
+     *
      * @requires PHP <8.0
      */
     public function testFixPre80(string $expected, string $input = null): void
@@ -363,7 +349,7 @@ final class PhpdocToReturnTypeFixerTest extends AbstractFixerTestCase
         $this->doTest($expected, $input);
     }
 
-    public function provideFixPre80Cases(): \Generator
+    public function provideFixPre80Cases(): iterable
     {
         yield 'report static as self' => [
             '<?php
@@ -385,6 +371,7 @@ final class PhpdocToReturnTypeFixerTest extends AbstractFixerTestCase
 
     /**
      * @dataProvider provideFixPhp80Cases
+     *
      * @requires PHP 8.0
      */
     public function testFixPhp80(string $expected, ?string $input = null): void
@@ -392,7 +379,7 @@ final class PhpdocToReturnTypeFixerTest extends AbstractFixerTestCase
         $this->doTest($expected, $input);
     }
 
-    public function provideFixPhp80Cases(): \Generator
+    public function provideFixPhp80Cases(): iterable
     {
         yield 'static' => [
             '<?php

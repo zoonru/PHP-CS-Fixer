@@ -32,7 +32,7 @@ final class MagicMethodCasingFixerTest extends AbstractFixerTestCase
         $this->doTest($expected, $input);
     }
 
-    public function provideFixCases(): \Generator
+    public function provideFixCases(): iterable
     {
         $fixerReflection = new \ReflectionClass(MagicMethodCasingFixer::class);
         $property = $fixerReflection->getProperty('magicNames');
@@ -74,7 +74,7 @@ final class MagicMethodCasingFixerTest extends AbstractFixerTestCase
         // two arguments
         $methodNames = ['__call', '__set'];
 
-        foreach ($methodNames as $i => $name) {
+        foreach ($methodNames as $name) {
             unset($allMethodNames[$name]);
 
             yield sprintf('method declaration for "%s".', $name) => [
@@ -83,7 +83,7 @@ final class MagicMethodCasingFixerTest extends AbstractFixerTestCase
             ];
         }
 
-        foreach ($methodNames as $i => $name) {
+        foreach ($methodNames as $name) {
             yield sprintf('method call "%s".', $name) => [
                 sprintf('<?php $a->%s($a, $b);', $name),
                 sprintf('<?php $a->%s($a, $b);', strtoupper($name)),
@@ -93,7 +93,7 @@ final class MagicMethodCasingFixerTest extends AbstractFixerTestCase
         // single argument
         $methodNames = ['__get', '__isset', '__unset', '__unserialize'];
 
-        foreach ($methodNames as $i => $name) {
+        foreach ($methodNames as $name) {
             unset($allMethodNames[$name]);
 
             yield sprintf('method declaration for "%s".', $name) => [
@@ -102,7 +102,7 @@ final class MagicMethodCasingFixerTest extends AbstractFixerTestCase
             ];
         }
 
-        foreach ($methodNames as $i => $name) {
+        foreach ($methodNames as $name) {
             yield sprintf('method call "%s".', $name) => [
                 sprintf('<?php $a->%s($a);', $name),
                 sprintf('<?php $a->%s($a);', strtoupper($name)),
@@ -111,14 +111,14 @@ final class MagicMethodCasingFixerTest extends AbstractFixerTestCase
 
         // no argument
 
-        foreach ($allMethodNames as $i => $name) {
+        foreach ($allMethodNames as $name) {
             yield sprintf('method declaration for "%s".', $name) => [
                 sprintf('<?php class Foo {public function %s(){}}', $name),
                 sprintf('<?php class Foo {public function %s(){}}', strtoupper($name)),
             ];
         }
 
-        foreach ($allMethodNames as $i => $name) {
+        foreach ($allMethodNames as $name) {
             yield sprintf('method call "%s".', $name) => [
                 sprintf('<?php $a->%s();', $name),
                 sprintf('<?php $a->%s();', strtoupper($name)),
@@ -258,6 +258,11 @@ class Foo extends Bar
             $a->__UnSet($foo); // fix
             ',
         ];
+
+        yield [
+            '<?php $foo->__invoke(1, );',
+            '<?php $foo->__INVOKE(1, );',
+        ];
     }
 
     /**
@@ -334,17 +339,6 @@ function __Tostring() {}',
     }
 
     /**
-     * @requires PHP 7.3
-     */
-    public function testFix73(): void
-    {
-        $this->doTest(
-            '<?php $foo->__invoke(1, );',
-            '<?php $foo->__INVOKE(1, );'
-        );
-    }
-
-    /**
      * @requires PHP 8.0
      */
     public function testFix80(): void
@@ -357,6 +351,7 @@ function __Tostring() {}',
 
     /**
      * @dataProvider provideFix81Cases
+     *
      * @requires PHP 8.1
      */
     public function testFix81(string $expected, string $input = null): void
@@ -364,7 +359,7 @@ function __Tostring() {}',
         $this->doTest($expected, $input);
     }
 
-    public function provideFix81Cases(): \Generator
+    public function provideFix81Cases(): iterable
     {
         yield 'static call to "__set_state".' => [
             '<?php $f = Foo::__set_state(...);',
@@ -374,6 +369,21 @@ function __Tostring() {}',
         yield 'isset' => [
             '<?php $a->__isset(...);',
             '<?php $a->__ISSET(...);',
+        ];
+
+        yield 'enum' => [
+            '<?php
+enum Foo
+{
+    public static function __callStatic(string $method, array $parameters){ echo $method;}
+}
+Foo::test();',
+            '<?php
+enum Foo
+{
+    public static function __CALLStatic(string $method, array $parameters){ echo $method;}
+}
+Foo::test();',
         ];
     }
 }

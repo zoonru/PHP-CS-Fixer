@@ -26,6 +26,8 @@ use PhpCsFixer\Tests\Test\AbstractFixerTestCase;
 final class CommentToPhpdocFixerTest extends AbstractFixerTestCase
 {
     /**
+     * @param array<string, mixed> $config
+     *
      * @dataProvider provideTestCases
      */
     public function testFix(string $expected, ?string $input = null, array $config = []): void
@@ -333,6 +335,10 @@ EOT
                 /// @bar
                 namespace Foo\Bar;
 ',
+            ],
+            [
+                '<?php /* header comment */ $foo = true; class Foo { /** @phpstan-use Bar<Baz> $bar */ use Bar; }',
+                '<?php /* header comment */ $foo = true; class Foo { /* @phpstan-use Bar<Baz> $bar */ use Bar; }',
             ],
         ];
     }

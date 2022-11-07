@@ -24,6 +24,7 @@ use Symfony\Component\Console\Tester\CommandTester;
  * @internal
  *
  * @coversNothing
+ *
  * @group auto-review
  * @group covers-nothing
  */
@@ -48,7 +49,7 @@ final class DescribeCommandTest extends TestCase
         static::assertSame(0, $commandTester->getStatusCode());
     }
 
-    public function provideDescribeCommandCases(): \Generator
+    public function provideDescribeCommandCases(): iterable
     {
         $factory = new FixerFactory();
         $factory->registerBuiltInFixers();

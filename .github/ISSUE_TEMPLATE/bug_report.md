@@ -9,9 +9,10 @@ labels: kind/bug
 <!--
   Before reporting a bug, make sure PHP CS Fixer is up-to-date.
 
+  Check that the issue is NOT regarded to an applied rule by using the `-vvv` option (will list applied rules) on a minimal code snippet.
+
   Please describe the problem and provide technical details such as:
-   * PHP version: php -v
-   * PHP CS Fixer version: php-cs-fixer -V
+   * PHP CS Fixer version and PHP runtime: php-cs-fixer -V
    * the command used to run PHP CS Fixer (run with `-vvv`)
    * the configuration (file) you used
 -->

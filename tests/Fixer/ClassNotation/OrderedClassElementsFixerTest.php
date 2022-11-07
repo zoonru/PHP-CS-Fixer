@@ -35,11 +35,10 @@ final class OrderedClassElementsFixerTest extends AbstractFixerTestCase
         $this->doTest($expected, $input);
     }
 
-    public function provideFixCases(): array
+    public function provideFixCases(): iterable
     {
-        return [
-            [
-                <<<'EOT'
+        yield [
+            <<<'EOT'
 <?php
 
 class Foo {}
@@ -48,28 +47,34 @@ class Bar
 {
 }
 EOT
-            ],
-            [
-                <<<'EOT'
+        ];
+
+        yield [
+            <<<'EOT'
 <?php
 
 class Foo { const C1 = 1; protected $abc = 'abc'; public function baz($y, $z) {} private function bar1($x) { return 1; } }
 EOT
-                , <<<'EOT'
+            , <<<'EOT'
 <?php
 
 class Foo { private function bar1($x) { return 1; } protected $abc = 'abc'; const C1 = 1; public function baz($y, $z) {} }
 EOT
-            ],
-            [
-                <<<'EOT'
+        ];
+
+        yield [
+            <<<'EOT'
 <?php
 
 interface FooInterface
 {
 
+    /** const 1 */
     const CONST1 = 'const1';
 
+    // foo
+
+    // const 2
     const CONST2 = 'const2';
     public function xyz($x, $y, $z); // comment
 
@@ -83,13 +88,14 @@ interface FooInterface
     public function def();
 }
 EOT
-                , <<<'EOT'
+            , <<<'EOT'
 <?php
 
 interface FooInterface
 {
     public function xyz($x, $y, $z); // comment
 
+    /** const 1 */
     const CONST1 = 'const1';
 
     /**
@@ -99,14 +105,18 @@ interface FooInterface
      */
     function abc(array &$a = null);
 
+    // foo
+
+    // const 2
     const CONST2 = 'const2';
 
     public function def();
 }
 EOT
-            ],
-            [
-                <<<'EOT'
+        ];
+
+        yield [
+            <<<'EOT'
 <?php
 
 abstract class Foo extends FooParent implements FooInterface1, FooInterface2
@@ -188,7 +198,7 @@ abstract class Foo extends FooParent implements FooInterface1, FooInterface2
     } // end foo5
 }
 EOT
-                , <<<'EOT'
+            , <<<'EOT'
 <?php
 
 abstract class Foo extends FooParent implements FooInterface1, FooInterface2
@@ -270,9 +280,10 @@ abstract class Foo extends FooParent implements FooInterface1, FooInterface2
     }
 }
 EOT
-            ],
-            [
-                <<<'EOT'
+        ];
+
+        yield [
+            <<<'EOT'
 <?php
 
 class Foo
@@ -289,7 +300,7 @@ class Bar
     public function baz() {}
 }
 EOT
-                , <<<'EOT'
+            , <<<'EOT'
 <?php
 
 class Foo
@@ -306,9 +317,10 @@ class Bar
     public function baz() {}
 }
 EOT
-            ],
-            [
-                <<<'EOT'
+        ];
+
+        yield [
+            <<<'EOT'
 <?php
 
 trait FooTrait
@@ -321,7 +333,7 @@ trait FooTrait
     }
 }
 EOT
-                , <<<'EOT'
+            , <<<'EOT'
 <?php
 
 trait FooTrait
@@ -334,9 +346,10 @@ trait FooTrait
     use BazTrait;
 }
 EOT
-            ],
-            [
-                <<<'EOT'
+        ];
+
+        yield [
+            <<<'EOT'
 <?php
 
 /**
@@ -352,8 +365,8 @@ class ComplexStringVariableAndUseTrait
 }
 
 EOT
-                ,
-                <<<'EOT'
+            ,
+            <<<'EOT'
 <?php
 
 /**
@@ -369,11 +382,12 @@ class ComplexStringVariableAndUseTrait
 }
 
 EOT
-            ],
         ];
     }
 
     /**
+     * @param array<string, mixed> $configuration
+     *
      * @dataProvider provideConfigurationCases
      */
     public function testFixWithConfiguration(array $configuration, string $expected, string $input): void
@@ -905,6 +919,8 @@ EOT
     }
 
     /**
+     * @param array<string, mixed> $configuration
+     *
      * @dataProvider provideSortingConfigurationCases
      */
     public function testFixWithSortingAlgorithm(array $configuration, string $expected, string $input): void
@@ -1240,19 +1256,18 @@ EOT
     }
 
     /**
+     * @param array<string, mixed> $configuration
+     *
      * @dataProvider provideFix74Cases
-     * @requires PHP 7.4
      */
-    public function testFix74(string $expected, ?string $input = null, ?array $configuration = null): void
+    public function testFix74(string $expected, ?string $input = null, array $configuration = []): void
     {
-        if (null !== $configuration) {
-            $this->fixer->configure($configuration);
-        }
+        $this->fixer->configure($configuration);
 
         $this->doTest($expected, $input);
     }
 
-    public function provideFix74Cases(): \Generator
+    public function provideFix74Cases(): iterable
     {
         yield [
             '<?php
@@ -1270,6 +1285,7 @@ EOT
                 var ? Foo\Bar $qux;
             }',
         ];
+
         yield [
             '<?php
             class Foo {
@@ -1311,23 +1327,26 @@ class TestClass
     public function %s(){}
 }';
         $this->fixer->configure(['order' => ['use_trait'], 'sort_algorithm' => OrderedClassElementsFixer::SORT_ALPHA]);
-
         $this->doTest(
             sprintf($template, $methodName2, $methodName1),
             sprintf($template, $methodName1, $methodName2)
         );
     }
 
-    public function provideWithConfigWithNoCandidateCases(): \Generator
+    public function provideWithConfigWithNoCandidateCases(): iterable
     {
         yield ['z', '__construct'];
+
         yield ['z', '__destruct'];
+
         yield ['z', '__sleep'];
+
         yield ['z', 'abc'];
     }
 
     /**
      * @dataProvider provideFix80Cases
+     *
      * @requires PHP 8.0
      */
     public function testFix80(string $expected, string $input): void
@@ -1335,8 +1354,29 @@ class TestClass
         $this->doTest($expected, $input);
     }
 
-    public function provideFix80Cases(): \Generator
+    public function provideFix80Cases(): iterable
     {
+        yield [
+            '<?php
+
+trait TestTrait
+{
+    abstract static public function abstractStaticPublic();
+    abstract private function abstractPrivate();
+    abstract static private function abstractStaticPrivate();
+}
+',
+            '<?php
+
+trait TestTrait
+{
+    abstract private function abstractPrivate();
+    abstract static private function abstractStaticPrivate();
+    abstract static public function abstractStaticPublic();
+}
+',
+        ];
+
         yield [
             '<?php class Foo
             {
@@ -1376,19 +1416,20 @@ class TestClass
     }
 
     /**
+     * @param array<string, mixed> $configuration
+     *
      * @dataProvider provideFix81Cases
+     *
      * @requires PHP 8.1
      */
-    public function testFix81(string $expected, ?string $input = null, ?array $configuration = null): void
+    public function testFix81(string $expected, ?string $input = null, array $configuration = []): void
     {
-        if (null !== $configuration) {
-            $this->fixer->configure($configuration);
-        }
+        $this->fixer->configure($configuration);
 
         $this->doTest($expected, $input);
     }
 
-    public function provideFix81Cases(): \Generator
+    public function provideFix81Cases(): iterable
     {
         yield [
             '<?php
@@ -1418,6 +1459,55 @@ class A
 }
 ',
             ['order' => ['property_public_readonly', 'property_public', 'property_protected_readonly', 'property_private_readonly'], 'sort_algorithm' => 'alpha'],
+        ];
+
+        yield [
+            '<?php
+
+ enum A: int
+ {
+     case Foo = 1;
+     case Bar = 2;
+     private const C1 = 1;
+     function qux() {
+         switch (true) {
+             case 1: break;
+         }
+     }
+ }
+ ',
+            '<?php
+
+ enum A: int
+ {
+     private const C1 = 1;
+     case Foo = 1;
+     function qux() {
+         switch (true) {
+             case 1: break;
+         }
+     }
+     case Bar = 2;
+ }
+ ',
+        ];
+    }
+
+    /**
+     * @dataProvider provideFix82Cases
+     *
+     * @requires PHP 8.2
+     */
+    public function testFix82(string $expected, ?string $input = null): void
+    {
+        $this->doTest($expected, $input);
+    }
+
+    public function provideFix82Cases(): iterable
+    {
+        yield [
+            '<?php trait Foo { const C1 = 1; protected $abc = "abc"; }',
+            '<?php trait Foo { protected $abc = "abc"; const C1 = 1; }',
         ];
     }
 }

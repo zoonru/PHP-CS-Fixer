@@ -93,21 +93,6 @@ final class CombineNestedDirnameFixerTest extends AbstractFixerTestCase
                 '<?php new dirname(dirname($path, 2));',
                 '<?php new dirname(dirname(dirname($path)));',
             ],
-        ];
-    }
-
-    /**
-     * @requires PHP 7.3
-     * @dataProvider provideFix73Cases
-     */
-    public function testFix73(string $expected, string $input): void
-    {
-        $this->doTest($expected, $input);
-    }
-
-    public function provideFix73Cases(): array
-    {
-        return [
             [
                 '<?php dirname($path, 3);',
                 '<?php dirname(dirname(dirname($path, ), ));',
@@ -121,6 +106,7 @@ final class CombineNestedDirnameFixerTest extends AbstractFixerTestCase
 
     /**
      * @dataProvider provideFix81Cases
+     *
      * @requires PHP 8.1
      */
     public function testFix81(string $expected, ?string $input = null): void
@@ -128,7 +114,7 @@ final class CombineNestedDirnameFixerTest extends AbstractFixerTestCase
         $this->doTest($expected, $input);
     }
 
-    public function provideFix81Cases(): \Generator
+    public function provideFix81Cases(): iterable
     {
         yield ['<?php $a = dirname(dirname(...));'];
     }

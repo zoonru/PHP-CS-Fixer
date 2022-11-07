@@ -26,7 +26,10 @@ use PhpCsFixer\Tokenizer\Tokens;
 final class ConstructorPromotionTransformerTest extends AbstractTransformerTestCase
 {
     /**
+     * @param array<int, int> $expectedTokens
+     *
      * @dataProvider provideProcessCases
+     *
      * @requires PHP 8.0
      */
     public function testProcess(array $expectedTokens, string $source): void
@@ -42,7 +45,7 @@ final class ConstructorPromotionTransformerTest extends AbstractTransformerTestC
         );
     }
 
-    public function provideProcessCases(): \Generator
+    public function provideProcessCases(): iterable
     {
         yield [
             [
@@ -124,7 +127,10 @@ class Point {
     }
 
     /**
+     * @param array<int, int> $expectedTokens
+     *
      * @dataProvider provideFix81Cases
+     *
      * @requires PHP 8.1
      */
     public function testFix81(array $expectedTokens, string $source): void
@@ -138,7 +144,7 @@ class Point {
         );
     }
 
-    public function provideFix81Cases(): \Generator
+    public function provideFix81Cases(): iterable
     {
         yield 'readonly' => [
             [

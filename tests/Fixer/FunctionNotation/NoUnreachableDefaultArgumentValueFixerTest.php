@@ -173,21 +173,6 @@ $bar) {}',
             [
                 '<?php function foo (?Foo $bar = null, ?Baz $baz = null) {}',
             ],
-        ];
-    }
-
-    /**
-     * @dataProvider provideFix74Cases
-     * @requires PHP 7.4
-     */
-    public function testFix74(string $expected, ?string $input = null): void
-    {
-        $this->doTest($expected, $input);
-    }
-
-    public function provideFix74Cases(): array
-    {
-        return [
             [
                 '<?php $fn = fn ($a, $b) => null;',
                 '<?php $fn = fn ($a = 1, $b) => null;',
@@ -197,6 +182,7 @@ $bar) {}',
 
     /**
      * @dataProvider provideFix80Cases
+     *
      * @requires PHP 8.0
      */
     public function testFix80(string $expected, ?string $input = null): void
@@ -204,7 +190,7 @@ $bar) {}',
         $this->doTest($expected, $input);
     }
 
-    public function provideFix80Cases(): \Generator
+    public function provideFix80Cases(): iterable
     {
         yield 'handle trailing comma' => [
             '<?php function foo($x, $y = 42, $z = 42 ) {}',
@@ -239,6 +225,7 @@ $bar) {}',
 
     /**
      * @dataProvider provideFix81Cases
+     *
      * @requires PHP 8.1
      */
     public function testFix81(string $expected, ?string $input = null): void
@@ -246,7 +233,7 @@ $bar) {}',
         $this->doTest($expected, $input);
     }
 
-    public function provideFix81Cases(): \Generator
+    public function provideFix81Cases(): iterable
     {
         yield 'do not crash' => [
             '<?php strlen( ... );',

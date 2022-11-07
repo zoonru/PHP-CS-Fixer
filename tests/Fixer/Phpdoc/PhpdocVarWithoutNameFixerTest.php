@@ -487,11 +487,28 @@ class A
 }
 ',
             ],
+            'trait' => [
+                '<?php
+ trait StaticExample {
+    /**
+     * @var string Hello!
+     */
+    public static $static = "foo";
+}',
+                '<?php
+ trait StaticExample {
+    /**
+     * @var string $static Hello!
+     */
+    public static $static = "foo";
+}',
+            ],
         ];
     }
 
     /**
      * @dataProvider provideFix81Cases
+     *
      * @requires PHP 8.1
      */
     public function testFix81(string $expected, ?string $input = null): void
@@ -499,7 +516,7 @@ class A
         $this->doTest($expected, $input);
     }
 
-    public function provideFix81Cases(): \Generator
+    public function provideFix81Cases(): iterable
     {
         yield 'readonly' => [
             '<?php

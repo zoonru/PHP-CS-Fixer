@@ -32,7 +32,7 @@ final class PowToExponentiationFixerTest extends AbstractFixerTestCase
         $this->doTest($expected, $input);
     }
 
-    public function provideFixCases(): \Generator
+    public function provideFixCases(): iterable
     {
         yield from [
             [
@@ -222,11 +222,24 @@ final class PowToExponentiationFixerTest extends AbstractFixerTestCase
             [
                 '<?php pow($b, ...$a);',
             ],
+            [
+                '<?php echo +$a** 2;',
+                '<?php echo pow(+$a, 2,);',
+            ],
+            [
+                '<?php echo +$a** 2/*1*//*2*/;',
+                '<?php echo pow(+$a, 2/*1*/,/*2*/);',
+            ],
+            [
+                '<?php echo 10_0** 2;',
+                '<?php echo pow(10_0, 2);',
+            ],
         ];
     }
 
     /**
      * @dataProvider provideFixPre80Cases
+     *
      * @requires PHP <8.0
      */
     public function testFixPre80(string $expected, string $input = null): void
@@ -234,7 +247,7 @@ final class PowToExponentiationFixerTest extends AbstractFixerTestCase
         $this->doTest($expected, $input);
     }
 
-    public function provideFixPre80Cases(): \Generator
+    public function provideFixPre80Cases(): iterable
     {
         yield [
             '<?php echo $a{1}** $b{2+5};',
@@ -269,49 +282,8 @@ final class PowToExponentiationFixerTest extends AbstractFixerTestCase
     }
 
     /**
-     * @requires PHP 7.3
-     * @dataProvider provideFix73Cases
-     */
-    public function testFix73(string $expected, string $input): void
-    {
-        $this->doTest($expected, $input);
-    }
-
-    public function provideFix73Cases(): array
-    {
-        return [
-            [
-                '<?php echo +$a** 2;',
-                '<?php echo pow(+$a, 2,);',
-            ],
-            [
-                '<?php echo +$a** 2/*1*//*2*/;',
-                '<?php echo pow(+$a, 2/*1*/,/*2*/);',
-            ],
-        ];
-    }
-
-    /**
-     * @requires PHP 7.4
-     * @dataProvider provideFix74Cases
-     */
-    public function testFix74(string $expected, string $input): void
-    {
-        $this->doTest($expected, $input);
-    }
-
-    public function provideFix74Cases(): array
-    {
-        return [
-            [
-                '<?php echo 10_0** 2;',
-                '<?php echo pow(10_0, 2);',
-            ],
-        ];
-    }
-
-    /**
      * @requires PHP 8.0
+     *
      * @dataProvider provideFix80Cases
      */
     public function testFix80(string $expected, string $input): void

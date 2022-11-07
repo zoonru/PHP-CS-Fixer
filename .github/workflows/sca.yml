@@ -4,6 +4,9 @@ on:
   - pull_request
   - push
 
+permissions:
+  contents: read # to fetch code (actions/checkout)
+
 jobs:
   tests:
     strategy:
@@ -57,6 +60,12 @@ jobs:
       - name: Report versions
         run: composer info -D
 
+      ## We want to have a lock-file used on PR level, so contributors are not bothered by SCA complains unrelated to their changes,
+      ## and same time we want to be aware that we are complying with bleeding edge of SCA tools as maintainers observing the push hook.
+      - name: Unlock dev-tools
+        if: ${{ github.event_name != 'pull_request' }}
+        run: rm ./dev-tools/composer.lock
+
       - name: Install dev-tools
         uses: nick-invision/retry@v2
         with:
@@ -107,9 +116,9 @@ jobs:
         if: ${{ env.CHANGED_PHP_FILES }}
         run: |
           if [ '${{ github.event_name }}' == 'pull_request' ]; then
-            ./dev-tools/vendor/bin/phpmd `echo "$CHANGED_PHP_FILES" | xargs | sed 's/ /,/g'` github phpmd.xml --exclude tests/Fixtures/
+            ./dev-tools/vendor/bin/phpmd `echo "$CHANGED_PHP_FILES" | grep -v /Fixtures/ | xargs | sed 's/ /,/g'` github phpmd.xml
           else
-            ./dev-tools/vendor/bin/phpmd `echo "$CHANGED_PHP_FILES" | xargs | sed 's/ /,/g'` ansi phpmd.xml --exclude tests/Fixtures/
+            ./dev-tools/vendor/bin/phpmd `echo "$CHANGED_PHP_FILES" | grep -v /Fixtures/ | xargs | sed 's/ /,/g'` ansi phpmd.xml
           fi
 
       - name: Check - ensure test files are not present in the archive

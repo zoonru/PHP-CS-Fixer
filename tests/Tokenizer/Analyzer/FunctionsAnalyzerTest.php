@@ -39,7 +39,7 @@ final class FunctionsAnalyzerTest extends TestCase
         self::assertIsGlobalFunctionCall($indices, $code);
     }
 
-    public function provideIsGlobalFunctionCallCases(): \Generator
+    public function provideIsGlobalFunctionCallCases(): iterable
     {
         yield [
             '<?php CONSTANT;',
@@ -244,16 +244,6 @@ final class FunctionsAnalyzerTest extends TestCase
             [1, 6, 11, 16, 21, 26],
         ];
 
-        if (\PHP_VERSION_ID < 80000) {
-            yield [
-                '<?php
-                    use function \  str_repeat;
-                    str_repeat($a, $b);
-                ',
-                [11],
-            ];
-        }
-
         yield [
             '<?php
 $z = new class(
@@ -266,31 +256,33 @@ A();
                 ',
             [46],
         ];
-    }
 
-    /**
-     * @param int[] $indices
-     *
-     * @dataProvider provideIsGlobalFunctionCallPhp74Cases
-     * @requires PHP 7.4
-     */
-    public function testIsGlobalFunctionCallPhp74(string $code, array $indices): void
-    {
-        self::assertIsGlobalFunctionCall($indices, $code);
-    }
-
-    public function provideIsGlobalFunctionCallPhp74Cases(): \Generator
-    {
         yield [
             '<?php $foo = fn() => false;',
             [],
         ];
+
+        yield [
+            '<?php foo("bar"); class A { function Foo(){ foo(); } }',
+            [1, 20],
+        ];
+
+        if (\PHP_VERSION_ID < 80000) {
+            yield [
+                '<?php
+                    use function \  str_repeat;
+                    str_repeat($a, $b);
+                ',
+                [11],
+            ];
+        }
     }
 
     /**
      * @param int[] $indices
      *
      * @dataProvider provideIsGlobalFunctionCallPhp80Cases
+     *
      * @requires PHP 8.0
      */
     public function testIsGlobalFunctionCallPhp80(string $code, array $indices): void
@@ -298,7 +290,7 @@ A();
         self::assertIsGlobalFunctionCall($indices, $code);
     }
 
-    public function provideIsGlobalFunctionCallPhp80Cases(): \Generator
+    public function provideIsGlobalFunctionCallPhp80Cases(): iterable
     {
         yield [
             '<?php $a = new (foo());',
@@ -336,6 +328,7 @@ class Foo {}
      * @param int[] $indices
      *
      * @dataProvider provideIsGlobalFunctionCallPhp81Cases
+     *
      * @requires PHP 8.1
      */
     public function testIsGlobalFunctionCallPhp81(array $indices, string $code): void
@@ -343,7 +336,7 @@ class Foo {}
         self::assertIsGlobalFunctionCall($indices, $code);
     }
 
-    public function provideIsGlobalFunctionCallPhp81Cases(): \Generator
+    public function provideIsGlobalFunctionCallPhp81Cases(): iterable
     {
         yield 'first class callable cases' => [
             [],
@@ -366,9 +359,16 @@ $a = new #[foo]
 class(){};
 ',
         ];
+
+        yield [
+            [1, 20],
+            '<?php foo("bar"); enum A { function Foo(){ foo(); } }',
+        ];
     }
 
     /**
+     * @param array<string, ArgumentAnalysis> $expected
+     *
      * @dataProvider provideFunctionsWithArgumentsCases
      */
     public function testFunctionArgumentInfo(string $code, int $methodIndex, array $expected): void
@@ -391,7 +391,7 @@ class(){};
         static::assertSame(serialize($expected), serialize($actual));
     }
 
-    public function provideFunctionsWithArgumentsCases(): \Generator
+    public function provideFunctionsWithArgumentsCases(): iterable
     {
         yield from [
             ['<?php function(){};', 1, []],
@@ -475,48 +475,6 @@ class(){};
             ]],
         ];
 
-        if (\PHP_VERSION_ID < 80000) {
-            yield ['<?php function(\Foo/** TODO: change to something else */\Bar $a){};', 1, [
-                '$a' => new ArgumentAnalysis(
-                    '$a',
-                    9,
-                    null,
-                    new TypeAnalysis(
-                        '\Foo\Bar',
-                        3,
-                        7
-                    )
-                ),
-            ]];
-        }
-    }
-
-    public function provideFunctionReturnTypeInfoCases(): \Generator
-    {
-        yield ['<?php function(){};', 1, null];
-        yield ['<?php function($a): array {};', 1, new TypeAnalysis('array', 7, 7)];
-        yield ['<?php function($a): \Foo\Bar {};', 1, new TypeAnalysis('\Foo\Bar', 7, 10)];
-        yield ['<?php function($a): /* not sure if really an array */array {};', 1, new TypeAnalysis('array', 8, 8)];
-
-        if (\PHP_VERSION_ID < 80000) {
-            yield ['<?php function($a): \Foo/** TODO: change to something else */\Bar {};', 1, new TypeAnalysis('\Foo\Bar', 7, 11)];
-        }
-    }
-
-    /**
-     * @dataProvider provideFunctionsWithArgumentsPhp74Cases
-     * @requires PHP 7.4
-     */
-    public function testFunctionArgumentInfoPhp74(string $code, int $methodIndex, array $expected): void
-    {
-        $tokens = Tokens::fromCode($code);
-        $analyzer = new FunctionsAnalyzer();
-
-        static::assertSame(serialize($expected), serialize($analyzer->getFunctionArguments($tokens, $methodIndex)));
-    }
-
-    public function provideFunctionsWithArgumentsPhp74Cases(): \Generator
-    {
         yield from [
             ['<?php fn() => null;', 1, []],
             ['<?php fn($a) => null;', 1, [
@@ -612,28 +570,44 @@ class(){};
                     )
                 ),
             ]];
+
+            yield ['<?php function(\Foo/** TODO: change to something else */\Bar $a){};', 1, [
+                '$a' => new ArgumentAnalysis(
+                    '$a',
+                    9,
+                    null,
+                    new TypeAnalysis(
+                        '\Foo\Bar',
+                        3,
+                        7
+                    )
+                ),
+            ]];
         }
     }
 
-    /**
-     * @dataProvider provideFunctionsWithReturnTypePhp74Cases
-     * @requires PHP 7.4
-     */
-    public function testFunctionReturnTypeInfoPhp74(string $code, int $methodIndex, ?TypeAnalysis $expected): void
+    public function provideFunctionReturnTypeInfoCases(): iterable
     {
-        $tokens = Tokens::fromCode($code);
-        $analyzer = new FunctionsAnalyzer();
-        $actual = $analyzer->getFunctionReturnType($tokens, $methodIndex);
+        yield ['<?php function(){};', 1, null];
 
-        static::assertSame(serialize($expected), serialize($actual));
-    }
+        yield ['<?php function($a): array {};', 1, new TypeAnalysis('array', 7, 7)];
 
-    public function provideFunctionsWithReturnTypePhp74Cases(): \Generator
-    {
+        yield ['<?php function($a): \Foo\Bar {};', 1, new TypeAnalysis('\Foo\Bar', 7, 10)];
+
+        yield ['<?php function($a): /* not sure if really an array */array {};', 1, new TypeAnalysis('array', 8, 8)];
+
+        if (\PHP_VERSION_ID < 80000) {
+            yield ['<?php function($a): \Foo/** TODO: change to something else */\Bar {};', 1, new TypeAnalysis('\Foo\Bar', 7, 11)];
+        }
+
         yield ['<?php fn() => null;', 1, null];
+
         yield ['<?php fn(array $a) => null;', 1, null];
+
         yield ['<?php fn($a): array => null;', 1, new TypeAnalysis('array', 7, 7)];
+
         yield ['<?php fn($a): \Foo\Bar => null;', 1, new TypeAnalysis('\Foo\Bar', 7, 10)];
+
         yield ['<?php fn($a): /* not sure if really an array */array => null;', 1, new TypeAnalysis('array', 8, 8)];
 
         if (\PHP_VERSION_ID < 80000) {
@@ -652,7 +626,7 @@ class(){};
         static::assertSame($isTheSameClassCall, $analyzer->isTheSameClassCall($tokens, $index));
     }
 
-    public function provideIsTheSameClassCallCases(): \Generator
+    public function provideIsTheSameClassCallCases(): iterable
     {
         $template = '<?php
             class Foo {
@@ -724,7 +698,10 @@ class(){};
     }
 
     /**
+     * @param array<string, ArgumentAnalysis> $expected
+     *
      * @dataProvider provideFunctionsWithArgumentsPhp80Cases
+     *
      * @requires PHP 8.0
      */
     public function testFunctionArgumentInfoPhp80(string $code, int $methodIndex, array $expected): void
@@ -735,7 +712,7 @@ class(){};
         static::assertSame(serialize($expected), serialize($analyzer->getFunctionArguments($tokens, $methodIndex)));
     }
 
-    public function provideFunctionsWithArgumentsPhp80Cases(): \Generator
+    public function provideFunctionsWithArgumentsPhp80Cases(): iterable
     {
         yield ['<?php function($aa,){};', 1, [
             '$aa' => new ArgumentAnalysis(

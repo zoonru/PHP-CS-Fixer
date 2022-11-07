@@ -22,6 +22,7 @@ use PhpCsFixer\Tokenizer\Tokens;
 
 /**
  * @internal
+ *
  * @requires PHP 8.0
  *
  * @covers \PhpCsFixer\Tokenizer\Transformer\NameQualifiedTransformer
@@ -60,7 +61,7 @@ final class NameQualifiedTransformerTest extends AbstractTransformerTestCase
         }
     }
 
-    public function provideProcessCases(): \Generator
+    public function provideProcessCases(): iterable
     {
         if (\PHP_VERSION_ID < 80000) {
             return; // PHPUnit still calls this for no reason on non PHP8.0
@@ -164,7 +165,7 @@ final class NameQualifiedTransformerTest extends AbstractTransformerTestCase
         self::assertTokens(Tokens::fromArray($expected), Tokens::fromCode($source));
     }
 
-    public function providePriorityCases(): \Generator
+    public function providePriorityCases(): iterable
     {
         yield [
             [

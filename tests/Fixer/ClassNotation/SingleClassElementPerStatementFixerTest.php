@@ -35,9 +35,9 @@ final class SingleClassElementPerStatementFixerTest extends AbstractFixerTestCas
         $this->doTest($expected, $input);
     }
 
-    public function provideFixCases(): array
+    public function provideFixCases(): iterable
     {
-        return [
+        yield from [
             [
                 '<?php
 class Foo
@@ -634,9 +634,61 @@ echo Foo::A, Foo::B;
                 ',
             ],
         ];
+
+        yield [
+            '<?php class Foo {
+                private int $foo;
+                private int $bar;
+            }',
+            '<?php class Foo {
+                private int $foo, $bar;
+            }',
+        ];
+
+        yield [
+            '<?php class Foo {
+                protected ?string $foo;
+                protected ?string $bar;
+            }',
+            '<?php class Foo {
+                protected ?string $foo, $bar;
+            }',
+        ];
+
+        yield [
+            '<?php class Foo {
+                public ? string $foo;
+                public ? string $bar;
+            }',
+            '<?php class Foo {
+                public ? string $foo, $bar;
+            }',
+        ];
+
+        yield [
+            '<?php class Foo {
+                var ? Foo\Bar $foo;
+                var ? Foo\Bar $bar;
+            }',
+            '<?php class Foo {
+                var ? Foo\Bar $foo, $bar;
+            }',
+        ];
+
+        yield [
+            '<?php class Foo {
+                var array $foo;
+                var array $bar;
+            }',
+            '<?php class Foo {
+                var array $foo, $bar;
+            }',
+        ];
     }
 
     /**
+     * @param array<string, mixed> $configuration
+     *
      * @dataProvider provideConfigurationCases
      */
     public function testFixWithConfiguration(array $configuration, string $expected): void
@@ -719,7 +771,7 @@ EOT
         $this->doTest($expected, $input);
     }
 
-    public function provideMessyWhitespacesCases(): \Generator
+    public function provideMessyWhitespacesCases(): iterable
     {
         yield [
             "<?php\r\n\tclass Foo {\r\n\t\tconst AAA=0;\r\n\t\tconst BBB=1;\r\n\t}",
@@ -774,69 +826,8 @@ EOT
     }
 
     /**
-     * @dataProvider provideTestFix74Cases
-     * @requires PHP 7.4
-     */
-    public function testFix74(string $expected, ?string $input = null): void
-    {
-        $this->doTest($expected, $input);
-    }
-
-    public function provideTestFix74Cases(): \Generator
-    {
-        yield [
-            '<?php class Foo {
-                private int $foo;
-                private int $bar;
-            }',
-            '<?php class Foo {
-                private int $foo, $bar;
-            }',
-        ];
-
-        yield [
-            '<?php class Foo {
-                protected ?string $foo;
-                protected ?string $bar;
-            }',
-            '<?php class Foo {
-                protected ?string $foo, $bar;
-            }',
-        ];
-
-        yield [
-            '<?php class Foo {
-                public ? string $foo;
-                public ? string $bar;
-            }',
-            '<?php class Foo {
-                public ? string $foo, $bar;
-            }',
-        ];
-
-        yield [
-            '<?php class Foo {
-                var ? Foo\Bar $foo;
-                var ? Foo\Bar $bar;
-            }',
-            '<?php class Foo {
-                var ? Foo\Bar $foo, $bar;
-            }',
-        ];
-
-        yield [
-            '<?php class Foo {
-                var array $foo;
-                var array $bar;
-            }',
-            '<?php class Foo {
-                var array $foo, $bar;
-            }',
-        ];
-    }
-
-    /**
      * @dataProvider provideFix80Cases
+     *
      * @requires PHP 8.0
      */
     public function testFix80(string $expected, string $input): void
@@ -844,7 +835,7 @@ EOT
         $this->doTest($expected, $input);
     }
 
-    public function provideFix80Cases(): \Generator
+    public function provideFix80Cases(): iterable
     {
         yield [
             '<?php
@@ -865,6 +856,7 @@ class Foo
 
     /**
      * @dataProvider provideFix81Cases
+     *
      * @requires PHP 8.1
      */
     public function testFix81(string $expected, ?string $input = null): void
@@ -872,7 +864,7 @@ class Foo
         $this->doTest($expected, $input);
     }
 
-    public function provideFix81Cases(): \Generator
+    public function provideFix81Cases(): iterable
     {
         yield [
             '<?php
@@ -928,6 +920,46 @@ class Foo
     private Foo&Bar $prop1, $prop2;
 }
 ',
+        ];
+
+        yield [
+            "<?php
+
+enum Foo: string {
+    public const A = 'A';
+    public const B = 'B';
+    case Hearts = 'H';
+    case Spades = 'S';
+}
+
+var_dump(Foo::A.Foo::B);",
+            "<?php
+
+enum Foo: string {
+    public const A = 'A', B = 'B';
+    case Hearts = 'H';
+    case Spades = 'S';
+}
+
+var_dump(Foo::A.Foo::B);",
+        ];
+    }
+
+    /**
+     * @dataProvider provideFix82Cases
+     *
+     * @requires PHP 8.2
+     */
+    public function testFix82(string $expected, ?string $input = null): void
+    {
+        $this->doTest($expected, $input);
+    }
+
+    public function provideFix82Cases(): iterable
+    {
+        yield [
+            '<?php trait Foo { public const Bar = 1; public const Baz = 1; }',
+            '<?php trait Foo { public const Bar = 1, Baz = 1; }',
         ];
     }
 }

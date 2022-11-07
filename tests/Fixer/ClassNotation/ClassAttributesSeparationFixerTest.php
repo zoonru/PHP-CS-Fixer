@@ -34,7 +34,7 @@ final class ClassAttributesSeparationFixerTest extends AbstractFixerTestCase
         $this->doTest($expected, $input);
     }
 
-    public function provideFixCases(): \Generator
+    public function provideFixCases(): iterable
     {
         yield [
             '<?php
@@ -249,6 +249,8 @@ private $d = 123;
     }
 
     /**
+     * @param array<mixed> $elements
+     *
      * @dataProvider provideInvalidElementsCases
      */
     public function testInvalidElements(array $elements): void
@@ -260,7 +262,9 @@ private $d = 123;
     public static function provideInvalidElementsCases(): iterable
     {
         yield 'numeric keys' => [['method', 'property']];
+
         yield 'wrong key name' => [['methods' => 'one']];
+
         yield 'wrong key value' => [['method' => 'two']];
     }
 
@@ -1159,6 +1163,8 @@ class ezcReflectionMethod extends ReflectionMethod {
     }
 
     /**
+     * @param array<string, mixed> $config
+     *
      * @dataProvider provideConfigCases
      */
     public function testWithConfig(string $expected, ?string $input, array $config): void
@@ -1784,7 +1790,6 @@ abstract class Example
 
     /**
      * @dataProvider provideFix71Cases
-     * @requires PHP 7.1
      */
     public function testFix71(string $expected, string $input): void
     {
@@ -1828,19 +1833,18 @@ abstract class Example
     }
 
     /**
+     * @param array<string, mixed> $config
+     *
      * @dataProvider provideFix74Cases
-     * @requires PHP 7.4
      */
-    public function testFix74(string $expected, ?string $input = null, array $config = null): void
+    public function testFix74(string $expected, ?string $input = null, array $config = []): void
     {
-        if (null !== $config) {
-            $this->fixer->configure($config);
-        }
+        $this->fixer->configure($config);
 
         $this->doTest($expected, $input);
     }
 
-    public function provideFix74Cases(): \Generator
+    public function provideFix74Cases(): iterable
     {
         yield [
             '<?php
@@ -1916,19 +1920,20 @@ abstract class Example
     }
 
     /**
+     * @param array<string, mixed> $config
+     *
      * @dataProvider provideFixPhp80Cases
+     *
      * @requires PHP 8.0
      */
-    public function testFixPhp80(string $expected, ?string $input, array $config = null): void
+    public function testFixPhp80(string $expected, ?string $input, array $config = []): void
     {
-        if (null !== $config) {
-            $this->fixer->configure($config);
-        }
+        $this->fixer->configure($config);
 
         $this->doTest($expected, $input);
     }
 
-    public function provideFixPhp80Cases(): \Generator
+    public function provideFixPhp80Cases(): iterable
     {
         yield 'attributes' => [
             '<?php
@@ -2176,15 +2181,20 @@ class Foo
     }
 
     /**
+     * @param array<string, mixed> $config
+     *
      * @dataProvider provideFix81Cases
+     *
      * @requires PHP 8.1
      */
-    public function testFix81(string $expected, ?string $input = null): void
+    public function testFix81(string $expected, ?string $input, array $config = []): void
     {
+        $this->fixer->configure($config);
+
         $this->doTest($expected, $input);
     }
 
-    public function provideFix81Cases(): \Generator
+    public function provideFix81Cases(): iterable
     {
         yield [
             '<?php class A {
@@ -2249,6 +2259,127 @@ class Foo
                 private static Bar & Something & Baz $b;
                 private Bar & Something & Baz $c;
                 private Bar & Something & Baz $d;
+            }',
+        ];
+
+        $input = '<?php
+enum Cards: string
+{
+    protected const Deck = "d.d";
+
+
+
+    protected const Pack = "p.p";
+
+    case Hearts = "H";
+
+
+    case Spades = "S";
+
+
+
+
+    case Diamonds = "D";
+
+
+    case Clubs = "C";
+    protected function test() {
+        echo 1;
+    }
+
+
+    protected function test2() {
+        echo 2;
+    }
+}
+            ';
+
+        yield [
+            '<?php
+enum Cards: string
+{
+    protected const Deck = "d.d";
+
+    protected const Pack = "p.p";
+
+    case Hearts = "H";
+
+    case Spades = "S";
+
+    case Diamonds = "D";
+
+    case Clubs = "C";
+
+    protected function test() {
+        echo 1;
+    }
+
+    protected function test2() {
+        echo 2;
+    }
+}
+            ',
+            $input,
+            ['elements' => [
+                'const' => 'one',
+                'method' => 'one',
+                'case' => 'one',
+            ]],
+        ];
+
+        yield [
+            '<?php
+enum Cards: string
+{
+    protected const Deck = "d.d";
+    protected const Pack = "p.p";
+
+    case Hearts = "H";
+    case Spades = "S";
+    case Diamonds = "D";
+    case Clubs = "C";
+
+    protected function test() {
+        echo 1;
+    }
+
+    protected function test2() {
+        echo 2;
+    }
+}
+            ',
+            $input,
+            ['elements' => [
+                'const' => 'none',
+                'method' => 'one',
+                'case' => 'none',
+            ]],
+        ];
+    }
+
+    /**
+     * @dataProvider provideFix82Cases
+     *
+     * @requires PHP 8.2
+     */
+    public function testFix82(string $expected, ?string $input = null): void
+    {
+        $this->doTest($expected, $input);
+    }
+
+    public function provideFix82Cases(): iterable
+    {
+        yield [
+            '<?php
+            trait Foo {
+                const Bar = 1;
+
+                const Baz = 2;
+            }',
+            '<?php
+            trait Foo {
+                const Bar = 1;
+                const Baz = 2;
             }',
         ];
     }

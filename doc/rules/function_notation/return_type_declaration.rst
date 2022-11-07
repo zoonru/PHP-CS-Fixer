@@ -2,8 +2,7 @@
 Rule ``return_type_declaration``
 ================================
 
-There should be one or no space before colon, and one space after it in return
-type declarations, according to configuration.
+Adjust spacing around colon in return type declarations and backed enum types.
 
 Description
 -----------
@@ -68,6 +67,9 @@ Rule sets
 ---------
 
 The rule is part of the following rule sets:
+
+@PER
+  Using the `@PER <./../../ruleSets/PER.rst>`_ rule set will enable the ``return_type_declaration`` rule with the default config.
 
 @PSR12
   Using the `@PSR12 <./../../ruleSets/PSR12.rst>`_ rule set will enable the ``return_type_declaration`` rule with the default config.

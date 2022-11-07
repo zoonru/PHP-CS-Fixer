@@ -264,6 +264,7 @@ if ($some) { return 1; } elseif ($a == 6){ $test = false; } //',
 
     /**
      * @dataProvider provideFix80Cases
+     *
      * @requires PHP 8.0
      */
     public function testFix80(string $expected): void
@@ -271,7 +272,7 @@ if ($some) { return 1; } elseif ($a == 6){ $test = false; } //',
         $this->doTest($expected);
     }
 
-    public function provideFix80Cases(): \Generator
+    public function provideFix80Cases(): iterable
     {
         yield [
             '<?php

@@ -4,9 +4,13 @@ Rule ``no_alias_functions``
 
 Master functions shall be used instead of aliases.
 
-.. warning:: Using this rule is risky.
+Warning
+-------
 
-   Risky when any of the alias functions are overridden.
+Using this rule is risky
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+Risky when any of the alias functions are overridden.
 
 Configuration
 -------------
@@ -35,7 +39,7 @@ List of sets to fix. Defined sets are:
 * ``@time`` (time functions)
 
 
-Allowed values: a subset of ``['@all', '@internal', '@exif', '@ftp', '@IMAP', '@ldap', '@mbreg', '@mysqli', '@oci', '@odbc', '@openssl', '@pcntl', '@pg', '@posix', '@snmp', '@sodium', '@time']``
+Allowed values: a subset of ``['@all', '@exif', '@ftp', '@IMAP', '@internal', '@ldap', '@mbreg', '@mysqli', '@oci', '@odbc', '@openssl', '@pcntl', '@pg', '@posix', '@snmp', '@sodium', '@time']``
 
 Default value: ``['@internal', '@IMAP', '@pg']``
 

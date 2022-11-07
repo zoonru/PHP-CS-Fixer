@@ -276,38 +276,24 @@ null;#13
             [
                 '<?php class Foo { public const FOO = null; }',
             ],
-        ];
-    }
-
-    /**
-     * @dataProvider provideFix74Cases
-     * @requires PHP 7.4
-     */
-    public function testFix74(string $expected, ?string $input = null): void
-    {
-        $this->doTest($expected, $input);
-    }
-
-    public function provideFix74Cases(): \Generator
-    {
-        yield [
-            '<?php class Foo { protected ?int $bar = null; }',
-        ];
-        yield [
-            '<?php class Foo { protected ? string $bar = null; }',
-        ];
-        yield [
-            '<?php class Foo { protected ? array $bar = null; }',
-        ];
-
-        yield [
-            '<?php class Foo { protected static ?int $bar = null; }',
-        ];
-        yield [
-            '<?php class Foo { protected static ? string $bar = null; }',
-        ];
-        yield [
-            '<?php class Foo { protected static ? array $bar = null; }',
+            [
+                '<?php class Foo { protected ?int $bar = null; }',
+            ],
+            [
+                '<?php class Foo { protected ? string $bar = null; }',
+            ],
+            [
+                '<?php class Foo { protected ? array $bar = null; }',
+            ],
+            [
+                '<?php class Foo { protected static ?int $bar = null; }',
+            ],
+            [
+                '<?php class Foo { protected static ? string $bar = null; }',
+            ],
+            [
+                '<?php class Foo { protected static ? array $bar = null; }',
+            ],
         ];
     }
 
@@ -321,7 +307,7 @@ null;#13
         $this->doTest($expected, $input);
     }
 
-    public function provideFixPrePHP80Cases(): \Generator
+    public function provideFixPrePHP80Cases(): iterable
     {
         yield [
             '<?php class Foo { public $bar; }',
@@ -362,6 +348,7 @@ class Point {
 
     /**
      * @dataProvider provideFix81Cases
+     *
      * @requires PHP 8.1
      */
     public function testFix81(string $expected, ?string $input = null): void
@@ -369,7 +356,7 @@ class Point {
         $this->doTest($expected, $input);
     }
 
-    public function provideFix81Cases(): \Generator
+    public function provideFix81Cases(): iterable
     {
         yield 'readonly - cannot have default value, fixer should not crash' => [
             '<?php

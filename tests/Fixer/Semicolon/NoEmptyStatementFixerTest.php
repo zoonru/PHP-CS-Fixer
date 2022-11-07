@@ -33,7 +33,7 @@ final class NoEmptyStatementFixerTest extends AbstractFixerTestCase
         $this->doTest($expected, $input);
     }
 
-    public function provideNoEmptyStatementsCases(): \Generator
+    public function provideNoEmptyStatementsCases(): iterable
     {
         yield from [
             [
@@ -521,7 +521,7 @@ final class NoEmptyStatementFixerTest extends AbstractFixerTestCase
      */
     public function testCasesWithShortOpenTag(string $expected, ?string $input = null): void
     {
-        if (!ini_get('short_open_tag')) {
+        if (!\ini_get('short_open_tag')) {
             static::markTestSkipped('No short tag tests possible.');
         }
 
@@ -600,6 +600,24 @@ final class NoEmptyStatementFixerTest extends AbstractFixerTestCase
                     }
                 ',
             ],
+        ];
+    }
+
+    /**
+     * @dataProvider provideFix81Cases
+     *
+     * @requires PHP 8.1
+     */
+    public function testFix81(string $expected, string $input): void
+    {
+        $this->doTest($expected, $input);
+    }
+
+    public function provideFix81Cases(): iterable
+    {
+        yield [
+            '<?php enum Foo{}',
+            '<?php enum Foo{};',
         ];
     }
 }

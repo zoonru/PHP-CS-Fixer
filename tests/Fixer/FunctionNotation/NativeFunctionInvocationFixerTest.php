@@ -53,7 +53,7 @@ final class NativeFunctionInvocationFixerTest extends AbstractFixerTestCase
         $this->expectException(InvalidConfigurationException::class);
         $this->expectExceptionMessage(sprintf(
             'Each element must be a non-empty, trimmed string, got "%s" instead.',
-            \is_object($element) ? \get_class($element) : \gettype($element)
+            get_debug_type($element)
         ));
 
         $this->fixer->configure([
@@ -251,6 +251,10 @@ json_encode($foo);
 strlen($foo);
 strlen($foo);
 ',
+            ],
+            [
+                '<?php $name = \get_class($foo, );',
+                '<?php $name = get_class($foo, );',
             ],
         ];
     }
@@ -462,16 +466,17 @@ namespace {
     }
 
     /**
+     * @param array<string, mixed> $configuration
+     *
      * @dataProvider provideFixWithConfiguredIncludeCases
      */
     public function testFixWithConfiguredInclude(string $expected, ?string $input = null, array $configuration = []): void
     {
         $this->fixer->configure($configuration);
-
         $this->doTest($expected, $input);
     }
 
-    public function provideFixWithConfiguredIncludeCases(): \Generator
+    public function provideFixWithConfiguredIncludeCases(): iterable
     {
         yield from [
             'include set + 1, exclude 1' => [
@@ -586,17 +591,6 @@ namespace {
     }
 
     /**
-     * @requires PHP 7.3
-     */
-    public function testFix73(): void
-    {
-        $this->doTest(
-            '<?php $name = \get_class($foo, );',
-            '<?php $name = get_class($foo, );'
-        );
-    }
-
-    /**
      * @requires PHP <8.0
      */
     public function testFixPrePHP80(): void
@@ -622,7 +616,10 @@ echo strlen($a);
     }
 
     /**
+     * @param array<string, mixed> $config
+     *
      * @dataProvider provideFix80Cases
+     *
      * @requires PHP 8.0
      */
     public function testFix80(string $expected, ?string $input = null, array $config = []): void
@@ -631,7 +628,7 @@ echo strlen($a);
         $this->doTest($expected, $input);
     }
 
-    public function provideFix80Cases(): \Generator
+    public function provideFix80Cases(): iterable
     {
         yield 'attribute and strict' => [
             '<?php

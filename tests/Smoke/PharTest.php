@@ -26,7 +26,9 @@ use Symfony\Component\Console\Tester\CommandTester;
  * @internal
  *
  * @coversNothing
+ *
  * @group covers-nothing
+ *
  * @large
  */
 final class PharTest extends AbstractSmokeTest
@@ -55,8 +57,11 @@ final class PharTest extends AbstractSmokeTest
 
     public function testVersion(): void
     {
+        /** @phpstan-ignore-next-line to avoid `Ternary operator condition is always true|false.` */
+        $shouldExpectCodename = Application::VERSION_CODENAME ? 1 : 0;
+
         static::assertMatchesRegularExpression(
-            '/^.* '.Application::VERSION.'(?: '.Application::VERSION_CODENAME.')? by .*$/',
+            sprintf("/^PHP CS Fixer (?<version>%s)(?<git_sha> \\([a-z0-9]+\\))?(?<codename> %s){%d}(?<by> by .*)\nPHP runtime: (?<php_version>\\d\\.\\d+\\..*)$/", Application::VERSION, Application::VERSION_CODENAME, $shouldExpectCodename),
             self::executePharCommand('--version')->getOutput()
         );
     }

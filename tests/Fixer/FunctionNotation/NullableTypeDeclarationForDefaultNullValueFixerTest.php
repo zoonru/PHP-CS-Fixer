@@ -34,56 +34,98 @@ final class NullableTypeDeclarationForDefaultNullValueFixerTest extends Abstract
         $this->doTest($expected);
     }
 
-    public function provideDoNotFixCases(): \Generator
+    public function provideDoNotFixCases(): iterable
     {
         yield ['<?php function foo($param = null) {}'];
+
         yield ['<?php function foo($param1 = null, $param2 = null) {}'];
+
         yield ['<?php function foo(&$param = null) {}'];
+
         yield ['<?php function foo(& $param = null) {}'];
+
         yield ['<?php function foo(/**int*/ $param = null) {}'];
+
         yield ['<?php function foo(/**int*/ &$param = null) {}'];
+
         yield ['<?php $foo = function ($param = null) {};'];
+
         yield ['<?php $foo = function (&$param = null) {};'];
 
         yield ['<?php function foo(?string $param = null) {}'];
+
         yield ['<?php function foo(?string $param= null) {}'];
+
         yield ['<?php function foo(?string $param =null) {}'];
+
         yield ['<?php function foo(?string $param=null) {}'];
+
         yield ['<?php function foo(?string $param1 = null, ?string $param2 = null) {}'];
+
         yield ['<?php function foo(?string &$param = null) {}'];
+
         yield ['<?php function foo(?string & $param = null) {}'];
+
         yield ['<?php function foo(?string /*comment*/$param = null) {}'];
+
         yield ['<?php function foo(?string /*comment*/&$param = null) {}'];
+
         yield ['<?php function foo(? string $param = null) {}'];
+
         yield ['<?php function foo(?/*comment*/string $param = null) {}'];
+
         yield ['<?php function foo(? /*comment*/ string $param = null) {}'];
+
         yield ['<?php $foo = function (?string $param = null) {};'];
+
         yield ['<?php $foo = function (?string &$param = null) {};'];
 
         yield ['<?php function foo(?Baz $param = null) {}'];
+
         yield ['<?php function foo(?\Baz $param = null) {}'];
+
         yield ['<?php function foo(?Bar\Baz $param = null) {}'];
+
         yield ['<?php function foo(?\Bar\Baz $param = null) {}'];
+
         yield ['<?php function foo(?Baz &$param = null) {}'];
+
         yield ['<?php function foo(?\Baz &$param = null) {}'];
+
         yield ['<?php function foo(?Bar\Baz &$param = null) {}'];
+
         yield ['<?php function foo(?\Bar\Baz &$param = null) {}'];
+
         yield ['<?php function foo(?Baz & $param = null) {}'];
+
         yield ['<?php function foo(?\Baz & $param = null) {}'];
+
         yield ['<?php function foo(?Bar\Baz & $param = null) {}'];
+
         yield ['<?php function foo(?\Bar\Baz & $param = null) {}'];
+
         yield ['<?php function foo(?array &$param = null) {}'];
+
         yield ['<?php function foo(?array & $param = null) {}'];
+
         yield ['<?php function foo(?callable &$param = null) {}'];
+
         yield ['<?php function foo(?callable & $param = null) {}'];
+
         yield ['<?php $foo = function (?Baz $param = null) {};'];
+
         yield ['<?php $foo = function (?Baz &$param = null) {};'];
+
         yield ['<?php $foo = function (?Baz & $param = null) {};'];
+
         yield ['<?php class Test { public function foo(?Bar\Baz $param = null) {} }'];
+
         yield ['<?php class Test { public function foo(?self $param = null) {} }'];
 
         yield ['<?php function foo(...$param) {}'];
+
         yield ['<?php function foo(array ...$param) {}'];
+
         yield ['<?php function foo(?array ...$param) {}'];
 
         yield ['<?php function foo(mixed $param = null) {}'];
@@ -105,11 +147,10 @@ final class NullableTypeDeclarationForDefaultNullValueFixerTest extends Abstract
     public function testFixInverse(string $expected, string $input): void
     {
         $this->fixer->configure(['use_nullable_type_declaration' => false]);
-
         $this->doTest($expected, $input);
     }
 
-    public function provideFixCases(): \Generator
+    public function provideFixCases(): iterable
     {
         yield [
             '<?php function foo(?string $param = null) {}',
@@ -286,12 +327,12 @@ final class NullableTypeDeclarationForDefaultNullValueFixerTest extends Abstract
         ];
     }
 
-    public function provideInvertedFixCases(): \Generator
+    public function provideInvertedFixCases(): iterable
     {
         return TestCaseUtils::swapExpectedInputTestCases($this->provideFixCases());
     }
 
-    public function provideNonInverseOnlyFixCases(): \Generator
+    public function provideNonInverseOnlyFixCases(): iterable
     {
         yield [
             '<?php function foo( ?string $param = null) {}',
@@ -309,7 +350,7 @@ final class NullableTypeDeclarationForDefaultNullValueFixerTest extends Abstract
         ];
     }
 
-    public function provideInverseOnlyFixCases(): \Generator
+    public function provideInverseOnlyFixCases(): iterable
     {
         yield [
             '<?php function foo(string $param = null) {}',
@@ -329,7 +370,6 @@ final class NullableTypeDeclarationForDefaultNullValueFixerTest extends Abstract
 
     /**
      * @dataProvider provideFixPhp74Cases
-     * @requires PHP 7.4
      */
     public function testFixPhp74(string $expected, string $input): void
     {
@@ -338,16 +378,14 @@ final class NullableTypeDeclarationForDefaultNullValueFixerTest extends Abstract
 
     /**
      * @dataProvider provideInvertedFixPhp74Cases
-     * @requires PHP 7.4
      */
     public function testFixInversePhp74(string $expected, string $input): void
     {
         $this->fixer->configure(['use_nullable_type_declaration' => false]);
-
         $this->doTest($expected, $input);
     }
 
-    public function provideFixPhp74Cases(): \Generator
+    public function provideFixPhp74Cases(): iterable
     {
         yield [
             '<?php $foo = fn (?string $param = null) => null;',
@@ -391,25 +429,26 @@ final class NullableTypeDeclarationForDefaultNullValueFixerTest extends Abstract
 
     /**
      * @dataProvider provideFix80Cases
+     *
      * @requires PHP 8.0
      */
     public function testFix80(string $expected, ?string $input = null): void
     {
-        $this->doTest($expected);
+        $this->doTest($expected, $input);
     }
 
     /**
      * @dataProvider provideInvertedFix80Cases
+     *
      * @requires PHP 8.0
      */
     public function testFixInverse80(string $expected, ?string $input = null): void
     {
         $this->fixer->configure(['use_nullable_type_declaration' => false]);
-
         $this->doTest($expected, $input);
     }
 
-    public function provideFix80Cases(): \Generator
+    public function provideFix80Cases(): iterable
     {
         yield 'trailing comma' => [
             '<?php function foo(?string $param = null,) {}',
@@ -470,20 +509,20 @@ final class NullableTypeDeclarationForDefaultNullValueFixerTest extends Abstract
     }
 
     /**
+     * @param array<string, mixed> $configuration
+     *
      * @requires PHP <8.0
      *
      * @dataProvider provideFixPre81Cases
      */
-    public function testFixPre81(string $expected, ?string $input = null, array $configuration = null): void
+    public function testFixPre81(string $expected, ?string $input = null, array $configuration = []): void
     {
-        if (null !== $configuration) {
-            $this->fixer->configure($configuration);
-        }
+        $this->fixer->configure($configuration);
 
         $this->doTest($expected, $input);
     }
 
-    public function provideFixPre81Cases(): \Generator
+    public function provideFixPre81Cases(): iterable
     {
         yield 'do not fix pre PHP 8.1' => [
             '<?php
@@ -498,6 +537,47 @@ final class NullableTypeDeclarationForDefaultNullValueFixerTest extends Abstract
         ];
 
         yield [$cases[0], $cases[1]];
+
         yield [$cases[1], $cases[0], ['use_nullable_type_declaration' => false]];
+    }
+
+    /**
+     * @param array<string, mixed> $config
+     *
+     * @dataProvider provideFix81Cases
+     *
+     * @requires PHP 8.1
+     */
+    public function testFix81(string $expected, array $config = []): void
+    {
+        $this->fixer->configure($config);
+
+        $this->doTest($expected);
+    }
+
+    public function provideFix81Cases(): iterable
+    {
+        yield [
+            '<?php
+class Foo
+{
+    public function __construct(
+        protected readonly ?bool $nullable = null,
+    ) {}
+}
+',
+        ];
+
+        yield [
+            '<?php
+
+            class Foo {
+                public function __construct(
+                   public readonly ?string $readonlyString = null,
+                   readonly public ?int $readonlyInt = null,
+                ) {}
+            }',
+            ['use_nullable_type_declaration' => false],
+        ];
     }
 }

@@ -28,6 +28,8 @@ use PhpCsFixer\Tokenizer\Tokens;
 final class PhpUnitNamespacedFixerTest extends AbstractFixerTestCase
 {
     /**
+     * @param array<string, mixed> $config
+     *
      * @dataProvider provideTestFixCases
      */
     public function testFix(string $expected, ?string $input = null, array $config = []): void
@@ -267,7 +269,7 @@ final class PhpUnitNamespacedFixerTest extends AbstractFixerTestCase
         static::assertStringNotContainsString('_', $tokens->generateCode());
     }
 
-    public static function provideClassIsFixedCases(): \Generator
+    public static function provideClassIsFixedCases(): iterable
     {
         $classmap = require __DIR__.'/../../../vendor/composer/autoload_classmap.php';
 
@@ -280,6 +282,7 @@ final class PhpUnitNamespacedFixerTest extends AbstractFixerTestCase
 
     /**
      * @dataProvider provideFix81Cases
+     *
      * @requires PHP 8.1
      */
     public function testFix81(string $expected, ?string $input = null): void
@@ -287,7 +290,7 @@ final class PhpUnitNamespacedFixerTest extends AbstractFixerTestCase
         $this->doTest($expected, $input);
     }
 
-    public function provideFix81Cases(): \Generator
+    public function provideFix81Cases(): iterable
     {
         yield [
             '<?php

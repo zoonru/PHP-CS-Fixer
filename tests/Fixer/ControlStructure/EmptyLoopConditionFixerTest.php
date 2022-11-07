@@ -24,18 +24,18 @@ use PhpCsFixer\Tests\Test\AbstractFixerTestCase;
 final class EmptyLoopConditionFixerTest extends AbstractFixerTestCase
 {
     /**
+     * @param array<string, mixed> $config
+     *
      * @dataProvider provideFixCases
      */
-    public function testFixConfig(string $expected, ?string $input = null, array $config = null): void
+    public function testFixConfig(string $expected, ?string $input = null, array $config = []): void
     {
-        if (null !== $config) {
-            $this->fixer->configure($config);
-        }
+        $this->fixer->configure($config);
 
         $this->doTest($expected, $input);
     }
 
-    public function provideFixCases(): \Generator
+    public function provideFixCases(): iterable
     {
         yield 'from `for` to `while`' => [
             '<?php

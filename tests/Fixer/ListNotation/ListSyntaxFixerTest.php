@@ -42,7 +42,7 @@ final class ListSyntaxFixerTest extends AbstractFixerTestCase
         $this->doTest($expected, $input);
     }
 
-    public function provideFixToLongSyntaxCases(): \Generator
+    public function provideFixToLongSyntaxCases(): iterable
     {
         // reverse testing
         $shortCases = $this->provideFixToShortSyntaxCases();
@@ -183,7 +183,6 @@ $a;#
     }
 
     /**
-     * @requires PHP 7.2
      * @dataProvider provideFixToShortSyntaxPhp72Cases
      */
     public function testFixToShortSyntaxPhp72(string $expected, string $input): void
@@ -193,7 +192,6 @@ $a;#
     }
 
     /**
-     * @requires PHP 7.2
      * @dataProvider provideFixToLongSyntaxPhp72Cases
      */
     public function testFixToLongSyntaxPhp72(string $expected, string $input): void
@@ -202,7 +200,7 @@ $a;#
         $this->doTest($expected, $input);
     }
 
-    public function provideFixToShortSyntaxPhp72Cases(): \Generator
+    public function provideFixToShortSyntaxPhp72Cases(): iterable
     {
         yield [
             '<?php [$a, $b,, [$c, $d]] = $a;',
@@ -216,7 +214,6 @@ $a;#
     }
 
     /**
-     * @requires PHP 7.3
      * @dataProvider provideFixToShortSyntaxPhp73Cases
      */
     public function testFixToShortSyntaxPhp73(string $expected, string $input): void
@@ -226,7 +223,6 @@ $a;#
     }
 
     /**
-     * @requires PHP 7.3
      * @dataProvider provideFixToLongSyntaxPhp73Cases
      */
     public function testFixToLongSyntaxPhp73(string $expected, string $input): void
@@ -235,7 +231,7 @@ $a;#
         $this->doTest($expected, $input);
     }
 
-    public function provideFixToShortSyntaxPhp73Cases(): \Generator
+    public function provideFixToShortSyntaxPhp73Cases(): iterable
     {
         yield [
             '<?php [&$a, $b] = $a;',
@@ -260,6 +256,7 @@ $a;#
 
     /**
      * @dataProvider provideFix81Cases
+     *
      * @requires PHP 8.1
      */
     public function testFix81(string $expected, string $input = null): void
@@ -267,7 +264,7 @@ $a;#
         $this->doTest($expected, $input);
     }
 
-    public function provideFix81Cases(): \Generator
+    public function provideFix81Cases(): iterable
     {
         yield 'simple 8.1' => [
             '<?php $a = _list(...);',

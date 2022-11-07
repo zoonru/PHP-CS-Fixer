@@ -25,7 +25,10 @@ use PhpCsFixer\Tokenizer\CT;
 final class TypeIntersectionTransformerTest extends AbstractTransformerTestCase
 {
     /**
+     * @param array<int, int> $expectedTokens
+     *
      * @dataProvider provideProcessCases
+     *
      * @requires PHP 8.1
      */
     public function testProcess(string $source, array $expectedTokens = []): void
@@ -39,7 +42,7 @@ final class TypeIntersectionTransformerTest extends AbstractTransformerTestCase
         );
     }
 
-    public function provideProcessCases(): \Generator
+    public function provideProcessCases(): iterable
     {
         yield 'do not fix cases' => [
             '<?php
@@ -293,6 +296,30 @@ $a = static function (A&B&int $a):int|null {};
                 22 => CT::T_TYPE_INTERSECTION,
                 37 => CT::T_TYPE_INTERSECTION,
                 52 => CT::T_TYPE_INTERSECTION,
+            ],
+        ];
+
+        yield [
+            '<?php
+
+use Psr\Log\LoggerInterface;
+function f( #[Target(\'xxx\')] LoggerInterface&A $logger) {}
+
+',
+            [
+                24 => CT::T_TYPE_INTERSECTION,
+            ],
+        ];
+
+        yield [
+            '<?php
+
+use Psr\Log\LoggerInterface;
+function f( #[Target(\'a\')] #[Target(\'b\')] #[Target(\'c\')] #[Target(\'d\')] LoggerInterface&X $logger) {}
+
+',
+            [
+                45 => CT::T_TYPE_INTERSECTION,
             ],
         ];
     }

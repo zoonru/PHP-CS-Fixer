@@ -48,7 +48,7 @@ Array Notation
 - `no_multiline_whitespace_around_double_arrow <./array_notation/no_multiline_whitespace_around_double_arrow.rst>`_
 
   Operator ``=>`` should not be surrounded by multi-line whitespaces.
-- `no_trailing_comma_in_singleline_array <./array_notation/no_trailing_comma_in_singleline_array.rst>`_
+- `no_trailing_comma_in_singleline_array <./array_notation/no_trailing_comma_in_singleline_array.rst>`_ *(deprecated)*
 
   PHP single-line arrays should not have trailing comma.
 - `no_whitespace_before_comma_in_array <./array_notation/no_whitespace_before_comma_in_array.rst>`_
@@ -70,9 +70,18 @@ Basic
 - `braces <./basic/braces.rst>`_
 
   The body of each structure MUST be enclosed by braces. Braces should be properly placed. Body of braces should be properly indented.
+- `curly_braces_position <./basic/curly_braces_position.rst>`_
+
+  Curly braces must be placed as configured.
 - `encoding <./basic/encoding.rst>`_
 
   PHP code MUST use only UTF-8 without BOM (remove BOM).
+- `no_multiple_statements_per_line <./basic/no_multiple_statements_per_line.rst>`_
+
+  There must not be more than one statement per line.
+- `no_trailing_comma_in_singleline <./basic/no_trailing_comma_in_singleline.rst>`_
+
+  If a list of values separated by a comma is contained on a single line, then the last item MUST NOT have a trailing comma.
 - `non_printable_character <./basic/non_printable_character.rst>`_ *(risky)*
 
   Remove Zero-width space (ZWSP), Non-breaking space (NBSP) and other invisible unicode symbols.
@@ -86,6 +95,9 @@ Basic
 Casing
 ------
 
+- `class_reference_name_casing <./casing/class_reference_name_casing.rst>`_
+
+  When referencing an internal class it must be written using the correct casing.
 - `constant_case <./casing/constant_case.rst>`_
 
   The PHP constants ``true``, ``false``, and ``null`` MUST be written using the correct casing.
@@ -141,7 +153,7 @@ Class Notation
   Class, trait and interface elements must be separated with one or none blank line.
 - `class_definition <./class_notation/class_definition.rst>`_
 
-  Whitespace around the keywords of a class, trait or interfaces definition should be one space.
+  Whitespace around the keywords of a class, trait, enum or interfaces definition should be one space.
 - `final_class <./class_notation/final_class.rst>`_ *(risky)*
 
   All classes must be final, except abstract ones and Doctrine entities.
@@ -162,10 +174,10 @@ Class Notation
   Convert PHP4-style constructors to ``__construct``.
 - `no_unneeded_final_method <./class_notation/no_unneeded_final_method.rst>`_ *(risky)*
 
-  A ``final`` class must not have ``final`` methods and ``private`` methods must not be ``final``.
+  Removes ``final`` from methods where possible.
 - `ordered_class_elements <./class_notation/ordered_class_elements.rst>`_
 
-  Orders the elements of classes/interfaces/traits.
+  Orders the elements of classes/interfaces/traits/enums.
 - `ordered_interfaces <./class_notation/ordered_interfaces.rst>`_ *(risky)*
 
   Orders the interfaces in an ``implements`` or ``interface extends`` clause.
@@ -216,6 +228,9 @@ Comment
 - `no_trailing_whitespace_in_comment <./comment/no_trailing_whitespace_in_comment.rst>`_
 
   There MUST be no trailing spaces inside comment or PHPDoc.
+- `single_line_comment_spacing <./comment/single_line_comment_spacing.rst>`_
+
+  Single-line comments must have proper spacing.
 - `single_line_comment_style <./comment/single_line_comment_style.rst>`_
 
   Single-line comments and multi-line comments with only one line of actual content should use the ``//`` syntax.
@@ -230,6 +245,9 @@ Constant Notation
 Control Structure
 -----------------
 
+- `control_structure_braces <./control_structure/control_structure_braces.rst>`_
+
+  The body of each control structure MUST be enclosed within braces.
 - `control_structure_continuation_position <./control_structure/control_structure_continuation_position.rst>`_
 
   Control structure continuation keyword must be on the configured line.
@@ -254,7 +272,7 @@ Control Structure
 - `no_superfluous_elseif <./control_structure/no_superfluous_elseif.rst>`_
 
   Replaces superfluous ``elseif`` with ``if``.
-- `no_trailing_comma_in_list_call <./control_structure/no_trailing_comma_in_list_call.rst>`_
+- `no_trailing_comma_in_list_call <./control_structure/no_trailing_comma_in_list_call.rst>`_ *(deprecated)*
 
   Remove trailing commas in list function calls.
 - `no_unneeded_control_parentheses <./control_structure/no_unneeded_control_parentheses.rst>`_
@@ -280,7 +298,7 @@ Control Structure
   Switch case must not be ended with ``continue`` but with ``break``.
 - `trailing_comma_in_multiline <./control_structure/trailing_comma_in_multiline.rst>`_
 
-  Multi-line arrays, arguments list and parameters list must have a trailing comma.
+  Multi-line arrays, arguments list, parameters list and ``match`` expressions must have a trailing comma.
 - `yoda_style <./control_structure/yoda_style.rst>`_
 
   Write conditions in Yoda style (``true``), non-Yoda style (``['equal' => false, 'identical' => false, 'less_and_greater' => false]``) or ignore those conditions (``null``) based on configuration.
@@ -307,6 +325,9 @@ Function Notation
 - `combine_nested_dirname <./function_notation/combine_nested_dirname.rst>`_ *(risky)*
 
   Replace multiple nested calls of ``dirname`` by only one call with second ``$level`` parameter. Requires PHP >= 7.0.
+- `date_time_create_from_format_call <./function_notation/date_time_create_from_format_call.rst>`_ *(risky)*
+
+  The first argument of ``DateTime::createFromFormat`` method must start with ``!``.
 - `fopen_flag_order <./function_notation/fopen_flag_order.rst>`_ *(risky)*
 
   Order the flags in ``fopen`` calls, ``b`` and ``t`` must be last.
@@ -334,6 +355,9 @@ Function Notation
 - `no_spaces_after_function_name <./function_notation/no_spaces_after_function_name.rst>`_
 
   When making a method or function call, there MUST NOT be a space between the method or function name and the opening parenthesis.
+- `no_trailing_comma_in_singleline_function_call <./function_notation/no_trailing_comma_in_singleline_function_call.rst>`_ *(deprecated)*
+
+  When making a method or function call on a single line there MUST NOT be a trailing comma after the last argument.
 - `no_unreachable_default_argument_value <./function_notation/no_unreachable_default_argument_value.rst>`_ *(risky)*
 
   In function arguments there must not be arguments with default values before non-default ones.
@@ -357,7 +381,7 @@ Function Notation
   Callables must be called without using ``call_user_func*`` when possible.
 - `return_type_declaration <./function_notation/return_type_declaration.rst>`_
 
-  There should be one or no space before colon, and one space after it in return type declarations, according to configuration.
+  Adjust spacing around colon in return type declarations and backed enum types.
 - `single_line_throw <./function_notation/single_line_throw.rst>`_
 
   Throwing exception must be done in single line.
@@ -386,6 +410,9 @@ Import
 - `no_leading_import_slash <./import/no_leading_import_slash.rst>`_
 
   Remove leading slashes in ``use`` clauses.
+- `no_unneeded_import_alias <./import/no_unneeded_import_alias.rst>`_
+
+  Imports should not be aliased as the same name.
 - `no_unused_imports <./import/no_unused_imports.rst>`_
 
   Unused ``use`` statements must be removed.
@@ -495,10 +522,16 @@ Operator
   Use ``&&`` and ``||`` logical operators instead of ``and`` and ``or``.
 - `new_with_braces <./operator/new_with_braces.rst>`_
 
-  All instances created with new keyword must be followed by braces.
+  All instances created with ``new`` keyword must (not) be followed by braces.
 - `no_space_around_double_colon <./operator/no_space_around_double_colon.rst>`_
 
   There must be no space around double colons (also called Scope Resolution Operator or Paamayim Nekudotayim).
+- `no_useless_concat_operator <./operator/no_useless_concat_operator.rst>`_
+
+  There should not be useless concat operations.
+- `no_useless_nullsafe_operator <./operator/no_useless_nullsafe_operator.rst>`_
+
+  There should not be useless ``null-safe-operators`` ``?->`` used.
 - `not_operator_with_space <./operator/not_operator_with_space.rst>`_
 
   Logical NOT operators (``!``) should have leading and trailing whitespaces.
@@ -663,7 +696,7 @@ PHPDoc
   Order phpdoc tags by value.
 - `phpdoc_order <./phpdoc/phpdoc_order.rst>`_
 
-  Annotations in PHPDoc should be ordered so that ``@param`` annotations come first, then ``@throws`` annotations, then ``@return`` annotations.
+  Annotations in PHPDoc should be ordered in defined sequence.
 - `phpdoc_return_self_reference <./phpdoc/phpdoc_return_self_reference.rst>`_
 
   The type of ``@return`` annotations of methods returning a reference to itself must the configured one.
@@ -672,7 +705,7 @@ PHPDoc
   Scalar types should always be written in the same form. ``int`` not ``integer``, ``bool`` not ``boolean``, ``float`` not ``real`` or ``double``.
 - `phpdoc_separation <./phpdoc/phpdoc_separation.rst>`_
 
-  Annotations in PHPDoc should be grouped together so that annotations of the same type immediately follow each other, and annotations of a different type are separated by a single blank line.
+  Annotations in PHPDoc should be grouped together so that annotations of the same type immediately follow each other. Annotations of a different type are separated by a single blank line.
 - `phpdoc_single_line_var_spacing <./phpdoc/phpdoc_single_line_var_spacing.rst>`_
 
   Single line ``@var`` PHPDoc should have proper spacing.
@@ -792,6 +825,9 @@ Whitespace
 - `blank_line_before_statement <./whitespace/blank_line_before_statement.rst>`_
 
   An empty line feed must precede any configured statement.
+- `blank_line_between_import_groups <./whitespace/blank_line_between_import_groups.rst>`_
+
+  Putting blank lines between ``use`` statement groups.
 - `compact_nullable_typehint <./whitespace/compact_nullable_typehint.rst>`_
 
   Remove extra spaces in a nullable typehint.
@@ -825,6 +861,9 @@ Whitespace
 - `single_blank_line_at_eof <./whitespace/single_blank_line_at_eof.rst>`_
 
   A PHP file without end tag must always end with a single empty line feed.
+- `statement_indentation <./whitespace/statement_indentation.rst>`_
+
+  Each statement must be indented.
 - `types_spaces <./whitespace/types_spaces.rst>`_
 
-  A single space or none should be around union type operator.
+  A single space or none should be around union type and intersection type operators.

@@ -27,6 +27,8 @@ use PhpCsFixer\Tokenizer\CT;
 final class NullableTypeTransformerTest extends AbstractTransformerTestCase
 {
     /**
+     * @param array<int, int> $expectedTokens
+     *
      * @dataProvider provideProcessCases
      */
     public function testProcess(string $source, array $expectedTokens = []): void
@@ -64,27 +66,6 @@ final class NullableTypeTransformerTest extends AbstractTransformerTestCase
                     $c = 1 ?: [];
                 ',
             ],
-        ];
-    }
-
-    /**
-     * @dataProvider provideProcess74Cases
-     * @requires PHP 7.4
-     */
-    public function testProcess74(string $source, array $expectedTokens = []): void
-    {
-        $this->doTest(
-            $source,
-            $expectedTokens,
-            [
-                CT::T_NULLABLE_TYPE,
-            ]
-        );
-    }
-
-    public function provideProcess74Cases(): array
-    {
-        return [
             [
                 '<?php class Foo { private ?string $foo; }',
                 [
@@ -134,7 +115,10 @@ final class NullableTypeTransformerTest extends AbstractTransformerTestCase
     }
 
     /**
+     * @param array<int, int> $expectedTokens
+     *
      * @dataProvider provideProcess80Cases
+     *
      * @requires PHP 8.0
      */
     public function testProcess80(array $expectedTokens, string $source): void
@@ -148,7 +132,7 @@ final class NullableTypeTransformerTest extends AbstractTransformerTestCase
         );
     }
 
-    public function provideProcess80Cases(): \Generator
+    public function provideProcess80Cases(): iterable
     {
         yield [
             [
@@ -180,7 +164,10 @@ final class NullableTypeTransformerTest extends AbstractTransformerTestCase
     }
 
     /**
+     * @param array<int, int> $expectedTokens
+     *
      * @dataProvider provideProcess81Cases
+     *
      * @requires PHP 8.1
      */
     public function testProcess81(array $expectedTokens, string $source): void
@@ -194,7 +181,7 @@ final class NullableTypeTransformerTest extends AbstractTransformerTestCase
         );
     }
 
-    public function provideProcess81Cases(): \Generator
+    public function provideProcess81Cases(): iterable
     {
         yield [
             [

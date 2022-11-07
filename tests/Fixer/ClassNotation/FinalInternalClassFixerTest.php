@@ -143,6 +143,8 @@ abstract class class4 {}
     }
 
     /**
+     * @param array<string, mixed> $config
+     *
      * @dataProvider provideFixWithConfigCases
      */
     public function testFixWithConfig(string $expected, string $input, array $config): void
@@ -279,7 +281,7 @@ class B{}
         $this->doTest($expected, $input);
     }
 
-    public function provideAnonymousClassesCases(): \Generator
+    public function provideAnonymousClassesCases(): iterable
     {
         yield [
             '<?php
@@ -309,6 +311,7 @@ $a = new class{};',
 
     /**
      * @dataProvider provideFix80Cases
+     *
      * @requires PHP 8.0
      */
     public function testFix80(string $expected, ?string $input = null): void
@@ -316,7 +319,7 @@ $a = new class{};',
         $this->doTest($expected, $input);
     }
 
-    public function provideFix80Cases(): \Generator
+    public function provideFix80Cases(): iterable
     {
         yield [
             '<?php

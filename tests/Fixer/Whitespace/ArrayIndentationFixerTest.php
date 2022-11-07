@@ -833,6 +833,24 @@ $array = [
 INPUT
                 ,
             ],
+            [
+                <<<'EXPECTED'
+<?php
+$foo = [
+    ...$foo,
+    ...$bar,
+];
+EXPECTED
+                ,
+                <<<'INPUT'
+<?php
+$foo = [
+  ...$foo,
+        ...$bar,
+ ];
+INPUT
+                ,
+            ],
         ]);
     }
 
@@ -888,38 +906,56 @@ INPUT
     }
 
     /**
-     * @dataProvider provideFixPhp74Cases
-     * @requires PHP 7.4
+     * @dataProvider provideFixPhp80Cases
+     *
+     * @requires PHP 8.0
      */
-    public function testFixPhp74(string $expected, ?string $input = null): void
+    public function testFixPhp80(string $expected, ?string $input = null): void
     {
         $this->doTest($expected, $input);
     }
 
-    public function provideFixPhp74Cases(): array
+    public function provideFixPhp80Cases(): iterable
     {
-        return [
-            [
-                <<<'EXPECTED'
-<?php
-$foo = [
-    ...$foo,
-    ...$bar,
-];
-EXPECTED
-                ,
-                <<<'INPUT'
-<?php
-$foo = [
-  ...$foo,
-        ...$bar,
- ];
-INPUT
-                ,
-            ],
+        yield 'attribute' => [
+            '<?php
+class Foo {
+ #[SimpleAttribute]
+#[ComplexAttribute(
+ foo: true,
+    bar: [
+        1,
+        2,
+        3,
+    ]
+ )]
+  public function bar()
+     {
+     }
+}',
+            '<?php
+class Foo {
+ #[SimpleAttribute]
+#[ComplexAttribute(
+ foo: true,
+    bar: [
+                1,
+                    2,
+              3,
+     ]
+ )]
+  public function bar()
+     {
+     }
+}',
         ];
     }
 
+    /**
+     * @param list<array{0: string, 1?: string}> $cases
+     *
+     * @return list<array{0: string, 1?: string}>
+     */
     private function withLongArraySyntaxCases(array $cases): array
     {
         $longSyntaxCases = [];

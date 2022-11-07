@@ -31,7 +31,7 @@ final class NoUselessSprintfFixerTest extends AbstractFixerTestCase
         $this->doTest($expected, $input);
     }
 
-    public function provideFixCases(): \Generator
+    public function provideFixCases(): iterable
     {
         yield 'simple' => [
             '<?php echo "bar";',
@@ -99,19 +99,7 @@ final class NoUselessSprintfFixerTest extends AbstractFixerTestCase
         yield [
             '<?php echo sprint[2]("foo");',
         ];
-    }
 
-    /**
-     * @dataProvider provideFix73Cases
-     * @requires PHP 7.3
-     */
-    public function testFix73(string $expected, ?string $input = null): void
-    {
-        $this->doTest($expected, $input);
-    }
-
-    public function provideFix73Cases(): \Generator
-    {
         yield 'trailing comma' => [
             '<?php echo "bar";',
             '<?php echo sprintf("bar",);',
@@ -120,6 +108,7 @@ final class NoUselessSprintfFixerTest extends AbstractFixerTestCase
 
     /**
      * @dataProvider provideFixPre80Cases
+     *
      * @requires PHP <8.0
      */
     public function testFixPre80(string $expected, string $input = null): void
@@ -127,7 +116,7 @@ final class NoUselessSprintfFixerTest extends AbstractFixerTestCase
         $this->doTest($expected, $input);
     }
 
-    public function provideFixPre80Cases(): \Generator
+    public function provideFixPre80Cases(): iterable
     {
         yield [
             '<?php echo  "bar";',
