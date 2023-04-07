@@ -67,7 +67,7 @@ Array Notation
 Basic
 -----
 
-- `braces <./basic/braces.rst>`_
+- `braces <./basic/braces.rst>`_ *(deprecated)*
 
   The body of each structure MUST be enclosed by braces. Braces should be properly placed. Body of braces should be properly indented.
 - `curly_braces_position <./basic/curly_braces_position.rst>`_
@@ -178,7 +178,7 @@ Class Notation
 - `ordered_class_elements <./class_notation/ordered_class_elements.rst>`_
 
   Orders the elements of classes/interfaces/traits/enums.
-- `ordered_interfaces <./class_notation/ordered_interfaces.rst>`_ *(risky)*
+- `ordered_interfaces <./class_notation/ordered_interfaces.rst>`_
 
   Orders the interfaces in an ``implements`` or ``interface extends`` clause.
 - `ordered_traits <./class_notation/ordered_traits.rst>`_ *(risky)*
@@ -465,7 +465,10 @@ Language Construct
 - `no_unset_on_property <./language_construct/no_unset_on_property.rst>`_ *(risky)*
 
   Properties should be set to ``null`` instead of using ``unset``.
-- `single_space_after_construct <./language_construct/single_space_after_construct.rst>`_
+- `single_space_after_construct <./language_construct/single_space_after_construct.rst>`_ *(deprecated)*
+
+  Ensures a single space after language constructs.
+- `single_space_around_construct <./language_construct/single_space_around_construct.rst>`_
 
   Ensures a single space after language constructs.
 
@@ -513,7 +516,7 @@ Operator
   Binary operators should be surrounded by space as configured.
 - `concat_space <./operator/concat_space.rst>`_
 
-  Concatenation should be spaced according configuration.
+  Concatenation should be spaced according to configuration.
 - `increment_style <./operator/increment_style.rst>`_
 
   Pre- or post-increment and decrement operators should be used if possible.
@@ -588,6 +591,9 @@ PHPUnit
 - `php_unit_construct <./php_unit/php_unit_construct.rst>`_ *(risky)*
 
   PHPUnit assertion method calls like ``->assertSame(true, $foo)`` should be written with dedicated method like ``->assertTrue($foo)``.
+- `php_unit_data_provider_static <./php_unit/php_unit_data_provider_static.rst>`_ *(risky)*
+
+  Data providers must be static.
 - `php_unit_dedicate_assert <./php_unit/php_unit_dedicate_assert.rst>`_ *(risky)*
 
   PHPUnit assertions like ``assertInternalType``, ``assertFileExists``, should be used over ``assertTrue``.

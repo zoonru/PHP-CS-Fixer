@@ -31,7 +31,7 @@ final class ControlStructureBracesFixerTest extends AbstractFixerTestCase
         $this->doTest($expected, $input);
     }
 
-    public function provideFixCases(): iterable
+    public static function provideFixCases(): iterable
     {
         yield 'if' => [
             '<?php if ($foo) { foo(); }',
@@ -150,6 +150,10 @@ final class ControlStructureBracesFixerTest extends AbstractFixerTestCase
         yield 'nested switch using alternative syntax' => [
             '<?php if ($foo) { switch ($foo): case 1: ?> foo <?php endswitch; } ?>',
             '<?php if ($foo) switch ($foo): case 1: ?> foo <?php endswitch; ?>',
+        ];
+
+        yield 'declare followed by closing tag' => [
+            '<?php declare(strict_types=1) ?>',
         ];
     }
 }

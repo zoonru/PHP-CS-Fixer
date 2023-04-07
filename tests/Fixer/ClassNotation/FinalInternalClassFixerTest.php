@@ -35,7 +35,7 @@ final class FinalInternalClassFixerTest extends AbstractFixerTestCase
         $this->doTest($expected, $input);
     }
 
-    public function provideFixCases(): array
+    public static function provideFixCases(): array
     {
         $input = $expected = '<?php ';
 
@@ -153,7 +153,7 @@ abstract class class4 {}
         $this->doTest($expected, $input);
     }
 
-    public function provideFixWithConfigCases(): array
+    public static function provideFixWithConfigCases(): array
     {
         return [
             [
@@ -267,6 +267,11 @@ class B{}
                     'annotation_exclude' => ['abc'],
                 ],
             ],
+            [
+                '<?php final class A{}',
+                '<?php class A{}',
+                ['consider_absent_docblock_as_internal_class' => true],
+            ],
         ];
     }
 
@@ -281,7 +286,7 @@ class B{}
         $this->doTest($expected, $input);
     }
 
-    public function provideAnonymousClassesCases(): iterable
+    public static function provideAnonymousClassesCases(): iterable
     {
         yield [
             '<?php
@@ -319,12 +324,34 @@ $a = new class{};',
         $this->doTest($expected, $input);
     }
 
-    public function provideFix80Cases(): iterable
+    public static function provideFix80Cases(): iterable
     {
         yield [
             '<?php
 #[Internal]
 class Foo {}',
+        ];
+    }
+
+    /**
+     * @param array<string, mixed> $config
+     *
+     * @dataProvider provideFix82Cases
+     *
+     * @requires PHP 8.2
+     */
+    public function testFix82(string $expected, ?string $input, array $config): void
+    {
+        $this->fixer->configure($config);
+        $this->doTest($expected, $input);
+    }
+
+    public static function provideFix82Cases(): iterable
+    {
+        yield [
+            '<?php readonly final class A{}',
+            '<?php readonly class A{}',
+            ['consider_absent_docblock_as_internal_class' => true],
         ];
     }
 }

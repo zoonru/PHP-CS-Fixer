@@ -38,7 +38,7 @@ final class LowercaseCastFixerTest extends AbstractFixerTestCase
      */
     public function testFix74Deprecated(string $expected, ?string $input = null): void
     {
-        if (\PHP_VERSION_ID >= 80000) {
+        if (\PHP_VERSION_ID >= 8_00_00) {
             static::markTestSkipped('PHP < 8.0 is required.');
         }
 
@@ -47,30 +47,30 @@ final class LowercaseCastFixerTest extends AbstractFixerTestCase
         $this->doTest($expected, $input);
     }
 
-    public function provideFixCases(): iterable
+    public static function provideFixCases(): iterable
     {
         $types = ['boolean', 'bool', 'integer', 'int', 'double', 'float', 'float', 'string', 'array', 'object', 'binary'];
 
-        if (\PHP_VERSION_ID < 80000) {
+        if (\PHP_VERSION_ID < 8_00_00) {
             $types[] = 'unset';
         }
 
         foreach ($types as $from) {
-            foreach ($this->createCasesFor($from) as $case) {
+            foreach (self::createCasesFor($from) as $case) {
                 yield $case;
             }
         }
     }
 
-    public function provideFixDeprecatedCases(): iterable
+    public static function provideFixDeprecatedCases(): iterable
     {
-        return $this->createCasesFor('real');
+        return self::createCasesFor('real');
     }
 
     /**
      * @return iterable<array{0: non-empty-string, 1?: non-empty-string}>
      */
-    private function createCasesFor(string $type): iterable
+    private static function createCasesFor(string $type): iterable
     {
         yield [
             sprintf('<?php $b= (%s)$d;', $type),

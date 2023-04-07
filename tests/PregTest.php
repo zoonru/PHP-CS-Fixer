@@ -46,7 +46,7 @@ final class PregTest extends TestCase
         static::assertSame($expectedMatches, $actualMatches);
     }
 
-    public function providePatternValidationCases(): iterable
+    public static function providePatternValidationCases(): iterable
     {
         yield from [
             'invalid_blank' => ['', null, PregException::class],
@@ -60,7 +60,7 @@ final class PregTest extends TestCase
             'php_version_dependent' => ['([\\R])', 0, PregException::class, 'Compilation failed: escape sequence is invalid '],
         ];
 
-        $nullByteMessage = \PHP_VERSION_ID >= 80200 ? 'NUL is not a valid modifier' : 'Null byte in regex';
+        $nullByteMessage = \PHP_VERSION_ID >= 8_02_00 ? 'NUL is not a valid modifier' : 'Null byte in regex';
 
         yield 'null_byte_injection' => ['()'."\0", null, PregException::class, " {$nullByteMessage} "];
     }
@@ -212,7 +212,7 @@ final class PregTest extends TestCase
         static::assertSame($expectedResult, $actualResult);
     }
 
-    public function provideCommonCases(): array
+    public static function provideCommonCases(): array
     {
         return [
             ['/u/u', 'u'],

@@ -42,10 +42,10 @@ final class ListSyntaxFixerTest extends AbstractFixerTestCase
         $this->doTest($expected, $input);
     }
 
-    public function provideFixToLongSyntaxCases(): iterable
+    public static function provideFixToLongSyntaxCases(): iterable
     {
         // reverse testing
-        $shortCases = $this->provideFixToShortSyntaxCases();
+        $shortCases = self::provideFixToShortSyntaxCases();
 
         foreach ($shortCases as $label => $shortCase) {
             if ('messy comments case' === $label) {
@@ -104,7 +104,7 @@ class Test
         $this->doTest($expected, $input);
     }
 
-    public function provideFixToShortSyntaxCases(): array
+    public static function provideFixToShortSyntaxCases(): array
     {
         return [
             [
@@ -200,7 +200,7 @@ $a;#
         $this->doTest($expected, $input);
     }
 
-    public function provideFixToShortSyntaxPhp72Cases(): iterable
+    public static function provideFixToShortSyntaxPhp72Cases(): iterable
     {
         yield [
             '<?php [$a, $b,, [$c, $d]] = $a;',
@@ -208,9 +208,9 @@ $a;#
         ];
     }
 
-    public function provideFixToLongSyntaxPhp72Cases(): iterable
+    public static function provideFixToLongSyntaxPhp72Cases(): iterable
     {
-        return TestCaseUtils::swapExpectedInputTestCases($this->provideFixToShortSyntaxPhp72Cases());
+        return TestCaseUtils::swapExpectedInputTestCases(self::provideFixToShortSyntaxPhp72Cases());
     }
 
     /**
@@ -231,7 +231,7 @@ $a;#
         $this->doTest($expected, $input);
     }
 
-    public function provideFixToShortSyntaxPhp73Cases(): iterable
+    public static function provideFixToShortSyntaxPhp73Cases(): iterable
     {
         yield [
             '<?php [&$a, $b] = $a;',
@@ -249,9 +249,9 @@ $a;#
         ];
     }
 
-    public function provideFixToLongSyntaxPhp73Cases(): iterable
+    public static function provideFixToLongSyntaxPhp73Cases(): iterable
     {
-        return TestCaseUtils::swapExpectedInputTestCases($this->provideFixToShortSyntaxPhp73Cases());
+        return TestCaseUtils::swapExpectedInputTestCases(self::provideFixToShortSyntaxPhp73Cases());
     }
 
     /**
@@ -264,7 +264,7 @@ $a;#
         $this->doTest($expected, $input);
     }
 
-    public function provideFix81Cases(): iterable
+    public static function provideFix81Cases(): iterable
     {
         yield 'simple 8.1' => [
             '<?php $a = _list(...);',

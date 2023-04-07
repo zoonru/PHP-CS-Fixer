@@ -43,9 +43,9 @@ final class TypeAlternationTransformerTest extends AbstractTransformerTestCase
         );
     }
 
-    public function provideProcessCases(): array
+    public static function provideProcessCases(): iterable
     {
-        return [
+        yield from [
             'no namespace' => [
                 '<?php try {} catch (ExceptionType1 | ExceptionType2 | ExceptionType3 $e) {}',
                 [
@@ -103,7 +103,7 @@ final class TypeAlternationTransformerTest extends AbstractTransformerTestCase
         $this->doTest($source, $expectedTokens);
     }
 
-    public function provideProcess80Cases(): iterable
+    public static function provideProcess80Cases(): iterable
     {
         yield 'arrow function' => [
             '<?php $a = fn(int|null $item): int|null => $item * 2;',
@@ -341,6 +341,45 @@ function f( #[Target(\'a\')] #[Target(\'b\')] #[Target(\'c\')] #[Target(\'d\')] 
                 45 => CT::T_TYPE_ALTERNATION,
             ],
         ];
+
+        yield 'self as type' => [
+            '<?php class Foo {
+                function f1(bool|self|int $x): void {}
+                function f2(): self|\stdClass {}
+            }',
+            [
+                12 => CT::T_TYPE_ALTERNATION,
+                14 => CT::T_TYPE_ALTERNATION,
+                34 => CT::T_TYPE_ALTERNATION,
+            ],
+        ];
+
+        yield 'static as type' => [
+            '<?php class Foo {
+                function f1(): static|TypeA {}
+                function f2(): TypeA|static|TypeB {}
+                function f3(): TypeA|static {}
+            }',
+            [
+                15 => CT::T_TYPE_ALTERNATION,
+                29 => CT::T_TYPE_ALTERNATION,
+                31 => CT::T_TYPE_ALTERNATION,
+                45 => CT::T_TYPE_ALTERNATION,
+            ],
+        ];
+
+        yield 'splat operator' => [
+            '<?php class Foo {
+                function f1(bool|int ... $x) {}
+                function f2(bool|int $x, TypeA|\Bar\Baz|TypeB ...$y) {}
+            }',
+            [
+                12 => CT::T_TYPE_ALTERNATION,
+                28 => CT::T_TYPE_ALTERNATION,
+                35 => CT::T_TYPE_ALTERNATION,
+                40 => CT::T_TYPE_ALTERNATION,
+            ],
+        ];
     }
 
     /**
@@ -361,7 +400,7 @@ function f( #[Target(\'a\')] #[Target(\'b\')] #[Target(\'c\')] #[Target(\'d\')] 
         );
     }
 
-    public function provideFix81Cases(): iterable
+    public static function provideFix81Cases(): iterable
     {
         yield 'readonly' => [
             [
@@ -388,6 +427,25 @@ class Foo
                 ) {}
             }',
         ];
+
+        yield 'parameters by reference' => [
+            [
+                19 => CT::T_TYPE_ALTERNATION,
+                21 => CT::T_TYPE_ALTERNATION,
+                91 => CT::T_TYPE_ALTERNATION,
+                93 => CT::T_TYPE_ALTERNATION,
+            ],
+            '<?php
+                f(FOO|BAR|BAZ&$x);
+                function f1(FOO|BAR|BAZ&$x) {} // Alternation found
+                function f2(FOO&BAR&BAZ&$x) {}
+                f(FOO&BAR|BAZ&$x);
+                f(FOO|BAR&BAZ&$x);
+                fn(FOO&BAR&BAZ&$x) => 0;
+                fn(FOO|BAR|BAZ&$x) => 0; // Alternation found
+                f(FOO&BAR&BAZ&$x);
+            ',
+        ];
     }
 
     /**
@@ -402,12 +460,99 @@ class Foo
         $this->doTest($source, $expectedTokens);
     }
 
-    public function provideProcess81Cases(): iterable
+    public static function provideProcess81Cases(): iterable
     {
         yield 'arrow function with intersection' => [
             '<?php $a = fn(int|null $item): int&null => $item * 2;',
             [
                 8 => CT::T_TYPE_ALTERNATION,
+            ],
+        ];
+    }
+
+    /**
+     * @param array<int, int> $expectedTokens
+     *
+     * @dataProvider provideProcess82Cases
+     *
+     * @requires PHP 8.2
+     */
+    public function testProcess82(string $source, array $expectedTokens): void
+    {
+        $this->doTest($source, $expectedTokens);
+    }
+
+    public static function provideProcess82Cases(): iterable
+    {
+        yield 'disjunctive normal form types parameter' => [
+            '<?php function foo((A&B)|D $x): void {}',
+            [
+                10 => CT::T_TYPE_ALTERNATION,
+            ],
+        ];
+
+        yield 'disjunctive normal form types return' => [
+            '<?php function foo(): (A&B)|D {}',
+            [
+                13 => CT::T_TYPE_ALTERNATION,
+            ],
+        ];
+
+        yield 'disjunctive normal form types parameters' => [
+            '<?php function foo(
+                (A&B)|C|D $x,
+                A|(B&C)|D $y,
+                A|B|(C&D) $z,
+            ): void {}',
+            [
+                11 => CT::T_TYPE_ALTERNATION,
+                13 => CT::T_TYPE_ALTERNATION,
+                20 => CT::T_TYPE_ALTERNATION,
+                26 => CT::T_TYPE_ALTERNATION,
+                33 => CT::T_TYPE_ALTERNATION,
+                35 => CT::T_TYPE_ALTERNATION,
+            ],
+        ];
+
+        yield 'bigger set of multiple DNF properties' => [
+            '<?php
+class Dnf
+{
+    public A|(C&D) $a;
+    protected (C&D)|B $b;
+    private (C&D)|(E&F)|(G&H) $c;
+    static (C&D)|Z $d;
+    public /* */ (C&D)|X $e;
+
+    public function foo($a, $b) {
+        return
+            $z|($A&$B)|(A::z&B\A::x)
+            || A::b|($A&$B)
+        ;
+    }
+}
+',
+            [
+                10 => CT::T_TYPE_ALTERNATION,
+                27 => CT::T_TYPE_ALTERNATION,
+                40 => CT::T_TYPE_ALTERNATION,
+                46 => CT::T_TYPE_ALTERNATION,
+                63 => CT::T_TYPE_ALTERNATION,
+                78 => CT::T_TYPE_ALTERNATION,
+            ],
+        ];
+
+        yield 'arrow function with DNF types' => [
+            '<?php
+                $f1 = fn (): A|(B&C) => new Foo();
+                $f2 = fn ((A&B)|C $x, A|(B&C) $y): (A&B&C)|D|(E&F) => new Bar();
+            ',
+            [
+                13 => CT::T_TYPE_ALTERNATION,
+                41 => CT::T_TYPE_ALTERNATION,
+                48 => CT::T_TYPE_ALTERNATION,
+                66 => CT::T_TYPE_ALTERNATION,
+                68 => CT::T_TYPE_ALTERNATION,
             ],
         ];
     }

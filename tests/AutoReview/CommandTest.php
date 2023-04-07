@@ -38,7 +38,7 @@ final class CommandTest extends TestCase
         static::assertNotNull($command::getDefaultName());
     }
 
-    public function provideCommandHasNameConstCases(): array
+    public static function provideCommandHasNameConstCases(): array
     {
         $application = new Application();
         $commands = $application->all();
@@ -48,8 +48,7 @@ final class CommandTest extends TestCase
                 // is not an alias
                 !\in_array($name, $commands[$name]->getAliases(), true)
                 // and is our command
-                && str_starts_with(\get_class($commands[$name]), 'PhpCsFixer\\')
-            ;
+                && str_starts_with(\get_class($commands[$name]), 'PhpCsFixer\\');
         });
 
         return array_map(static function (string $name) use ($commands): array {

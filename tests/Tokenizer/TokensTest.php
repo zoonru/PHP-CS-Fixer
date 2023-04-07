@@ -75,7 +75,7 @@ final class TokensTest extends TestCase
         );
     }
 
-    public function provideFindSequenceCases(): array
+    public static function provideFindSequenceCases(): array
     {
         return [
             [
@@ -293,7 +293,7 @@ final class TokensTest extends TestCase
         $tokens->findSequence($sequence);
     }
 
-    public function provideFindSequenceExceptionCases(): array
+    public static function provideFindSequenceExceptionCases(): array
     {
         $emptyToken = new Token('');
 
@@ -354,7 +354,7 @@ PHP;
         static::assertSame($isMonolithic, $tokens->isMonolithicPhp());
     }
 
-    public function provideMonolithicPhpDetectionCases(): iterable
+    public static function provideMonolithicPhpDetectionCases(): iterable
     {
         yield [true, "<?php\n"];
 
@@ -533,7 +533,7 @@ PHP;
         }
     }
 
-    public function provideGetClearTokenAndMergeSurroundingWhitespaceCases(): array
+    public static function provideGetClearTokenAndMergeSurroundingWhitespaceCases(): array
     {
         $clearToken = new Token('');
 
@@ -656,7 +656,7 @@ PHP;
         static::assertSame($expectedIndex, $tokens->getTokenOfKindSibling($index, $direction, $findTokens, $caseSensitive));
     }
 
-    public function provideTokenOfKindSiblingCases(): array
+    public static function provideTokenOfKindSiblingCases(): array
     {
         return [
             // find next cases
@@ -695,7 +695,7 @@ PHP;
         static::assertFindBlockEnd($expectedIndex, $source, $type, $searchIndex);
     }
 
-    public function provideFindBlockEndCases(): array
+    public static function provideFindBlockEndCases(): array
     {
         return [
             [4, '<?php ${$bar};', Tokens::BLOCK_TYPE_DYNAMIC_VAR_BRACE, 2],
@@ -726,7 +726,7 @@ PHP;
         static::assertFindBlockEnd($expectedIndex, $source, $type, $searchIndex);
     }
 
-    public function provideFindBlockEnd80Cases(): array
+    public static function provideFindBlockEnd80Cases(): array
     {
         return [
             [
@@ -739,6 +739,43 @@ PHP;
                 7,
             ],
         ];
+    }
+
+    /**
+     * @requires PHP 8.2
+     *
+     * @dataProvider provideFindBlockEnd82Cases
+     *
+     * @param Tokens::BLOCK_TYPE_* $type
+     */
+    public function testFindBlockEnd82(int $expectedIndex, string $source, int $type, int $searchIndex): void
+    {
+        static::assertFindBlockEnd($expectedIndex, $source, $type, $searchIndex);
+    }
+
+    public static function provideFindBlockEnd82Cases(): iterable
+    {
+        yield [
+            11,
+            '<?php function foo(A|(B&C) $x) {}',
+            Tokens::BLOCK_TYPE_DISJUNCTIVE_NORMAL_FORM_TYPE_PARENTHESIS,
+            7,
+        ];
+
+        yield [
+            11,
+            '<?php function foo((A&B&C)|D $x) {}',
+            Tokens::BLOCK_TYPE_DISJUNCTIVE_NORMAL_FORM_TYPE_PARENTHESIS,
+            5,
+        ];
+        foreach ([7 => 11, 19 => 23, 27 => 35] as $openIndex => $closeIndex) {
+            yield [
+                $closeIndex,
+                '<?php function foo(A|(B&C)|D $x): (A&B)|bool|(C&D&E&F) {}',
+                Tokens::BLOCK_TYPE_DISJUNCTIVE_NORMAL_FORM_TYPE_PARENTHESIS,
+                $openIndex,
+            ];
+        }
     }
 
     public function testFindBlockEndInvalidType(): void
@@ -844,7 +881,7 @@ PHP;
         static::assertSame($isEmpty, $tokens->isEmptyAt(0), $token->toJson());
     }
 
-    public function provideIsEmptyCases(): array
+    public static function provideIsEmptyCases(): array
     {
         return [
             [new Token(''), true],
@@ -883,7 +920,7 @@ PHP;
         static::assertTokens(Tokens::fromCode($expected), $tokens);
     }
 
-    public function provideEnsureWhitespaceAtIndexCases(): array
+    public static function provideEnsureWhitespaceAtIndexCases(): array
     {
         return [
             [
@@ -1047,7 +1084,7 @@ echo $a;',
         static::assertSame($expected, $tokens->generateCode());
     }
 
-    public function provideRemoveLeadingWhitespaceCases(): array
+    public static function provideRemoveLeadingWhitespaceCases(): array
     {
         return [
             [
@@ -1201,7 +1238,7 @@ $bar;',
         static::assertSame($expected, Tokens::detectBlockType($tokens[$index]));
     }
 
-    public function provideDetectBlockTypeCases(): iterable
+    public static function provideDetectBlockTypeCases(): iterable
     {
         yield [
             [
@@ -1243,7 +1280,7 @@ $bar;',
         $tokens->overrideRange($indexStart, $indexEnd, $items);
         $tokens->clearEmptyTokens();
 
-        self::assertTokens(Tokens::fromArray($expected), $tokens);
+        static::assertTokens(Tokens::fromArray($expected), $tokens);
     }
 
     /**
@@ -1258,10 +1295,10 @@ $bar;',
         $tokens->overrideRange($indexStart, $indexEnd, $items);
         $tokens->clearEmptyTokens();
 
-        self::assertTokens(Tokens::fromArray($expected), $tokens);
+        static::assertTokens(Tokens::fromArray($expected), $tokens);
     }
 
-    public function provideOverrideRangeCases(): iterable
+    public static function provideOverrideRangeCases(): iterable
     {
         // typically done by transformers, here we test the reverse
 
@@ -1382,7 +1419,7 @@ $bar;',
         static::assertSame($expectIndex, $tokens->getMeaningfulTokenSibling($index, $direction));
     }
 
-    public function provideGetMeaningfulTokenSiblingCases(): iterable
+    public static function provideGetMeaningfulTokenSiblingCases(): iterable
     {
         yield [null, 0, 1, '<?php '];
 
@@ -1429,7 +1466,7 @@ EOF;
         static::assertTokens(Tokens::fromCode($expected), $tokens);
     }
 
-    public function provideInsertSlicesAtMultiplePlacesCases(): iterable
+    public static function provideInsertSlicesAtMultiplePlacesCases(): iterable
     {
         yield 'one slice count' => [
             <<<'EOF'
@@ -1491,7 +1528,7 @@ EOF
         static::assertTokens($expected, $tokens);
     }
 
-    public function provideInsertSlicesCases(): iterable
+    public static function provideInsertSlicesCases(): iterable
     {
         // basic insert of single token at 3 different locations including appending as new token
 

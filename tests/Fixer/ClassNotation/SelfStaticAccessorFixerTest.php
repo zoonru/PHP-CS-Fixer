@@ -31,7 +31,7 @@ final class SelfStaticAccessorFixerTest extends AbstractFixerTestCase
         $this->doTest($expected, $input);
     }
 
-    public function provideFixCases(): array
+    public static function provideFixCases(): array
     {
         return [
             'simple' => [
@@ -357,6 +357,50 @@ $a = static function() { return static::class; };
 $b = function() { return static::class; };
 ',
             ],
+        ];
+    }
+
+    /**
+     * @dataProvider provideFix82Cases
+     *
+     * @requires PHP 8.2
+     */
+    public function testFix82(string $expected, string $input): void
+    {
+        $this->doTest($expected, $input);
+    }
+
+    public static function provideFix82Cases(): iterable
+    {
+        yield 'simple' => [
+            '<?php
+final readonly class Sample
+{
+    public function getBar()
+    {
+        return self::class.self::test();
+    }
+
+    private static function test()
+    {
+        return \'test\';
+    }
+}
+',
+            '<?php
+final readonly class Sample
+{
+    public function getBar()
+    {
+        return static::class.static::test();
+    }
+
+    private static function test()
+    {
+        return \'test\';
+    }
+}
+',
         ];
     }
 }

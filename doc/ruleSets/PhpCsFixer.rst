@@ -9,7 +9,6 @@ Rules
 
 - `@PER <./PER.rst>`_
 - `@Symfony <./Symfony.rst>`_
-- `align_multiline_comment <./../rules/phpdoc/align_multiline_comment.rst>`_
 - `array_indentation <./../rules/whitespace/array_indentation.rst>`_
 - `blank_line_before_statement <./../rules/whitespace/blank_line_before_statement.rst>`_
   config:
@@ -32,16 +31,12 @@ Rules
 - `no_extra_blank_lines <./../rules/whitespace/no_extra_blank_lines.rst>`_
   config:
   ``['tokens' => ['attribute', 'break', 'case', 'continue', 'curly_brace_block', 'default', 'extra', 'parenthesis_brace_block', 'return', 'square_brace_block', 'switch', 'throw', 'use']]``
-- `no_null_property_initialization <./../rules/class_notation/no_null_property_initialization.rst>`_
 - `no_superfluous_elseif <./../rules/control_structure/no_superfluous_elseif.rst>`_
 - `no_unneeded_control_parentheses <./../rules/control_structure/no_unneeded_control_parentheses.rst>`_
   config:
   ``['statements' => ['break', 'clone', 'continue', 'echo_print', 'negative_instanceof', 'others', 'return', 'switch_case', 'yield', 'yield_from']]``
 - `no_useless_else <./../rules/control_structure/no_useless_else.rst>`_
 - `no_useless_return <./../rules/return_notation/no_useless_return.rst>`_
-- `operator_linebreak <./../rules/operator/operator_linebreak.rst>`_
-  config:
-  ``['only_booleans' => true]``
 - `ordered_class_elements <./../rules/class_notation/ordered_class_elements.rst>`_
 - `php_unit_internal_class <./../rules/php_unit/php_unit_internal_class.rst>`_
 - `php_unit_test_class_requires_covers <./../rules/php_unit/php_unit_test_class_requires_covers.rst>`_
@@ -52,7 +47,11 @@ Rules
 - `phpdoc_var_annotation_correct_order <./../rules/phpdoc/phpdoc_var_annotation_correct_order.rst>`_
 - `return_assignment <./../rules/return_notation/return_assignment.rst>`_
 - `single_line_comment_style <./../rules/comment/single_line_comment_style.rst>`_
-- `single_line_throw <./../rules/function_notation/single_line_throw.rst>`_
 - `whitespace_after_comma_in_array <./../rules/array_notation/whitespace_after_comma_in_array.rst>`_
   config:
   ``['ensure_single_space' => true]``
+
+Disabled rules
+--------------
+
+- `single_line_throw <./../rules/function_notation/single_line_throw.rst>`_

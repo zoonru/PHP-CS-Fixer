@@ -261,8 +261,7 @@ else {
             ) {
                 $previousOpenTagContent = $tokens[$index - 1]->isGivenKind(T_OPEN_TAG)
                     ? Preg::replace('/\S/', '', $tokens[$index - 1]->getContent())
-                    : ''
-                ;
+                    : '';
 
                 $content = $previousOpenTagContent.($token->isWhitespace() ? $token->getContent() : '');
 
@@ -524,7 +523,7 @@ else {
 
         $index = $tokens->getNextMeaningfulToken($index);
 
-        return null !== $index && $tokens[$index]->equalsAny([[T_ELSE], [T_ELSEIF], ',']);
+        return null !== $index && $tokens[$index]->isGivenKind([T_ELSE, T_ELSEIF]);
     }
 
     /**

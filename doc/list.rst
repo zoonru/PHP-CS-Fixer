@@ -14,7 +14,7 @@ List of Available Rules
      | Default value: ``'phpdocs_only'``
 
 
-   Part of rule set `@PhpCsFixer <./ruleSets/PhpCsFixer.rst>`_
+   Part of rule sets `@PhpCsFixer <./ruleSets/PhpCsFixer.rst>`_ `@Symfony <./ruleSets/Symfony.rst>`_
 
    `Source PhpCsFixer\\Fixer\\Phpdoc\\AlignMultilineCommentFixer <./../src/Fixer/Phpdoc/AlignMultilineCommentFixer.php>`_
 -  `array_indentation <./rules/whitespace/array_indentation.rst>`_
@@ -73,10 +73,10 @@ List of Available Rules
 
    - | ``default``
      | Default fix strategy.
-     | Allowed values: ``'align'``, ``'align_single_space'``, ``'align_single_space_minimal'``, ``'no_space'``, ``'single_space'``, ``null``
+     | Allowed values: ``'align'``, ``'align_by_scope'``, ``'align_single_space'``, ``'align_single_space_by_scope'``, ``'align_single_space_minimal'``, ``'align_single_space_minimal_by_scope'``, ``'no_space'``, ``'single_space'``, ``null``
      | Default value: ``'single_space'``
    - | ``operators``
-     | Dictionary of `binary operator` => `fix strategy` values that differ from the default strategy. Supported are: `=`, `*`, `/`, `%`, `<`, `>`, `|`, `^`, `+`, `-`, `&`, `&=`, `&&`, `||`, `.=`, `/=`, `=>`, `==`, `>=`, `===`, `!=`, `<>`, `!==`, `<=`, `and`, `or`, `xor`, `-=`, `%=`, `*=`, `|=`, `+=`, `<<`, `<<=`, `>>`, `>>=`, `^=`, `**`, `**=`, `<=>`, `??`, `??=`
+     | Dictionary of `binary operator` => `fix strategy` values that differ from the default strategy. Supported are: `=`, `*`, `/`, `%`, `<`, `>`, `|`, `^`, `+`, `-`, `&`, `&=`, `&&`, `||`, `.=`, `/=`, `=>`, `==`, `>=`, `===`, `!=`, `<>`, `!==`, `<=`, `and`, `or`, `xor`, `-=`, `%=`, `*=`, `|=`, `+=`, `<<`, `<<=`, `>>`, `>>=`, `^=`, `**`, `**=`, `<=>`, `??`, `??=`.
      | Allowed types: ``array``
      | Default value: ``[]``
 
@@ -88,7 +88,7 @@ List of Available Rules
 
    There MUST be one blank line after the namespace declaration.
 
-   Part of rule sets `@PER <./ruleSets/PER.rst>`_ `@PSR12 <./ruleSets/PSR12.rst>`_ `@PSR2 <./ruleSets/PSR2.rst>`_ `@PhpCsFixer <./ruleSets/PhpCsFixer.rst>`_ `@Symfony <./ruleSets/Symfony.rst>`_
+   Part of rule sets `@PER <./ruleSets/PER.rst>`_ `@PSR2 <./ruleSets/PSR2.rst>`_ `@PSR12 <./ruleSets/PSR12.rst>`_ `@PhpCsFixer <./ruleSets/PhpCsFixer.rst>`_ `@Symfony <./ruleSets/Symfony.rst>`_
 
    `Source PhpCsFixer\\Fixer\\NamespaceNotation\\BlankLineAfterNamespaceFixer <./../src/Fixer/NamespaceNotation/BlankLineAfterNamespaceFixer.php>`_
 -  `blank_line_after_opening_tag <./rules/php_tag/blank_line_after_opening_tag.rst>`_
@@ -124,6 +124,11 @@ List of Available Rules
 
    The body of each structure MUST be enclosed by braces. Braces should be properly placed. Body of braces should be properly indented.
 
+   *warning deprecated*   Use ``single_space_around_construct``, ``control_structure_braces``,
+   ``curly_braces_position``, ``control_structure_continuation_position``,
+   ``declare_parentheses``, ``statement_indentation``,
+   ``no_multiple_statements_per_line`` and ``no_extra_blank_lines`` instead.
+
    Configuration options:
 
    - | ``allow_single_line_anonymous_class_with_empty_body``
@@ -135,20 +140,18 @@ List of Available Rules
      | Allowed types: ``bool``
      | Default value: ``false``
    - | ``position_after_functions_and_oop_constructs``
-     | whether the opening brace should be placed on "next" or "same" line after classy constructs (non-anonymous classes, interfaces, traits, methods and non-lambda functions).
+     | Whether the opening brace should be placed on "next" or "same" line after classy constructs (non-anonymous classes, interfaces, traits, methods and non-lambda functions).
      | Allowed values: ``'next'``, ``'same'``
      | Default value: ``'next'``
    - | ``position_after_control_structures``
-     | whether the opening brace should be placed on "next" or "same" line after control structures.
+     | Whether the opening brace should be placed on "next" or "same" line after control structures.
      | Allowed values: ``'next'``, ``'same'``
      | Default value: ``'same'``
    - | ``position_after_anonymous_constructs``
-     | whether the opening brace should be placed on "next" or "same" line after anonymous constructs (anonymous classes and lambda functions).
+     | Whether the opening brace should be placed on "next" or "same" line after anonymous constructs (anonymous classes and lambda functions).
      | Allowed values: ``'next'``, ``'same'``
      | Default value: ``'same'``
 
-
-   Part of rule sets `@PER <./ruleSets/PER.rst>`_ `@PSR12 <./ruleSets/PSR12.rst>`_ `@PSR2 <./ruleSets/PSR2.rst>`_ `@PhpCsFixer <./ruleSets/PhpCsFixer.rst>`_ `@Symfony <./ruleSets/Symfony.rst>`_
 
    `Source PhpCsFixer\\Fixer\\Basic\\BracesFixer <./../src/Fixer/Basic/BracesFixer.php>`_
 -  `cast_spaces <./rules/cast_notation/cast_spaces.rst>`_
@@ -158,7 +161,7 @@ List of Available Rules
    Configuration options:
 
    - | ``space``
-     | spacing to apply between cast and variable.
+     | Spacing to apply between cast and variable.
      | Allowed values: ``'none'``, ``'single'``
      | Default value: ``'single'``
 
@@ -209,7 +212,7 @@ List of Available Rules
      | Default value: ``true``
 
 
-   Part of rule sets `@PER <./ruleSets/PER.rst>`_ `@PSR12 <./ruleSets/PSR12.rst>`_ `@PSR2 <./ruleSets/PSR2.rst>`_ `@PhpCsFixer <./ruleSets/PhpCsFixer.rst>`_ `@Symfony <./ruleSets/Symfony.rst>`_
+   Part of rule sets `@PER <./ruleSets/PER.rst>`_ `@PSR2 <./ruleSets/PSR2.rst>`_ `@PSR12 <./ruleSets/PSR12.rst>`_ `@PhpCsFixer <./ruleSets/PhpCsFixer.rst>`_ `@Symfony <./ruleSets/Symfony.rst>`_
 
    `Source PhpCsFixer\\Fixer\\ClassNotation\\ClassDefinitionFixer <./../src/Fixer/ClassNotation/ClassDefinitionFixer.php>`_
 -  `class_keyword_remove <./rules/language_construct/class_keyword_remove.rst>`_
@@ -266,7 +269,7 @@ List of Available Rules
    Configuration options:
 
    - | ``ignored_tags``
-     | List of ignored tags
+     | List of ignored tags.
      | Allowed types: ``array``
      | Default value: ``[]``
 
@@ -285,7 +288,7 @@ List of Available Rules
    `Source PhpCsFixer\\Fixer\\Whitespace\\CompactNullableTypehintFixer <./../src/Fixer/Whitespace/CompactNullableTypehintFixer.php>`_
 -  `concat_space <./rules/operator/concat_space.rst>`_
 
-   Concatenation should be spaced according configuration.
+   Concatenation should be spaced according to configuration.
 
    Configuration options:
 
@@ -310,12 +313,14 @@ List of Available Rules
      | Default value: ``'lower'``
 
 
-   Part of rule sets `@PER <./ruleSets/PER.rst>`_ `@PSR12 <./ruleSets/PSR12.rst>`_ `@PSR2 <./ruleSets/PSR2.rst>`_ `@PhpCsFixer <./ruleSets/PhpCsFixer.rst>`_ `@Symfony <./ruleSets/Symfony.rst>`_
+   Part of rule sets `@PER <./ruleSets/PER.rst>`_ `@PSR2 <./ruleSets/PSR2.rst>`_ `@PSR12 <./ruleSets/PSR12.rst>`_ `@PhpCsFixer <./ruleSets/PhpCsFixer.rst>`_ `@Symfony <./ruleSets/Symfony.rst>`_
 
    `Source PhpCsFixer\\Fixer\\Casing\\ConstantCaseFixer <./../src/Fixer/Casing/ConstantCaseFixer.php>`_
 -  `control_structure_braces <./rules/control_structure/control_structure_braces.rst>`_
 
    The body of each control structure MUST be enclosed within braces.
+
+   Part of rule sets `@PER <./ruleSets/PER.rst>`_ `@PSR2 <./ruleSets/PSR2.rst>`_ `@PSR12 <./ruleSets/PSR12.rst>`_ `@PhpCsFixer <./ruleSets/PhpCsFixer.rst>`_ `@Symfony <./ruleSets/Symfony.rst>`_
 
    `Source PhpCsFixer\\Fixer\\ControlStructure\\ControlStructureBracesFixer <./../src/Fixer/ControlStructure/ControlStructureBracesFixer.php>`_
 -  `control_structure_continuation_position <./rules/control_structure/control_structure_continuation_position.rst>`_
@@ -325,10 +330,12 @@ List of Available Rules
    Configuration options:
 
    - | ``position``
-     | the position of the keyword that continues the control structure.
+     | The position of the keyword that continues the control structure.
      | Allowed values: ``'next_line'``, ``'same_line'``
      | Default value: ``'same_line'``
 
+
+   Part of rule sets `@PER <./ruleSets/PER.rst>`_ `@PSR2 <./ruleSets/PSR2.rst>`_ `@PSR12 <./ruleSets/PSR12.rst>`_ `@PhpCsFixer <./ruleSets/PhpCsFixer.rst>`_ `@Symfony <./ruleSets/Symfony.rst>`_
 
    `Source PhpCsFixer\\Fixer\\ControlStructure\\ControlStructureContinuationPositionFixer <./../src/Fixer/ControlStructure/ControlStructureContinuationPositionFixer.php>`_
 -  `curly_braces_position <./rules/basic/curly_braces_position.rst>`_
@@ -338,34 +345,36 @@ List of Available Rules
    Configuration options:
 
    - | ``control_structures_opening_brace``
-     | the position of the opening brace of control structures body.
+     | The position of the opening brace of control structures‘ body.
      | Allowed values: ``'next_line_unless_newline_at_signature_end'``, ``'same_line'``
      | Default value: ``'same_line'``
    - | ``functions_opening_brace``
-     | the position of the opening brace of functions body.
+     | The position of the opening brace of functions‘ body.
      | Allowed values: ``'next_line_unless_newline_at_signature_end'``, ``'same_line'``
      | Default value: ``'next_line_unless_newline_at_signature_end'``
    - | ``anonymous_functions_opening_brace``
-     | the position of the opening brace of anonymous functions body.
+     | The position of the opening brace of anonymous functions‘ body.
      | Allowed values: ``'next_line_unless_newline_at_signature_end'``, ``'same_line'``
      | Default value: ``'same_line'``
    - | ``classes_opening_brace``
-     | the position of the opening brace of classes body.
+     | The position of the opening brace of classes‘ body.
      | Allowed values: ``'next_line_unless_newline_at_signature_end'``, ``'same_line'``
      | Default value: ``'next_line_unless_newline_at_signature_end'``
    - | ``anonymous_classes_opening_brace``
-     | the position of the opening brace of anonymous classes body.
+     | The position of the opening brace of anonymous classes‘ body.
      | Allowed values: ``'next_line_unless_newline_at_signature_end'``, ``'same_line'``
      | Default value: ``'same_line'``
    - | ``allow_single_line_empty_anonymous_classes``
-     | allow anonymous classes to have opening and closing braces on the same line.
+     | Allow anonymous classes to have opening and closing braces on the same line.
      | Allowed types: ``bool``
      | Default value: ``true``
    - | ``allow_single_line_anonymous_functions``
-     | allow anonymous functions to have opening and closing braces on the same line.
+     | Allow anonymous functions to have opening and closing braces on the same line.
      | Allowed types: ``bool``
      | Default value: ``true``
 
+
+   Part of rule sets `@PER <./ruleSets/PER.rst>`_ `@PSR2 <./ruleSets/PSR2.rst>`_ `@PSR12 <./ruleSets/PSR12.rst>`_ `@PhpCsFixer <./ruleSets/PhpCsFixer.rst>`_ `@Symfony <./ruleSets/Symfony.rst>`_
 
    `Source PhpCsFixer\\Fixer\\Basic\\CurlyBracesPositionFixer <./../src/Fixer/Basic/CurlyBracesPositionFixer.php>`_
 -  `date_time_create_from_format_call <./rules/function_notation/date_time_create_from_format_call.rst>`_
@@ -409,6 +418,8 @@ List of Available Rules
 -  `declare_parentheses <./rules/language_construct/declare_parentheses.rst>`_
 
    There must not be spaces around ``declare`` statement parentheses.
+
+   Part of rule sets `@PhpCsFixer <./ruleSets/PhpCsFixer.rst>`_ `@Symfony <./ruleSets/Symfony.rst>`_
 
    `Source PhpCsFixer\\Fixer\\LanguageConstruct\\DeclareParenthesesFixer <./../src/Fixer/LanguageConstruct/DeclareParenthesesFixer.php>`_
 -  `declare_strict_types <./rules/strict/declare_strict_types.rst>`_
@@ -549,11 +560,11 @@ List of Available Rules
      | Allowed values: ``'long'``, ``'short'``
      | Default value: ``'long'``
    - | ``long_function``
-     | The function to be used to expand the short echo tags
+     | The function to be used to expand the short echo tags.
      | Allowed values: ``'echo'``, ``'print'``
      | Default value: ``'echo'``
    - | ``shorten_simple_statements_only``
-     | Render short-echo tags only in case of simple code
+     | Render short-echo tags only in case of simple code.
      | Allowed types: ``bool``
      | Default value: ``true``
 
@@ -565,7 +576,7 @@ List of Available Rules
 
    The keyword ``elseif`` should be used instead of ``else if`` so that all control keywords look like single words.
 
-   Part of rule sets `@PER <./ruleSets/PER.rst>`_ `@PSR12 <./ruleSets/PSR12.rst>`_ `@PSR2 <./ruleSets/PSR2.rst>`_ `@PhpCsFixer <./ruleSets/PhpCsFixer.rst>`_ `@Symfony <./ruleSets/Symfony.rst>`_
+   Part of rule sets `@PER <./ruleSets/PER.rst>`_ `@PSR2 <./ruleSets/PSR2.rst>`_ `@PSR12 <./ruleSets/PSR12.rst>`_ `@PhpCsFixer <./ruleSets/PhpCsFixer.rst>`_ `@Symfony <./ruleSets/Symfony.rst>`_
 
    `Source PhpCsFixer\\Fixer\\ControlStructure\\ElseifFixer <./../src/Fixer/ControlStructure/ElseifFixer.php>`_
 -  `empty_loop_body <./rules/control_structure/empty_loop_body.rst>`_
@@ -602,7 +613,7 @@ List of Available Rules
 
    PHP code MUST use only UTF-8 without BOM (remove BOM).
 
-   Part of rule sets `@PER <./ruleSets/PER.rst>`_ `@PSR1 <./ruleSets/PSR1.rst>`_ `@PSR12 <./ruleSets/PSR12.rst>`_ `@PSR2 <./ruleSets/PSR2.rst>`_ `@PhpCsFixer <./ruleSets/PhpCsFixer.rst>`_ `@Symfony <./ruleSets/Symfony.rst>`_
+   Part of rule sets `@PER <./ruleSets/PER.rst>`_ `@PSR1 <./ruleSets/PSR1.rst>`_ `@PSR2 <./ruleSets/PSR2.rst>`_ `@PSR12 <./ruleSets/PSR12.rst>`_ `@PhpCsFixer <./ruleSets/PhpCsFixer.rst>`_ `@Symfony <./ruleSets/Symfony.rst>`_
 
    `Source PhpCsFixer\\Fixer\\Basic\\EncodingFixer <./../src/Fixer/Basic/EncodingFixer.php>`_
 -  `ereg_to_preg <./rules/alias/ereg_to_preg.rst>`_
@@ -632,7 +643,7 @@ List of Available Rules
      | Allowed types: ``bool``
      | Default value: ``false``
    - | ``noise_remaining_usages_exclude``
-     | List of global functions to exclude from removing `@`
+     | List of global functions to exclude from removing `@`.
      | Allowed types: ``array``
      | Default value: ``[]``
 
@@ -729,15 +740,15 @@ List of Available Rules
    Configuration options:
 
    - | ``annotation_include``
-     | Class level annotations tags that must be set in order to fix the class. (case insensitive)
+     | Class level annotations tags that must be set in order to fix the class (case insensitive).
      | Allowed types: ``array``
      | Default value: ``['@internal']``
    - | ``annotation_exclude``
-     | Class level annotations tags that must be omitted to fix the class, even if all of the white list ones are used as well. (case insensitive)
+     | Class level annotations tags that must be omitted to fix the class, even if all of the white list ones are used as well (case insensitive).
      | Allowed types: ``array``
      | Default value: ``['@final', '@Entity', '@ORM\\Entity', '@ORM\\Mapping\\Entity', '@Mapping\\Entity', '@Document', '@ODM\\Document']``
    - | ``consider_absent_docblock_as_internal_class``
-     | Should classes without any DocBlock be fixed to final?
+     | Whether classes without any DocBlock should be fixed to final.
      | Allowed types: ``bool``
      | Default value: ``false``
 
@@ -792,7 +803,7 @@ List of Available Rules
 
    PHP code must use the long ``<?php`` tags or short-echo ``<?=`` tags and not other tag variations.
 
-   Part of rule sets `@PER <./ruleSets/PER.rst>`_ `@PSR1 <./ruleSets/PSR1.rst>`_ `@PSR12 <./ruleSets/PSR12.rst>`_ `@PSR2 <./ruleSets/PSR2.rst>`_ `@PhpCsFixer <./ruleSets/PhpCsFixer.rst>`_ `@Symfony <./ruleSets/Symfony.rst>`_
+   Part of rule sets `@PER <./ruleSets/PER.rst>`_ `@PSR1 <./ruleSets/PSR1.rst>`_ `@PSR2 <./ruleSets/PSR2.rst>`_ `@PSR12 <./ruleSets/PSR12.rst>`_ `@PhpCsFixer <./ruleSets/PhpCsFixer.rst>`_ `@Symfony <./ruleSets/Symfony.rst>`_
 
    `Source PhpCsFixer\\Fixer\\PhpTag\\FullOpeningTagFixer <./../src/Fixer/PhpTag/FullOpeningTagFixer.php>`_
 -  `function_declaration <./rules/function_notation/function_declaration.rst>`_
@@ -815,7 +826,7 @@ List of Available Rules
      | Default value: ``false``
 
 
-   Part of rule sets `@PER <./ruleSets/PER.rst>`_ `@PSR12 <./ruleSets/PSR12.rst>`_ `@PSR2 <./ruleSets/PSR2.rst>`_ `@PhpCsFixer <./ruleSets/PhpCsFixer.rst>`_ `@Symfony <./ruleSets/Symfony.rst>`_
+   Part of rule sets `@PER <./ruleSets/PER.rst>`_ `@PSR2 <./ruleSets/PSR2.rst>`_ `@PSR12 <./ruleSets/PSR12.rst>`_ `@PhpCsFixer <./ruleSets/PhpCsFixer.rst>`_ `@Symfony <./ruleSets/Symfony.rst>`_
 
    `Source PhpCsFixer\\Fixer\\FunctionNotation\\FunctionDeclarationFixer <./../src/Fixer/FunctionNotation/FunctionDeclarationFixer.php>`_
 -  `function_to_constant <./rules/language_construct/function_to_constant.rst>`_
@@ -1005,7 +1016,7 @@ List of Available Rules
 
    Code MUST use configured indentation type.
 
-   Part of rule sets `@PER <./ruleSets/PER.rst>`_ `@PSR12 <./ruleSets/PSR12.rst>`_ `@PSR2 <./ruleSets/PSR2.rst>`_ `@PhpCsFixer <./ruleSets/PhpCsFixer.rst>`_ `@Symfony <./ruleSets/Symfony.rst>`_
+   Part of rule sets `@PER <./ruleSets/PER.rst>`_ `@PSR2 <./ruleSets/PSR2.rst>`_ `@PSR12 <./ruleSets/PSR12.rst>`_ `@PhpCsFixer <./ruleSets/PhpCsFixer.rst>`_ `@Symfony <./ruleSets/Symfony.rst>`_
 
    `Source PhpCsFixer\\Fixer\\Whitespace\\IndentationTypeFixer <./../src/Fixer/Whitespace/IndentationTypeFixer.php>`_
 -  `integer_literal_case <./rules/casing/integer_literal_case.rst>`_
@@ -1042,7 +1053,7 @@ List of Available Rules
 
    All PHP files must use same line ending.
 
-   Part of rule sets `@PER <./ruleSets/PER.rst>`_ `@PSR12 <./ruleSets/PSR12.rst>`_ `@PSR2 <./ruleSets/PSR2.rst>`_ `@PhpCsFixer <./ruleSets/PhpCsFixer.rst>`_ `@Symfony <./ruleSets/Symfony.rst>`_
+   Part of rule sets `@PER <./ruleSets/PER.rst>`_ `@PSR2 <./ruleSets/PSR2.rst>`_ `@PSR12 <./ruleSets/PSR12.rst>`_ `@PhpCsFixer <./ruleSets/PhpCsFixer.rst>`_ `@Symfony <./ruleSets/Symfony.rst>`_
 
    `Source PhpCsFixer\\Fixer\\Whitespace\\LineEndingFixer <./../src/Fixer/Whitespace/LineEndingFixer.php>`_
 -  `list_syntax <./rules/list_notation/list_syntax.rst>`_
@@ -1081,7 +1092,7 @@ List of Available Rules
 
    PHP keywords MUST be in lower case.
 
-   Part of rule sets `@PER <./ruleSets/PER.rst>`_ `@PSR12 <./ruleSets/PSR12.rst>`_ `@PSR2 <./ruleSets/PSR2.rst>`_ `@PhpCsFixer <./ruleSets/PhpCsFixer.rst>`_ `@Symfony <./ruleSets/Symfony.rst>`_
+   Part of rule sets `@PER <./ruleSets/PER.rst>`_ `@PSR2 <./ruleSets/PSR2.rst>`_ `@PSR12 <./ruleSets/PSR12.rst>`_ `@PhpCsFixer <./ruleSets/PhpCsFixer.rst>`_ `@Symfony <./ruleSets/Symfony.rst>`_
 
    `Source PhpCsFixer\\Fixer\\Casing\\LowercaseKeywordsFixer <./../src/Fixer/Casing/LowercaseKeywordsFixer.php>`_
 -  `lowercase_static_reference <./rules/casing/lowercase_static_reference.rst>`_
@@ -1133,7 +1144,7 @@ List of Available Rules
      | Default value: ``false``
 
 
-   Part of rule sets `@PER <./ruleSets/PER.rst>`_ `@PHP73Migration <./ruleSets/PHP73Migration.rst>`_ `@PHP74Migration <./ruleSets/PHP74Migration.rst>`_ `@PHP80Migration <./ruleSets/PHP80Migration.rst>`_ `@PHP81Migration <./ruleSets/PHP81Migration.rst>`_ `@PHP82Migration <./ruleSets/PHP82Migration.rst>`_ `@PSR12 <./ruleSets/PSR12.rst>`_ `@PSR2 <./ruleSets/PSR2.rst>`_ `@PhpCsFixer <./ruleSets/PhpCsFixer.rst>`_ `@Symfony <./ruleSets/Symfony.rst>`_
+   Part of rule sets `@PER <./ruleSets/PER.rst>`_ `@PHP73Migration <./ruleSets/PHP73Migration.rst>`_ `@PHP74Migration <./ruleSets/PHP74Migration.rst>`_ `@PHP80Migration <./ruleSets/PHP80Migration.rst>`_ `@PHP81Migration <./ruleSets/PHP81Migration.rst>`_ `@PHP82Migration <./ruleSets/PHP82Migration.rst>`_ `@PSR2 <./ruleSets/PSR2.rst>`_ `@PSR12 <./ruleSets/PSR12.rst>`_ `@PhpCsFixer <./ruleSets/PhpCsFixer.rst>`_ `@Symfony <./ruleSets/Symfony.rst>`_
 
    `Source PhpCsFixer\\Fixer\\FunctionNotation\\MethodArgumentSpaceFixer <./../src/Fixer/FunctionNotation/MethodArgumentSpaceFixer.php>`_
 -  `method_chaining_indentation <./rules/whitespace/method_chaining_indentation.rst>`_
@@ -1325,24 +1336,23 @@ List of Available Rules
    - | ``sets``
      | List of sets to fix. Defined sets are:
 
-* `@all` (all listed sets)
-* `@internal` (native functions)
-* `@exif` (EXIF functions)
-* `@ftp` (FTP functions)
-* `@IMAP` (IMAP functions)
-* `@ldap` (LDAP functions)
-* `@mbreg` (from `ext-mbstring`)
-* `@mysqli` (mysqli functions)
-* `@oci` (oci functions)
-* `@odbc` (odbc functions)
-* `@openssl` (openssl functions)
-* `@pcntl` (PCNTL functions)
-* `@pg` (pg functions)
-* `@posix` (POSIX functions)
-* `@snmp` (SNMP functions)
-* `@sodium` (libsodium functions)
-* `@time` (time functions)
-
+* `@all` (all listed sets);
+* `@internal` (native functions);
+* `@exif` (EXIF functions);
+* `@ftp` (FTP functions);
+* `@IMAP` (IMAP functions);
+* `@ldap` (LDAP functions);
+* `@mbreg` (from `ext-mbstring`);
+* `@mysqli` (mysqli functions);
+* `@oci` (oci functions);
+* `@odbc` (odbc functions);
+* `@openssl` (openssl functions);
+* `@pcntl` (PCNTL functions);
+* `@pg` (pg functions);
+* `@posix` (POSIX functions);
+* `@snmp` (SNMP functions);
+* `@sodium` (libsodium functions);
+* `@time` (time functions).
      | Allowed values: a subset of ``['@all', '@exif', '@ftp', '@IMAP', '@internal', '@ldap', '@mbreg', '@mysqli', '@oci', '@odbc', '@openssl', '@pcntl', '@pg', '@posix', '@snmp', '@sodium', '@time']``
      | Default value: ``['@internal', '@IMAP', '@pg']``
 
@@ -1413,14 +1423,14 @@ List of Available Rules
      | Default value: ``'no break'``
 
 
-   Part of rule sets `@PER <./ruleSets/PER.rst>`_ `@PSR12 <./ruleSets/PSR12.rst>`_ `@PSR2 <./ruleSets/PSR2.rst>`_ `@PhpCsFixer <./ruleSets/PhpCsFixer.rst>`_ `@Symfony <./ruleSets/Symfony.rst>`_
+   Part of rule sets `@PER <./ruleSets/PER.rst>`_ `@PSR2 <./ruleSets/PSR2.rst>`_ `@PSR12 <./ruleSets/PSR12.rst>`_ `@PhpCsFixer <./ruleSets/PhpCsFixer.rst>`_ `@Symfony <./ruleSets/Symfony.rst>`_
 
    `Source PhpCsFixer\\Fixer\\ControlStructure\\NoBreakCommentFixer <./../src/Fixer/ControlStructure/NoBreakCommentFixer.php>`_
 -  `no_closing_tag <./rules/php_tag/no_closing_tag.rst>`_
 
    The closing ``?>`` tag MUST be omitted from files containing only PHP.
 
-   Part of rule sets `@PER <./ruleSets/PER.rst>`_ `@PSR12 <./ruleSets/PSR12.rst>`_ `@PSR2 <./ruleSets/PSR2.rst>`_ `@PhpCsFixer <./ruleSets/PhpCsFixer.rst>`_ `@Symfony <./ruleSets/Symfony.rst>`_
+   Part of rule sets `@PER <./ruleSets/PER.rst>`_ `@PSR2 <./ruleSets/PSR2.rst>`_ `@PSR12 <./ruleSets/PSR12.rst>`_ `@PhpCsFixer <./ruleSets/PhpCsFixer.rst>`_ `@Symfony <./ruleSets/Symfony.rst>`_
 
    `Source PhpCsFixer\\Fixer\\PhpTag\\NoClosingTagFixer <./../src/Fixer/PhpTag/NoClosingTagFixer.php>`_
 -  `no_empty_comment <./rules/comment/no_empty_comment.rst>`_
@@ -1509,12 +1519,14 @@ List of Available Rules
 
    There must not be more than one statement per line.
 
+   Part of rule sets `@PER <./ruleSets/PER.rst>`_ `@PSR2 <./ruleSets/PSR2.rst>`_ `@PSR12 <./ruleSets/PSR12.rst>`_ `@PhpCsFixer <./ruleSets/PhpCsFixer.rst>`_ `@Symfony <./ruleSets/Symfony.rst>`_
+
    `Source PhpCsFixer\\Fixer\\Basic\\NoMultipleStatementsPerLineFixer <./../src/Fixer/Basic/NoMultipleStatementsPerLineFixer.php>`_
 -  `no_null_property_initialization <./rules/class_notation/no_null_property_initialization.rst>`_
 
    Properties MUST not be explicitly initialized with ``null`` except when they have a type declaration (PHP 7.4).
 
-   Part of rule set `@PhpCsFixer <./ruleSets/PhpCsFixer.rst>`_
+   Part of rule sets `@PhpCsFixer <./ruleSets/PhpCsFixer.rst>`_ `@Symfony <./ruleSets/Symfony.rst>`_
 
    `Source PhpCsFixer\\Fixer\\ClassNotation\\NoNullPropertyInitializationFixer <./../src/Fixer/ClassNotation/NoNullPropertyInitializationFixer.php>`_
 -  `no_php4_constructor <./rules/class_notation/no_php4_constructor.rst>`_
@@ -1545,7 +1557,7 @@ List of Available Rules
 
    When making a method or function call, there MUST NOT be a space between the method or function name and the opening parenthesis.
 
-   Part of rule sets `@PER <./ruleSets/PER.rst>`_ `@PSR12 <./ruleSets/PSR12.rst>`_ `@PSR2 <./ruleSets/PSR2.rst>`_ `@PhpCsFixer <./ruleSets/PhpCsFixer.rst>`_ `@Symfony <./ruleSets/Symfony.rst>`_
+   Part of rule sets `@PER <./ruleSets/PER.rst>`_ `@PSR2 <./ruleSets/PSR2.rst>`_ `@PSR12 <./ruleSets/PSR12.rst>`_ `@PhpCsFixer <./ruleSets/PhpCsFixer.rst>`_ `@Symfony <./ruleSets/Symfony.rst>`_
 
    `Source PhpCsFixer\\Fixer\\FunctionNotation\\NoSpacesAfterFunctionNameFixer <./../src/Fixer/FunctionNotation/NoSpacesAfterFunctionNameFixer.php>`_
 -  `no_spaces_around_offset <./rules/whitespace/no_spaces_around_offset.rst>`_
@@ -1567,14 +1579,14 @@ List of Available Rules
 
    There MUST NOT be a space after the opening parenthesis. There MUST NOT be a space before the closing parenthesis.
 
-   Part of rule sets `@PER <./ruleSets/PER.rst>`_ `@PSR12 <./ruleSets/PSR12.rst>`_ `@PSR2 <./ruleSets/PSR2.rst>`_ `@PhpCsFixer <./ruleSets/PhpCsFixer.rst>`_ `@Symfony <./ruleSets/Symfony.rst>`_
+   Part of rule sets `@PER <./ruleSets/PER.rst>`_ `@PSR2 <./ruleSets/PSR2.rst>`_ `@PSR12 <./ruleSets/PSR12.rst>`_ `@PhpCsFixer <./ruleSets/PhpCsFixer.rst>`_ `@Symfony <./ruleSets/Symfony.rst>`_
 
    `Source PhpCsFixer\\Fixer\\Whitespace\\NoSpacesInsideParenthesisFixer <./../src/Fixer/Whitespace/NoSpacesInsideParenthesisFixer.php>`_
 -  `no_space_around_double_colon <./rules/operator/no_space_around_double_colon.rst>`_
 
    There must be no space around double colons (also called Scope Resolution Operator or Paamayim Nekudotayim).
 
-   Part of rule sets `@PER <./ruleSets/PER.rst>`_ `@PSR12 <./ruleSets/PSR12.rst>`_ `@PSR2 <./ruleSets/PSR2.rst>`_ `@PhpCsFixer <./ruleSets/PhpCsFixer.rst>`_ `@Symfony <./ruleSets/Symfony.rst>`_
+   Part of rule sets `@PER <./ruleSets/PER.rst>`_ `@PSR2 <./ruleSets/PSR2.rst>`_ `@PSR12 <./ruleSets/PSR12.rst>`_ `@PhpCsFixer <./ruleSets/PhpCsFixer.rst>`_ `@Symfony <./ruleSets/Symfony.rst>`_
 
    `Source PhpCsFixer\\Fixer\\Operator\\NoSpaceAroundDoubleColonFixer <./../src/Fixer/Operator/NoSpaceAroundDoubleColonFixer.php>`_
 -  `no_superfluous_elseif <./rules/control_structure/no_superfluous_elseif.rst>`_
@@ -1591,15 +1603,15 @@ List of Available Rules
    Configuration options:
 
    - | ``allow_mixed``
-     | Whether type `mixed` without description is allowed (`true`) or considered superfluous (`false`)
+     | Whether type `mixed` without description is allowed (`true`) or considered superfluous (`false`).
      | Allowed types: ``bool``
      | Default value: ``false``
    - | ``remove_inheritdoc``
-     | Remove `@inheritDoc` tags
+     | Remove `@inheritDoc` tags.
      | Allowed types: ``bool``
      | Default value: ``false``
    - | ``allow_unused_params``
-     | Whether `param` annotation without actual signature is allowed (`true`) or considered superfluous (`false`)
+     | Whether `param` annotation without actual signature is allowed (`true`) or considered superfluous (`false`).
      | Allowed types: ``bool``
      | Default value: ``false``
 
@@ -1647,14 +1659,14 @@ List of Available Rules
 
    Remove trailing whitespace at the end of non-blank lines.
 
-   Part of rule sets `@PER <./ruleSets/PER.rst>`_ `@PSR12 <./ruleSets/PSR12.rst>`_ `@PSR2 <./ruleSets/PSR2.rst>`_ `@PhpCsFixer <./ruleSets/PhpCsFixer.rst>`_ `@Symfony <./ruleSets/Symfony.rst>`_
+   Part of rule sets `@PER <./ruleSets/PER.rst>`_ `@PSR2 <./ruleSets/PSR2.rst>`_ `@PSR12 <./ruleSets/PSR12.rst>`_ `@PhpCsFixer <./ruleSets/PhpCsFixer.rst>`_ `@Symfony <./ruleSets/Symfony.rst>`_
 
    `Source PhpCsFixer\\Fixer\\Whitespace\\NoTrailingWhitespaceFixer <./../src/Fixer/Whitespace/NoTrailingWhitespaceFixer.php>`_
 -  `no_trailing_whitespace_in_comment <./rules/comment/no_trailing_whitespace_in_comment.rst>`_
 
    There MUST be no trailing spaces inside comment or PHPDoc.
 
-   Part of rule sets `@PER <./ruleSets/PER.rst>`_ `@PSR12 <./ruleSets/PSR12.rst>`_ `@PSR2 <./ruleSets/PSR2.rst>`_ `@PhpCsFixer <./ruleSets/PhpCsFixer.rst>`_ `@Symfony <./ruleSets/Symfony.rst>`_
+   Part of rule sets `@PER <./ruleSets/PER.rst>`_ `@PSR2 <./ruleSets/PSR2.rst>`_ `@PSR12 <./ruleSets/PSR12.rst>`_ `@PhpCsFixer <./ruleSets/PhpCsFixer.rst>`_ `@Symfony <./ruleSets/Symfony.rst>`_
 
    `Source PhpCsFixer\\Fixer\\Comment\\NoTrailingWhitespaceInCommentFixer <./../src/Fixer/Comment/NoTrailingWhitespaceInCommentFixer.php>`_
 -  `no_trailing_whitespace_in_string <./rules/string_notation/no_trailing_whitespace_in_string.rst>`_
@@ -1862,16 +1874,16 @@ List of Available Rules
    Configuration options:
 
    - | ``only_booleans``
-     | whether to limit operators to only boolean ones
+     | Whether to limit operators to only boolean ones.
      | Allowed types: ``bool``
      | Default value: ``false``
    - | ``position``
-     | whether to place operators at the beginning or at the end of the line
+     | Whether to place operators at the beginning or at the end of the line.
      | Allowed values: ``'beginning'``, ``'end'``
      | Default value: ``'beginning'``
 
 
-   Part of rule set `@PhpCsFixer <./ruleSets/PhpCsFixer.rst>`_
+   Part of rule sets `@PhpCsFixer <./ruleSets/PhpCsFixer.rst>`_ `@Symfony <./ruleSets/Symfony.rst>`_
 
    `Source PhpCsFixer\\Fixer\\Operator\\OperatorLinebreakFixer <./../src/Fixer/Operator/OperatorLinebreakFixer.php>`_
 -  `ordered_class_elements <./rules/class_notation/ordered_class_elements.rst>`_
@@ -1885,7 +1897,7 @@ List of Available Rules
      | Allowed values: a subset of ``['case', 'constant', 'constant_private', 'constant_protected', 'constant_public', 'construct', 'destruct', 'magic', 'method', 'method_abstract', 'method_private', 'method_private_abstract', 'method_private_abstract_static', 'method_private_static', 'method_protected', 'method_protected_abstract', 'method_protected_abstract_static', 'method_protected_static', 'method_public', 'method_public_abstract', 'method_public_abstract_static', 'method_public_static', 'method_static', 'phpunit', 'private', 'property', 'property_private', 'property_private_readonly', 'property_private_static', 'property_protected', 'property_protected_readonly', 'property_protected_static', 'property_public', 'property_public_readonly', 'property_public_static', 'property_static', 'protected', 'public', 'use_trait']``
      | Default value: ``['use_trait', 'case', 'constant_public', 'constant_protected', 'constant_private', 'property_public', 'property_protected', 'property_private', 'construct', 'destruct', 'magic', 'phpunit', 'method_public', 'method_protected', 'method_private']``
    - | ``sort_algorithm``
-     | How multiple occurrences of same type statements should be sorted
+     | How multiple occurrences of same type statements should be sorted.
      | Allowed values: ``'alpha'``, ``'none'``
      | Default value: ``'none'``
 
@@ -1900,7 +1912,7 @@ List of Available Rules
    Configuration options:
 
    - | ``sort_algorithm``
-     | whether the statements should be sorted alphabetically or by length, or not sorted
+     | Whether the statements should be sorted alphabetically or by length, or not sorted.
      | Allowed values: ``'alpha'``, ``'length'``, ``'none'``
      | Default value: ``'alpha'``
    - | ``imports_order``
@@ -1916,18 +1928,14 @@ List of Available Rules
 
    Orders the interfaces in an ``implements`` or ``interface extends`` clause.
 
-   *warning risky* Risky for ``implements`` when specifying both an interface and its parent
-   interface, because PHP doesn't break on ``parent, child`` but does on
-   ``child, parent``.
-
    Configuration options:
 
    - | ``order``
-     | How the interfaces should be ordered
+     | How the interfaces should be ordered.
      | Allowed values: ``'alpha'``, ``'length'``
      | Default value: ``'alpha'``
    - | ``direction``
-     | Which direction the interfaces should be ordered
+     | Which direction the interfaces should be ordered.
      | Allowed values: ``'ascend'``, ``'descend'``
      | Default value: ``'ascend'``
 
@@ -1968,7 +1976,7 @@ List of Available Rules
      | Allowed values: a subset of ``['method', 'param', 'property', 'property-read', 'property-write', 'return', 'throws', 'type', 'var']``
      | Default value: ``['method', 'param', 'property', 'return', 'throws', 'type', 'var']``
    - | ``align``
-     | Align comments
+     | How comments should be aligned.
      | Allowed values: ``'left'``, ``'vertical'``
      | Default value: ``'vertical'``
 
@@ -1997,7 +2005,7 @@ List of Available Rules
    Configuration options:
 
    - | ``tags``
-     | The list of tags to normalize
+     | The list of tags to normalize.
      | Allowed types: ``array``
      | Default value: ``['example', 'id', 'internal', 'inheritdoc', 'inheritdocs', 'link', 'source', 'toc', 'tutorial']``
 
@@ -2012,15 +2020,15 @@ List of Available Rules
    Configuration options:
 
    - | ``const``
-     | Whether const blocks should be single or multi line
+     | Whether const blocks should be single or multi line.
      | Allowed values: ``'multi'``, ``'single'``, ``null``
      | Default value: ``'multi'``
    - | ``property``
-     | Whether property doc blocks should be single or multi line
+     | Whether property doc blocks should be single or multi line.
      | Allowed values: ``'multi'``, ``'single'``, ``null``
      | Default value: ``'multi'``
    - | ``method``
-     | Whether method doc blocks should be single or multi line
+     | Whether method doc blocks should be single or multi line.
      | Allowed values: ``'multi'``, ``'single'``, ``null``
      | Default value: ``'multi'``
 
@@ -2136,9 +2144,13 @@ List of Available Rules
    Configuration options:
 
    - | ``groups``
-     | Sets of annotation types to be grouped together.
+     | Sets of annotation types to be grouped together. Use `*` to match any tag character.
      | Allowed types: ``string[][]``
      | Default value: ``[['deprecated', 'link', 'see', 'since'], ['author', 'copyright', 'license'], ['category', 'package', 'subpackage'], ['property', 'property-read', 'property-write']]``
+   - | ``skip_unlisted_annotations``
+     | Whether to skip annotations that are not listed in any group.
+     | Allowed types: ``bool``
+     | Default value: ``false``
 
 
    Part of rule sets `@PhpCsFixer <./ruleSets/PhpCsFixer.rst>`_ `@Symfony <./ruleSets/Symfony.rst>`_
@@ -2178,7 +2190,7 @@ List of Available Rules
    Configuration options:
 
    - | ``tags``
-     | The list of tags to fix
+     | The list of tags to fix.
      | Allowed types: ``array``
      | Default value: ``['api' => 'annotation', 'author' => 'annotation', 'copyright' => 'annotation', 'deprecated' => 'annotation', 'example' => 'annotation', 'global' => 'annotation', 'inheritDoc' => 'annotation', 'internal' => 'annotation', 'license' => 'annotation', 'method' => 'annotation', 'package' => 'annotation', 'param' => 'annotation', 'property' => 'annotation', 'return' => 'annotation', 'see' => 'annotation', 'since' => 'annotation', 'throws' => 'annotation', 'todo' => 'annotation', 'uses' => 'annotation', 'var' => 'annotation', 'version' => 'annotation']``
 
@@ -2193,7 +2205,7 @@ List of Available Rules
    Configuration options:
 
    - | ``ignored_tags``
-     | List of ignored tags (matched case insensitively)
+     | List of ignored tags (matched case insensitively).
      | Allowed types: ``array``
      | Default value: ``[]``
 
@@ -2337,6 +2349,23 @@ List of Available Rules
    Part of rule sets `@PhpCsFixer:risky <./ruleSets/PhpCsFixerRisky.rst>`_ `@Symfony:risky <./ruleSets/SymfonyRisky.rst>`_
 
    `Source PhpCsFixer\\Fixer\\PhpUnit\\PhpUnitConstructFixer <./../src/Fixer/PhpUnit/PhpUnitConstructFixer.php>`_
+-  `php_unit_data_provider_static <./rules/php_unit/php_unit_data_provider_static.rst>`_
+
+   Data providers must be static.
+
+   *warning risky* Fixer could be risky if one is calling data provider function dynamically.
+
+   Configuration options:
+
+   - | ``force``
+     | Whether to make the data providers static even if they have a dynamic class call (may introduce fatal error "using $this when not in object context", and you may have to adjust the code manually by converting dynamic calls to static ones).
+     | Allowed types: ``bool``
+     | Default value: ``false``
+
+
+   Part of rule set `@PHPUnit100Migration:risky <./ruleSets/PHPUnit100MigrationRisky.rst>`_
+
+   `Source PhpCsFixer\\Fixer\\PhpUnit\\PhpUnitDataProviderStaticFixer <./../src/Fixer/PhpUnit/PhpUnitDataProviderStaticFixer.php>`_
 -  `php_unit_dedicate_assert <./rules/php_unit/php_unit_dedicate_assert.rst>`_
 
    PHPUnit assertions like ``assertInternalType``, ``assertFileExists``, should be used over ``assertTrue``.
@@ -2351,7 +2380,7 @@ List of Available Rules
      | Default value: ``'newest'``
 
 
-   Part of rule sets `@PHPUnit30Migration:risky <./ruleSets/PHPUnit30MigrationRisky.rst>`_ `@PHPUnit32Migration:risky <./ruleSets/PHPUnit32MigrationRisky.rst>`_ `@PHPUnit35Migration:risky <./ruleSets/PHPUnit35MigrationRisky.rst>`_ `@PHPUnit43Migration:risky <./ruleSets/PHPUnit43MigrationRisky.rst>`_ `@PHPUnit48Migration:risky <./ruleSets/PHPUnit48MigrationRisky.rst>`_ `@PHPUnit50Migration:risky <./ruleSets/PHPUnit50MigrationRisky.rst>`_ `@PHPUnit52Migration:risky <./ruleSets/PHPUnit52MigrationRisky.rst>`_ `@PHPUnit54Migration:risky <./ruleSets/PHPUnit54MigrationRisky.rst>`_ `@PHPUnit55Migration:risky <./ruleSets/PHPUnit55MigrationRisky.rst>`_ `@PHPUnit56Migration:risky <./ruleSets/PHPUnit56MigrationRisky.rst>`_ `@PHPUnit57Migration:risky <./ruleSets/PHPUnit57MigrationRisky.rst>`_ `@PHPUnit60Migration:risky <./ruleSets/PHPUnit60MigrationRisky.rst>`_ `@PHPUnit75Migration:risky <./ruleSets/PHPUnit75MigrationRisky.rst>`_ `@PHPUnit84Migration:risky <./ruleSets/PHPUnit84MigrationRisky.rst>`_
+   Part of rule sets `@PHPUnit30Migration:risky <./ruleSets/PHPUnit30MigrationRisky.rst>`_ `@PHPUnit32Migration:risky <./ruleSets/PHPUnit32MigrationRisky.rst>`_ `@PHPUnit35Migration:risky <./ruleSets/PHPUnit35MigrationRisky.rst>`_ `@PHPUnit43Migration:risky <./ruleSets/PHPUnit43MigrationRisky.rst>`_ `@PHPUnit48Migration:risky <./ruleSets/PHPUnit48MigrationRisky.rst>`_ `@PHPUnit50Migration:risky <./ruleSets/PHPUnit50MigrationRisky.rst>`_ `@PHPUnit52Migration:risky <./ruleSets/PHPUnit52MigrationRisky.rst>`_ `@PHPUnit54Migration:risky <./ruleSets/PHPUnit54MigrationRisky.rst>`_ `@PHPUnit55Migration:risky <./ruleSets/PHPUnit55MigrationRisky.rst>`_ `@PHPUnit56Migration:risky <./ruleSets/PHPUnit56MigrationRisky.rst>`_ `@PHPUnit57Migration:risky <./ruleSets/PHPUnit57MigrationRisky.rst>`_ `@PHPUnit60Migration:risky <./ruleSets/PHPUnit60MigrationRisky.rst>`_ `@PHPUnit75Migration:risky <./ruleSets/PHPUnit75MigrationRisky.rst>`_ `@PHPUnit84Migration:risky <./ruleSets/PHPUnit84MigrationRisky.rst>`_ `@PHPUnit100Migration:risky <./ruleSets/PHPUnit100MigrationRisky.rst>`_
 
    `Source PhpCsFixer\\Fixer\\PhpUnit\\PhpUnitDedicateAssertFixer <./../src/Fixer/PhpUnit/PhpUnitDedicateAssertFixer.php>`_
 -  `php_unit_dedicate_assert_internal_type <./rules/php_unit/php_unit_dedicate_assert_internal_type.rst>`_
@@ -2369,7 +2398,7 @@ List of Available Rules
      | Default value: ``'newest'``
 
 
-   Part of rule sets `@PHPUnit75Migration:risky <./ruleSets/PHPUnit75MigrationRisky.rst>`_ `@PHPUnit84Migration:risky <./ruleSets/PHPUnit84MigrationRisky.rst>`_
+   Part of rule sets `@PHPUnit75Migration:risky <./ruleSets/PHPUnit75MigrationRisky.rst>`_ `@PHPUnit84Migration:risky <./ruleSets/PHPUnit84MigrationRisky.rst>`_ `@PHPUnit100Migration:risky <./ruleSets/PHPUnit100MigrationRisky.rst>`_
 
    `Source PhpCsFixer\\Fixer\\PhpUnit\\PhpUnitDedicateAssertInternalTypeFixer <./../src/Fixer/PhpUnit/PhpUnitDedicateAssertInternalTypeFixer.php>`_
 -  `php_unit_expectation <./rules/php_unit/php_unit_expectation.rst>`_
@@ -2387,7 +2416,7 @@ List of Available Rules
      | Default value: ``'newest'``
 
 
-   Part of rule sets `@PHPUnit52Migration:risky <./ruleSets/PHPUnit52MigrationRisky.rst>`_ `@PHPUnit54Migration:risky <./ruleSets/PHPUnit54MigrationRisky.rst>`_ `@PHPUnit55Migration:risky <./ruleSets/PHPUnit55MigrationRisky.rst>`_ `@PHPUnit56Migration:risky <./ruleSets/PHPUnit56MigrationRisky.rst>`_ `@PHPUnit57Migration:risky <./ruleSets/PHPUnit57MigrationRisky.rst>`_ `@PHPUnit60Migration:risky <./ruleSets/PHPUnit60MigrationRisky.rst>`_ `@PHPUnit75Migration:risky <./ruleSets/PHPUnit75MigrationRisky.rst>`_ `@PHPUnit84Migration:risky <./ruleSets/PHPUnit84MigrationRisky.rst>`_
+   Part of rule sets `@PHPUnit52Migration:risky <./ruleSets/PHPUnit52MigrationRisky.rst>`_ `@PHPUnit54Migration:risky <./ruleSets/PHPUnit54MigrationRisky.rst>`_ `@PHPUnit55Migration:risky <./ruleSets/PHPUnit55MigrationRisky.rst>`_ `@PHPUnit56Migration:risky <./ruleSets/PHPUnit56MigrationRisky.rst>`_ `@PHPUnit57Migration:risky <./ruleSets/PHPUnit57MigrationRisky.rst>`_ `@PHPUnit60Migration:risky <./ruleSets/PHPUnit60MigrationRisky.rst>`_ `@PHPUnit75Migration:risky <./ruleSets/PHPUnit75MigrationRisky.rst>`_ `@PHPUnit84Migration:risky <./ruleSets/PHPUnit84MigrationRisky.rst>`_ `@PHPUnit100Migration:risky <./ruleSets/PHPUnit100MigrationRisky.rst>`_
 
    `Source PhpCsFixer\\Fixer\\PhpUnit\\PhpUnitExpectationFixer <./../src/Fixer/PhpUnit/PhpUnitExpectationFixer.php>`_
 -  `php_unit_fqcn_annotation <./rules/php_unit/php_unit_fqcn_annotation.rst>`_
@@ -2404,7 +2433,7 @@ List of Available Rules
    Configuration options:
 
    - | ``types``
-     | What types of classes to mark as internal
+     | What types of classes to mark as internal.
      | Allowed values: a subset of ``['abstract', 'final', 'normal']``
      | Default value: ``['normal', 'final']``
 
@@ -2419,7 +2448,7 @@ List of Available Rules
    Configuration options:
 
    - | ``case``
-     | Apply camel or snake case to test methods
+     | Apply camel or snake case to test methods.
      | Allowed values: ``'camel_case'``, ``'snake_case'``
      | Default value: ``'camel_case'``
 
@@ -2442,7 +2471,7 @@ List of Available Rules
      | Default value: ``'newest'``
 
 
-   Part of rule sets `@PHPUnit54Migration:risky <./ruleSets/PHPUnit54MigrationRisky.rst>`_ `@PHPUnit55Migration:risky <./ruleSets/PHPUnit55MigrationRisky.rst>`_ `@PHPUnit56Migration:risky <./ruleSets/PHPUnit56MigrationRisky.rst>`_ `@PHPUnit57Migration:risky <./ruleSets/PHPUnit57MigrationRisky.rst>`_ `@PHPUnit60Migration:risky <./ruleSets/PHPUnit60MigrationRisky.rst>`_ `@PHPUnit75Migration:risky <./ruleSets/PHPUnit75MigrationRisky.rst>`_ `@PHPUnit84Migration:risky <./ruleSets/PHPUnit84MigrationRisky.rst>`_
+   Part of rule sets `@PHPUnit54Migration:risky <./ruleSets/PHPUnit54MigrationRisky.rst>`_ `@PHPUnit55Migration:risky <./ruleSets/PHPUnit55MigrationRisky.rst>`_ `@PHPUnit56Migration:risky <./ruleSets/PHPUnit56MigrationRisky.rst>`_ `@PHPUnit57Migration:risky <./ruleSets/PHPUnit57MigrationRisky.rst>`_ `@PHPUnit60Migration:risky <./ruleSets/PHPUnit60MigrationRisky.rst>`_ `@PHPUnit75Migration:risky <./ruleSets/PHPUnit75MigrationRisky.rst>`_ `@PHPUnit84Migration:risky <./ruleSets/PHPUnit84MigrationRisky.rst>`_ `@PHPUnit100Migration:risky <./ruleSets/PHPUnit100MigrationRisky.rst>`_
 
    `Source PhpCsFixer\\Fixer\\PhpUnit\\PhpUnitMockFixer <./../src/Fixer/PhpUnit/PhpUnitMockFixer.php>`_
 -  `php_unit_mock_short_will_return <./rules/php_unit/php_unit_mock_short_will_return.rst>`_
@@ -2480,7 +2509,7 @@ List of Available Rules
      | Default value: ``'newest'``
 
 
-   Part of rule sets `@PHPUnit48Migration:risky <./ruleSets/PHPUnit48MigrationRisky.rst>`_ `@PHPUnit50Migration:risky <./ruleSets/PHPUnit50MigrationRisky.rst>`_ `@PHPUnit52Migration:risky <./ruleSets/PHPUnit52MigrationRisky.rst>`_ `@PHPUnit54Migration:risky <./ruleSets/PHPUnit54MigrationRisky.rst>`_ `@PHPUnit55Migration:risky <./ruleSets/PHPUnit55MigrationRisky.rst>`_ `@PHPUnit56Migration:risky <./ruleSets/PHPUnit56MigrationRisky.rst>`_ `@PHPUnit57Migration:risky <./ruleSets/PHPUnit57MigrationRisky.rst>`_ `@PHPUnit60Migration:risky <./ruleSets/PHPUnit60MigrationRisky.rst>`_ `@PHPUnit75Migration:risky <./ruleSets/PHPUnit75MigrationRisky.rst>`_ `@PHPUnit84Migration:risky <./ruleSets/PHPUnit84MigrationRisky.rst>`_
+   Part of rule sets `@PHPUnit48Migration:risky <./ruleSets/PHPUnit48MigrationRisky.rst>`_ `@PHPUnit50Migration:risky <./ruleSets/PHPUnit50MigrationRisky.rst>`_ `@PHPUnit52Migration:risky <./ruleSets/PHPUnit52MigrationRisky.rst>`_ `@PHPUnit54Migration:risky <./ruleSets/PHPUnit54MigrationRisky.rst>`_ `@PHPUnit55Migration:risky <./ruleSets/PHPUnit55MigrationRisky.rst>`_ `@PHPUnit56Migration:risky <./ruleSets/PHPUnit56MigrationRisky.rst>`_ `@PHPUnit57Migration:risky <./ruleSets/PHPUnit57MigrationRisky.rst>`_ `@PHPUnit60Migration:risky <./ruleSets/PHPUnit60MigrationRisky.rst>`_ `@PHPUnit75Migration:risky <./ruleSets/PHPUnit75MigrationRisky.rst>`_ `@PHPUnit84Migration:risky <./ruleSets/PHPUnit84MigrationRisky.rst>`_ `@PHPUnit100Migration:risky <./ruleSets/PHPUnit100MigrationRisky.rst>`_
 
    `Source PhpCsFixer\\Fixer\\PhpUnit\\PhpUnitNamespacedFixer <./../src/Fixer/PhpUnit/PhpUnitNamespacedFixer.php>`_
 -  `php_unit_no_expectation_annotation <./rules/php_unit/php_unit_no_expectation_annotation.rst>`_
@@ -2502,7 +2531,7 @@ List of Available Rules
      | Default value: ``true``
 
 
-   Part of rule sets `@PHPUnit32Migration:risky <./ruleSets/PHPUnit32MigrationRisky.rst>`_ `@PHPUnit35Migration:risky <./ruleSets/PHPUnit35MigrationRisky.rst>`_ `@PHPUnit43Migration:risky <./ruleSets/PHPUnit43MigrationRisky.rst>`_ `@PHPUnit48Migration:risky <./ruleSets/PHPUnit48MigrationRisky.rst>`_ `@PHPUnit50Migration:risky <./ruleSets/PHPUnit50MigrationRisky.rst>`_ `@PHPUnit52Migration:risky <./ruleSets/PHPUnit52MigrationRisky.rst>`_ `@PHPUnit54Migration:risky <./ruleSets/PHPUnit54MigrationRisky.rst>`_ `@PHPUnit55Migration:risky <./ruleSets/PHPUnit55MigrationRisky.rst>`_ `@PHPUnit56Migration:risky <./ruleSets/PHPUnit56MigrationRisky.rst>`_ `@PHPUnit57Migration:risky <./ruleSets/PHPUnit57MigrationRisky.rst>`_ `@PHPUnit60Migration:risky <./ruleSets/PHPUnit60MigrationRisky.rst>`_ `@PHPUnit75Migration:risky <./ruleSets/PHPUnit75MigrationRisky.rst>`_ `@PHPUnit84Migration:risky <./ruleSets/PHPUnit84MigrationRisky.rst>`_
+   Part of rule sets `@PHPUnit32Migration:risky <./ruleSets/PHPUnit32MigrationRisky.rst>`_ `@PHPUnit35Migration:risky <./ruleSets/PHPUnit35MigrationRisky.rst>`_ `@PHPUnit43Migration:risky <./ruleSets/PHPUnit43MigrationRisky.rst>`_ `@PHPUnit48Migration:risky <./ruleSets/PHPUnit48MigrationRisky.rst>`_ `@PHPUnit50Migration:risky <./ruleSets/PHPUnit50MigrationRisky.rst>`_ `@PHPUnit52Migration:risky <./ruleSets/PHPUnit52MigrationRisky.rst>`_ `@PHPUnit54Migration:risky <./ruleSets/PHPUnit54MigrationRisky.rst>`_ `@PHPUnit55Migration:risky <./ruleSets/PHPUnit55MigrationRisky.rst>`_ `@PHPUnit56Migration:risky <./ruleSets/PHPUnit56MigrationRisky.rst>`_ `@PHPUnit57Migration:risky <./ruleSets/PHPUnit57MigrationRisky.rst>`_ `@PHPUnit60Migration:risky <./ruleSets/PHPUnit60MigrationRisky.rst>`_ `@PHPUnit75Migration:risky <./ruleSets/PHPUnit75MigrationRisky.rst>`_ `@PHPUnit84Migration:risky <./ruleSets/PHPUnit84MigrationRisky.rst>`_ `@PHPUnit100Migration:risky <./ruleSets/PHPUnit100MigrationRisky.rst>`_
 
    `Source PhpCsFixer\\Fixer\\PhpUnit\\PhpUnitNoExpectationAnnotationFixer <./../src/Fixer/PhpUnit/PhpUnitNoExpectationAnnotationFixer.php>`_
 -  `php_unit_set_up_tear_down_visibility <./rules/php_unit/php_unit_set_up_tear_down_visibility.rst>`_
@@ -2525,7 +2554,7 @@ List of Available Rules
    Configuration options:
 
    - | ``group``
-     | Define a specific group to be used in case no group is already in use
+     | Define a specific group to be used in case no group is already in use.
      | Allowed values: ``'large'``, ``'medium'``, ``'small'``
      | Default value: ``'small'``
 
@@ -2745,7 +2774,7 @@ List of Available Rules
 
    A PHP file without end tag must always end with a single empty line feed.
 
-   Part of rule sets `@PER <./ruleSets/PER.rst>`_ `@PSR12 <./ruleSets/PSR12.rst>`_ `@PSR2 <./ruleSets/PSR2.rst>`_ `@PhpCsFixer <./ruleSets/PhpCsFixer.rst>`_ `@Symfony <./ruleSets/Symfony.rst>`_
+   Part of rule sets `@PER <./ruleSets/PER.rst>`_ `@PSR2 <./ruleSets/PSR2.rst>`_ `@PSR12 <./ruleSets/PSR12.rst>`_ `@PhpCsFixer <./ruleSets/PhpCsFixer.rst>`_ `@Symfony <./ruleSets/Symfony.rst>`_
 
    `Source PhpCsFixer\\Fixer\\Whitespace\\SingleBlankLineAtEofFixer <./../src/Fixer/Whitespace/SingleBlankLineAtEofFixer.php>`_
 -  `single_blank_line_before_namespace <./rules/namespace_notation/single_blank_line_before_namespace.rst>`_
@@ -2767,7 +2796,7 @@ List of Available Rules
      | Default value: ``['const', 'property']``
 
 
-   Part of rule sets `@PER <./ruleSets/PER.rst>`_ `@PSR12 <./ruleSets/PSR12.rst>`_ `@PSR2 <./ruleSets/PSR2.rst>`_ `@PhpCsFixer <./ruleSets/PhpCsFixer.rst>`_ `@Symfony <./ruleSets/Symfony.rst>`_
+   Part of rule sets `@PER <./ruleSets/PER.rst>`_ `@PSR2 <./ruleSets/PSR2.rst>`_ `@PSR12 <./ruleSets/PSR12.rst>`_ `@PhpCsFixer <./ruleSets/PhpCsFixer.rst>`_ `@Symfony <./ruleSets/Symfony.rst>`_
 
    `Source PhpCsFixer\\Fixer\\ClassNotation\\SingleClassElementPerStatementFixer <./../src/Fixer/ClassNotation/SingleClassElementPerStatementFixer.php>`_
 -  `single_import_per_statement <./rules/import/single_import_per_statement.rst>`_
@@ -2782,14 +2811,14 @@ List of Available Rules
      | Default value: ``true``
 
 
-   Part of rule sets `@PER <./ruleSets/PER.rst>`_ `@PSR12 <./ruleSets/PSR12.rst>`_ `@PSR2 <./ruleSets/PSR2.rst>`_ `@PhpCsFixer <./ruleSets/PhpCsFixer.rst>`_ `@Symfony <./ruleSets/Symfony.rst>`_
+   Part of rule sets `@PER <./ruleSets/PER.rst>`_ `@PSR2 <./ruleSets/PSR2.rst>`_ `@PSR12 <./ruleSets/PSR12.rst>`_ `@PhpCsFixer <./ruleSets/PhpCsFixer.rst>`_ `@Symfony <./ruleSets/Symfony.rst>`_
 
    `Source PhpCsFixer\\Fixer\\Import\\SingleImportPerStatementFixer <./../src/Fixer/Import/SingleImportPerStatementFixer.php>`_
 -  `single_line_after_imports <./rules/import/single_line_after_imports.rst>`_
 
    Each namespace use MUST go on its own line and there MUST be one blank line after the use statements block.
 
-   Part of rule sets `@PER <./ruleSets/PER.rst>`_ `@PSR12 <./ruleSets/PSR12.rst>`_ `@PSR2 <./ruleSets/PSR2.rst>`_ `@PhpCsFixer <./ruleSets/PhpCsFixer.rst>`_ `@Symfony <./ruleSets/Symfony.rst>`_
+   Part of rule sets `@PER <./ruleSets/PER.rst>`_ `@PSR2 <./ruleSets/PSR2.rst>`_ `@PSR12 <./ruleSets/PSR12.rst>`_ `@PhpCsFixer <./ruleSets/PhpCsFixer.rst>`_ `@Symfony <./ruleSets/Symfony.rst>`_
 
    `Source PhpCsFixer\\Fixer\\Import\\SingleLineAfterImportsFixer <./../src/Fixer/Import/SingleLineAfterImportsFixer.php>`_
 -  `single_line_comment_spacing <./rules/comment/single_line_comment_spacing.rst>`_
@@ -2806,7 +2835,7 @@ List of Available Rules
    Configuration options:
 
    - | ``comment_types``
-     | List of comment types to fix
+     | List of comment types to fix.
      | Allowed values: a subset of ``['asterisk', 'hash']``
      | Default value: ``['asterisk', 'hash']``
 
@@ -2840,6 +2869,8 @@ List of Available Rules
 
    Ensures a single space after language constructs.
 
+   *warning deprecated*   Use ``single_space_around_construct`` instead.
+
    Configuration options:
 
    - | ``constructs``
@@ -2848,9 +2879,30 @@ List of Available Rules
      | Default value: ``['abstract', 'as', 'attribute', 'break', 'case', 'catch', 'class', 'clone', 'comment', 'const', 'const_import', 'continue', 'do', 'echo', 'else', 'elseif', 'enum', 'extends', 'final', 'finally', 'for', 'foreach', 'function', 'function_import', 'global', 'goto', 'if', 'implements', 'include', 'include_once', 'instanceof', 'insteadof', 'interface', 'match', 'named_argument', 'namespace', 'new', 'open_tag_with_echo', 'php_doc', 'php_open', 'print', 'private', 'protected', 'public', 'readonly', 'require', 'require_once', 'return', 'static', 'switch', 'throw', 'trait', 'try', 'use', 'use_lambda', 'use_trait', 'var', 'while', 'yield', 'yield_from']``
 
 
+   `Source PhpCsFixer\\Fixer\\LanguageConstruct\\SingleSpaceAfterConstructFixer <./../src/Fixer/LanguageConstruct/SingleSpaceAfterConstructFixer.php>`_
+-  `single_space_around_construct <./rules/language_construct/single_space_around_construct.rst>`_
+
+   Ensures a single space after language constructs.
+
+   Configuration options:
+
+   - | ``constructs_contain_a_single_space``
+     | List of constructs which must contain a single space.
+     | Allowed values: a subset of ``['yield_from']``
+     | Default value: ``['yield_from']``
+   - | ``constructs_preceded_by_a_single_space``
+     | List of constructs which must be preceded by a single space.
+     | Allowed values: a subset of ``['use_lambda']``
+     | Default value: ``['use_lambda']``
+   - | ``constructs_followed_by_a_single_space``
+     | List of constructs which must be followed by a single space.
+     | Allowed values: a subset of ``['abstract', 'as', 'attribute', 'break', 'case', 'catch', 'class', 'clone', 'comment', 'const', 'const_import', 'continue', 'do', 'echo', 'else', 'elseif', 'enum', 'extends', 'final', 'finally', 'for', 'foreach', 'function', 'function_import', 'global', 'goto', 'if', 'implements', 'include', 'include_once', 'instanceof', 'insteadof', 'interface', 'match', 'named_argument', 'namespace', 'new', 'open_tag_with_echo', 'php_doc', 'php_open', 'print', 'private', 'protected', 'public', 'readonly', 'require', 'require_once', 'return', 'static', 'switch', 'throw', 'trait', 'try', 'type_colon', 'use', 'use_lambda', 'use_trait', 'var', 'while', 'yield', 'yield_from']``
+     | Default value: ``['abstract', 'as', 'attribute', 'break', 'case', 'catch', 'class', 'clone', 'comment', 'const', 'const_import', 'continue', 'do', 'echo', 'else', 'elseif', 'enum', 'extends', 'final', 'finally', 'for', 'foreach', 'function', 'function_import', 'global', 'goto', 'if', 'implements', 'include', 'include_once', 'instanceof', 'insteadof', 'interface', 'match', 'named_argument', 'namespace', 'new', 'open_tag_with_echo', 'php_doc', 'php_open', 'print', 'private', 'protected', 'public', 'readonly', 'require', 'require_once', 'return', 'static', 'switch', 'throw', 'trait', 'try', 'type_colon', 'use', 'use_lambda', 'use_trait', 'var', 'while', 'yield', 'yield_from']``
+
+
    Part of rule sets `@PhpCsFixer <./ruleSets/PhpCsFixer.rst>`_ `@Symfony <./ruleSets/Symfony.rst>`_
 
-   `Source PhpCsFixer\\Fixer\\LanguageConstruct\\SingleSpaceAfterConstructFixer <./../src/Fixer/LanguageConstruct/SingleSpaceAfterConstructFixer.php>`_
+   `Source PhpCsFixer\\Fixer\\LanguageConstruct\\SingleSpaceAroundConstructFixer <./../src/Fixer/LanguageConstruct/SingleSpaceAroundConstructFixer.php>`_
 -  `single_trait_insert_per_statement <./rules/class_notation/single_trait_insert_per_statement.rst>`_
 
    Each trait ``use`` must be done as single statement.
@@ -2890,6 +2942,8 @@ List of Available Rules
 -  `statement_indentation <./rules/whitespace/statement_indentation.rst>`_
 
    Each statement must be indented.
+
+   Part of rule sets `@PER <./ruleSets/PER.rst>`_ `@PSR2 <./ruleSets/PSR2.rst>`_ `@PSR12 <./ruleSets/PSR12.rst>`_ `@PhpCsFixer <./ruleSets/PhpCsFixer.rst>`_ `@Symfony <./ruleSets/Symfony.rst>`_
 
    `Source PhpCsFixer\\Fixer\\Whitespace\\StatementIndentationFixer <./../src/Fixer/Whitespace/StatementIndentationFixer.php>`_
 -  `static_lambda <./rules/function_notation/static_lambda.rst>`_
@@ -2945,14 +2999,14 @@ List of Available Rules
 
    A case should be followed by a colon and not a semicolon.
 
-   Part of rule sets `@PER <./ruleSets/PER.rst>`_ `@PSR12 <./ruleSets/PSR12.rst>`_ `@PSR2 <./ruleSets/PSR2.rst>`_ `@PhpCsFixer <./ruleSets/PhpCsFixer.rst>`_ `@Symfony <./ruleSets/Symfony.rst>`_
+   Part of rule sets `@PER <./ruleSets/PER.rst>`_ `@PSR2 <./ruleSets/PSR2.rst>`_ `@PSR12 <./ruleSets/PSR12.rst>`_ `@PhpCsFixer <./ruleSets/PhpCsFixer.rst>`_ `@Symfony <./ruleSets/Symfony.rst>`_
 
    `Source PhpCsFixer\\Fixer\\ControlStructure\\SwitchCaseSemicolonToColonFixer <./../src/Fixer/ControlStructure/SwitchCaseSemicolonToColonFixer.php>`_
 -  `switch_case_space <./rules/control_structure/switch_case_space.rst>`_
 
    Removes extra spaces between colon and case value.
 
-   Part of rule sets `@PER <./ruleSets/PER.rst>`_ `@PSR12 <./ruleSets/PSR12.rst>`_ `@PSR2 <./ruleSets/PSR2.rst>`_ `@PhpCsFixer <./ruleSets/PhpCsFixer.rst>`_ `@Symfony <./ruleSets/Symfony.rst>`_
+   Part of rule sets `@PER <./ruleSets/PER.rst>`_ `@PSR2 <./ruleSets/PSR2.rst>`_ `@PSR12 <./ruleSets/PSR12.rst>`_ `@PhpCsFixer <./ruleSets/PhpCsFixer.rst>`_ `@Symfony <./ruleSets/Symfony.rst>`_
 
    `Source PhpCsFixer\\Fixer\\ControlStructure\\SwitchCaseSpaceFixer <./../src/Fixer/ControlStructure/SwitchCaseSpaceFixer.php>`_
 -  `switch_continue_to_break <./rules/control_structure/switch_continue_to_break.rst>`_
@@ -3018,11 +3072,11 @@ List of Available Rules
    Configuration options:
 
    - | ``space``
-     | spacing to apply around union type and intersection type operators.
+     | Spacing to apply around union type and intersection type operators.
      | Allowed values: ``'none'``, ``'single'``
      | Default value: ``'none'``
    - | ``space_multiple_catch``
-     | spacing to apply around type operator when catching exceptions of multiple types, use `null` to follow the value configured for `space`.
+     | Spacing to apply around type operator when catching exceptions of multiple types, use `null` to follow the value configured for `space`.
      | Allowed values: ``'none'``, ``'single'``, ``null``
      | Default value: ``null``
 
@@ -3059,7 +3113,7 @@ List of Available Rules
      | Default value: ``['property', 'method', 'const']``
 
 
-   Part of rule sets `@PER <./ruleSets/PER.rst>`_ `@PHP71Migration <./ruleSets/PHP71Migration.rst>`_ `@PHP73Migration <./ruleSets/PHP73Migration.rst>`_ `@PHP74Migration <./ruleSets/PHP74Migration.rst>`_ `@PHP80Migration <./ruleSets/PHP80Migration.rst>`_ `@PHP81Migration <./ruleSets/PHP81Migration.rst>`_ `@PHP82Migration <./ruleSets/PHP82Migration.rst>`_ `@PSR12 <./ruleSets/PSR12.rst>`_ `@PSR2 <./ruleSets/PSR2.rst>`_ `@PhpCsFixer <./ruleSets/PhpCsFixer.rst>`_ `@Symfony <./ruleSets/Symfony.rst>`_
+   Part of rule sets `@PER <./ruleSets/PER.rst>`_ `@PHP71Migration <./ruleSets/PHP71Migration.rst>`_ `@PHP73Migration <./ruleSets/PHP73Migration.rst>`_ `@PHP74Migration <./ruleSets/PHP74Migration.rst>`_ `@PHP80Migration <./ruleSets/PHP80Migration.rst>`_ `@PHP81Migration <./ruleSets/PHP81Migration.rst>`_ `@PHP82Migration <./ruleSets/PHP82Migration.rst>`_ `@PSR2 <./ruleSets/PSR2.rst>`_ `@PSR12 <./ruleSets/PSR12.rst>`_ `@PhpCsFixer <./ruleSets/PhpCsFixer.rst>`_ `@Symfony <./ruleSets/Symfony.rst>`_
 
    `Source PhpCsFixer\\Fixer\\ClassNotation\\VisibilityRequiredFixer <./../src/Fixer/ClassNotation/VisibilityRequiredFixer.php>`_
 -  `void_return <./rules/function_notation/void_return.rst>`_

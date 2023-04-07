@@ -11,9 +11,22 @@ PHP 8.2 test.
 <?php
 
 // https://wiki.php.net/rfc/readonly_classes
-readonly final class Foo
+final readonly class Foo
 {
     public string $prop;
+}
+
+// https://wiki.php.net/rfc/fetch_property_in_const_expressions
+enum A: string
+{
+    case B = 'B';
+    public const C = [self::B->name => self::B->value];
+    public const D = self::B?->value;
+}
+
+#[Attr(A::B->name)]
+class E
+{
 }
 
 // https://wiki.php.net/rfc/null-false-standalone-types
@@ -88,6 +101,12 @@ trait WithConstants
     private const THREE = 'three';
 }
 
+// https://wiki.php.net/rfc/dnf_types
+function generateSlug((HasTitle&HasId)|null $post)
+{
+    throw new \Exception('not implemented');
+}
+
 --INPUT--
 <?php
 
@@ -95,6 +114,19 @@ trait WithConstants
 READONLY       final       class       Foo
 {
     public string $prop;
+}
+
+// https://wiki.php.net/rfc/fetch_property_in_const_expressions
+enum A: string
+{
+    case B = 'B';
+    const C = [self::B -> name => self::B->value];
+    const D = self::B ?-> value;
+}
+
+#[Attr(A::B -> name)]
+class E
+{
 }
 
 // https://wiki.php.net/rfc/null-false-standalone-types
@@ -164,4 +196,10 @@ trait      WithConstants      {
     public    const ONE   = 'one';
     protected const TWO   = 'two';
     private   const THREE = 'three';
+}
+
+// https://wiki.php.net/rfc/dnf_types
+function generateSlug((HasTitle&HasId)|null $post)
+{
+    throw new \Exception('not implemented');
 }

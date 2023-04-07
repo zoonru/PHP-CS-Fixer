@@ -46,7 +46,7 @@ final class EmptyLoopBodyFixerTest extends AbstractFixerTestCase
         }
     }
 
-    public function provideFixCases(): iterable
+    public static function provideFixCases(): iterable
     {
         yield 'simple "while"' => [
             '<?php while(foo());',
@@ -138,6 +138,12 @@ echo 1;
 echo 1;
 ',
             ['style' => 'semicolon'],
+        ];
+
+        yield 'empty "foreach" with comment' => [
+            '<?php foreach (Foo() as $f) {
+    // $this->add($f);
+}',
         ];
     }
 }

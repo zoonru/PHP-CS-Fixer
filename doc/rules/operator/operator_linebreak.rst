@@ -11,7 +11,7 @@ Configuration
 ``only_booleans``
 ~~~~~~~~~~~~~~~~~
 
-whether to limit operators to only boolean ones
+Whether to limit operators to only boolean ones.
 
 Allowed types: ``bool``
 
@@ -20,7 +20,7 @@ Default value: ``false``
 ``position``
 ~~~~~~~~~~~~
 
-whether to place operators at the beginning or at the end of the line
+Whether to place operators at the beginning or at the end of the line.
 
 Allowed values: ``'beginning'``, ``'end'``
 
@@ -66,9 +66,14 @@ With configuration: ``['position' => 'end']``.
 Rule sets
 ---------
 
-The rule is part of the following rule set:
+The rule is part of the following rule sets:
 
 @PhpCsFixer
   Using the `@PhpCsFixer <./../../ruleSets/PhpCsFixer.rst>`_ rule set will enable the ``operator_linebreak`` rule with the config below:
+
+  ``['only_booleans' => true]``
+
+@Symfony
+  Using the `@Symfony <./../../ruleSets/Symfony.rst>`_ rule set will enable the ``operator_linebreak`` rule with the config below:
 
   ``['only_booleans' => true]``

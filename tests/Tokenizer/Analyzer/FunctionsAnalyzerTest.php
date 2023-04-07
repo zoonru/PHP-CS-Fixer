@@ -39,7 +39,7 @@ final class FunctionsAnalyzerTest extends TestCase
         self::assertIsGlobalFunctionCall($indices, $code);
     }
 
-    public function provideIsGlobalFunctionCallCases(): iterable
+    public static function provideIsGlobalFunctionCallCases(): iterable
     {
         yield [
             '<?php CONSTANT;',
@@ -267,7 +267,7 @@ A();
             [1, 20],
         ];
 
-        if (\PHP_VERSION_ID < 80000) {
+        if (\PHP_VERSION_ID < 8_00_00) {
             yield [
                 '<?php
                     use function \  str_repeat;
@@ -290,7 +290,7 @@ A();
         self::assertIsGlobalFunctionCall($indices, $code);
     }
 
-    public function provideIsGlobalFunctionCallPhp80Cases(): iterable
+    public static function provideIsGlobalFunctionCallPhp80Cases(): iterable
     {
         yield [
             '<?php $a = new (foo());',
@@ -336,12 +336,13 @@ class Foo {}
         self::assertIsGlobalFunctionCall($indices, $code);
     }
 
-    public function provideIsGlobalFunctionCallPhp81Cases(): iterable
+    public static function provideIsGlobalFunctionCallPhp81Cases(): iterable
     {
         yield 'first class callable cases' => [
             [],
             '<?php
 strlen(...);
+\strlen(...);
 $closure(...);
 $invokableObject(...);
 $obj->method(...);
@@ -391,7 +392,7 @@ class(){};
         static::assertSame(serialize($expected), serialize($actual));
     }
 
-    public function provideFunctionsWithArgumentsCases(): iterable
+    public static function provideFunctionsWithArgumentsCases(): iterable
     {
         yield from [
             ['<?php function(){};', 1, []],
@@ -557,7 +558,7 @@ class(){};
             ]],
         ];
 
-        if (\PHP_VERSION_ID < 80000) {
+        if (\PHP_VERSION_ID < 8_00_00) {
             yield ['<?php fn(\Foo/** TODO: change to something else */\Bar $a) => null;', 1, [
                 '$a' => new ArgumentAnalysis(
                     '$a',
@@ -586,7 +587,7 @@ class(){};
         }
     }
 
-    public function provideFunctionReturnTypeInfoCases(): iterable
+    public static function provideFunctionReturnTypeInfoCases(): iterable
     {
         yield ['<?php function(){};', 1, null];
 
@@ -596,7 +597,7 @@ class(){};
 
         yield ['<?php function($a): /* not sure if really an array */array {};', 1, new TypeAnalysis('array', 8, 8)];
 
-        if (\PHP_VERSION_ID < 80000) {
+        if (\PHP_VERSION_ID < 8_00_00) {
             yield ['<?php function($a): \Foo/** TODO: change to something else */\Bar {};', 1, new TypeAnalysis('\Foo\Bar', 7, 11)];
         }
 
@@ -610,7 +611,7 @@ class(){};
 
         yield ['<?php fn($a): /* not sure if really an array */array => null;', 1, new TypeAnalysis('array', 8, 8)];
 
-        if (\PHP_VERSION_ID < 80000) {
+        if (\PHP_VERSION_ID < 8_00_00) {
             yield ['<?php fn($a): \Foo/** TODO: change to something else */\Bar => null;', 1, new TypeAnalysis('\Foo\Bar', 7, 11)];
         }
     }
@@ -626,7 +627,7 @@ class(){};
         static::assertSame($isTheSameClassCall, $analyzer->isTheSameClassCall($tokens, $index));
     }
 
-    public function provideIsTheSameClassCallCases(): iterable
+    public static function provideIsTheSameClassCallCases(): iterable
     {
         $template = '<?php
             class Foo {
@@ -682,7 +683,7 @@ class(){};
             24,
         ];
 
-        if (\PHP_VERSION_ID >= 80000) {
+        if (\PHP_VERSION_ID >= 8_00_00) {
             yield [
                 true,
                 sprintf($template, '$this?->'),
@@ -712,7 +713,7 @@ class(){};
         static::assertSame(serialize($expected), serialize($analyzer->getFunctionArguments($tokens, $methodIndex)));
     }
 
-    public function provideFunctionsWithArgumentsPhp80Cases(): iterable
+    public static function provideFunctionsWithArgumentsPhp80Cases(): iterable
     {
         yield ['<?php function($aa,){};', 1, [
             '$aa' => new ArgumentAnalysis(

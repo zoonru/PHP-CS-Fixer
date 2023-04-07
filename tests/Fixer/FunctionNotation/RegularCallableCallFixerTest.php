@@ -33,7 +33,7 @@ final class RegularCallableCallFixerTest extends AbstractFixerTestCase
         $this->doTest($expected, $input);
     }
 
-    public function provideFixCases(): iterable
+    public static function provideFixCases(): iterable
     {
         yield 'call by name - list' => [
             '<?php
@@ -121,7 +121,7 @@ final class RegularCallableCallFixerTest extends AbstractFixerTestCase
             '<?php call_user_func($foo, $foo = "bar");',
         ];
 
-        if (\PHP_VERSION_ID < 80000) {
+        if (\PHP_VERSION_ID < 8_00_00) {
             yield 'call by variable (PHP < 8.0)' => [
                 '<?php
                     $a{"b"}{"c"}(1, 2);
@@ -251,7 +251,7 @@ class Foo {
         $this->doTest($expected, $input);
     }
 
-    public function provideFix81Cases(): iterable
+    public static function provideFix81Cases(): iterable
     {
         yield [
             '<?php \call_user_func(...) ?>',

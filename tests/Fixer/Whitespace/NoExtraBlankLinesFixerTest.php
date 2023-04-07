@@ -105,7 +105,7 @@ EOF;
         $this->doTest($this->removeLinesFromString($this->template, $lineNumberRemoved), $this->template);
     }
 
-    public function provideWithConfigCases(): iterable
+    public static function provideWithConfigCases(): iterable
     {
         $tests = [
             [
@@ -366,7 +366,7 @@ EOF;
         $this->doTest($expected, $input);
     }
 
-    public function provideCommentCases(): array
+    public static function provideCommentCases(): array
     {
         return [
             [
@@ -420,7 +420,7 @@ EOF
         $this->doTest($expected, $input);
     }
 
-    public function provideLineBreakCases(): iterable
+    public static function provideLineBreakCases(): iterable
     {
         $input = '<?php //
 
@@ -479,7 +479,7 @@ $b = 1;
         $this->doTest($expected, $input);
     }
 
-    public function provideBetweenUseCases(): iterable
+    public static function provideBetweenUseCases(): iterable
     {
         yield from [
             ['<?php use A\B;'],
@@ -565,7 +565,7 @@ use const some\Z\{ConstX,ConstY,ConstZ,};
         $this->doTest($expected, $input);
     }
 
-    public function provideRemoveLinesBetweenUseStatementsCases(): array
+    public static function provideRemoveLinesBetweenUseStatementsCases(): array
     {
         return [
             [
@@ -639,7 +639,7 @@ use const some\a\{ConstA, ConstB, ConstC};
         $this->doTest($expected);
     }
 
-    public function provideWithoutUsesCases(): iterable
+    public static function provideWithoutUsesCases(): iterable
     {
         yield [
             '<?php
@@ -677,7 +677,7 @@ $a = new Qux();',
         $this->doTest($expected, $input);
     }
 
-    public function provideRemoveBetweenUseTraitsCases(): iterable
+    public static function provideRemoveBetweenUseTraitsCases(): iterable
     {
         yield [
             '<?php
@@ -792,7 +792,7 @@ class Foo
         $this->doTest($expected, $input);
     }
 
-    public function provideOneAndInLineCases(): iterable
+    public static function provideOneAndInLineCases(): iterable
     {
         yield [
             "<?php\n\n\$a = function() use (\$b) { while(3<1)break; \$c = \$b[1]; while(\$b<1)continue; if (true) throw \$e; return 1; };\n\n",
@@ -815,7 +815,7 @@ class Foo
             "<?php\n\n\$a = new class { public function a () { while(4<1)break; while(3<1)continue; if (true) throw \$e; return 1; }};\n\n",
         ];
 
-        if (\PHP_VERSION_ID < 80000) {
+        if (\PHP_VERSION_ID < 8_00_00) {
             yield [
                 "<?php\n\n\$a = \$b{0};\n\n",
             ];
@@ -834,7 +834,7 @@ class Foo
         $this->doTest($expected, $input);
     }
 
-    public function provideBraceCases(): array
+    public static function provideBraceCases(): array
     {
         return [
             [
@@ -935,7 +935,7 @@ class Foo
         $this->doTest($expected, $input);
     }
 
-    public function provideMessyWhitespacesCases(): iterable
+    public static function provideMessyWhitespacesCases(): iterable
     {
         yield [
             [],
@@ -974,7 +974,7 @@ class Foo
         $this->doTest($expected, $input);
     }
 
-    public function provideSwitchCases(): array
+    public static function provideSwitchCases(): array
     {
         return [
             [
@@ -1117,7 +1117,7 @@ class Foo {}'
         $this->doTest($expected, $input);
     }
 
-    public function provideFix80Cases(): iterable
+    public static function provideFix80Cases(): iterable
     {
         yield [
             ['tokens' => ['throw']],
@@ -1175,7 +1175,7 @@ function foo(){}
         $this->doTest($expected, $input);
     }
 
-    public function provideFix81Cases(): iterable
+    public static function provideFix81Cases(): iterable
     {
         yield [
             '<?php
@@ -1218,8 +1218,7 @@ enum Foo
     case CASE_1;
 
     %s
-}'
-        ;
+}';
 
         $enumAttributes = [
             'case CASE_2;',

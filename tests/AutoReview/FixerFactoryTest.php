@@ -137,7 +137,7 @@ final class FixerFactoryTest extends TestCase
         static::assertCount(0, $missingIntegrationsTests, sprintf("There shall be an integration test. How do you know that priority set up is good, if there is no integration test to check it?\nMissing:\n- %s", implode("\n- ", $missingIntegrationsTests)));
     }
 
-    public function provideFixersPriorityCasesHaveIntegrationCases(): iterable
+    public static function provideFixersPriorityCasesHaveIntegrationCases(): iterable
     {
         foreach (self::getFixersPriorityGraph() as $fixerName => $edges) {
             yield $fixerName => [$fixerName, $edges];
@@ -168,7 +168,7 @@ final class FixerFactoryTest extends TestCase
         );
     }
 
-    public function provideIntegrationTestFilesCases(): iterable
+    public static function provideIntegrationTestFilesCases(): iterable
     {
         foreach (new \DirectoryIterator(self::getIntegrationPriorityDirectory()) as $candidate) {
             if (!$candidate->isDot()) {
@@ -491,6 +491,10 @@ final class FixerFactoryTest extends TestCase
                 'not_operator_with_successor_space',
                 'php_unit_dedicate_assert',
                 'single_space_after_construct',
+                'single_space_around_construct',
+            ],
+            'modernize_types_casting' => [
+                'no_unneeded_control_parentheses',
             ],
             'multiline_whitespace_before_semicolons' => [
                 'space_after_semicolon',
@@ -787,6 +791,10 @@ final class FixerFactoryTest extends TestCase
                 'no_useless_concat_operator',
             ],
             'single_space_after_construct' => [
+                'braces',
+                'function_declaration',
+            ],
+            'single_space_around_construct' => [
                 'braces',
                 'function_declaration',
             ],

@@ -37,7 +37,7 @@ final class PhpUnitTestAnnotationFixerTest extends AbstractFixerTestCase
         $this->doTest($expected, $input);
     }
 
-    public function provideFixCases(): array
+    public static function provideFixCases(): array
     {
         return [
             'Annotation is used, and it should not be' => [
@@ -976,6 +976,18 @@ class Test extends \PhpUnit\FrameWork\TestCase
 }',
                 ['style' => 'annotation'],
             ],
+            'do not touch single line @depends annotation when already correct' => [
+                '<?php class FooTest extends \PHPUnit\Framework\TestCase
+                {
+                    public function testOne() {}
+
+                    /** @depends testOne */
+                    public function testTwo() {}
+
+                    /**    @depends    testTwo    */
+                    public function testThree() {}
+                }',
+            ],
         ];
     }
 
@@ -991,7 +1003,7 @@ class Test extends \PhpUnit\FrameWork\TestCase
         $this->doTest($expected, $input);
     }
 
-    public function provideMessyWhitespacesCases(): array
+    public static function provideMessyWhitespacesCases(): array
     {
         return [
             [
@@ -1016,6 +1028,86 @@ class Test extends \PhpUnit\FrameWork\TestCase
                     }
                 ',
             ],
+        ];
+    }
+
+    /**
+     * @dataProvider provideFix80Cases
+     *
+     * @param array<string, string> $config
+     *
+     * @requires PHP 8.0
+     */
+    public function testFix80(string $expected, string $input, array $config): void
+    {
+        $this->fixer->configure($config);
+
+        $this->doTest($expected, $input);
+    }
+
+    /**
+     * @return iterable<(string|array<string, string>)[]>
+     */
+    public static function provideFix80Cases(): iterable
+    {
+        yield [
+            '<?php
+class Test extends \PhpUnit\FrameWork\TestCase
+{
+    /**
+     * @test
+     */
+    #[OneTest]
+    public function itWorks() {}
+
+    /**
+     * @test
+     */
+    #[TwoTest]
+    public function itDoesSomething() {}
+}',
+            '<?php
+class Test extends \PhpUnit\FrameWork\TestCase
+{
+    #[OneTest]
+    public function testItWorks() {}
+
+    #[TwoTest]
+    public function testItDoesSomething() {}
+}',
+            ['style' => 'annotation'],
+        ];
+
+        yield [
+            '<?php
+class Test extends \PhpUnit\FrameWork\TestCase
+{
+    /**
+     * @test
+     */
+    #[OneTest]
+    #[Internal]
+    public function itWorks() {}
+
+    /**
+     * @test
+     */
+    #[TwoTest]
+    #[Internal]
+    public function itDoesSomething() {}
+}',
+            '<?php
+class Test extends \PhpUnit\FrameWork\TestCase
+{
+    #[OneTest]
+    #[Internal]
+    public function testItWorks() {}
+
+    #[TwoTest]
+    #[Internal]
+    public function testItDoesSomething() {}
+}',
+            ['style' => 'annotation'],
         ];
     }
 }

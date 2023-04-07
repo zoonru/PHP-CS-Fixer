@@ -26,7 +26,6 @@ final class PhpCsFixerSet extends AbstractRuleSetDescription
         return [
             '@PER' => true,
             '@Symfony' => true,
-            'align_multiline_comment' => true,
             'array_indentation' => true,
             'blank_line_before_statement' => [
                 'statements' => [
@@ -82,7 +81,6 @@ final class PhpCsFixerSet extends AbstractRuleSetDescription
                     'use',
                 ],
             ],
-            'no_null_property_initialization' => true,
             'no_superfluous_elseif' => true,
             'no_unneeded_control_parentheses' => [
                 'statements' => [
@@ -100,9 +98,6 @@ final class PhpCsFixerSet extends AbstractRuleSetDescription
             ],
             'no_useless_else' => true,
             'no_useless_return' => true,
-            'operator_linebreak' => [
-                'only_booleans' => true,
-            ],
             'ordered_class_elements' => true,
             'php_unit_internal_class' => true,
             'php_unit_test_class_requires_covers' => true,

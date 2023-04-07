@@ -72,7 +72,7 @@ EOF;
         $this->doTest($expected, $input);
     }
 
-    public function provideCommentCases(): array
+    public static function provideCommentCases(): array
     {
         return [
             [
@@ -115,7 +115,7 @@ EOF;
         $this->doTest($expected);
     }
 
-    public function provideOutsideCases(): iterable
+    public static function provideOutsideCases(): iterable
     {
         yield from [
             [
@@ -180,7 +180,7 @@ $baz [0]
             ],
         ];
 
-        if (\PHP_VERSION_ID < 80000) {
+        if (\PHP_VERSION_ID < 8_00_00) {
             yield [
                 '<?php
 $foo{0}{1}{2} = 3;',
@@ -206,7 +206,7 @@ $var = $arr[0]{     0
         }
     }
 
-    public function provideInsideCases(): array
+    public static function provideInsideCases(): array
     {
         return [
             [
@@ -303,7 +303,7 @@ $var = $arr[0][     0
         $this->doTest($expected, $input);
     }
 
-    public function provideConfigurationCases(): iterable
+    public static function provideConfigurationCases(): iterable
     {
         $tests = [
             [
@@ -348,7 +348,7 @@ EOT
         ];
 
         foreach ($tests as $index => $test) {
-            if (\PHP_VERSION_ID >= 80000) {
+            if (\PHP_VERSION_ID >= 8_00_00) {
                 $test[1] = str_replace('{', '[', $test[1]);
                 $test[1] = str_replace('}', ']', $test[1]);
                 $test[2] = str_replace('{', '[', $test[2]);

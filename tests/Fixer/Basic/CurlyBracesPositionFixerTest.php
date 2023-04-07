@@ -35,7 +35,7 @@ final class CurlyBracesPositionFixerTest extends AbstractFixerTestCase
         $this->doTest($expected, $input);
     }
 
-    public function provideFixCases(): iterable
+    public static function provideFixCases(): iterable
     {
         yield 'if (default)' => [
             '<?php
@@ -607,6 +607,21 @@ final class CurlyBracesPositionFixerTest extends AbstractFixerTestCase
             ['control_structures_opening_brace' => 'next_line_unless_newline_at_signature_end'],
         ];
 
+        yield 'next line with newline before closing parenthesis and callable type' => [
+            '<?php
+                function foo($foo
+                ): callable {
+                    return function (): void {};
+                }',
+            '<?php
+                function foo($foo
+                ): callable
+                {
+                    return function (): void {};
+                }',
+            ['control_structures_opening_brace' => 'next_line_unless_newline_at_signature_end'],
+        ];
+
         yield 'next line with newline in signature but not before closing parenthesis and return type' => [
             '<?php
                 function foo(
@@ -666,6 +681,38 @@ final class CurlyBracesPositionFixerTest extends AbstractFixerTestCase
                     foo();
                 }',
         ];
+
+        yield 'open brace not preceded by space and followed by a comment' => [
+            '<?php class test
+{
+    public function example()// example
+    {
+    }
+}
+',
+            '<?php class test
+{
+    public function example(){// example
+    }
+}
+',
+        ];
+
+        yield 'open brace not preceded by space and followed by a space and comment' => [
+            '<?php class test
+{
+    public function example() // example
+    {
+    }
+}
+',
+            '<?php class test
+{
+    public function example(){ // example
+    }
+}
+',
+        ];
     }
 
     /**
@@ -678,7 +725,7 @@ final class CurlyBracesPositionFixerTest extends AbstractFixerTestCase
         $this->doTest($expected, $input);
     }
 
-    public function provideFix80Cases(): iterable
+    public static function provideFix80Cases(): iterable
     {
         yield 'function (multiline + union return)' => [
             '<?php
@@ -743,7 +790,7 @@ final class CurlyBracesPositionFixerTest extends AbstractFixerTestCase
         $this->doTest($expected, $input);
     }
 
-    public function provideFix81Cases(): iterable
+    public static function provideFix81Cases(): iterable
     {
         yield 'function (multiline + intersection return)' => [
             '<?php
@@ -751,6 +798,28 @@ final class CurlyBracesPositionFixerTest extends AbstractFixerTestCase
                     mixed $bar,
                     mixed $baz,
                 ): Foo&Bar {
+                }',
+        ];
+    }
+
+    /**
+     * @dataProvider provideFix82Cases
+     *
+     * @requires PHP 8.2
+     */
+    public function testFix82(string $expected, ?string $input = null): void
+    {
+        $this->doTest($expected, $input);
+    }
+
+    public static function provideFix82Cases(): iterable
+    {
+        yield 'function (multiline + DNF return)' => [
+            '<?php
+                function foo(
+                    mixed $bar,
+                    mixed $baz,
+                ): (Foo&Bar)|int|null {
                 }',
         ];
     }

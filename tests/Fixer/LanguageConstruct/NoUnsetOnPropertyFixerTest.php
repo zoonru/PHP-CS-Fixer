@@ -33,7 +33,7 @@ final class NoUnsetOnPropertyFixerTest extends AbstractFixerTestCase
         $this->doTest($expected, $input);
     }
 
-    public function provideFixCases(): iterable
+    public static function provideFixCases(): iterable
     {
         yield from [
             'It replaces an unset on a property with = null' => [
@@ -108,7 +108,7 @@ final class NoUnsetOnPropertyFixerTest extends AbstractFixerTestCase
             ],
         ];
 
-        if (\PHP_VERSION_ID < 80000) {
+        if (\PHP_VERSION_ID < 8_00_00) {
             yield 'It does not replace unsets on arrays with special notation' => [
                 '<?php unset($bar->foo{0});',
             ];
@@ -204,7 +204,7 @@ final class NoUnsetOnPropertyFixerTest extends AbstractFixerTestCase
             ],
         ];
 
-        if (\PHP_VERSION_ID < 80000) {
+        if (\PHP_VERSION_ID < 8_00_00) {
             yield 'It does not replace unsets on arrays with special notation 1' => [
                 '<?php unset($bar->foo{0},);',
             ];
@@ -221,7 +221,7 @@ final class NoUnsetOnPropertyFixerTest extends AbstractFixerTestCase
         $this->doTest($expected, $input);
     }
 
-    public function provideFixPre80Cases(): iterable
+    public static function provideFixPre80Cases(): iterable
     {
         yield 'It does not break curly access expressions' => [
             '<?php unset(a(){"a"});',

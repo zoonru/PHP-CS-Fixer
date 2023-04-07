@@ -26,7 +26,6 @@ use PhpCsFixer\Tests\Test\AbstractIntegrationTestCase;
 use PhpCsFixer\Tests\TestCase;
 use PhpCsFixer\Tokenizer\Token;
 use PhpCsFixer\Tokenizer\Tokens;
-use PhpCsFixer\Utils;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;
 
@@ -529,34 +528,6 @@ final class ProjectCodeTest extends TestCase
     /**
      * @dataProvider provideSrcClassCases
      */
-    public function testThereIsNoTriggerErrorUsedDirectly(string $className): void
-    {
-        if (Utils::class === $className) {
-            $this->expectNotToPerformAssertions(); // This is where "trigger_error" should be
-
-            return;
-        }
-
-        $rc = new \ReflectionClass($className);
-        $tokens = Tokens::fromCode(file_get_contents($rc->getFileName()));
-
-        $triggerErrors = array_filter(
-            $tokens->toArray(),
-            static function (Token $token): bool {
-                return $token->equals([T_STRING, 'trigger_error'], false);
-            }
-        );
-
-        static::assertCount(
-            0,
-            $triggerErrors,
-            sprintf('Class "%s" must not use "trigger_error", it shall use "Util::triggerDeprecation" instead.', $className)
-        );
-    }
-
-    /**
-     * @dataProvider provideSrcClassCases
-     */
     public function testInheritdocIsNotAbused(string $className): void
     {
         $rc = new \ReflectionClass($className);
@@ -683,7 +654,7 @@ final class ProjectCodeTest extends TestCase
     /**
      * @return iterable<array{class-string<TestCase>}>
      */
-    public function provideTestClassCases(): iterable
+    public static function provideTestClassCases(): iterable
     {
         if (null === self::$testClassCases) {
             self::$testClassCases = array_map(
@@ -716,7 +687,7 @@ final class ProjectCodeTest extends TestCase
         static::assertTrue($reflection->isSubclassOf(AbstractPhpUnitFixer::class));
     }
 
-    public function providePhpUnitFixerExtendsAbstractPhpUnitFixerCases(): iterable
+    public static function providePhpUnitFixerExtendsAbstractPhpUnitFixerCases(): iterable
     {
         $factory = new FixerFactory();
         $factory->registerBuiltInFixers();

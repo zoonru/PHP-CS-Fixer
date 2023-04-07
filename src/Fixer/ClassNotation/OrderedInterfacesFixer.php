@@ -95,8 +95,6 @@ final class OrderedInterfacesFixer extends AbstractFixer implements Configurable
                     ]
                 ),
             ],
-            null,
-            "Risky for `implements` when specifying both an interface and its parent interface, because PHP doesn't break on `parent, child` but does on `child, parent`."
         );
     }
 
@@ -107,14 +105,6 @@ final class OrderedInterfacesFixer extends AbstractFixer implements Configurable
     {
         return $tokens->isTokenKindFound(T_IMPLEMENTS)
             || $tokens->isAllTokenKindsFound([T_INTERFACE, T_EXTENDS]);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function isRisky(): bool
-    {
-        return true;
     }
 
     /**
@@ -211,11 +201,11 @@ final class OrderedInterfacesFixer extends AbstractFixer implements Configurable
     protected function createConfigurationDefinition(): FixerConfigurationResolverInterface
     {
         return new FixerConfigurationResolver([
-            (new FixerOptionBuilder(self::OPTION_ORDER, 'How the interfaces should be ordered'))
+            (new FixerOptionBuilder(self::OPTION_ORDER, 'How the interfaces should be ordered.'))
                 ->setAllowedValues(self::SUPPORTED_ORDER_OPTIONS)
                 ->setDefault(self::ORDER_ALPHA)
                 ->getOption(),
-            (new FixerOptionBuilder(self::OPTION_DIRECTION, 'Which direction the interfaces should be ordered'))
+            (new FixerOptionBuilder(self::OPTION_DIRECTION, 'Which direction the interfaces should be ordered.'))
                 ->setAllowedValues(self::SUPPORTED_DIRECTION_OPTIONS)
                 ->setDefault(self::DIRECTION_ASCEND)
                 ->getOption(),

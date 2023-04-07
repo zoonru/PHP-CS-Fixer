@@ -42,8 +42,7 @@ final class NameQualifiedTransformerTest extends AbstractTransformerTestCase
         $expectedTokens = Tokens::fromArray($expected);
         $tokens = null === $input
             ? Tokens::fromArray($expected)
-            : Tokens::fromArray($input)
-        ;
+            : Tokens::fromArray($input);
 
         $tokenCount = \count($tokens);
 
@@ -51,7 +50,7 @@ final class NameQualifiedTransformerTest extends AbstractTransformerTestCase
             $this->transformer->process($tokens, $tokens[$i], $i);
         }
 
-        self::assertTokens($expectedTokens, $tokens);
+        static::assertTokens($expectedTokens, $tokens);
 
         if (null === $input) {
             static::assertFalse($tokens->isChanged());
@@ -61,9 +60,9 @@ final class NameQualifiedTransformerTest extends AbstractTransformerTestCase
         }
     }
 
-    public function provideProcessCases(): iterable
+    public static function provideProcessCases(): iterable
     {
-        if (\PHP_VERSION_ID < 80000) {
+        if (\PHP_VERSION_ID < 8_00_00) {
             return; // PHPUnit still calls this for no reason on non PHP8.0
         }
 
@@ -162,10 +161,10 @@ final class NameQualifiedTransformerTest extends AbstractTransformerTestCase
      */
     public function testPriority(array $expected, string $source): void
     {
-        self::assertTokens(Tokens::fromArray($expected), Tokens::fromCode($source));
+        static::assertTokens(Tokens::fromArray($expected), Tokens::fromCode($source));
     }
 
-    public function providePriorityCases(): iterable
+    public static function providePriorityCases(): iterable
     {
         yield [
             [

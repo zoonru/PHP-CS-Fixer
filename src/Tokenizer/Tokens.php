@@ -27,6 +27,8 @@ use PhpCsFixer\Preg;
  *
  * @extends \SplFixedArray<Token>
  *
+ * @method Token offsetGet($offset)
+ *
  * @final
  */
 class Tokens extends \SplFixedArray
@@ -42,6 +44,7 @@ class Tokens extends \SplFixedArray
     public const BLOCK_TYPE_DESTRUCTURING_SQUARE_BRACE = 9;
     public const BLOCK_TYPE_BRACE_CLASS_INSTANTIATION = 10;
     public const BLOCK_TYPE_ATTRIBUTE = 11;
+    public const BLOCK_TYPE_DISJUNCTIVE_NORMAL_FORM_TYPE_PARENTHESIS = 12;
 
     /**
      * Static class cache.
@@ -239,6 +242,10 @@ class Tokens extends \SplFixedArray
                 'start' => [CT::T_BRACE_CLASS_INSTANTIATION_OPEN, '('],
                 'end' => [CT::T_BRACE_CLASS_INSTANTIATION_CLOSE, ')'],
             ],
+            self::BLOCK_TYPE_DISJUNCTIVE_NORMAL_FORM_TYPE_PARENTHESIS => [
+                'start' => [CT::T_DISJUNCTIVE_NORMAL_FORM_TYPE_PARENTHESIS_OPEN, '('],
+                'end' => [CT::T_DISJUNCTIVE_NORMAL_FORM_TYPE_PARENTHESIS_CLOSE, ')'],
+            ],
         ];
 
         // @TODO: drop condition when PHP 8.0+ is required
@@ -372,16 +379,14 @@ class Tokens extends \SplFixedArray
 
                     return \strlen($whitespace) > 2 // @TODO: can be removed on PHP 8; https://php.net/manual/en/function.substr.php
                         ? substr($whitespace, 2)
-                        : ''
-                    ;
+                        : '';
                 }
 
                 $tokens[$index] = new Token([T_OPEN_TAG, rtrim($token->getContent()).$whitespace[0]]);
 
                 return \strlen($whitespace) > 1 // @TODO: can be removed on PHP 8; https://php.net/manual/en/function.substr.php
                     ? substr($whitespace, 1)
-                    : ''
-                ;
+                    : '';
             }
 
             return $whitespace;
@@ -702,7 +707,7 @@ class Tokens extends \SplFixedArray
      * @param list<array{0: int, 1?: string}|string|Token> $sequence      an array of token (kinds)
      * @param int                                          $start         start index, defaulting to the start of the file
      * @param null|int                                     $end           end index, defaulting to the end of the file
-     * @param bool|list<bool>                              $caseSensitive global case sensitiveness or a list of booleans, whose keys should match
+     * @param array<bool>|bool                             $caseSensitive global case sensitiveness or a list of booleans, whose keys should match
      *                                                                    the ones used in $sequence. If any is missing, the default case-sensitive
      *                                                                    comparison is used
      *
@@ -995,7 +1000,7 @@ class Tokens extends \SplFixedArray
             $this->registerFoundToken($token);
         }
 
-        if (\PHP_VERSION_ID < 80000) {
+        if (\PHP_VERSION_ID < 8_00_00) {
             $this->rewind();
         }
 
@@ -1011,7 +1016,7 @@ class Tokens extends \SplFixedArray
             $output[$index] = $token->toArray();
         }
 
-        if (\PHP_VERSION_ID < 80000) {
+        if (\PHP_VERSION_ID < 8_00_00) {
             $this->rewind();
         }
 
@@ -1338,8 +1343,7 @@ class Tokens extends \SplFixedArray
         // inlined extractTokenKind() call on the hot path
         $tokenKind = $token instanceof Token
             ? ($token->isArray() ? $token->getId() : $token->getContent())
-            : (\is_array($token) ? $token[0] : $token)
-        ;
+            : (\is_array($token) ? $token[0] : $token);
 
         $this->foundTokenKinds[$tokenKind] ??= 0;
         ++$this->foundTokenKinds[$tokenKind];
@@ -1355,8 +1359,7 @@ class Tokens extends \SplFixedArray
         // inlined extractTokenKind() call on the hot path
         $tokenKind = $token instanceof Token
             ? ($token->isArray() ? $token->getId() : $token->getContent())
-            : (\is_array($token) ? $token[0] : $token)
-        ;
+            : (\is_array($token) ? $token[0] : $token);
 
         if (!isset($this->foundTokenKinds[$tokenKind])) {
             return;
@@ -1374,8 +1377,7 @@ class Tokens extends \SplFixedArray
     {
         return $token instanceof Token
             ? ($token->isArray() ? $token->getId() : $token->getContent())
-            : (\is_array($token) ? $token[0] : $token)
-        ;
+            : (\is_array($token) ? $token[0] : $token);
     }
 
     /**

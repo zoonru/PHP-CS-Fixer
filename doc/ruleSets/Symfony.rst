@@ -8,15 +8,13 @@ Rules
 -----
 
 - `@PSR12 <./PSR12.rst>`_
+- `align_multiline_comment <./../rules/phpdoc/align_multiline_comment.rst>`_
 - `array_syntax <./../rules/array_notation/array_syntax.rst>`_
 - `backtick_to_shell_exec <./../rules/alias/backtick_to_shell_exec.rst>`_
 - `binary_operator_spaces <./../rules/operator/binary_operator_spaces.rst>`_
 - `blank_line_before_statement <./../rules/whitespace/blank_line_before_statement.rst>`_
   config:
   ``['statements' => ['return']]``
-- `braces <./../rules/basic/braces.rst>`_
-  config:
-  ``['allow_single_line_anonymous_class_with_empty_body' => true, 'allow_single_line_closure' => true]``
 - `cast_spaces <./../rules/cast_notation/cast_spaces.rst>`_
 - `class_attributes_separation <./../rules/class_notation/class_attributes_separation.rst>`_
   config:
@@ -27,6 +25,10 @@ Rules
 - `class_reference_name_casing <./../rules/casing/class_reference_name_casing.rst>`_
 - `clean_namespace <./../rules/namespace_notation/clean_namespace.rst>`_
 - `concat_space <./../rules/operator/concat_space.rst>`_
+- `curly_braces_position <./../rules/basic/curly_braces_position.rst>`_
+  config:
+  ``['allow_single_line_anonymous_functions' => true, 'allow_single_line_empty_anonymous_classes' => true]``
+- `declare_parentheses <./../rules/language_construct/declare_parentheses.rst>`_
 - `echo_tag_syntax <./../rules/php_tag/echo_tag_syntax.rst>`_
 - `empty_loop_body <./../rules/control_structure/empty_loop_body.rst>`_
   config:
@@ -65,6 +67,7 @@ Rules
 - `no_leading_namespace_whitespace <./../rules/namespace_notation/no_leading_namespace_whitespace.rst>`_
 - `no_mixed_echo_print <./../rules/alias/no_mixed_echo_print.rst>`_
 - `no_multiline_whitespace_around_double_arrow <./../rules/array_notation/no_multiline_whitespace_around_double_arrow.rst>`_
+- `no_null_property_initialization <./../rules/class_notation/no_null_property_initialization.rst>`_
 - `no_short_bool_cast <./../rules/cast_notation/no_short_bool_cast.rst>`_
 - `no_singleline_whitespace_before_semicolons <./../rules/semicolon/no_singleline_whitespace_before_semicolons.rst>`_
 - `no_spaces_around_offset <./../rules/whitespace/no_spaces_around_offset.rst>`_
@@ -86,7 +89,12 @@ Rules
 - `no_whitespace_before_comma_in_array <./../rules/array_notation/no_whitespace_before_comma_in_array.rst>`_
 - `normalize_index_brace <./../rules/array_notation/normalize_index_brace.rst>`_
 - `object_operator_without_whitespace <./../rules/operator/object_operator_without_whitespace.rst>`_
+- `operator_linebreak <./../rules/operator/operator_linebreak.rst>`_
+  config:
+  ``['only_booleans' => true]``
 - `ordered_imports <./../rules/import/ordered_imports.rst>`_
+  config:
+  ``['imports_order' => ['class', 'function', 'const'], 'sort_algorithm' => 'alpha']``
 - `php_unit_fqcn_annotation <./../rules/php_unit/php_unit_fqcn_annotation.rst>`_
 - `php_unit_method_casing <./../rules/php_unit/php_unit_method_casing.rst>`_
 - `phpdoc_align <./../rules/phpdoc/phpdoc_align.rst>`_
@@ -127,9 +135,7 @@ Rules
   ``['comment_types' => ['hash']]``
 - `single_line_throw <./../rules/function_notation/single_line_throw.rst>`_
 - `single_quote <./../rules/string_notation/single_quote.rst>`_
-- `single_space_after_construct <./../rules/language_construct/single_space_after_construct.rst>`_
-  config:
-  ``['constructs' => ['abstract', 'as', 'attribute', 'break', 'case', 'catch', 'class', 'clone', 'comment', 'const', 'const_import', 'continue', 'do', 'echo', 'else', 'elseif', 'enum', 'extends', 'final', 'finally', 'for', 'foreach', 'function', 'function_import', 'global', 'goto', 'if', 'implements', 'include', 'include_once', 'instanceof', 'insteadof', 'interface', 'match', 'named_argument', 'namespace', 'new', 'open_tag_with_echo', 'php_doc', 'php_open', 'print', 'private', 'protected', 'public', 'readonly', 'require', 'require_once', 'return', 'static', 'switch', 'throw', 'trait', 'try', 'type_colon', 'use', 'use_lambda', 'use_trait', 'var', 'while', 'yield', 'yield_from']]``
+- `single_space_around_construct <./../rules/language_construct/single_space_around_construct.rst>`_
 - `space_after_semicolon <./../rules/semicolon/space_after_semicolon.rst>`_
   config:
   ``['remove_in_empty_for_expressions' => true]``

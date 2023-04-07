@@ -43,7 +43,7 @@ abstract class AbstractSetTest extends TestCase
         static::assertStringEndsWith('.', $setDescription, sprintf('Ruleset description of "%s" must end with ".", got "%s".', $setName, $setDescription));
         static::assertRules($setRules, $factory, $setName);
 
-        if (1 === preg_match('/(\d)(\d)Migration/', \get_class($set), $matches)) {
+        if (1 === preg_match('/(\d+)(\d)Migration/', \get_class($set), $matches)) {
             static::assertStringEndsWith(
                 sprintf(' %d.%d compatibility.', $matches[1], $matches[2]),
                 $setDescription,
@@ -67,10 +67,16 @@ abstract class AbstractSetTest extends TestCase
         }
     }
 
+    protected static function assertSanityString(string $string): void
+    {
+        static::assertSame(trim($string), $string);
+        static::assertNotSame('', $string);
+    }
+
     /**
      * @param array<string, array<string, mixed>|bool> $setRules
      */
-    private static function assertRules(array $setRules, FixerFactory $factory, string $setName): void
+    protected static function assertRules(array $setRules, FixerFactory $factory, string $setName): void
     {
         $sawRule = false;
 
@@ -90,12 +96,6 @@ abstract class AbstractSetTest extends TestCase
         ksort($setRulesSorted);
 
         static::assertSame($setRulesSorted, $setRules);
-    }
-
-    private static function assertSanityString(string $string): void
-    {
-        static::assertSame(trim($string), $string);
-        static::assertNotSame('', $string);
     }
 
     private static function getSet(): RuleSetDescriptionInterface

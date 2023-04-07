@@ -36,7 +36,7 @@ final class PhpUnitInternalClassFixerTest extends AbstractFixerTestCase
         $this->doTest($expected, $input);
     }
 
-    public function provideFixCases(): array
+    public static function provideFixCases(): array
     {
         return [
             'It does not change normal classes' => [
@@ -371,6 +371,153 @@ class Test extends TestCase
 }
 ',
             ],
+        ];
+    }
+
+    /**
+     * @dataProvider provideFix80Cases
+     *
+     * @requires PHP 8.0
+     */
+    public function testFix80(string $expected, string $input): void
+    {
+        $this->doTest($expected, $input);
+    }
+
+    /**
+     * @return iterable<string[]>
+     */
+    public static function provideFix80Cases(): iterable
+    {
+        yield 'it adds a docblock above when there is an attribute' => [
+            '<?php
+
+            /**
+             * @internal
+             */
+            #[SimpleTest]
+            class Test extends TestCase
+            {
+            }
+            ',
+            '<?php
+
+            #[SimpleTest]
+            class Test extends TestCase
+            {
+            }
+            ',
+        ];
+
+        yield 'it adds the internal tag along other tags when there is an attribute' => [
+            '<?php
+
+            /**
+             * @coversNothing
+             *
+             * @internal
+             */
+            #[SimpleTest]
+            class Test extends TestCase
+            {
+            }
+            ',
+            '<?php
+
+            /**
+             * @coversNothing
+             */
+            #[SimpleTest]
+            class Test extends TestCase
+            {
+            }
+            ',
+        ];
+
+        yield 'it adds a docblock above when there are attributes' => [
+            '<?php
+
+            /**
+             * @internal
+             */
+            #[SimpleTest]
+            #[Annotated]
+            class Test extends TestCase
+            {
+            }
+            ',
+            '<?php
+
+            #[SimpleTest]
+            #[Annotated]
+            class Test extends TestCase
+            {
+            }
+            ',
+        ];
+
+        yield 'it adds the internal tag along other tags when there are attributes' => [
+            '<?php
+
+            /**
+             * @coversNothing
+             *
+             * @internal
+             */
+            #[SimpleTest]
+            #[Annotated]
+            class Test extends TestCase
+            {
+            }
+            ',
+            '<?php
+
+            /**
+             * @coversNothing
+             */
+            #[SimpleTest]
+            #[Annotated]
+            class Test extends TestCase
+            {
+            }
+            ',
+        ];
+    }
+
+    /**
+     * @param array<string, mixed> $config
+     *
+     * @dataProvider provideFix82Cases
+     *
+     * @requires PHP 8.2
+     */
+    public function testFix82(string $expected, ?string $input = null, array $config = []): void
+    {
+        $this->fixer->configure($config);
+        $this->doTest($expected, $input);
+    }
+
+    public static function provideFix82Cases(): iterable
+    {
+        yield 'If final is not added as an option, final classes will not be marked internal' => [
+            '<?php
+final readonly class Test extends TestCase
+{}
+',
+            null,
+            [
+                'types' => ['normal'],
+            ],
+        ];
+
+        yield [
+            '<?php
+/**
+ * @internal
+ */
+readonly final class Test extends TestCase {}',
+            '<?php
+readonly final class Test extends TestCase {}',
         ];
     }
 }

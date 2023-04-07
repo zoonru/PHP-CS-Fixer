@@ -444,8 +444,7 @@ EOF;
 <?php
 
 $c = 1;
-EOF
-        ;
+EOF;
 
         $this->doTest($expected);
     }
@@ -562,7 +561,7 @@ B#
         $this->doTest($expected, $input);
     }
 
-    public function provideFixCases(): iterable
+    public static function provideFixCases(): iterable
     {
         yield [
             <<<'EOF'
@@ -1130,7 +1129,7 @@ use function some\a\{fn_a, fn_b, fn_c,};
         $this->fixer->configure($configuration);
     }
 
-    public function provideInvalidSortAlgorithmCases(): array
+    public static function provideInvalidSortAlgorithmCases(): array
     {
         return [
             [
@@ -1728,8 +1727,7 @@ EOF;
 <?php
 
 $c = 1;
-EOF
-        ;
+EOF;
 
         $this->doTest($expected);
     }
@@ -1747,7 +1745,7 @@ EOF
         $this->doTest($expected, $input);
     }
 
-    public function provideFixByLengthCases(): array
+    public static function provideFixByLengthCases(): array
     {
         return [
             [
@@ -1893,7 +1891,7 @@ use const ZZZ;
         $this->doTest($expected, $input);
     }
 
-    public function provideFixTypesOrderAndLengthCases(): array
+    public static function provideFixTypesOrderAndLengthCases(): array
     {
         return [
             [
@@ -1950,7 +1948,7 @@ use function some\f\{fn_c, fn_d, fn_e};
         $this->doTest($expected, $input);
     }
 
-    public function provideFixTypesOrderAndAlphabetCases(): iterable
+    public static function provideFixTypesOrderAndAlphabetCases(): iterable
     {
         return [
             [
@@ -2018,7 +2016,7 @@ use function some\a\{fn_a, fn_b};
         $this->doTest($expected, $input);
     }
 
-    public function provideFixTypesOrderAndNoneCases(): array
+    public static function provideFixTypesOrderAndNoneCases(): array
     {
         return [
             [

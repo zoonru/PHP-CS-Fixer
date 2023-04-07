@@ -182,8 +182,7 @@ Exit code of the fix command is built using following bit flags:
 * 32 - Configuration error of a Fixer.
 * 64 - Exception raised within the application.
 
-EOF
-        ;
+EOF;
     }
 
     /**
@@ -251,8 +250,7 @@ EOF
 
         $stdErr = $output instanceof ConsoleOutputInterface
             ? $output->getErrorOutput()
-            : ('txt' === $reporter->getFormat() ? $output : null)
-        ;
+            : ('txt' === $reporter->getFormat() ? $output : null);
 
         if (null !== $stdErr) {
             if (OutputInterface::VERBOSITY_VERBOSE <= $verbosity) {
@@ -272,7 +270,7 @@ EOF
         }
 
         $progressType = $resolver->getProgress();
-        $finder = $resolver->getFinder();
+        $finder = new \ArrayIterator(iterator_to_array($resolver->getFinder()));
 
         if (null !== $stdErr && $resolver->configFinderIsOverridden()) {
             $stdErr->writeln(
@@ -283,7 +281,6 @@ EOF
         if ('none' === $progressType || null === $stdErr) {
             $progressOutput = new NullOutput();
         } else {
-            $finder = new \ArrayIterator(iterator_to_array($finder));
             $progressOutput = new ProcessOutput(
                 $stdErr,
                 $this->eventDispatcher,
@@ -325,8 +322,7 @@ EOF
 
         $output->isDecorated()
             ? $output->write($reporter->generate($reportSummary))
-            : $output->write($reporter->generate($reportSummary), false, OutputInterface::OUTPUT_RAW)
-        ;
+            : $output->write($reporter->generate($reportSummary), false, OutputInterface::OUTPUT_RAW);
 
         $invalidErrors = $this->errorsManager->getInvalidErrors();
         $exceptionErrors = $this->errorsManager->getExceptionErrors();

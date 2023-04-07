@@ -5,6 +5,17 @@ Rule ``braces``
 The body of each structure MUST be enclosed by braces. Braces should be properly
 placed. Body of braces should be properly indented.
 
+Warning
+-------
+
+This rule is deprecated and will be removed on next major version
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+You should use ``single_space_around_construct``, ``control_structure_braces``,
+``curly_braces_position``, ``control_structure_continuation_position``,
+``declare_parentheses``, ``statement_indentation``,
+``no_multiple_statements_per_line`` and ``no_extra_blank_lines`` instead.
+
 Configuration
 -------------
 
@@ -29,7 +40,7 @@ Default value: ``false``
 ``position_after_functions_and_oop_constructs``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-whether the opening brace should be placed on "next" or "same" line after classy
+Whether the opening brace should be placed on "next" or "same" line after classy
 constructs (non-anonymous classes, interfaces, traits, methods and non-lambda
 functions).
 
@@ -40,7 +51,7 @@ Default value: ``'next'``
 ``position_after_control_structures``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-whether the opening brace should be placed on "next" or "same" line after
+Whether the opening brace should be placed on "next" or "same" line after
 control structures.
 
 Allowed values: ``'next'``, ``'same'``
@@ -50,7 +61,7 @@ Default value: ``'same'``
 ``position_after_anonymous_constructs``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-whether the opening brace should be placed on "next" or "same" line after
+Whether the opening brace should be placed on "next" or "same" line after
 anonymous constructs (anonymous classes and lambda functions).
 
 Allowed values: ``'next'``, ``'same'``
@@ -173,31 +184,3 @@ With configuration: ``['position_after_functions_and_oop_constructs' => 'same']`
    +        }
         }
     }
-
-Rule sets
----------
-
-The rule is part of the following rule sets:
-
-@PER
-  Using the `@PER <./../../ruleSets/PER.rst>`_ rule set will enable the ``braces`` rule with the config below:
-
-  ``['allow_single_line_anonymous_class_with_empty_body' => true]``
-
-@PSR12
-  Using the `@PSR12 <./../../ruleSets/PSR12.rst>`_ rule set will enable the ``braces`` rule with the config below:
-
-  ``['allow_single_line_anonymous_class_with_empty_body' => true]``
-
-@PSR2
-  Using the `@PSR2 <./../../ruleSets/PSR2.rst>`_ rule set will enable the ``braces`` rule with the default config.
-
-@PhpCsFixer
-  Using the `@PhpCsFixer <./../../ruleSets/PhpCsFixer.rst>`_ rule set will enable the ``braces`` rule with the config below:
-
-  ``['allow_single_line_anonymous_class_with_empty_body' => true, 'allow_single_line_closure' => true]``
-
-@Symfony
-  Using the `@Symfony <./../../ruleSets/Symfony.rst>`_ rule set will enable the ``braces`` rule with the config below:
-
-  ``['allow_single_line_anonymous_class_with_empty_body' => true, 'allow_single_line_closure' => true]``

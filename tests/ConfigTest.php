@@ -41,7 +41,7 @@ final class ConfigTest extends TestCase
         $configResolver = new ConfigurationResolver(
             $config,
             [
-                'rules' => 'cast_spaces,braces',
+                'rules' => 'cast_spaces,statement_indentation',
             ],
             getcwd(),
             new ToolInfo()
@@ -50,7 +50,7 @@ final class ConfigTest extends TestCase
         static::assertSame(
             [
                 'cast_spaces' => true,
-                'braces' => true,
+                'statement_indentation' => true,
             ],
             $configResolver->getRules()
         );
@@ -248,7 +248,7 @@ final class ConfigTest extends TestCase
         static::assertFalse($config->getUsingCache());
     }
 
-    public function provideRegisterCustomFixersCases(): array
+    public static function provideRegisterCustomFixersCases(): array
     {
         $fixers = [
             new NoWhitespaceBeforeCommaInArrayFixer(),

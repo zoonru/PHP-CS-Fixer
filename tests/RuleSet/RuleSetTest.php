@@ -126,7 +126,7 @@ final class RuleSetTest extends TestCase
         static::assertNotInstanceOf(DeprecatedFixerInterface::class, $fixer, sprintf('RuleSet "%s" contains deprecated rule "%s".', $setName, $ruleName));
     }
 
-    public function provideAllRulesFromSetsCases(): iterable
+    public static function provideAllRulesFromSetsCases(): iterable
     {
         foreach (RuleSets::getSetDefinitionNames() as $setName) {
             $ruleSet = new RuleSet([$setName => true]);
@@ -196,9 +196,11 @@ final class RuleSetTest extends TestCase
         static::assertSameRules(
             [
                 'blank_line_after_namespace' => true,
-                'braces' => true,
                 'class_definition' => true,
                 'constant_case' => true,
+                'control_structure_braces' => true,
+                'control_structure_continuation_position' => true,
+                'curly_braces_position' => true,
                 'elseif' => true,
                 'encoding' => true,
                 'full_opening_tag' => true,
@@ -209,6 +211,7 @@ final class RuleSetTest extends TestCase
                 'method_argument_space' => ['on_multiline' => 'ensure_fully_multiline'],
                 'no_break_comment' => true,
                 'no_closing_tag' => true,
+                'no_multiple_statements_per_line' => true,
                 'no_space_around_double_colon' => true,
                 'no_spaces_after_function_name' => true,
                 'no_spaces_inside_parenthesis' => true,
@@ -218,6 +221,7 @@ final class RuleSetTest extends TestCase
                 'single_class_element_per_statement' => ['elements' => ['property']],
                 'single_import_per_statement' => true,
                 'single_line_after_imports' => true,
+                'statement_indentation' => true,
                 'strict_comparison' => true,
                 'switch_case_semicolon_to_colon' => true,
                 'switch_case_space' => true,
@@ -238,9 +242,11 @@ final class RuleSetTest extends TestCase
         static::assertSameRules(
             [
                 'blank_line_after_namespace' => true,
-                'braces' => true,
                 'constant_case' => true,
                 'class_definition' => true,
+                'control_structure_braces' => true,
+                'control_structure_continuation_position' => true,
+                'curly_braces_position' => true,
                 'elseif' => true,
                 'encoding' => true,
                 'function_declaration' => true,
@@ -250,6 +256,7 @@ final class RuleSetTest extends TestCase
                 'method_argument_space' => ['on_multiline' => 'ensure_fully_multiline'],
                 'no_break_comment' => true,
                 'no_closing_tag' => true,
+                'no_multiple_statements_per_line' => true,
                 'no_spaces_after_function_name' => true,
                 'no_space_around_double_colon' => true,
                 'no_spaces_inside_parenthesis' => true,
@@ -259,6 +266,7 @@ final class RuleSetTest extends TestCase
                 'single_class_element_per_statement' => ['elements' => ['property']],
                 'single_import_per_statement' => true,
                 'single_line_after_imports' => true,
+                'statement_indentation' => true,
                 'switch_case_semicolon_to_colon' => true,
                 'switch_case_space' => true,
                 'visibility_required' => ['elements' => ['method', 'property']],
@@ -302,7 +310,7 @@ final class RuleSetTest extends TestCase
         );
     }
 
-    public function provideSafeSetCases(): iterable
+    public static function provideSafeSetCases(): iterable
     {
         foreach (RuleSets::getSetDefinitionNames() as $name) {
             yield $name => [
@@ -383,7 +391,7 @@ final class RuleSetTest extends TestCase
         ));
     }
 
-    public function provideAllSetCases(): iterable
+    public static function provideAllSetCases(): iterable
     {
         foreach (RuleSets::getSetDefinitions() as $name => $set) {
             yield $name => [$set];

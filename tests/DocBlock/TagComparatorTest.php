@@ -31,16 +31,20 @@ final class TagComparatorTest extends TestCase
 {
     /**
      * @dataProvider provideComparatorCases
+     *
+     * @group legacy
      */
     public function testComparatorTogether(string $first, string $second, bool $expected): void
     {
         $tag1 = new Tag(new Line('* @'.$first));
         $tag2 = new Tag(new Line('* @'.$second));
 
+        $this->expectDeprecation('%AMethod PhpCsFixer\DocBlock\TagComparator::shouldBeTogether is deprecated and will be removed in version 4.0.');
+
         static::assertSame($expected, TagComparator::shouldBeTogether($tag1, $tag2));
     }
 
-    public function provideComparatorCases(): array
+    public static function provideComparatorCases(): array
     {
         return [
             ['return', 'return', true],
@@ -59,11 +63,15 @@ final class TagComparatorTest extends TestCase
      * @dataProvider provideComparatorWithDefinedGroupsCases
      *
      * @param string[][] $groups
+     *
+     * @group legacy
      */
     public function testComparatorTogetherWithDefinedGroups(array $groups, string $first, string $second, bool $expected): void
     {
         $tag1 = new Tag(new Line('* @'.$first));
         $tag2 = new Tag(new Line('* @'.$second));
+
+        $this->expectDeprecation('%AMethod PhpCsFixer\DocBlock\TagComparator::shouldBeTogether is deprecated and will be removed in version 4.0.');
 
         static::assertSame(
             $expected,
@@ -71,7 +79,7 @@ final class TagComparatorTest extends TestCase
         );
     }
 
-    public function provideComparatorWithDefinedGroupsCases(): array
+    public static function provideComparatorWithDefinedGroupsCases(): array
     {
         return [
             [[['param', 'return']], 'return', 'return', true],

@@ -39,26 +39,37 @@ final class MultilineWhitespaceBeforeSemicolonsFixerTest extends AbstractFixerTe
         $this->doTest($expected, $input);
     }
 
-    public function provideMultiLineWhitespaceFixCases(): array
+    public static function provideMultiLineWhitespaceFixCases(): array
     {
         return [
             [
                 '<?php
-                    $foo->bar() // test
-;',
+                    $foo->bar(); // test',
                 '<?php
                     $foo->bar() // test
                     ;',
             ],
             [
+                '<?php echo(1); // test',
                 "<?php echo(1) // test\n;",
             ],
             [
+                "<?php echo(1); // test\n",
+            ],
+            [
+                '<?php
+                    $foo->bar(); # test',
                 '<?php
                     $foo->bar() # test
-;',
+
+
+                ;',
+            ],
+            [
                 '<?php
-                    $foo->bar() # test
+                    $foo->bar();// test',
+                '<?php
+                    $foo->bar()// test
 
 
                 ;',
@@ -125,16 +136,14 @@ $this
             ],
             [
                 '<?php
-                    Foo::bar() // test
-;',
+                    Foo::bar(); // test',
                 '<?php
                     Foo::bar() // test
                     ;',
             ],
             [
                 '<?php
-                    Foo::bar() # test
-;',
+                    Foo::bar(); # test',
                 '<?php
                     Foo::bar() # test
 
@@ -198,6 +207,46 @@ self
 
     ;',
             ],
+            [
+                '<?php
+$seconds = $minutes
+    * 60; // seconds in a minute',
+                '<?php
+$seconds = $minutes
+    * 60 // seconds in a minute
+;',
+            ],
+            [
+                '<?php
+$seconds = $minutes
+    * (int) \'60\'; // seconds in a minute',
+                '<?php
+$seconds = $minutes
+    * (int) \'60\' // seconds in a minute
+;',
+            ],
+            [
+                '<?php
+$secondsPerMinute = 60;
+$seconds = $minutes
+    * $secondsPerMinute; // seconds in a minute',
+                '<?php
+$secondsPerMinute = 60;
+$seconds = $minutes
+    * $secondsPerMinute // seconds in a minute
+;',
+            ],
+            [
+                '<?php
+$secondsPerMinute = 60;
+$seconds = $minutes
+    * 60 * (int) true; // seconds in a minute',
+                '<?php
+$secondsPerMinute = 60;
+$seconds = $minutes
+    * 60 * (int) true // seconds in a minute
+;',
+            ],
         ];
     }
 
@@ -211,10 +260,11 @@ self
         $this->doTest($expected, $input);
     }
 
-    public function provideMessyWhitespacesMultiLineWhitespaceFixCases(): array
+    public static function provideMessyWhitespacesMultiLineWhitespaceFixCases(): array
     {
         return [
             [
+                '<?php echo(1); // test',
                 "<?php echo(1) // test\r\n;",
             ],
         ];
@@ -229,7 +279,7 @@ self
         $this->doTest($expected, $input);
     }
 
-    public function provideSemicolonForChainedCallsFixCases(): array
+    public static function provideSemicolonForChainedCallsFixCases(): array
     {
         return [
             [
@@ -845,6 +895,108 @@ Service
                 "<?php\n\$this\n    ->one(1, )\n    ->two()\n;",
                 "<?php\n\$this\n    ->one(1, )\n    ->two();",
             ],
+            [
+                '<?php
+
+                    $foo->bar();
+
+                    Service::method1()
+                        ->method2()
+                        ->method3()->method4()
+                    ;
+                ?>',
+                '<?php
+
+                    $foo->bar()
+                    ;
+
+                    Service::method1()
+                        ->method2()
+                        ->method3()->method4();
+                ?>',
+            ],
+            [
+                '<?php
+
+                    $foo->bar();
+
+                    \Service::method1()
+                        ->method2()
+                        ->method3()->method4()
+                    ;
+                ?>',
+                '<?php
+
+                    $foo->bar()
+                    ;
+
+                    \Service::method1()
+                        ->method2()
+                        ->method3()->method4();
+                ?>',
+            ],
+            [
+                '<?php
+
+                    $foo->bar();
+
+                    Ns\Service::method1()
+                        ->method2()
+                        ->method3()->method4()
+                    ;
+                ?>',
+                '<?php
+
+                    $foo->bar()
+                    ;
+
+                    Ns\Service::method1()
+                        ->method2()
+                        ->method3()->method4();
+                ?>',
+            ],
+            [
+                '<?php
+
+                    $foo->bar();
+
+                    \Ns\Service::method1()
+                        ->method2()
+                        ->method3()->method4()
+                    ;
+                ?>',
+                '<?php
+
+                    $foo->bar()
+                    ;
+
+                    \Ns\Service::method1()
+                        ->method2()
+                        ->method3()->method4();
+                ?>',
+            ],
+            [
+                '<?php
+$this
+    ->setName(\'readme2\')
+    ->setDescription(\'Generates the README\')
+;
+',
+                '<?php
+$this
+    ->setName(\'readme2\')
+    ->setDescription(\'Generates the README\')
+    ;
+',
+            ],
+            [
+                '<?php
+$this
+    ->foo()
+    ->{$bar ? \'bar\' : \'baz\'}()
+;
+',
+            ],
         ];
     }
 
@@ -858,7 +1010,7 @@ Service
         $this->doTest($expected, $input);
     }
 
-    public function provideMessyWhitespacesSemicolonForChainedCallsFixCases(): array
+    public static function provideMessyWhitespacesSemicolonForChainedCallsFixCases(): array
     {
         return [
             [

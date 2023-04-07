@@ -10,8 +10,8 @@ Configuration
 ``sort_algorithm``
 ~~~~~~~~~~~~~~~~~~
 
-whether the statements should be sorted alphabetically or by length, or not
-sorted
+Whether the statements should be sorted alphabetically or by length, or not
+sorted.
 
 Allowed values: ``'alpha'``, ``'length'``, ``'none'``
 
@@ -148,7 +148,11 @@ The rule is part of the following rule sets:
   ``['imports_order' => ['class', 'function', 'const'], 'sort_algorithm' => 'none']``
 
 @PhpCsFixer
-  Using the `@PhpCsFixer <./../../ruleSets/PhpCsFixer.rst>`_ rule set will enable the ``ordered_imports`` rule with the default config.
+  Using the `@PhpCsFixer <./../../ruleSets/PhpCsFixer.rst>`_ rule set will enable the ``ordered_imports`` rule with the config below:
+
+  ``['imports_order' => ['class', 'function', 'const'], 'sort_algorithm' => 'alpha']``
 
 @Symfony
-  Using the `@Symfony <./../../ruleSets/Symfony.rst>`_ rule set will enable the ``ordered_imports`` rule with the default config.
+  Using the `@Symfony <./../../ruleSets/Symfony.rst>`_ rule set will enable the ``ordered_imports`` rule with the config below:
+
+  ``['imports_order' => ['class', 'function', 'const'], 'sort_algorithm' => 'alpha']``

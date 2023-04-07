@@ -92,7 +92,7 @@ $f = function () {};
                     '<?php
 $f = fn () => null;
 ',
-                    new VersionSpecification(70400),
+                    new VersionSpecification(7_04_00),
                     ['closure_fn_spacing' => self::SPACING_NONE]
                 ),
             ]
@@ -103,7 +103,7 @@ $f = fn () => null;
      * {@inheritdoc}
      *
      * Must run before MethodArgumentSpaceFixer.
-     * Must run after SingleSpaceAfterConstructFixer.
+     * Must run after SingleSpaceAfterConstructFixer, SingleSpaceAroundConstructFixer.
      */
     public function getPriority(): int
     {

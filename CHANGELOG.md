@@ -3,6 +3,123 @@ CHANGELOG for PHP CS Fixer
 
 This file contains changelogs for stable releases only.
 
+Changelog for v3.16.0
+---------------------
+
+* bug: ControlStructureBracesFixer - handle closing tag (#6873)
+* bug: CurlyBracesPositionFixer - fix for callable return type (#6855)
+* bug: CurlyBracesPositionFixer - fix for DNF types (#6859)
+* bug: Fix MultilineWhitespaceBeforeSemicolonsFixer (#5126)
+* docs: Fix rule description (#6844)
+* DX: fix checkbashisms installation (#6843)
+* DX: make data providers static for fixer's tests (#6860)
+* DX: refactor PHPUnit fixers adding class-level annotation to use shared code (#6756)
+* DX: unify option's descriptions (#6856)
+* feature: AbstractPhpUnitFixer - support attribute detection in docblock insertion (#6858)
+* feature: add "force" option to PhpUnitDataProviderStaticFixer (#6757)
+* feature: introduce single_space_around_construct, deprecate single_space_after_construct (#6857)
+* feature: PhpUnitTestClassRequiresCoversFixer - support single-line PHPDocs (#6847)
+* minor: Deprecate BracesFixer (#4885)
+* minor: Fix autocompletion for `Tokens::offsetGet()` (#6838)
+* minor: PHP8.2 Docker runtime (#6833)
+* minor: Use Composer binary-only images instead of installer script (#6834)
+
+Changelog for v3.15.1
+---------------------
+
+* bug: BinaryOperatorSpacesFixer - fix for static in type (#6835)
+* bug: BinaryOperatorSpacesFixer - fix parameters with union types passed by reference (#6826)
+* bug: NoUnusedImportsFixer - fix for splat operator (#6836)
+* DX: fix CI (#6837)
+* feature: Support for type casing in arrow functions (#6831)
+* minor: fix CI on PHP 8.3 (#6827)
+
+Changelog for v3.15.0
+---------------------
+
+* bug: VisibilityRequiredFixer - handle DNF types (#6806)
+* DX: officially enable 8.2 support (#6825)
+
+Changelog for v3.14.5
+---------------------
+
+* bug: EmptyLoopBodyFixer must keep comments inside (#6800)
+* bug: FunctionsAnalyzer - fix detecting global function (#6792)
+* bug: NativeFunctionTypeDeclarationCasingFixer - do not require T_STRING present in code (#6812)
+* bug: PhpdocTypesFixer - do not change case of array keys (#6810)
+* bug: PhpUnitTestAnnotationFixer - do not break single line @depends (#6824)
+* docs: Add supported PHP versions section to the README (#6768)
+* docs: drop Atom from readme, due to it's sunsetting (#6778)
+* DX: Add composer keywords (#6781)
+* DX: update PHPStan to 1.10.3 (#6805)
+* feature: [PHP8.2] Support for readonly classes (#6745)
+* minor: add custom tokens for Disjunctive Normal Form types parentheses (#6823)
+* minor: PHP8.2 - handle union and intersection types for DNF types (#6804)
+* minor: PHP8.2 - support property in const expressions (#6803)
+
+Changelog for v3.14.4
+---------------------
+
+* bug: CurlyBracesPositionFixer - fix for open brace not preceded by space and followed by a comment (#6776)
+* docs: drop license end year (#6767)
+* DX: use numeric_literal_separator (#6766)
+* feature: Allow installation of `sebastian/diff:^5.0.0` (#6771)
+
+Changelog for v3.14.3
+---------------------
+
+* DX: Drop doctrine/annotations 1, allow doctrine/lexer 3 (#6730)
+
+Changelog for v3.14.2
+---------------------
+
+* DX: Drop support for doctrine/lexer 1 (#6729)
+
+Changelog for v3.14.1
+---------------------
+
+* DX: Allow doctrine/annotations 2 (#6721)
+
+Changelog for v3.14.0
+---------------------
+
+* bug: Fix indentation for comment at end of function followed by a comma (#6542)
+* bug: Fix PHPDoc alignment fixer containing callbacks using `\Closure` (#6746)
+* bug: Fix type error when using paths intersection mode (#6734)
+* bug: PhpdocSeparationFixer - Make groups handling more flexible (#6668)
+* docs: make bug_report.md template more explicit (#6736)
+* docs: PhpUnitTestCaseIndicator - fix docs (#6727)
+* DX: apply CS (#6759)
+* DX: bump doctrine/annotations to prevent installing version with unintentional BC break (#6739)
+* DX: update deps (#6760)
+* DX: upgrade dev-tools/composer.json (#6737)
+* DX: upgrade PHPStan to 1.9.7 (#6741)
+* feature: Add php 7.4 types to Cookbook docs (#6763)
+* feature: add PhpUnitDataProviderStaticFixer (#6702)
+* feature: binary_operator_spaces - Revert change about => alignment and use option instead (#6724)
+* feature: make OrderedInterfacesFixer non-risky (#6722)
+* feature: OctalNotationFixer - support _ notation (#6762)
+* fix: enum case "PARENT" must not be renamed (#6732)
+* minor: Follow PSR12 ordered imports in Symfony ruleset (#6712)
+* minor: improve rule sets order (#6738)
+
+Changelog for v3.13.2
+---------------------
+
+* bug: Fix type error when using paths intersection mode (#6734)
+
+Changelog for v3.13.1
+---------------------
+
+* bug: Align all the arrows inside the same array (#6590)
+* bug: Fix priority between `modernize_types_casting` and `no_unneeded_control_parentheses` (#6687)
+* bug: TrailingCommaInMultilineFixer - do not add trailing comma when there is no break line after last element (#6677)
+* docs: Fix docs for disabled rules in rulesets (#6679)
+* docs: fix the cookbook_fixers.rst (#6672)
+* docs: Update installation recommended commands for `mkdir` argument (`-p` insteadof `--parents`). (#6689)
+* Make static data providers that are not using dynamic calls (#6696)
+* minor: displaying number of checked files (#6674)
+
 Changelog for v3.13.0
 ---------------------
 

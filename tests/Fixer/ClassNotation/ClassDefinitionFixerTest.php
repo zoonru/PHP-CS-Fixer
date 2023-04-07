@@ -118,7 +118,7 @@ final class ClassDefinitionFixerTest extends AbstractFixerTestCase
         $fixer->configure(['single_line' => 'z']);
     }
 
-    public function provideAnonymousClassesCases(): array
+    public static function provideAnonymousClassesCases(): array
     {
         return [
             [
@@ -315,16 +315,16 @@ A#
         ];
     }
 
-    public function provideClassesCases(): array
+    public static function provideClassesCases(): array
     {
         return array_merge(
-            $this->provideClassyCases('class'),
-            $this->provideClassyExtendingCases('class'),
-            $this->provideClassyImplementsCases()
+            self::provideClassyCases('class'),
+            self::provideClassyExtendingCases('class'),
+            self::provideClassyImplementsCases()
         );
     }
 
-    public function provideClassesWithConfigCases(): array
+    public static function provideClassesWithConfigCases(): array
     {
         return [
             [
@@ -374,11 +374,11 @@ A#
         ];
     }
 
-    public function provideInterfacesCases(): array
+    public static function provideInterfacesCases(): array
     {
         $cases = array_merge(
-            $this->provideClassyCases('interface'),
-            $this->provideClassyExtendingCases('interface')
+            self::provideClassyCases('interface'),
+            self::provideClassyExtendingCases('interface')
         );
 
         $cases[] = [
@@ -411,9 +411,9 @@ TestInterface3, /**/     TestInterface4   ,
         return $cases;
     }
 
-    public function provideTraitsCases(): array
+    public static function provideTraitsCases(): array
     {
-        return $this->provideClassyCases('trait');
+        return self::provideClassyCases('trait');
     }
 
     /**
@@ -431,10 +431,13 @@ TestInterface3, /**/     TestInterface4   ,
 
         $result = $method->invoke($this->fixer, $tokens, $expected['classy']);
 
+        ksort($expected);
+        ksort($result);
+
         static::assertSame($expected, $result);
     }
 
-    public function provideClassyDefinitionInfoCases(): array
+    public static function provideClassyDefinitionInfoCases(): array
     {
         return [
             [
@@ -446,6 +449,9 @@ TestInterface3, /**/     TestInterface4   ,
                     'extends' => false,
                     'implements' => false,
                     'anonymousClass' => false,
+                    'final' => false,
+                    'abstract' => false,
+                    'readonly' => false,
                 ],
             ],
             [
@@ -457,6 +463,9 @@ TestInterface3, /**/     TestInterface4   ,
                     'extends' => false,
                     'implements' => false,
                     'anonymousClass' => false,
+                    'final' => 1,
+                    'abstract' => false,
+                    'readonly' => false,
                 ],
             ],
             [
@@ -468,6 +477,9 @@ TestInterface3, /**/     TestInterface4   ,
                     'extends' => false,
                     'implements' => false,
                     'anonymousClass' => false,
+                    'final' => false,
+                    'abstract' => 1,
+                    'readonly' => false,
                 ],
             ],
             [
@@ -483,6 +495,9 @@ TestInterface3, /**/     TestInterface4   ,
                     ],
                     'implements' => false,
                     'anonymousClass' => false,
+                    'final' => false,
+                    'abstract' => false,
+                    'readonly' => false,
                 ],
             ],
             [
@@ -498,6 +513,9 @@ TestInterface3, /**/     TestInterface4   ,
                     ],
                     'implements' => false,
                     'anonymousClass' => false,
+                    'final' => false,
+                    'abstract' => false,
+                    'readonly' => false,
                 ],
             ],
         ];
@@ -513,7 +531,7 @@ TestInterface3, /**/     TestInterface4   ,
         $this->doTestClassyInheritanceInfo($source, $label, $expected);
     }
 
-    public function provideClassyImplementsInfoCases(): iterable
+    public static function provideClassyImplementsInfoCases(): iterable
     {
         yield from [
             '1' => [
@@ -549,7 +567,7 @@ class X10 implements    Z   , T,R    //
             ],
         ];
 
-        if (\PHP_VERSION_ID < 80000) {
+        if (\PHP_VERSION_ID < 8_00_00) {
             $multiLine = true;
             $code = '<?php
 namespace A {
@@ -628,7 +646,7 @@ namespace {
         $this->doTest($expected, $input);
     }
 
-    public function provideFixCases(): array
+    public static function provideFixCases(): array
     {
         return [
             [
@@ -686,7 +704,7 @@ $a = new class implements
         $this->doTest($expected, $input);
     }
 
-    public function provideMessyWhitespacesCases(): array
+    public static function provideMessyWhitespacesCases(): array
     {
         return [
             [
@@ -706,7 +724,7 @@ $a = new class implements
         $this->doTest($expected, $input);
     }
 
-    public function provideFix81Cases(): iterable
+    public static function provideFix81Cases(): iterable
     {
         yield [
             "<?php enum SomeEnum implements SomeInterface, D\n{};",
@@ -721,6 +739,40 @@ $a = new class implements
         yield [
             "<?php enum SomeEnum\n{}",
             "<?php enum\tSomeEnum{}",
+        ];
+    }
+
+    /**
+     * @dataProvider provideFix82Cases
+     *
+     * @requires PHP 8.2
+     */
+    public function testFix82(string $expected, string $input): void
+    {
+        $this->doTest($expected, $input);
+    }
+
+    public static function provideFix82Cases(): iterable
+    {
+        yield 'final readonly works' => [
+            '<?php final readonly class a
+{}',
+            '<?php final           readonly      class a
+{}',
+        ];
+
+        yield 'final - readonly modifiers get sorted' => [
+            '<?php final readonly class a
+{}',
+            '<?php readonly final class a
+{}',
+        ];
+
+        yield 'abstract - readonly modifiers get sorted' => [
+            '<?php abstract readonly class a
+{}',
+            '<?php readonly abstract class a
+{}',
         ];
     }
 
@@ -751,7 +803,7 @@ $a = new class implements
         static::assertSame($expected, $result);
     }
 
-    private function provideClassyCases(string $classy): array
+    private static function provideClassyCases(string $classy): array
     {
         return [
             [
@@ -819,7 +871,7 @@ namespace {
         ];
     }
 
-    private function provideClassyExtendingCases(string $classy): array
+    private static function provideClassyExtendingCases(string $classy): array
     {
         return [
             [
@@ -849,7 +901,7 @@ extends
         ];
     }
 
-    private function provideClassyImplementsCases(): array
+    private static function provideClassyImplementsCases(): array
     {
         return [
             [
@@ -865,11 +917,24 @@ extends
                 "<?php abstract class F extends B implements C\n{}",
                 '<?php abstract    class    F    extends     B    implements C {}',
             ],
-            [
+            'multiline abstract extends implements with comments' => [
                 "<?php abstract class G extends       //
 B /*  */ implements C\n{}",
                 '<?php abstract    class     G     extends       //
 B/*  */implements C{}',
+            ],
+            'final extends implement' => [
+                "<?php final class G extends       //
+B /*  */ implements C\n{}",
+                '<?php final    class     G     extends       //
+B/*  */implements C{}',
+            ],
+            'final' => [
+                '<?php final class G        //
+/*  */
+{}',
+                '<?php final    class     G        //
+/*  */{}',
             ],
             [
                 '<?php

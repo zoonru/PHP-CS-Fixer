@@ -39,8 +39,8 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 final class Application extends BaseApplication
 {
-    public const VERSION = '3.13.1-DEV';
-    public const VERSION_CODENAME = 'Oliva';
+    public const VERSION = '3.16.1-DEV';
+    public const VERSION_CODENAME = 'BoY42';
 
     private ToolInfo $toolInfo;
 
@@ -74,8 +74,7 @@ final class Application extends BaseApplication
     {
         $stdErr = $output instanceof ConsoleOutputInterface
             ? $output->getErrorOutput()
-            : ($input->hasParameterOption('--format', true) && 'txt' !== $input->getParameterOption('--format', null, true) ? null : $output)
-        ;
+            : ($input->hasParameterOption('--format', true) && 'txt' !== $input->getParameterOption('--format', null, true) ? null : $output);
 
         if (null !== $stdErr) {
             $warningsDetector = new WarningsDetector($this->toolInfo);

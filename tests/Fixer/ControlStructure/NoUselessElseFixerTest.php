@@ -33,7 +33,7 @@ final class NoUselessElseFixerTest extends AbstractFixerTestCase
         $this->doTest($expected, $input);
     }
 
-    public function providePHPCloseTagCases(): array
+    public static function providePHPCloseTagCases(): array
     {
         return [
             [
@@ -133,7 +133,7 @@ else?><?php echo 5;',
         $this->doTest($expected, $input);
     }
 
-    public function provideFixIfElseIfElseCases(): array
+    public static function provideFixIfElseIfElseCases(): array
     {
         $expected =
             '<?php
@@ -171,7 +171,7 @@ else?><?php echo 5;',
                 }
             ';
 
-        $cases = $this->generateCases($expected, $input);
+        $cases = self::generateCases($expected, $input);
 
         $expected =
             '<?php
@@ -188,7 +188,7 @@ else?><?php echo 5;',
                 }
             ';
 
-        $cases = array_merge($cases, $this->generateCases($expected));
+        $cases = array_merge($cases, self::generateCases($expected));
 
         $expected =
             '<?php
@@ -209,7 +209,7 @@ else?><?php echo 5;',
                 }
             ';
 
-        $cases = array_merge($cases, $this->generateCases($expected));
+        $cases = array_merge($cases, self::generateCases($expected));
 
         $cases[] = [
             '<?php
@@ -257,7 +257,7 @@ else?><?php echo 5;',
         $this->doTest($expected, $input);
     }
 
-    public function provideFixIfElseCases(): iterable
+    public static function provideFixIfElseCases(): iterable
     {
         $expected = '<?php
             while(true) {
@@ -283,7 +283,7 @@ else?><?php echo 5;',
             }
         ';
 
-        yield from $this->generateCases($expected, $input);
+        yield from self::generateCases($expected, $input);
 
         yield [
             '<?php
@@ -315,7 +315,7 @@ else?><?php echo 5;',
         $this->doTest($expected, $input);
     }
 
-    public function provideFixNestedIfCases(): array
+    public static function provideFixNestedIfCases(): array
     {
         return [
             [
@@ -353,7 +353,7 @@ else?><?php echo 5;',
         $this->doTest($expected, $input);
     }
 
-    public function provideFixEmptyElseCases(): array
+    public static function provideFixEmptyElseCases(): array
     {
         return [
             [
@@ -445,7 +445,7 @@ else?><?php echo 5;',
         $this->doTest($expected);
     }
 
-    public function provideNegativeCases(): iterable
+    public static function provideNegativeCases(): iterable
     {
         yield from [
             [
@@ -617,7 +617,7 @@ else?><?php echo 5;',
         $this->doTest($expected);
     }
 
-    public function provideNegativePhp80Cases(): iterable
+    public static function provideNegativePhp80Cases(): iterable
     {
         $cases = [
             '$bar = $foo1 ?? throw new \Exception($e);',
@@ -655,7 +655,7 @@ else?><?php echo 5;',
         Tokens::clearCache();
         $tokens = Tokens::fromCode($source);
 
-        $method = new \ReflectionMethod($this->fixer, 'getPreviousBlock');
+        $method = new \ReflectionMethod(get_parent_class($this->fixer), 'getPreviousBlock');
         $method->setAccessible(true);
 
         $result = $method->invoke($this->fixer, $tokens, $index);
@@ -663,7 +663,7 @@ else?><?php echo 5;',
         static::assertSame($expected, $result);
     }
 
-    public function provideBlockDetectionCases(): array
+    public static function provideBlockDetectionCases(): array
     {
         $cases = [];
 
@@ -711,7 +711,7 @@ else?><?php echo 5;',
         $this->doTest($expected, $input);
     }
 
-    public function provideConditionsWithoutBracesCases(): iterable
+    public static function provideConditionsWithoutBracesCases(): iterable
     {
         $statements = [
             'die;',
@@ -724,7 +724,7 @@ else?><?php echo 5;',
         ];
 
         foreach ($statements as $statement) {
-            yield from $this->generateConditionsWithoutBracesCase($statement);
+            yield from self::generateConditionsWithoutBracesCase($statement);
         }
 
         yield [
@@ -748,9 +748,9 @@ else?><?php echo 5;',
                 return $ret;',
         ];
 
-        yield from $this->generateConditionsWithoutBracesCase('throw new class extends Exception{};');
+        yield from self::generateConditionsWithoutBracesCase('throw new class extends Exception{};');
 
-        yield from $this->generateConditionsWithoutBracesCase('throw new class ($a, 9) extends Exception{ public function z($a, $b){ echo 7;} };');
+        yield from self::generateConditionsWithoutBracesCase('throw new class ($a, 9) extends Exception{ public function z($a, $b){ echo 7;} };');
     }
 
     /**
@@ -763,9 +763,9 @@ else?><?php echo 5;',
         $this->doTest($expected);
     }
 
-    public function provideConditionsWithoutBraces80Cases(): iterable
+    public static function provideConditionsWithoutBraces80Cases(): iterable
     {
-        yield from $this->generateConditionsWithoutBracesCase('$b = $a ?? throw new Exception($i);');
+        yield from self::generateConditionsWithoutBracesCase('$b = $a ?? throw new Exception($i);');
     }
 
     /**
@@ -789,7 +789,7 @@ else?><?php echo 5;',
         }
     }
 
-    public function provideIsInConditionWithoutBracesCases(): array
+    public static function provideIsInConditionWithoutBracesCases(): array
     {
         return [
             [
@@ -945,7 +945,7 @@ else?><?php echo 5;',
     /**
      * @return iterable<array{0: non-empty-string, 1?: non-empty-string}>
      */
-    private function generateConditionsWithoutBracesCase(string $statement): iterable
+    private static function generateConditionsWithoutBracesCase(string $statement): iterable
     {
         $ifTemplate = '<?php
             if ($a === false)
@@ -955,8 +955,7 @@ else?><?php echo 5;',
             else
                 $ret .= $value;
 
-            return $ret;'
-        ;
+            return $ret;';
 
         $ifElseIfTemplate = '<?php
             if ($a === false)
@@ -968,8 +967,7 @@ else?><?php echo 5;',
             else
                 $ret .= $value;
 
-            return $ret;'
-        ;
+            return $ret;';
 
         $ifElseTemplate = '<?php
             if ($a === false)
@@ -981,8 +979,7 @@ else?><?php echo 5;',
             else
                 $ret .= $value;
 
-            return $ret;'
-        ;
+            return $ret;';
 
         yield [sprintf($ifTemplate, $statement)];
 
@@ -994,7 +991,7 @@ else?><?php echo 5;',
     /**
      * @return array<array<string>>
      */
-    private function generateCases(string $expected, ?string $input = null): array
+    private static function generateCases(string $expected, ?string $input = null): array
     {
         $cases = [];
 

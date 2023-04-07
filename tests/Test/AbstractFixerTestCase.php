@@ -196,6 +196,11 @@ abstract class AbstractFixerTestCase extends TestCase
 
             foreach ($options as $option) {
                 static::assertMatchesRegularExpression('/^[a-z_]+[a-z]$/', $option->getName(), sprintf('[%s] Option %s is not snake_case.', $fixerName, $option->getName()));
+                static::assertMatchesRegularExpression(
+                    '/^[A-Z].+\.$/s',
+                    $option->getDescription(),
+                    sprintf('[%s] Description of option "%s" must start with capital letter and end with dot.', $fixerName, $option->getName())
+                );
             }
         }
 
@@ -349,7 +354,7 @@ abstract class AbstractFixerTestCase extends TestCase
         return new $fixerClassName();
     }
 
-    protected function getTestFile(string $filename = __FILE__): \SplFileInfo
+    protected static function getTestFile(string $filename = __FILE__): \SplFileInfo
     {
         static $files = [];
 
@@ -380,7 +385,7 @@ abstract class AbstractFixerTestCase extends TestCase
             throw new \InvalidArgumentException('Input parameter must not be equal to expected parameter.');
         }
 
-        $file ??= $this->getTestFile();
+        $file ??= self::getTestFile();
         $fileIsSupported = $this->fixer->supports($file);
 
         if (null !== $input) {
@@ -445,6 +450,11 @@ abstract class AbstractFixerTestCase extends TestCase
         return null;
     }
 
+    protected static function assertCorrectCasing(string $needle, string $haystack, string $message): void
+    {
+        static::assertSame(substr_count(strtolower($haystack), strtolower($needle)), substr_count($haystack, $needle), $message);
+    }
+
     private function getLinter(): LinterInterface
     {
         static $linter = null;
@@ -465,11 +475,6 @@ abstract class AbstractFixerTestCase extends TestCase
         static::assertCorrectCasing($description, 'PHPDoc', sprintf('[%s] `PHPDoc` must be in correct casing in %s.', $fixerName, $descriptionType));
         static::assertCorrectCasing($description, 'PHPUnit', sprintf('[%s] `PHPUnit` must be in correct casing in %s.', $fixerName, $descriptionType));
         static::assertFalse(strpos($descriptionType, '``'), sprintf('[%s] The %s must no contain sequential backticks.', $fixerName, $descriptionType));
-    }
-
-    private static function assertCorrectCasing(string $needle, string $haystack, string $message): void
-    {
-        static::assertSame(substr_count(strtolower($haystack), strtolower($needle)), substr_count($haystack, $needle), $message);
     }
 
     /**
