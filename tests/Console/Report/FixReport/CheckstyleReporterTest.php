@@ -45,79 +45,79 @@ final class CheckstyleReporterTest extends AbstractReporterTestCase
         self::$xsd = null;
     }
 
-    protected function createNoErrorReport(): string
+    protected static function createNoErrorReport(): string
     {
         return <<<'XML'
-<?xml version="1.0" encoding="UTF-8"?>
-<checkstyle />
-XML;
+            <?xml version="1.0" encoding="UTF-8"?>
+            <checkstyle />
+            XML;
     }
 
-    protected function createSimpleReport(): string
+    protected static function createSimpleReport(): string
     {
         return <<<'XML'
-<?xml version="1.0" encoding="UTF-8"?>
-<checkstyle>
-  <file name="someFile.php">
-    <error severity="warning" source="PHP-CS-Fixer.some_fixer_name_here" message="Found violation(s) of type: some_fixer_name_here" />
-  </file>
-</checkstyle>
-XML;
+            <?xml version="1.0" encoding="UTF-8"?>
+            <checkstyle>
+              <file name="someFile.php">
+                <error severity="warning" source="PHP-CS-Fixer.some_fixer_name_here" message="Found violation(s) of type: some_fixer_name_here" />
+              </file>
+            </checkstyle>
+            XML;
     }
 
-    protected function createWithDiffReport(): string
+    protected static function createWithDiffReport(): string
     {
         // NOTE: checkstyle format does NOT include diffs
         return <<<'XML'
-<?xml version="1.0" encoding="UTF-8"?>
-<checkstyle>
-  <file name="someFile.php">
-    <error severity="warning" source="PHP-CS-Fixer.some_fixer_name_here" message="Found violation(s) of type: some_fixer_name_here" />
-  </file>
-</checkstyle>
-XML;
+            <?xml version="1.0" encoding="UTF-8"?>
+            <checkstyle>
+              <file name="someFile.php">
+                <error severity="warning" source="PHP-CS-Fixer.some_fixer_name_here" message="Found violation(s) of type: some_fixer_name_here" />
+              </file>
+            </checkstyle>
+            XML;
     }
 
-    protected function createWithAppliedFixersReport(): string
+    protected static function createWithAppliedFixersReport(): string
     {
         return <<<'XML'
-<?xml version="1.0" encoding="UTF-8"?>
-<checkstyle>
-  <file name="someFile.php">
-    <error severity="warning" source="PHP-CS-Fixer.some_fixer_name_here_1" message="Found violation(s) of type: some_fixer_name_here_1" />
-    <error severity="warning" source="PHP-CS-Fixer.some_fixer_name_here_2" message="Found violation(s) of type: some_fixer_name_here_2" />
-  </file>
-</checkstyle>
-XML;
+            <?xml version="1.0" encoding="UTF-8"?>
+            <checkstyle>
+              <file name="someFile.php">
+                <error severity="warning" source="PHP-CS-Fixer.some_fixer_name_here_1" message="Found violation(s) of type: some_fixer_name_here_1" />
+                <error severity="warning" source="PHP-CS-Fixer.some_fixer_name_here_2" message="Found violation(s) of type: some_fixer_name_here_2" />
+              </file>
+            </checkstyle>
+            XML;
     }
 
-    protected function createWithTimeAndMemoryReport(): string
+    protected static function createWithTimeAndMemoryReport(): string
     {
         // NOTE: checkstyle format does NOT include time or memory
         return <<<'XML'
-<?xml version="1.0" encoding="UTF-8"?>
-<checkstyle>
-  <file name="someFile.php">
-    <error severity="warning" source="PHP-CS-Fixer.some_fixer_name_here" message="Found violation(s) of type: some_fixer_name_here" />
-  </file>
-</checkstyle>
-XML;
+            <?xml version="1.0" encoding="UTF-8"?>
+            <checkstyle>
+              <file name="someFile.php">
+                <error severity="warning" source="PHP-CS-Fixer.some_fixer_name_here" message="Found violation(s) of type: some_fixer_name_here" />
+              </file>
+            </checkstyle>
+            XML;
     }
 
-    protected function createComplexReport(): string
+    protected static function createComplexReport(): string
     {
         return <<<'XML'
-<?xml version="1.0" encoding="UTF-8"?>
-<checkstyle>
-  <file name="someFile.php">
-    <error severity="warning" source="PHP-CS-Fixer.some_fixer_name_here_1" message="Found violation(s) of type: some_fixer_name_here_1" />
-    <error severity="warning" source="PHP-CS-Fixer.some_fixer_name_here_2" message="Found violation(s) of type: some_fixer_name_here_2" />
-  </file>
-  <file name="anotherFile.php">
-    <error severity="warning" source="PHP-CS-Fixer.another_fixer_name_here" message="Found violation(s) of type: another_fixer_name_here" />
-  </file>
-</checkstyle>
-XML;
+            <?xml version="1.0" encoding="UTF-8"?>
+            <checkstyle>
+              <file name="someFile.php">
+                <error severity="warning" source="PHP-CS-Fixer.some_fixer_name_here_1" message="Found violation(s) of type: some_fixer_name_here_1" />
+                <error severity="warning" source="PHP-CS-Fixer.some_fixer_name_here_2" message="Found violation(s) of type: some_fixer_name_here_2" />
+              </file>
+              <file name="anotherFile.php">
+                <error severity="warning" source="PHP-CS-Fixer.another_fixer_name_here" message="Found violation(s) of type: another_fixer_name_here" />
+              </file>
+            </checkstyle>
+            XML;
     }
 
     protected function createReporter(): ReporterInterface
@@ -135,7 +135,7 @@ XML;
         $formatter = new OutputFormatter();
         $input = $formatter->format($input);
 
-        static::assertThat($input, new XmlMatchesXsd(self::$xsd));
-        static::assertXmlStringEqualsXmlString($expected, $input);
+        self::assertThat($input, new XmlMatchesXsd(self::$xsd));
+        self::assertXmlStringEqualsXmlString($expected, $input);
     }
 }

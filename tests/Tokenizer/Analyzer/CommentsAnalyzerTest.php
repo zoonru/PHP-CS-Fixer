@@ -48,48 +48,50 @@ final class CommentsAnalyzerTest extends TestCase
         $tokens = Tokens::fromCode($code);
         $analyzer = new CommentsAnalyzer();
 
-        static::assertSame($borders, $analyzer->getCommentBlockIndices($tokens, $index));
-        static::assertFalse($analyzer->isHeaderComment($tokens, $index));
+        self::assertSame($borders, $analyzer->getCommentBlockIndices($tokens, $index));
+        self::assertFalse($analyzer->isHeaderComment($tokens, $index));
     }
 
-    public static function provideCommentsCases(): array
+    public static function provideCommentsCases(): iterable
     {
-        return [
-            'discover all 4 comments for the 1st comment with slash' => [
-                '<?php
+        yield 'discover all 4 comments for the 1st comment with slash' => [
+            '<?php
 $foo;
 // one
 // two
 // three
 // four
 $bar;',
-                4,
-                [4, 6, 8, 10],
-            ],
-            'discover all 4 comments for the 1st comment with hash' => [
-                '<?php
+            4,
+            [4, 6, 8, 10],
+        ];
+
+        yield 'discover all 4 comments for the 1st comment with hash' => [
+            '<?php
 $foo;
 # one
 # two
 # three
 # four
 $bar;',
-                4,
-                [4, 6, 8, 10],
-            ],
-            'discover 3 comments out of 4 for the 2nd comment' => [
-                '<?php
+            4,
+            [4, 6, 8, 10],
+        ];
+
+        yield 'discover 3 comments out of 4 for the 2nd comment' => [
+            '<?php
 $foo;
 // one
 // two
 // three
 // four
 $bar;',
-                6,
-                [6, 8, 10],
-            ],
-            'discover 3 comments when empty line separates 4th' => [
-                '<?php
+            6,
+            [6, 8, 10],
+        ];
+
+        yield 'discover 3 comments when empty line separates 4th' => [
+            '<?php
 $foo;
 // one
 // two
@@ -97,11 +99,12 @@ $foo;
 
 // four
 $bar;',
-                4,
-                [4, 6, 8],
-            ],
-            'discover 3 comments when empty line of CR separates 4th' => [
-                str_replace("\n", "\r", '<?php
+            4,
+            [4, 6, 8],
+        ];
+
+        yield 'discover 3 comments when empty line of CR separates 4th' => [
+            str_replace("\n", "\r", '<?php
 $foo;
 // one
 // two
@@ -109,41 +112,43 @@ $foo;
 
 // four
 $bar;'),
-                4,
-                [4, 6, 8],
-            ],
-            'discover correctly when mix of slash and hash' => [
-                '<?php
+            4,
+            [4, 6, 8],
+        ];
+
+        yield 'discover correctly when mix of slash and hash' => [
+            '<?php
 $foo;
 // one
 // two
 # three
 // four
 $bar;',
-                4,
-                [4, 6],
-            ],
-            'do not group asterisk comments' => [
-                '<?php
+            4,
+            [4, 6],
+        ];
+
+        yield 'do not group asterisk comments' => [
+            '<?php
 $foo;
 /* one */
 /* two */
 /* three */
 $bar;',
-                4,
-                [4],
-            ],
-            'handle fancy indent' => [
-                '<?php
+            4,
+            [4],
+        ];
+
+        yield 'handle fancy indent' => [
+            '<?php
 $foo;
         // one
        //  two
       //   three
      //    four
 $bar;',
-                4,
-                [4, 6, 8, 10],
-            ],
+            4,
+            [4, 6, 8, 10],
         ];
     }
 
@@ -165,18 +170,20 @@ $bar;',
         $tokens = Tokens::fromCode($code);
         $analyzer = new CommentsAnalyzer();
 
-        static::assertTrue($analyzer->isHeaderComment($tokens, $index));
+        self::assertTrue($analyzer->isHeaderComment($tokens, $index));
     }
 
-    public static function provideHeaderCommentCases(): array
+    public static function provideHeaderCommentCases(): iterable
     {
-        return [
-            ['<?php /* Comment */ namespace Foo;', 1],
-            ['<?php /** Comment */ namespace Foo;', 1],
-            ['<?php declare(strict_types=1); /* Comment */ namespace Foo;', 9],
-            ['<?php /* We test this one */ /* Foo */ namespace Bar;', 1],
-            ['<?php /** Comment */ namespace Foo; declare(strict_types=1); /* Comment */ namespace Foo;', 1],
-        ];
+        yield ['<?php /* Comment */ namespace Foo;', 1];
+
+        yield ['<?php /** Comment */ namespace Foo;', 1];
+
+        yield ['<?php declare(strict_types=1); /* Comment */ namespace Foo;', 9];
+
+        yield ['<?php /* We test this one */ /* Foo */ namespace Bar;', 1];
+
+        yield ['<?php /** Comment */ namespace Foo; declare(strict_types=1); /* Comment */ namespace Foo;', 1];
     }
 
     /**
@@ -187,19 +194,22 @@ $bar;',
         $tokens = Tokens::fromCode($code);
         $analyzer = new CommentsAnalyzer();
 
-        static::assertFalse($analyzer->isHeaderComment($tokens, $index));
+        self::assertFalse($analyzer->isHeaderComment($tokens, $index));
     }
 
-    public static function provideNotHeaderCommentCases(): array
+    public static function provideNotHeaderCommentCases(): iterable
     {
-        return [
-            ['<?php $foo; /* Comment */ $bar;', 4],
-            ['<?php foo(); /* Comment */ $bar;', 6],
-            ['<?php namespace Foo; /* Comment */ class Bar {};', 6],
-            ['<?php /* It is not header when no content after */', 1],
-            ['<?php /* Foo */ /* We test this one */ namespace Bar;', 3],
-            ['<?php /* Foo */ declare(strict_types=1); /* We test this one */ namespace Bar;', 11],
-        ];
+        yield ['<?php $foo; /* Comment */ $bar;', 4];
+
+        yield ['<?php foo(); /* Comment */ $bar;', 6];
+
+        yield ['<?php namespace Foo; /* Comment */ class Bar {};', 6];
+
+        yield ['<?php /* It is not header when no content after */', 1];
+
+        yield ['<?php /* Foo */ /* We test this one */ namespace Bar;', 3];
+
+        yield ['<?php /* Foo */ declare(strict_types=1); /* We test this one */ namespace Bar;', 11];
     }
 
     public function testPhpdocCandidateAcceptsOnlyComments(): void
@@ -221,48 +231,86 @@ $bar;',
         $index = $tokens->getNextTokenOfKind(0, [[T_COMMENT], [T_DOC_COMMENT]]);
         $analyzer = new CommentsAnalyzer();
 
-        static::assertTrue($analyzer->isBeforeStructuralElement($tokens, $index));
+        self::assertTrue($analyzer->isBeforeStructuralElement($tokens, $index));
     }
 
-    public static function providePhpdocCandidateCases(): array
+    public static function providePhpdocCandidateCases(): iterable
     {
-        return [
-            ['<?php /* @var Foo */ $bar = "baz";'],
-            ['<?php /* Before namespace */ namespace Foo;'],
-            ['<?php /* Before class */ class Foo {}'],
-            ['<?php /* Before class */ abstract class Foo {}'],
-            ['<?php /* Before class */ final class Foo {}'],
-            ['<?php /* Before trait */ trait Foo {}'],
-            ['<?php /* Before interface */ interface Foo {}'],
-            ['<?php /* Before anonymous function */ function () {};'],
-            ['<?php class Foo { /* Before property */ private $bar; }'],
-            ['<?php class Foo { /* Before property */ protected $bar; }'],
-            ['<?php class Foo { /* Before property */ public $bar; }'],
-            ['<?php class Foo { /* Before property */ var $bar; }'],
-            ['<?php class Foo { /* Before function */ function bar() {} }'],
-            ['<?php class Foo { /* Before use */ use Bar; }'],
-            ['<?php class Foo { /* Before function */ final function bar() {} }'],
-            ['<?php class Foo { /* Before function */ private function bar() {} }'],
-            ['<?php class Foo { /* Before function */ protected function bar() {} }'],
-            ['<?php class Foo { /* Before function */ public function bar() {} }'],
-            ['<?php class Foo { /* Before function */ static function bar() {} }'],
-            ['<?php class Foo { /* Before function */ abstract function bar(); }'],
-            ['<?php class Foo { /* Before constant */ const FOO = 42; }'],
-            ['<?php /* Before require */ require "foo/php";'],
-            ['<?php /* Before require_once */ require_once "foo/php";'],
-            ['<?php /* Before include */ include "foo/php";'],
-            ['<?php /* Before include_once */ include_once "foo/php";'],
-            ['<?php /* @var array $foo */ foreach ($foo as $bar) {};'],
-            ['<?php /* @var int $foo */ if ($foo === -1) {};'],
-            ['<?php /* @var SomeClass $foo */ switch ($foo) { default: exit; };'],
-            ['<?php /* @var bool $foo */ while ($foo) { $foo--; };'],
-            ['<?php /* @var int $i */ for ($i = 0; $i < 16; $i++) {};'],
-            ['<?php /* @var int $i @var int $j */ list($i, $j) = getValues();'],
-            ['<?php /* @var string $s */ print($s);'],
-            ['<?php /* @var string $s */ echo($s);'],
-            ['<?php /* @var User $bar */ ($baz = tmp())->doSomething();'],
-            ['<?php /* @var User $bar */ list($bar) = a();'],
-        ];
+        yield ['<?php /* @var Foo */ $bar = "baz";'];
+
+        yield ['<?php /* Before namespace */ namespace Foo;'];
+
+        yield ['<?php /* Before class */ class Foo {}'];
+
+        yield ['<?php /* Before class */ abstract class Foo {}'];
+
+        yield ['<?php /* Before class */ final class Foo {}'];
+
+        yield ['<?php /* Before trait */ trait Foo {}'];
+
+        yield ['<?php /* Before interface */ interface Foo {}'];
+
+        yield ['<?php /* Before anonymous function */ function () {};'];
+
+        yield ['<?php class Foo { /* Before property */ private $bar; }'];
+
+        yield ['<?php class Foo { /* Before property */ protected $bar; }'];
+
+        yield ['<?php class Foo { /* Before property */ public $bar; }'];
+
+        yield ['<?php class Foo { /* Before property */ var $bar; }'];
+
+        yield ['<?php class Foo { /* Before function */ function bar() {} }'];
+
+        yield ['<?php class Foo { /* Before use */ use Bar; }'];
+
+        yield ['<?php class Foo { /* Before function */ final function bar() {} }'];
+
+        yield ['<?php class Foo { /* Before function */ private function bar() {} }'];
+
+        yield ['<?php class Foo { /* Before function */ protected function bar() {} }'];
+
+        yield ['<?php class Foo { /* Before function */ public function bar() {} }'];
+
+        yield ['<?php class Foo { /* Before function */ static function bar() {} }'];
+
+        yield ['<?php class Foo { /* Before function */ abstract function bar(); }'];
+
+        yield ['<?php class Foo { /* Before constant */ const FOO = 42; }'];
+
+        yield ['<?php /* Before require */ require "foo/php";'];
+
+        yield ['<?php /* Before require_once */ require_once "foo/php";'];
+
+        yield ['<?php /* Before include */ include "foo/php";'];
+
+        yield ['<?php /* Before include_once */ include_once "foo/php";'];
+
+        yield ['<?php /* @var array $foo */ foreach ($foo as $bar) {};'];
+
+        yield ['<?php /* @var int $foo */ if ($foo === -1) {};'];
+
+        yield ['<?php /* @var SomeClass $foo */ switch ($foo) { default: exit; };'];
+
+        yield ['<?php /* @var bool $foo */ while ($foo) { $foo--; };'];
+
+        yield ['<?php /* @var int $i */ for ($i = 0; $i < 16; $i++) {};'];
+
+        yield ['<?php /* @var int $i @var int $j */ list($i, $j) = getValues();'];
+
+        yield ['<?php /* @var string $s */ print($s);'];
+
+        yield ['<?php /* @var string $s */ echo($s);'];
+
+        yield ['<?php /* @var User $bar */ ($baz = tmp())->doSomething();'];
+
+        yield ['<?php /* @var User $bar */ list($bar) = a();'];
+
+        yield ['<?php /* Before anonymous function */ $fn = fn($x) => $x + 1;'];
+
+        yield ['<?php /* Before anonymous function */ fn($x) => $x + 1;'];
+
+        yield ['<?php /* @var int $x */ [$x] = [2];'];
     }
 
     /**
@@ -274,57 +322,26 @@ $bar;',
         $index = $tokens->getNextTokenOfKind(0, [[T_COMMENT], [T_DOC_COMMENT]]);
         $analyzer = new CommentsAnalyzer();
 
-        static::assertFalse($analyzer->isBeforeStructuralElement($tokens, $index));
+        self::assertFalse($analyzer->isBeforeStructuralElement($tokens, $index));
     }
 
-    public static function provideNotPhpdocCandidateCases(): array
+    public static function provideNotPhpdocCandidateCases(): iterable
     {
-        return [
-            ['<?php class Foo {} /* At the end of file */'],
-            ['<?php class Foo { public $baz; public function baz(); /* At the end of class */ }'],
-            ['<?php /* Before increment */ $i++;'],
-            ['<?php /* Comment, but not doc block */ if ($foo === -1) {};'],
-            ['<?php
+        yield ['<?php class Foo {} /* At the end of file */'];
+
+        yield ['<?php class Foo { public $baz; public function baz(); /* At the end of class */ }'];
+
+        yield ['<?php /* Before increment */ $i++;'];
+
+        yield ['<?php /* Comment, but not doc block */ if ($foo === -1) {};'];
+
+        yield ['<?php
                 $a = $b[1]; // @phpstan-ignore-line
 
                 static::bar();',
-            ],
         ];
-    }
 
-    public function testPhpdocCandidate71(): void
-    {
-        $tokens = Tokens::fromCode('<?php /* @var int $x */ [$x] = [2];');
-        $analyzer = new CommentsAnalyzer();
-
-        static::assertTrue($analyzer->isHeaderComment($tokens, 1));
-    }
-
-    public function testNotPhpdocCandidate71(): void
-    {
-        $tokens = Tokens::fromCode('<?php /* @var int $a */ [$b] = [2];');
-        $analyzer = new CommentsAnalyzer();
-
-        static::assertFalse($analyzer->isBeforeStructuralElement($tokens, 1));
-    }
-
-    /**
-     * @dataProvider providePhpdocCandidatePhp74Cases
-     */
-    public function testPhpdocCandidatePhp74(string $code): void
-    {
-        $tokens = Tokens::fromCode($code);
-        $index = $tokens->getNextTokenOfKind(0, [[T_COMMENT], [T_DOC_COMMENT]]);
-        $analyzer = new CommentsAnalyzer();
-
-        static::assertTrue($analyzer->isBeforeStructuralElement($tokens, $index));
-    }
-
-    public static function providePhpdocCandidatePhp74Cases(): array
-    {
-        return [
-            ['<?php /* Before anonymous function */ $fn = fn($x) => $x + 1;'],
-        ];
+        yield ['<?php /* @var int $a */ [$b] = [2];'];
     }
 
     /**
@@ -338,18 +355,18 @@ $bar;',
         $index = $tokens->getNextTokenOfKind(0, [[T_COMMENT], [T_DOC_COMMENT]]);
         $analyzer = new CommentsAnalyzer();
 
-        static::assertTrue($analyzer->isBeforeStructuralElement($tokens, $index));
+        self::assertTrue($analyzer->isBeforeStructuralElement($tokens, $index));
     }
 
-    public static function providePhpdocCandidatePhp80Cases(): array
+    public static function providePhpdocCandidatePhp80Cases(): iterable
     {
-        return [
-            ['<?php
+        yield 'attribute between class and phpDoc' => [
+            '<?php
 /**
  * @Annotation
  */
 #[CustomAnnotationA]
-Class MyAnnotation3 {}'],
+Class MyAnnotation3 {}',
         ];
     }
 
@@ -364,7 +381,7 @@ Class MyAnnotation3 {}'],
         $index = $tokens->getNextTokenOfKind(0, [[T_COMMENT], [T_DOC_COMMENT]]);
         $analyzer = new CommentsAnalyzer();
 
-        static::assertTrue($analyzer->isBeforeStructuralElement($tokens, $index));
+        self::assertTrue($analyzer->isBeforeStructuralElement($tokens, $index));
     }
 
     public static function providePhpdocCandidatePhp81Cases(): iterable
@@ -399,6 +416,53 @@ Class MyAnnotation3 {}'],
 
         yield 'enum' => [
             '<?php /* Before enum */ enum Foo {}',
+        ];
+
+        yield 'enum with deprecated case' => [
+            '<?php
+enum Foo: int {
+    /**
+     * @deprecated Lorem ipsum
+     */
+    case BAR = 1;
+}',
+        ];
+    }
+
+    /**
+     * @dataProvider provideNotPhpdocCandidatePhp81Cases
+     *
+     * @requires PHP 8.1
+     */
+    public function testNotPhpdocCandidatePhp81(string $code): void
+    {
+        $tokens = Tokens::fromCode($code);
+        $index = $tokens->getNextTokenOfKind(0, [[T_COMMENT], [T_DOC_COMMENT]]);
+        $analyzer = new CommentsAnalyzer();
+
+        self::assertFalse($analyzer->isBeforeStructuralElement($tokens, $index));
+    }
+
+    public static function provideNotPhpdocCandidatePhp81Cases(): iterable
+    {
+        yield 'enum and switch' => [
+            '<?php
+            enum E {}
+            switch ($x) {
+                /* */
+                case 1: return 2;
+            }
+            ',
+        ];
+
+        yield 'switch and enum' => [
+            '<?php
+            switch ($x) {
+                /* */
+                case 1: return 2;
+            }
+            enum E {}
+            ',
         ];
     }
 }

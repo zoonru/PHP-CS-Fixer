@@ -27,48 +27,13 @@ use PhpCsFixer\Tests\TestCase;
 final class HelpCommandTest extends TestCase
 {
     /**
-     * @param mixed $input
-     *
-     * @dataProvider provideToStringCases
-     */
-    public function testToString(string $expected, $input): void
-    {
-        static::assertSame($expected, HelpCommand::toString($input));
-    }
-
-    public static function provideToStringCases(): iterable
-    {
-        yield ["['a' => 3, 'b' => 'c']", ['a' => 3, 'b' => 'c']];
-
-        yield ['[[1], [2]]', [[1], [2]]];
-
-        yield ['[0 => [1], \'a\' => [2]]', [[1], 'a' => [2]]];
-
-        yield ['[1, 2, \'foo\', null]', [1, 2, 'foo', null]];
-
-        yield ['[1, 2]', [1, 2]];
-
-        yield ['[]', []];
-
-        yield ['1.5', 1.5];
-
-        yield ['false', false];
-
-        yield ['true', true];
-
-        yield ['1', 1];
-
-        yield ["'foo'", 'foo'];
-    }
-
-    /**
      * @param null|mixed $expected
      *
      * @dataProvider provideGetDisplayableAllowedValuesCases
      */
     public function testGetDisplayableAllowedValues($expected, FixerOptionInterface $input): void
     {
-        static::assertSame($expected, HelpCommand::getDisplayableAllowedValues($input));
+        self::assertSame($expected, HelpCommand::getDisplayableAllowedValues($input));
     }
 
     public static function provideGetDisplayableAllowedValuesCases(): iterable

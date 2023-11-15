@@ -12,7 +12,7 @@ Configuration
 
 Spacing to apply around concatenation operator.
 
-Allowed values: ``'none'``, ``'one'``
+Allowed values: ``'none'`` and ``'one'``
 
 Default value: ``'none'``
 
@@ -63,8 +63,22 @@ Rule sets
 
 The rule is part of the following rule sets:
 
-@PhpCsFixer
-  Using the `@PhpCsFixer <./../../ruleSets/PhpCsFixer.rst>`_ rule set will enable the ``concat_space`` rule with the default config.
+- `@PER <./../../ruleSets/PER.rst>`_ with config:
 
-@Symfony
-  Using the `@Symfony <./../../ruleSets/Symfony.rst>`_ rule set will enable the ``concat_space`` rule with the default config.
+  ``['spacing' => 'one']``
+
+- `@PER-CS <./../../ruleSets/PER-CS.rst>`_ with config:
+
+  ``['spacing' => 'one']``
+
+- `@PER-CS2.0 <./../../ruleSets/PER-CS2.0.rst>`_ with config:
+
+  ``['spacing' => 'one']``
+
+- `@PhpCsFixer <./../../ruleSets/PhpCsFixer.rst>`_
+- `@Symfony <./../../ruleSets/Symfony.rst>`_
+
+Source class
+------------
+
+`PhpCsFixer\\Fixer\\Operator\\ConcatSpaceFixer <./../src/Fixer/Operator/ConcatSpaceFixer.php>`_

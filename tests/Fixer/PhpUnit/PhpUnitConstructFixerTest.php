@@ -27,7 +27,7 @@ use PhpCsFixer\Tests\Test\AbstractFixerTestCase;
 final class PhpUnitConstructFixerTest extends AbstractFixerTestCase
 {
     /**
-     * @dataProvider provideTestFixCases
+     * @dataProvider provideFixCases
      */
     public function testFix(string $expected, ?string $input = null): void
     {
@@ -48,7 +48,7 @@ final class PhpUnitConstructFixerTest extends AbstractFixerTestCase
         }
     }
 
-    public static function provideTestFixCases(): array
+    public static function provideFixCases(): iterable
     {
         $cases = [
             ['$sth->assertSame(true, $foo);'],
@@ -115,10 +115,10 @@ final class PhpUnitConstructFixerTest extends AbstractFixerTestCase
         array_walk(
             $cases,
             static function (&$case): void {
-                $case[0] = static::generateTest($case[0]);
+                $case[0] = self::generateTest($case[0]);
 
                 if (isset($case[1])) {
-                    $case[1] = static::generateTest($case[1]);
+                    $case[1] = self::generateTest($case[1]);
                 }
             }
         );
@@ -165,17 +165,16 @@ final class PhpUnitConstructFixerTest extends AbstractFixerTestCase
         $this->doTest($expected, $input);
     }
 
-    public static function provideFix73Cases(): array
+    public static function provideFix73Cases(): iterable
     {
-        return [
-            [
-                static::generateTest('$this->assertTrue($a, );'),
-                static::generateTest('$this->assertSame(true, $a, );'),
-            ],
-            [
-                static::generateTest('$this->assertTrue($a, $message , );'),
-                static::generateTest('$this->assertSame(true, $a, $message , );'),
-            ],
+        yield [
+            self::generateTest('$this->assertTrue($a, );'),
+            self::generateTest('$this->assertSame(true, $a, );'),
+        ];
+
+        yield [
+            self::generateTest('$this->assertTrue($a, $message , );'),
+            self::generateTest('$this->assertSame(true, $a, $message , );'),
         ];
     }
 

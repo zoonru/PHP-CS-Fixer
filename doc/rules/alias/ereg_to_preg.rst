@@ -30,8 +30,10 @@ Rule sets
 
 The rule is part of the following rule sets:
 
-@PhpCsFixer:risky
-  Using the `@PhpCsFixer:risky <./../../ruleSets/PhpCsFixerRisky.rst>`_ rule set will enable the ``ereg_to_preg`` rule.
+- `@PhpCsFixer:risky <./../../ruleSets/PhpCsFixerRisky.rst>`_
+- `@Symfony:risky <./../../ruleSets/SymfonyRisky.rst>`_
 
-@Symfony:risky
-  Using the `@Symfony:risky <./../../ruleSets/SymfonyRisky.rst>`_ rule set will enable the ``ereg_to_preg`` rule.
+Source class
+------------
+
+`PhpCsFixer\\Fixer\\Alias\\EregToPregFixer <./../src/Fixer/Alias/EregToPregFixer.php>`_

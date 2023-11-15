@@ -13,16 +13,7 @@ Configuration
 
 Whether const blocks should be single or multi line.
 
-Allowed values: ``'multi'``, ``'single'``, ``null``
-
-Default value: ``'multi'``
-
-``property``
-~~~~~~~~~~~~
-
-Whether property doc blocks should be single or multi line.
-
-Allowed values: ``'multi'``, ``'single'``, ``null``
+Allowed values: ``'multi'``, ``'single'`` and ``null``
 
 Default value: ``'multi'``
 
@@ -31,7 +22,16 @@ Default value: ``'multi'``
 
 Whether method doc blocks should be single or multi line.
 
-Allowed values: ``'multi'``, ``'single'``, ``null``
+Allowed values: ``'multi'``, ``'single'`` and ``null``
+
+Default value: ``'multi'``
+
+``property``
+~~~~~~~~~~~~
+
+Whether property doc blocks should be single or multi line.
+
+Allowed values: ``'multi'``, ``'single'`` and ``null``
 
 Default value: ``'multi'``
 
@@ -75,3 +75,7 @@ With configuration: ``['property' => 'single']``.
    +    /** @var bool */
         public $var;
     }
+Source class
+------------
+
+`PhpCsFixer\\Fixer\\Phpdoc\\PhpdocLineSpanFixer <./../src/Fixer/Phpdoc/PhpdocLineSpanFixer.php>`_

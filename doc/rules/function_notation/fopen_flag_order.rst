@@ -31,8 +31,10 @@ Rule sets
 
 The rule is part of the following rule sets:
 
-@PhpCsFixer:risky
-  Using the `@PhpCsFixer:risky <./../../ruleSets/PhpCsFixerRisky.rst>`_ rule set will enable the ``fopen_flag_order`` rule.
+- `@PhpCsFixer:risky <./../../ruleSets/PhpCsFixerRisky.rst>`_
+- `@Symfony:risky <./../../ruleSets/SymfonyRisky.rst>`_
 
-@Symfony:risky
-  Using the `@Symfony:risky <./../../ruleSets/SymfonyRisky.rst>`_ rule set will enable the ``fopen_flag_order`` rule.
+Source class
+------------
+
+`PhpCsFixer\\Fixer\\FunctionNotation\\FopenFlagOrderFixer <./../src/Fixer/FunctionNotation/FopenFlagOrderFixer.php>`_

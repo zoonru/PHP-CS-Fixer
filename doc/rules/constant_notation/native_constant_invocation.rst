@@ -17,6 +17,15 @@ Risky when any of the constants are namespaced or overridden.
 Configuration
 -------------
 
+``exclude``
+~~~~~~~~~~~
+
+List of constants to ignore.
+
+Allowed types: ``array``
+
+Default value: ``['null', 'false', 'true']``
+
 ``fix_built_in``
 ~~~~~~~~~~~~~~~~
 
@@ -36,21 +45,12 @@ Allowed types: ``array``
 
 Default value: ``[]``
 
-``exclude``
-~~~~~~~~~~~
-
-List of constants to ignore.
-
-Allowed types: ``array``
-
-Default value: ``['null', 'false', 'true']``
-
 ``scope``
 ~~~~~~~~~
 
 Only fix constant invocations that are made within a namespace or fix all.
 
-Allowed values: ``'all'``, ``'namespaced'``
+Allowed values: ``'all'`` and ``'namespaced'``
 
 Default value: ``'all'``
 
@@ -138,10 +138,16 @@ Rule sets
 
 The rule is part of the following rule sets:
 
-@PhpCsFixer:risky
-  Using the `@PhpCsFixer:risky <./../../ruleSets/PhpCsFixerRisky.rst>`_ rule set will enable the ``native_constant_invocation`` rule with the config below:
+- `@PhpCsFixer:risky <./../../ruleSets/PhpCsFixerRisky.rst>`_ with config:
 
   ``['fix_built_in' => false, 'include' => ['DIRECTORY_SEPARATOR', 'PHP_INT_SIZE', 'PHP_SAPI', 'PHP_VERSION_ID'], 'scope' => 'namespaced', 'strict' => true]``
 
-@Symfony:risky
-  Using the `@Symfony:risky <./../../ruleSets/SymfonyRisky.rst>`_ rule set will enable the ``native_constant_invocation`` rule with the default config.
+- `@Symfony:risky <./../../ruleSets/SymfonyRisky.rst>`_ with config:
+
+  ``['strict' => false]``
+
+
+Source class
+------------
+
+`PhpCsFixer\\Fixer\\ConstantNotation\\NativeConstantInvocationFixer <./../src/Fixer/ConstantNotation/NativeConstantInvocationFixer.php>`_

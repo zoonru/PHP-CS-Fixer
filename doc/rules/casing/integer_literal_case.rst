@@ -25,8 +25,10 @@ Rule sets
 
 The rule is part of the following rule sets:
 
-@PhpCsFixer
-  Using the `@PhpCsFixer <./../../ruleSets/PhpCsFixer.rst>`_ rule set will enable the ``integer_literal_case`` rule.
+- `@PhpCsFixer <./../../ruleSets/PhpCsFixer.rst>`_
+- `@Symfony <./../../ruleSets/Symfony.rst>`_
 
-@Symfony
-  Using the `@Symfony <./../../ruleSets/Symfony.rst>`_ rule set will enable the ``integer_literal_case`` rule.
+Source class
+------------
+
+`PhpCsFixer\\Fixer\\Casing\\IntegerLiteralCaseFixer <./../src/Fixer/Casing/IntegerLiteralCaseFixer.php>`_

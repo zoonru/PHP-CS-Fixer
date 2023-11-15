@@ -25,7 +25,7 @@ abstract class AbstractDoctrineAnnotationFixerTestCase extends AbstractFixerTest
     /**
      * @param array<mixed> $configuration
      *
-     * @dataProvider provideInvalidConfigurationCases
+     * @dataProvider provideConfigureWithInvalidConfigurationCases
      */
     public function testConfigureWithInvalidConfiguration(array $configuration): void
     {
@@ -34,12 +34,11 @@ abstract class AbstractDoctrineAnnotationFixerTestCase extends AbstractFixerTest
         $this->fixer->configure($configuration);
     }
 
-    public static function provideInvalidConfigurationCases(): array
+    public static function provideConfigureWithInvalidConfigurationCases(): iterable
     {
-        return [
-            [['foo' => 'bar']],
-            [['ignored_tags' => 'foo']],
-        ];
+        yield [['foo' => 'bar']];
+
+        yield [['ignored_tags' => 'foo']];
     }
 
     /**

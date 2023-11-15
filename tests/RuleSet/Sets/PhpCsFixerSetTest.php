@@ -19,6 +19,4 @@ namespace PhpCsFixer\Tests\RuleSet\Sets;
  *
  * @covers \PhpCsFixer\RuleSet\Sets\PhpCsFixerSet
  */
-final class PhpCsFixerSetTest extends AbstractSetTest
-{
-}
+final class PhpCsFixerSetTest extends AbstractSetTestCase {}

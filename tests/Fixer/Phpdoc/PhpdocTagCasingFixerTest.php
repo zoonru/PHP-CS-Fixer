@@ -35,37 +35,40 @@ final class PhpdocTagCasingFixerTest extends AbstractFixerTestCase
         $this->doTest($expected, $input);
     }
 
-    public static function provideFixCases(): array
+    public static function provideFixCases(): iterable
     {
-        return [
-            [
-                '<?php /** @inheritDoc */',
-                '<?php /** @inheritdoc */',
-            ],
-            [
-                '<?php /** @inheritDoc */',
-                '<?php /** @inheritdoc */',
-                ['tags' => ['inheritDoc']],
-            ],
-            [
-                '<?php /** @inheritdoc */',
-                '<?php /** @inheritDoc */',
-                ['tags' => ['inheritdoc']],
-            ],
-            [
-                '<?php /** {@inheritDoc} */',
-                '<?php /** {@inheritdoc} */',
-            ],
-            [
-                '<?php /** {@inheritDoc} */',
-                '<?php /** {@inheritdoc} */',
-                ['tags' => ['inheritDoc']],
-            ],
-            [
-                '<?php /** {@inheritdoc} */',
-                '<?php /** {@inheritDoc} */',
-                ['tags' => ['inheritdoc']],
-            ],
+        yield [
+            '<?php /** @inheritDoc */',
+            '<?php /** @inheritdoc */',
+        ];
+
+        yield [
+            '<?php /** @inheritDoc */',
+            '<?php /** @inheritdoc */',
+            ['tags' => ['inheritDoc']],
+        ];
+
+        yield [
+            '<?php /** @inheritdoc */',
+            '<?php /** @inheritDoc */',
+            ['tags' => ['inheritdoc']],
+        ];
+
+        yield [
+            '<?php /** {@inheritDoc} */',
+            '<?php /** {@inheritdoc} */',
+        ];
+
+        yield [
+            '<?php /** {@inheritDoc} */',
+            '<?php /** {@inheritdoc} */',
+            ['tags' => ['inheritDoc']],
+        ];
+
+        yield [
+            '<?php /** {@inheritdoc} */',
+            '<?php /** {@inheritDoc} */',
+            ['tags' => ['inheritdoc']],
         ];
     }
 }

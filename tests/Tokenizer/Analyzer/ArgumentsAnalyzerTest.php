@@ -39,8 +39,8 @@ final class ArgumentsAnalyzerTest extends TestCase
         $tokens = Tokens::fromCode($code);
         $analyzer = new ArgumentsAnalyzer();
 
-        static::assertSame(\count($arguments), $analyzer->countArguments($tokens, $openIndex, $closeIndex));
-        static::assertSame($arguments, $analyzer->getArguments($tokens, $openIndex, $closeIndex));
+        self::assertSame(\count($arguments), $analyzer->countArguments($tokens, $openIndex, $closeIndex));
+        self::assertSame($arguments, $analyzer->getArguments($tokens, $openIndex, $closeIndex));
     }
 
     public static function provideArgumentsCases(): iterable
@@ -99,8 +99,8 @@ final class ArgumentsAnalyzerTest extends TestCase
         $tokens = Tokens::fromCode($code);
         $analyzer = new ArgumentsAnalyzer();
 
-        static::assertSame(\count($arguments), $analyzer->countArguments($tokens, $openIndex, $closeIndex));
-        static::assertSame($arguments, $analyzer->getArguments($tokens, $openIndex, $closeIndex));
+        self::assertSame(\count($arguments), $analyzer->countArguments($tokens, $openIndex, $closeIndex));
+        self::assertSame($arguments, $analyzer->getArguments($tokens, $openIndex, $closeIndex));
     }
 
     public static function provideArguments80Cases(): iterable
@@ -128,8 +128,8 @@ final class ArgumentsAnalyzerTest extends TestCase
         $tokens = Tokens::fromCode($code);
         $analyzer = new ArgumentsAnalyzer();
 
-        static::assertSame(\count($arguments), $analyzer->countArguments($tokens, $openIndex, $closeIndex));
-        static::assertSame($arguments, $analyzer->getArguments($tokens, $openIndex, $closeIndex));
+        self::assertSame(\count($arguments), $analyzer->countArguments($tokens, $openIndex, $closeIndex));
+        self::assertSame($arguments, $analyzer->getArguments($tokens, $openIndex, $closeIndex));
     }
 
     public static function provideArguments81Cases(): iterable
@@ -138,7 +138,7 @@ final class ArgumentsAnalyzerTest extends TestCase
     }
 
     /**
-     * @dataProvider provideArgumentsInfoCases
+     * @dataProvider provideArgumentInfoCases
      */
     public function testArgumentInfo(string $code, int $openIndex, int $closeIndex, ArgumentAnalysis $expected): void
     {
@@ -148,7 +148,7 @@ final class ArgumentsAnalyzerTest extends TestCase
         self::assertArgumentAnalysis($expected, $analyzer->getArgumentInfo($tokens, $openIndex, $closeIndex));
     }
 
-    public static function provideArgumentsInfoCases(): iterable
+    public static function provideArgumentInfoCases(): iterable
     {
         yield ['<?php function($a){};', 3, 3, new ArgumentAnalysis(
             '$a',
@@ -174,6 +174,13 @@ final class ArgumentsAnalyzerTest extends TestCase
         yield ['<?php foo($a, $b)?>', 5, 6, new ArgumentAnalysis(
             '$b',
             6,
+            null,
+            null
+        )];
+
+        yield ['<?php foo($a, "b")?>', 5, 6, new ArgumentAnalysis(
+            null,
+            null,
             null,
             null
         )];
@@ -274,7 +281,7 @@ final class ArgumentsAnalyzerTest extends TestCase
     /**
      * @requires PHP 8.0
      *
-     * @dataProvider provideArgumentsInfo80Cases
+     * @dataProvider provideArgumentInfo80Cases
      */
     public function testArgumentInfo80(string $code, int $openIndex, int $closeIndex, ArgumentAnalysis $expected): void
     {
@@ -284,7 +291,7 @@ final class ArgumentsAnalyzerTest extends TestCase
         self::assertArgumentAnalysis($expected, $analyzer->getArgumentInfo($tokens, $openIndex, $closeIndex));
     }
 
-    public static function provideArgumentsInfo80Cases(): iterable
+    public static function provideArgumentInfo80Cases(): iterable
     {
         yield [
             '<?php function foo(#[AnAttribute] ?string $param = null) {}',
@@ -324,7 +331,7 @@ final class ArgumentsAnalyzerTest extends TestCase
     /**
      * @requires PHP 8.1
      *
-     * @dataProvider provideArgumentsInfo81Cases
+     * @dataProvider provideArgumentInfo81Cases
      */
     public function testArgumentInfo81(string $code, int $openIndex, int $closeIndex, ArgumentAnalysis $expected): void
     {
@@ -334,7 +341,7 @@ final class ArgumentsAnalyzerTest extends TestCase
         self::assertArgumentAnalysis($expected, $analyzer->getArgumentInfo($tokens, $openIndex, $closeIndex));
     }
 
-    public static function provideArgumentsInfo81Cases(): iterable
+    public static function provideArgumentInfo81Cases(): iterable
     {
         yield [
             '<?php
@@ -362,25 +369,25 @@ class Foo
 
     private static function assertArgumentAnalysis(ArgumentAnalysis $expected, ArgumentAnalysis $actual): void
     {
-        static::assertSame($expected->getDefault(), $actual->getDefault(), 'Default.');
-        static::assertSame($expected->getName(), $actual->getName(), 'Name.');
-        static::assertSame($expected->getNameIndex(), $actual->getNameIndex(), 'Name index.');
-        static::assertSame($expected->hasDefault(), $actual->hasDefault(), 'Has default.');
-        static::assertSame($expected->hasTypeAnalysis(), $actual->hasTypeAnalysis(), 'Has type analysis.');
+        self::assertSame($expected->getDefault(), $actual->getDefault(), 'Default.');
+        self::assertSame($expected->getName(), $actual->getName(), 'Name.');
+        self::assertSame($expected->getNameIndex(), $actual->getNameIndex(), 'Name index.');
+        self::assertSame($expected->hasDefault(), $actual->hasDefault(), 'Has default.');
+        self::assertSame($expected->hasTypeAnalysis(), $actual->hasTypeAnalysis(), 'Has type analysis.');
 
         if ($expected->hasTypeAnalysis()) {
             $expectedTypeAnalysis = $expected->getTypeAnalysis();
             $actualTypeAnalysis = $actual->getTypeAnalysis();
 
-            static::assertSame($expectedTypeAnalysis->getEndIndex(), $actualTypeAnalysis->getEndIndex(), 'Type analysis end index.');
-            static::assertSame($expectedTypeAnalysis->getName(), $actualTypeAnalysis->getName(), 'Type analysis name.');
-            static::assertSame($expectedTypeAnalysis->getStartIndex(), $actualTypeAnalysis->getStartIndex(), 'Type analysis start index.');
-            static::assertSame($expectedTypeAnalysis->isNullable(), $actualTypeAnalysis->isNullable(), 'Type analysis nullable.');
-            static::assertSame($expectedTypeAnalysis->isReservedType(), $actualTypeAnalysis->isReservedType(), 'Type analysis reserved type.');
+            self::assertSame($expectedTypeAnalysis->getEndIndex(), $actualTypeAnalysis->getEndIndex(), 'Type analysis end index.');
+            self::assertSame($expectedTypeAnalysis->getName(), $actualTypeAnalysis->getName(), 'Type analysis name.');
+            self::assertSame($expectedTypeAnalysis->getStartIndex(), $actualTypeAnalysis->getStartIndex(), 'Type analysis start index.');
+            self::assertSame($expectedTypeAnalysis->isNullable(), $actualTypeAnalysis->isNullable(), 'Type analysis nullable.');
+            self::assertSame($expectedTypeAnalysis->isReservedType(), $actualTypeAnalysis->isReservedType(), 'Type analysis reserved type.');
         } else {
-            static::assertNull($actual->getTypeAnalysis());
+            self::assertNull($actual->getTypeAnalysis());
         }
 
-        static::assertSame(serialize($expected), serialize($actual));
+        self::assertSame(serialize($expected), serialize($actual));
     }
 }

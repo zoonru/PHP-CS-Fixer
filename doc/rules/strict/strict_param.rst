@@ -45,5 +45,9 @@ Rule sets
 
 The rule is part of the following rule set:
 
-@PhpCsFixer:risky
-  Using the `@PhpCsFixer:risky <./../../ruleSets/PhpCsFixerRisky.rst>`_ rule set will enable the ``strict_param`` rule.
+- `@PhpCsFixer:risky <./../../ruleSets/PhpCsFixerRisky.rst>`_
+
+Source class
+------------
+
+`PhpCsFixer\\Fixer\\Strict\\StrictParamFixer <./../src/Fixer/Strict/StrictParamFixer.php>`_

@@ -35,21 +35,21 @@ final class NormalizeIndexBraceFixerTest extends AbstractFixerTestCase
         $this->doTest($expected, $input);
     }
 
-    public static function provideFixCases(): array
+    public static function provideFixCases(): iterable
     {
-        return [
-            [
-                '<?php echo $arr[$index];',
-                '<?php echo $arr{$index};',
-            ],
-            [
-                '<?php echo $nestedArray[$index][$index2][$index3][$index4];',
-                '<?php echo $nestedArray{$index}{$index2}[$index3]{$index4};',
-            ],
-            [
-                '<?php echo $array[0]->foo . $collection->items[1]->property;',
-                '<?php echo $array{0}->foo . $collection->items{1}->property;',
-            ],
+        yield [
+            '<?php echo $arr[$index];',
+            '<?php echo $arr{$index};',
+        ];
+
+        yield [
+            '<?php echo $nestedArray[$index][$index2][$index3][$index4];',
+            '<?php echo $nestedArray{$index}{$index2}[$index3]{$index4};',
+        ];
+
+        yield [
+            '<?php echo $array[0]->foo . $collection->items[1]->property;',
+            '<?php echo $array{0}->foo . $collection->items{1}->property;',
         ];
     }
 }

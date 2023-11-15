@@ -25,8 +25,10 @@ Rule sets
 
 The rule is part of the following rule sets:
 
-@PhpCsFixer
-  Using the `@PhpCsFixer <./../../ruleSets/PhpCsFixer.rst>`_ rule set will enable the ``no_multiline_whitespace_around_double_arrow`` rule.
+- `@PhpCsFixer <./../../ruleSets/PhpCsFixer.rst>`_
+- `@Symfony <./../../ruleSets/Symfony.rst>`_
 
-@Symfony
-  Using the `@Symfony <./../../ruleSets/Symfony.rst>`_ rule set will enable the ``no_multiline_whitespace_around_double_arrow`` rule.
+Source class
+------------
+
+`PhpCsFixer\\Fixer\\ArrayNotation\\NoMultilineWhitespaceAroundDoubleArrowFixer <./../src/Fixer/ArrayNotation/NoMultilineWhitespaceAroundDoubleArrowFixer.php>`_

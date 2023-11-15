@@ -7,8 +7,8 @@ Ensures a single space after language constructs.
 Warning
 -------
 
-This rule is deprecated and will be removed on next major version
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+This rule is deprecated and will be removed in the next major version
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 You should use ``single_space_around_construct`` instead.
 
@@ -68,3 +68,7 @@ With configuration: ``['constructs' => ['yield_from']]``.
 
    -yield  from  baz();
    +yield from baz();
+Source class
+------------
+
+`PhpCsFixer\\Fixer\\LanguageConstruct\\SingleSpaceAfterConstructFixer <./../src/Fixer/LanguageConstruct/SingleSpaceAfterConstructFixer.php>`_

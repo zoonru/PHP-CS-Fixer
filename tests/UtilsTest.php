@@ -55,62 +55,74 @@ final class UtilsTest extends TestCase
     public function testCamelCaseToUnderscore(string $expected, string $input = null): void
     {
         if (null !== $input) {
-            static::assertSame($expected, Utils::camelCaseToUnderscore($input));
+            self::assertSame($expected, Utils::camelCaseToUnderscore($input));
         }
 
-        static::assertSame($expected, Utils::camelCaseToUnderscore($expected));
+        self::assertSame($expected, Utils::camelCaseToUnderscore($expected));
     }
 
-    public static function provideCamelCaseToUnderscoreCases(): array
+    /**
+     * @return iterable<array{0: string, 1?: string}>
+     */
+    public static function provideCamelCaseToUnderscoreCases(): iterable
     {
-        return [
-            [
-                'dollar_close_curly_braces',
-                'DollarCloseCurlyBraces',
-            ],
-            [
-                'utf8_encoder_fixer',
-                'utf8EncoderFixer',
-            ],
-            [
-                'terminated_with_number10',
-                'TerminatedWithNumber10',
-            ],
-            [
-                'utf8_encoder_fixer',
-            ],
-            [
-                'a',
-                'A',
-            ],
-            [
-                'aa',
-                'AA',
-            ],
-            [
-                'foo',
-                'FOO',
-            ],
-            [
-                'foo_bar_baz',
-                'FooBarBAZ',
-            ],
-            [
-                'foo_bar_baz',
-                'FooBARBaz',
-            ],
-            [
-                'foo_bar_baz',
-                'FOOBarBaz',
-            ],
-            [
-                'mr_t',
-                'MrT',
-            ],
-            [
-                'voyage_éclair',
-                'VoyageÉclair',
-            ],
+        yield [
+            'dollar_close_curly_braces',
+            'DollarCloseCurlyBraces',
+        ];
+
+        yield [
+            'utf8_encoder_fixer',
+            'utf8EncoderFixer',
+        ];
+
+        yield [
+            'terminated_with_number10',
+            'TerminatedWithNumber10',
+        ];
+
+        yield [
+            'utf8_encoder_fixer',
+        ];
+
+        yield [
+            'a',
+            'A',
+        ];
+
+        yield [
+            'aa',
+            'AA',
+        ];
+
+        yield [
+            'foo',
+            'FOO',
+        ];
+
+        yield [
+            'foo_bar_baz',
+            'FooBarBAZ',
+        ];
+
+        yield [
+            'foo_bar_baz',
+            'FooBARBaz',
+        ];
+
+        yield [
+            'foo_bar_baz',
+            'FOOBarBaz',
+        ];
+
+        yield [
+            'mr_t',
+            'MrT',
+        ];
+
+        yield [
+            'voyage_éclair',
+            'VoyageÉclair',
         ];
     }
 
@@ -123,19 +135,25 @@ final class UtilsTest extends TestCase
     {
         $token = new Token($input);
 
-        static::assertSame($spaces, Utils::calculateTrailingWhitespaceIndent($token));
+        self::assertSame($spaces, Utils::calculateTrailingWhitespaceIndent($token));
     }
 
-    public static function provideCalculateTrailingWhitespaceIndentCases(): array
+    /**
+     * @return iterable<array{string, array{int, string}|string}>
+     */
+    public static function provideCalculateTrailingWhitespaceIndentCases(): iterable
     {
-        return [
-            ['    ', [T_WHITESPACE, "\n\n    "]],
-            [' ', [T_WHITESPACE, "\r\n\r\r\r "]],
-            ["\t", [T_WHITESPACE, "\r\n\t"]],
-            ['', [T_WHITESPACE, "\t\n\r"]],
-            ['', [T_WHITESPACE, "\n"]],
-            ['', ''],
-        ];
+        yield ['    ', [T_WHITESPACE, "\n\n    "]];
+
+        yield [' ', [T_WHITESPACE, "\r\n\r\r\r "]];
+
+        yield ["\t", [T_WHITESPACE, "\r\n\t"]];
+
+        yield ['', [T_WHITESPACE, "\t\n\r"]];
+
+        yield ['', [T_WHITESPACE, "\n"]];
+
+        yield ['', ''];
     }
 
     public function testCalculateTrailingWhitespaceIndentFail(): void
@@ -160,39 +178,43 @@ final class UtilsTest extends TestCase
         callable $getComparableValueCallback,
         callable $compareValuesCallback
     ): void {
-        static::assertSame(
+        self::assertSame(
             $expected,
             Utils::stableSort($elements, $getComparableValueCallback, $compareValuesCallback)
         );
     }
 
-    public static function provideStableSortCases(): array
+    /**
+     * @return iterable<array{list<mixed>, list<mixed>, callable, callable}>
+     */
+    public static function provideStableSortCases(): iterable
     {
-        return [
-            [
-                ['a', 'b', 'c', 'd', 'e'],
-                ['b', 'd', 'e', 'a', 'c'],
-                static fn ($element) => $element,
-                'strcmp',
-            ],
-            [
-                ['b', 'd', 'e', 'a', 'c'],
-                ['b', 'd', 'e', 'a', 'c'],
-                static fn (): string => 'foo',
-                'strcmp',
-            ],
-            [
-                ['b', 'd', 'e', 'a', 'c'],
-                ['b', 'd', 'e', 'a', 'c'],
-                static fn ($element) => $element,
-                static fn (): int => 0,
-            ],
-            [
-                ['bar1', 'baz1', 'foo1', 'bar2', 'baz2', 'foo2'],
-                ['foo1', 'foo2', 'bar1', 'bar2', 'baz1', 'baz2'],
-                static fn ($element) => preg_replace('/([a-z]+)(\d+)/', '$2$1', $element),
-                'strcmp',
-            ],
+        yield [
+            ['a', 'b', 'c', 'd', 'e'],
+            ['b', 'd', 'e', 'a', 'c'],
+            static fn ($element) => $element,
+            'strcmp',
+        ];
+
+        yield [
+            ['b', 'd', 'e', 'a', 'c'],
+            ['b', 'd', 'e', 'a', 'c'],
+            static fn (): string => 'foo',
+            'strcmp',
+        ];
+
+        yield [
+            ['b', 'd', 'e', 'a', 'c'],
+            ['b', 'd', 'e', 'a', 'c'],
+            static fn ($element) => $element,
+            static fn (): int => 0,
+        ];
+
+        yield [
+            ['bar1', 'baz1', 'foo1', 'bar2', 'baz2', 'foo2'],
+            ['foo1', 'foo2', 'bar1', 'bar2', 'baz1', 'baz2'],
+            static fn ($element) => preg_replace('/([a-z]+)(\d+)/', '$2$1', $element),
+            'strcmp',
         ];
     }
 
@@ -205,7 +227,7 @@ final class UtilsTest extends TestCase
             $this->createFixerDouble('f4', -10),
         ];
 
-        static::assertSame(
+        self::assertSame(
             [
                 $fixers[2],
                 $fixers[0],
@@ -214,6 +236,107 @@ final class UtilsTest extends TestCase
             ],
             Utils::sortFixers($fixers)
         );
+    }
+
+    public function testNaturalLanguageJoinThrowsInvalidArgumentExceptionForEmptyArray(): void
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Array of names cannot be empty.');
+
+        Utils::naturalLanguageJoin([]);
+    }
+
+    public function testNaturalLanguageJoinThrowsInvalidArgumentExceptionForMoreThanOneCharWrapper(): void
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Wrapper should be a single-char string or empty.');
+
+        Utils::naturalLanguageJoin(['a', 'b'], 'foo');
+    }
+
+    /**
+     * @dataProvider provideNaturalLanguageJoinCases
+     *
+     * @param list<string> $names
+     */
+    public function testNaturalLanguageJoin(string $joined, array $names, string $wrapper = '"'): void
+    {
+        self::assertSame($joined, Utils::naturalLanguageJoin($names, $wrapper));
+    }
+
+    /**
+     * @return iterable<array<null|array<string>|string>>
+     */
+    public static function provideNaturalLanguageJoinCases(): iterable
+    {
+        yield [
+            '"a"',
+            ['a'],
+        ];
+
+        yield [
+            '"a" and "b"',
+            ['a', 'b'],
+        ];
+
+        yield [
+            '"a", "b" and "c"',
+            ['a', 'b', 'c'],
+        ];
+
+        yield [
+            '\'a\'',
+            ['a'],
+            '\'',
+        ];
+
+        yield [
+            '\'a\' and \'b\'',
+            ['a', 'b'],
+            '\'',
+        ];
+
+        yield [
+            '\'a\', \'b\' and \'c\'',
+            ['a', 'b', 'c'],
+            '\'',
+        ];
+
+        yield [
+            '?a?',
+            ['a'],
+            '?',
+        ];
+
+        yield [
+            '?a? and ?b?',
+            ['a', 'b'],
+            '?',
+        ];
+
+        yield [
+            '?a?, ?b? and ?c?',
+            ['a', 'b', 'c'],
+            '?',
+        ];
+
+        yield [
+            'a',
+            ['a'],
+            '',
+        ];
+
+        yield [
+            'a and b',
+            ['a', 'b'],
+            '',
+        ];
+
+        yield [
+            'a, b and c',
+            ['a', 'b', 'c'],
+            '',
+        ];
     }
 
     public function testNaturalLanguageJoinWithBackticksThrowsInvalidArgumentExceptionForEmptyArray(): void
@@ -230,24 +353,27 @@ final class UtilsTest extends TestCase
      */
     public function testNaturalLanguageJoinWithBackticks(string $joined, array $names): void
     {
-        static::assertSame($joined, Utils::naturalLanguageJoinWithBackticks($names));
+        self::assertSame($joined, Utils::naturalLanguageJoinWithBackticks($names));
     }
 
-    public static function provideNaturalLanguageJoinWithBackticksCases(): array
+    /**
+     * @return iterable<array{string, list<string>}>
+     */
+    public static function provideNaturalLanguageJoinWithBackticksCases(): iterable
     {
-        return [
-            [
-                '`a`',
-                ['a'],
-            ],
-            [
-                '`a` and `b`',
-                ['a', 'b'],
-            ],
-            [
-                '`a`, `b` and `c`',
-                ['a', 'b', 'c'],
-            ],
+        yield [
+            '`a`',
+            ['a'],
+        ];
+
+        yield [
+            '`a` and `b`',
+            ['a', 'b'],
+        ];
+
+        yield [
+            '`a`, `b` and `c`',
+            ['a', 'b', 'c'],
         ];
     }
 
@@ -264,7 +390,7 @@ final class UtilsTest extends TestCase
         Utils::triggerDeprecation(new \DomainException($message));
 
         $triggered = Utils::getTriggeredDeprecations();
-        static::assertContains($message, $triggered);
+        self::assertContains($message, $triggered);
     }
 
     public function testTriggerDeprecationWhenFutureModeIsOn(): void
@@ -280,11 +406,49 @@ final class UtilsTest extends TestCase
         } catch (\Exception $futureModeException) {
         }
 
-        static::assertInstanceOf(\RuntimeException::class, $futureModeException);
-        static::assertSame($exception, $futureModeException->getPrevious());
+        self::assertInstanceOf(\RuntimeException::class, $futureModeException);
+        self::assertSame($exception, $futureModeException->getPrevious());
 
         $triggered = Utils::getTriggeredDeprecations();
-        static::assertNotContains($message, $triggered);
+        self::assertNotContains($message, $triggered);
+    }
+
+    /**
+     * @param mixed $input
+     *
+     * @dataProvider provideToStringCases
+     */
+    public function testToString(string $expected, $input): void
+    {
+        self::assertSame($expected, Utils::toString($input));
+    }
+
+    /**
+     * @return iterable<array{string, mixed}>
+     */
+    public static function provideToStringCases(): iterable
+    {
+        yield ["['a' => 3, 'b' => 'c']", ['a' => 3, 'b' => 'c']];
+
+        yield ['[[1], [2]]', [[1], [2]]];
+
+        yield ['[0 => [1], \'a\' => [2]]', [[1], 'a' => [2]]];
+
+        yield ['[1, 2, \'foo\', null]', [1, 2, 'foo', null]];
+
+        yield ['[1, 2]', [1, 2]];
+
+        yield ['[]', []];
+
+        yield ['1.5', 1.5];
+
+        yield ['false', false];
+
+        yield ['true', true];
+
+        yield ['1', 1];
+
+        yield ["'foo'", 'foo'];
     }
 
     private function createFixerDouble(string $name, int $priority): FixerInterface

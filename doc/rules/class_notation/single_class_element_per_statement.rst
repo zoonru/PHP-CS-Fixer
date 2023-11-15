@@ -62,23 +62,34 @@ Rule sets
 
 The rule is part of the following rule sets:
 
-@PER
-  Using the `@PER <./../../ruleSets/PER.rst>`_ rule set will enable the ``single_class_element_per_statement`` rule with the config below:
+- `@PER <./../../ruleSets/PER.rst>`_ with config:
 
   ``['elements' => ['property']]``
 
-@PSR2
-  Using the `@PSR2 <./../../ruleSets/PSR2.rst>`_ rule set will enable the ``single_class_element_per_statement`` rule with the config below:
+- `@PER-CS <./../../ruleSets/PER-CS.rst>`_ with config:
 
   ``['elements' => ['property']]``
 
-@PSR12
-  Using the `@PSR12 <./../../ruleSets/PSR12.rst>`_ rule set will enable the ``single_class_element_per_statement`` rule with the config below:
+- `@PER-CS1.0 <./../../ruleSets/PER-CS1.0.rst>`_ with config:
 
   ``['elements' => ['property']]``
 
-@PhpCsFixer
-  Using the `@PhpCsFixer <./../../ruleSets/PhpCsFixer.rst>`_ rule set will enable the ``single_class_element_per_statement`` rule with the default config.
+- `@PER-CS2.0 <./../../ruleSets/PER-CS2.0.rst>`_ with config:
 
-@Symfony
-  Using the `@Symfony <./../../ruleSets/Symfony.rst>`_ rule set will enable the ``single_class_element_per_statement`` rule with the default config.
+  ``['elements' => ['property']]``
+
+- `@PSR2 <./../../ruleSets/PSR2.rst>`_ with config:
+
+  ``['elements' => ['property']]``
+
+- `@PSR12 <./../../ruleSets/PSR12.rst>`_ with config:
+
+  ``['elements' => ['property']]``
+
+- `@PhpCsFixer <./../../ruleSets/PhpCsFixer.rst>`_
+- `@Symfony <./../../ruleSets/Symfony.rst>`_
+
+Source class
+------------
+
+`PhpCsFixer\\Fixer\\ClassNotation\\SingleClassElementPerStatementFixer <./../src/Fixer/ClassNotation/SingleClassElementPerStatementFixer.php>`_

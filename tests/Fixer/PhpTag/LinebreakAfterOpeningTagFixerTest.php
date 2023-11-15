@@ -35,56 +35,61 @@ final class LinebreakAfterOpeningTagFixerTest extends AbstractFixerTestCase
         $this->doTest($expected, $input);
     }
 
-    public static function provideFixCases(): array
+    public static function provideFixCases(): iterable
     {
-        return [
-            [
-                '<?php
+        yield [
+            '<?php
 $a = function(){
                     echo 1;
                 };',
-                '<?php $a = function(){
+            '<?php $a = function(){
                     echo 1;
                 };',
-            ],
-            [
-                '<?php $foo = true; ?>',
-            ],
-            [
-                '<?php $foo = true; ?>
+        ];
+
+        yield [
+            '<?php $foo = true; ?>',
+        ];
+
+        yield [
+            '<?php $foo = true; ?>
 ',
-            ],
-            [
-                '<?php
+        ];
+
+        yield [
+            '<?php
 
 
 $foo = true;
 ?>',
-            ],
-            [
-                '<?php
+        ];
+
+        yield [
+            '<?php
 $foo = true;
 $bar = false;
 ?>',
-                '<?php $foo = true;
+            '<?php $foo = true;
 $bar = false;
 ?>',
-            ],
-            [
-                '<?php $foo = true; ?>
+        ];
+
+        yield [
+            '<?php $foo = true; ?>
 Html here
 <?php $bar = false; ?>',
-            ],
-            [
-                '<?= $bar;
+        ];
+
+        yield [
+            '<?= $bar;
 $foo = $bar;
 ?>',
-            ],
-            [
-                str_replace("\n", "\r\n", '<?php
+        ];
+
+        yield [
+            str_replace("\n", "\r\n", '<?php
 // linebreak already present in file with Windows line endings
 '),
-            ],
         ];
     }
 
@@ -98,13 +103,11 @@ $foo = $bar;
         $this->doTest($expected, $input);
     }
 
-    public static function provideMessyWhitespacesCases(): array
+    public static function provideMessyWhitespacesCases(): iterable
     {
-        return [
-            [
-                "<?php\r\n\$foo = true;\n",
-                "<?php \$foo = true;\n",
-            ],
+        yield [
+            "<?php\r\n\$foo = true;\n",
+            "<?php \$foo = true;\n",
         ];
     }
 }

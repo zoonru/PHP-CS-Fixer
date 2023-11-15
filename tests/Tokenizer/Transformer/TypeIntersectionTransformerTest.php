@@ -25,7 +25,7 @@ use PhpCsFixer\Tokenizer\CT;
 final class TypeIntersectionTransformerTest extends AbstractTransformerTestCase
 {
     /**
-     * @param array<int, int> $expectedTokens
+     * @param array<int, int|string> $expectedTokens
      *
      * @dataProvider provideProcessCases
      *
@@ -58,6 +58,8 @@ final class TypeIntersectionTransformerTest extends AbstractTransformerTestCase
                 function foo(){}
                 $a = $b&$c;
                 $a &+ $b;
+                const A1 = B&C;
+                const B1 = D::X & C;
             ',
         ];
 
@@ -66,6 +68,20 @@ final class TypeIntersectionTransformerTest extends AbstractTransformerTestCase
                 '<?php $a = $b&$c;',
                 [
                     6 => T_AMPERSAND_FOLLOWED_BY_VAR_OR_VARARG,
+                ],
+            ];
+
+            yield 'do not fix, close/open' => [
+                '<?php fn() => 0 ?><?php $a = FOO|BAR|BAZ&$x;',
+                [
+                    20 => T_AMPERSAND_FOLLOWED_BY_VAR_OR_VARARG,
+                ],
+            ];
+
+            yield 'do not fix, foreach' => [
+                '<?php while(foo()){} $a = FOO|BAR|BAZ&$x;',
+                [
+                    19 => T_AMPERSAND_FOLLOWED_BY_VAR_OR_VARARG,
                 ],
             ];
         }
@@ -490,6 +506,49 @@ class Dnf
                 61 => CT::T_TYPE_INTERSECTION,
                 63 => CT::T_TYPE_INTERSECTION,
                 71 => CT::T_TYPE_INTERSECTION,
+            ],
+        ];
+    }
+
+    /**
+     * @param array<int, int> $expectedTokens
+     *
+     * @dataProvider provideProcess83Cases
+     *
+     * @requires PHP 8.3
+     */
+    public function testProcess83(string $source, array $expectedTokens): void
+    {
+        $this->doTest($source, $expectedTokens);
+    }
+
+    public static function provideProcess83Cases(): iterable
+    {
+        yield 'typed const DNF types 1' => [
+            '<?php class Foo { const (A&B)|Z Bar = 1;}',
+            [
+                11 => CT::T_TYPE_INTERSECTION,
+            ],
+        ];
+
+        yield 'typed const DNF types 2' => [
+            '<?php class Foo { const Z|(A&B) Bar = 1;}',
+            [
+                13 => CT::T_TYPE_INTERSECTION,
+            ],
+        ];
+
+        yield 'typed const DNF types 3' => [
+            '<?php class Foo { const Z|(A&B)|X Bar = 1;}',
+            [
+                13 => CT::T_TYPE_INTERSECTION,
+            ],
+        ];
+
+        yield 'typed const' => [
+            '<?php class Foo { const A&B Bar = 1;}',
+            [
+                10 => CT::T_TYPE_INTERSECTION,
             ],
         ];
     }

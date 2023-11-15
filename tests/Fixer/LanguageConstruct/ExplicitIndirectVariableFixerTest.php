@@ -26,46 +26,48 @@ use PhpCsFixer\Tests\Test\AbstractFixerTestCase;
 final class ExplicitIndirectVariableFixerTest extends AbstractFixerTestCase
 {
     /**
-     * @dataProvider provideTestFixCases
+     * @dataProvider provideFixCases
      */
     public function testFix(string $expected, ?string $input = null): void
     {
         $this->doTest($expected, $input);
     }
 
-    public static function provideTestFixCases(): array
+    public static function provideFixCases(): iterable
     {
-        return [
-            [
-                '<?php echo ${$foo}($bar);',
-                '<?php echo $$foo($bar);',
-            ],
-            [
-                '<?php echo ${$foo}[\'bar\'][\'baz\'];',
-                '<?php echo $$foo[\'bar\'][\'baz\'];',
-            ],
-            [
-                '<?php echo $foo->{$bar}[\'baz\'];',
-                '<?php echo $foo->$bar[\'baz\'];',
-            ],
-            [
-                '<?php echo $foo->{$bar}[\'baz\']();',
-                '<?php echo $foo->$bar[\'baz\']();',
-            ],
-            [
-                '<?php echo $
+        yield [
+            '<?php echo ${$foo}($bar);',
+            '<?php echo $$foo($bar);',
+        ];
+
+        yield [
+            '<?php echo ${$foo}[\'bar\'][\'baz\'];',
+            '<?php echo $$foo[\'bar\'][\'baz\'];',
+        ];
+
+        yield [
+            '<?php echo $foo->{$bar}[\'baz\'];',
+            '<?php echo $foo->$bar[\'baz\'];',
+        ];
+
+        yield [
+            '<?php echo $foo->{$bar}[\'baz\']();',
+            '<?php echo $foo->$bar[\'baz\']();',
+        ];
+
+        yield [
+            '<?php echo $
 /* C1 */
 // C2
 {$foo}
 // C3
 ;',
-                '<?php echo $
+            '<?php echo $
 /* C1 */
 // C2
 $foo
 // C3
 ;',
-            ],
         ];
     }
 
@@ -73,7 +75,7 @@ $foo
      * @param mixed $expected
      * @param mixed $input
      *
-     * @dataProvider provideTestFix80Cases
+     * @dataProvider provideFix80Cases
      *
      * @requires PHP 8.0
      */
@@ -82,17 +84,16 @@ $foo
         $this->doTest($expected, $input);
     }
 
-    public static function provideTestFix80Cases(): array
+    public static function provideFix80Cases(): iterable
     {
-        return [
-            [
-                '<?php echo $foo?->{$bar}["baz"];',
-                '<?php echo $foo?->$bar["baz"];',
-            ],
-            [
-                '<?php echo $foo?->{$bar}["baz"]();',
-                '<?php echo $foo?->$bar["baz"]();',
-            ],
+        yield [
+            '<?php echo $foo?->{$bar}["baz"];',
+            '<?php echo $foo?->$bar["baz"];',
+        ];
+
+        yield [
+            '<?php echo $foo?->{$bar}["baz"]();',
+            '<?php echo $foo?->$bar["baz"]();',
         ];
     }
 }

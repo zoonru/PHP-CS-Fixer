@@ -95,8 +95,8 @@ final class AnnotationTest extends TestCase
         $doc = new DocBlock(self::$sample);
         $annotation = $doc->getAnnotation($index);
 
-        static::assertSame($content, $annotation->getContent());
-        static::assertSame($content, (string) $annotation);
+        self::assertSame($content, $annotation->getContent());
+        self::assertSame($content, (string) $annotation);
     }
 
     public static function provideGetContentCases(): iterable
@@ -114,7 +114,7 @@ final class AnnotationTest extends TestCase
         $doc = new DocBlock(self::$sample);
         $annotation = $doc->getAnnotation($index);
 
-        static::assertSame($start, $annotation->getStart());
+        self::assertSame($start, $annotation->getStart());
     }
 
     public static function provideStartCases(): iterable
@@ -132,7 +132,7 @@ final class AnnotationTest extends TestCase
         $doc = new DocBlock(self::$sample);
         $annotation = $doc->getAnnotation($index);
 
-        static::assertSame($end, $annotation->getEnd());
+        self::assertSame($end, $annotation->getEnd());
     }
 
     public static function provideEndCases(): iterable
@@ -150,7 +150,7 @@ final class AnnotationTest extends TestCase
         $doc = new DocBlock(self::$sample);
         $annotation = $doc->getAnnotation($index);
 
-        static::assertSame($tag, $annotation->getTag()->getName());
+        self::assertSame($tag, $annotation->getTag()->getName());
     }
 
     public static function provideGetTagCases(): iterable
@@ -169,9 +169,9 @@ final class AnnotationTest extends TestCase
         $annotation = $doc->getAnnotation($index);
 
         $annotation->remove();
-        static::assertSame('', $annotation->getContent());
-        static::assertSame('', $doc->getLine($start)->getContent());
-        static::assertSame('', $doc->getLine($end)->getContent());
+        self::assertSame('', $annotation->getContent());
+        self::assertSame('', $doc->getLine($start)->getContent());
+        self::assertSame('', $doc->getLine($end)->getContent());
     }
 
     public static function provideRemoveCases(): iterable
@@ -190,43 +190,46 @@ final class AnnotationTest extends TestCase
         $annotation = $doc->getAnnotation(0);
 
         $annotation->remove();
-        static::assertSame($expected, $doc->getContent());
+        self::assertSame($expected, $doc->getContent());
     }
 
-    public static function provideRemoveEdgeCasesCases(): array
+    public static function provideRemoveEdgeCasesCases(): iterable
     {
-        return [
-            // Single line
-            ['', '/** @return null*/'],
-            ['', '/** @return null */'],
-            ['', '/** @return null  */'],
+        // Single line
+        yield ['', '/** @return null*/'];
 
-            // Multi line, annotation on start line
-            [
-                '/**
+        yield ['', '/** @return null */'];
+
+        yield ['', '/** @return null  */'];
+
+        // Multi line, annotation on start line
+        yield [
+            '/**
                  */',
-                '/** @return null
+            '/** @return null
                  */',
-            ],
-            [
-                '/**
+        ];
+
+        yield [
+            '/**
                  */',
-                '/** @return null '.'
+            '/** @return null '.'
                  */',
-            ],
-            // Multi line, annotation on end line
-            [
-                '/**
+        ];
+
+        // Multi line, annotation on end line
+        yield [
+            '/**
                  */',
-                '/**
+            '/**
                  * @return null*/',
-            ],
-            [
-                '/**
+        ];
+
+        yield [
+            '/**
                  */',
-                '/**
+            '/**
                  * @return null */',
-            ],
         ];
     }
 
@@ -239,212 +242,259 @@ final class AnnotationTest extends TestCase
     {
         $tag = new Annotation([new Line($input)]);
 
-        static::assertSame($expected, $tag->getTypes());
+        self::assertSame($expected, $tag->getTypes());
     }
 
-    public static function provideTypeParsingCases(): array
+    public static function provideTypeParsingCases(): iterable
     {
-        return [
-            [
-                ['int'],
-                ' * @method int method()',
-            ],
-            [
-                ['int[]'],
-                " * @return int[]\r",
-            ],
-            [
-                ['int[]'],
-                " * @return int[]\r\n",
-            ],
-            [
-                ['Foo[][]'],
-                ' * @method Foo[][] method()',
-            ],
-            [
-                ['int[]'],
-                ' * @method int[] method()',
-            ],
-            [
-                ['int[]', 'null'],
-                ' * @method int[]|null method()',
-            ],
-            [
-                ['int[]', 'null', '?int', 'array'],
-                ' * @method int[]|null|?int|array method()',
-            ],
-            [
-                ['null', 'Foo\Bar', '\Baz\Bax', 'int[]'],
-                ' * @method null|Foo\Bar|\Baz\Bax|int[] method()',
-            ],
-            [
-                ['gen<int>'],
-                ' * @method gen<int> method()',
-            ],
-            [
-                ['int', 'gen<int>'],
-                ' * @method int|gen<int> method()',
-            ],
-            [
-                ['\int', '\gen<\int, \bool>'],
-                ' * @method \int|\gen<\int, \bool> method()',
-            ],
-            [
-                ['gen<int,  int>'],
-                ' * @method gen<int,  int> method()',
-            ],
-            [
-                ['gen<int,  bool|string>'],
-                ' * @method gen<int,  bool|string> method()',
-            ],
-            [
-                ['gen<int,  string[]>'],
-                ' * @method gen<int,  string[]> method() <> a',
-            ],
-            [
-                ['gen<int,  gener<string, bool>>'],
-                ' * @method gen<int,  gener<string, bool>> method() foo <a >',
-            ],
-            [
-                ['gen<int,  gener<string, null|bool>>'],
-                ' * @method gen<int,  gener<string, null|bool>> method()',
-            ],
-            [
-                ['null', 'gen<int,  gener<string, bool>>', 'int', 'string[]'],
-                ' * @method null|gen<int,  gener<string, bool>>|int|string[] method() foo <a >',
-            ],
-            [
-                ['null', 'gen<int,  gener<string, bool>>', 'int', 'array<int, string>', 'string[]'],
-                ' * @method null|gen<int,  gener<string, bool>>|int|array<int, string>|string[] method() foo <a >',
-            ],
-            [
-                ['this'],
-                '/** @return    this */',
-            ],
-            [
-                ['@this'],
-                '/** @return    @this */',
-            ],
-            [
-                ['$SELF', 'int'],
-                '/** @return $SELF|int */',
-            ],
-            [
-                ['array<string|int, string>'],
-                '/** @var array<string|int, string>',
-            ],
-            [
-                ['int'],
-                " * @return int\n",
-            ],
-            [
-                ['int'],
-                " * @return int\r\n",
-            ],
-            [
-                ['Collection<Foo<Bar>, Foo<Baz>>'],
-                '/** @var Collection<Foo<Bar>, Foo<Baz>>',
-            ],
-            [
-                ['int', 'string'],
-                '/** @var int | string',
-            ],
-            [
-                ['Foo::*'],
-                '/** @var Foo::*',
-            ],
-            [
-                ['Foo::A'],
-                '/** @var Foo::A',
-            ],
-            [
-                ['Foo::A', 'Foo::B'],
-                '/** @var Foo::A|Foo::B',
-            ],
-            [
-                ['Foo::A*'],
-                '/** @var Foo::A*',
-            ],
-            [
-                ['array<Foo::A*>', 'null'],
-                '/** @var array<Foo::A*>|null',
-            ],
-            [
-                ['null', 'true', 'false', '1', '-1', '1.5', '-1.5', '.5', '1.', "'a'", '"b"'],
-                '/** @var null|true|false|1|-1|1.5|-1.5|.5|1.|\'a\'|"b"',
-            ],
-            [
-                ['int', '"a"', 'A<B<C, D>, E<F::*|G[]>>'],
-                '/** @param int | "a" | A<B<C, D>, E<F::*|G[]>> $foo */',
-            ],
-            [
-                ['class-string<Foo>'],
-                '/** @var class-string<Foo> */',
-            ],
-            [
-                ['A', 'B'],
-                '/** @var A&B */',
-            ],
-            [
-                ['A', 'B'],
-                '/** @var A & B */',
-            ],
-            [
-                ['array{1: bool, 2: bool}'],
-                '/** @var array{1: bool, 2: bool} */',
-            ],
-            [
-                ['array{a: int|string, b?: bool}'],
-                '/** @var array{a: int|string, b?: bool} */',
-            ],
-            [
-                ['array{\'a\': "a", "b"?: \'b\'}'],
-                '/** @var array{\'a\': "a", "b"?: \'b\'} */',
-            ],
-            [
-                ['array { a : int | string , b ? : A<B, C> }'],
-                '/** @var array { a : int | string , b ? : A<B, C> } */',
-            ],
-            [
-                ['callable(string)'],
-                '/** @param callable(string) $function',
-            ],
-            [
-                ['callable(string): bool'],
-                '/** @param callable(string): bool $function',
-            ],
-            [
-                ['callable(array<int, string>, array<int, Foo>): bool'],
-                '/** @param callable(array<int, string>, array<int, Foo>): bool $function',
-            ],
-            [
-                ['array<int, callable(string): bool>'],
-                '/** @param array<int, callable(string): bool> $function',
-            ],
-            [
-                ['callable(string): callable(int)'],
-                '/** @param callable(string): callable(int) $function',
-            ],
-            [
-                ['callable(string) : callable(int) : bool'],
-                '/** @param callable(string) : callable(int) : bool $function',
-            ],
-            [
-                ['TheCollection<callable(Foo, Bar,Baz): Foo[]>', 'string[]', 'null'],
-                '* @param TheCollection<callable(Foo, Bar,Baz): Foo[]>|string[]|null $x',
-            ],
-            [
-                ['Closure(string)'],
-                '/** @param Closure(string) $function',
-            ],
-            [
-                ['closure()'],
-                '/** @param closure() $function',
-            ],
-            [
-                ['array  <  int   , callable  (  string  )  :   bool  >'],
-                '/** @param   array  <  int   , callable  (  string  )  :   bool  > $function',
-            ],
+        yield [
+            ['int'],
+            ' * @method int method()',
+        ];
+
+        yield [
+            ['int[]'],
+            " * @return int[]\r",
+        ];
+
+        yield [
+            ['int[]'],
+            " * @return int[]\r\n",
+        ];
+
+        yield [
+            ['Foo[][]'],
+            ' * @method Foo[][] method()',
+        ];
+
+        yield [
+            ['int[]'],
+            ' * @method int[] method()',
+        ];
+
+        yield [
+            ['int[]', 'null'],
+            ' * @method int[]|null method()',
+        ];
+
+        yield [
+            ['int[]', 'null', '?int', 'array'],
+            ' * @method int[]|null|?int|array method()',
+        ];
+
+        yield [
+            ['null', 'Foo\Bar', '\Baz\Bax', 'int[]'],
+            ' * @method null|Foo\Bar|\Baz\Bax|int[] method()',
+        ];
+
+        yield [
+            ['gen<int>'],
+            ' * @method gen<int> method()',
+        ];
+
+        yield [
+            ['int', 'gen<int>'],
+            ' * @method int|gen<int> method()',
+        ];
+
+        yield [
+            ['\int', '\gen<\int, \bool>'],
+            ' * @method \int|\gen<\int, \bool> method()',
+        ];
+
+        yield [
+            ['gen<int,  int>'],
+            ' * @method gen<int,  int> method()',
+        ];
+
+        yield [
+            ['gen<int,  bool|string>'],
+            ' * @method gen<int,  bool|string> method()',
+        ];
+
+        yield [
+            ['gen<int,  string[]>'],
+            ' * @method gen<int,  string[]> method() <> a',
+        ];
+
+        yield [
+            ['gen<int,  gener<string, bool>>'],
+            ' * @method gen<int,  gener<string, bool>> method() foo <a >',
+        ];
+
+        yield [
+            ['gen<int,  gener<string, null|bool>>'],
+            ' * @method gen<int,  gener<string, null|bool>> method()',
+        ];
+
+        yield [
+            ['null', 'gen<int,  gener<string, bool>>', 'int', 'string[]'],
+            ' * @method null|gen<int,  gener<string, bool>>|int|string[] method() foo <a >',
+        ];
+
+        yield [
+            ['null', 'gen<int,  gener<string, bool>>', 'int', 'array<int, string>', 'string[]'],
+            ' * @method null|gen<int,  gener<string, bool>>|int|array<int, string>|string[] method() foo <a >',
+        ];
+
+        yield [
+            ['this'],
+            '/** @return    this */',
+        ];
+
+        yield [
+            ['@this'],
+            '/** @return    @this */',
+        ];
+
+        yield [
+            ['$SELF', 'int'],
+            '/** @return $SELF|int */',
+        ];
+
+        yield [
+            ['array<string|int, string>'],
+            '/** @var array<string|int, string>',
+        ];
+
+        yield [
+            ['int'],
+            " * @return int\n",
+        ];
+
+        yield [
+            ['int'],
+            " * @return int\r\n",
+        ];
+
+        yield [
+            ['Collection<Foo<Bar>, Foo<Baz>>'],
+            '/** @var Collection<Foo<Bar>, Foo<Baz>>',
+        ];
+
+        yield [
+            ['int', 'string'],
+            '/** @var int | string',
+        ];
+
+        yield [
+            ['Foo::*'],
+            '/** @var Foo::*',
+        ];
+
+        yield [
+            ['Foo::A'],
+            '/** @var Foo::A',
+        ];
+
+        yield [
+            ['Foo::A', 'Foo::B'],
+            '/** @var Foo::A|Foo::B',
+        ];
+
+        yield [
+            ['Foo::A*'],
+            '/** @var Foo::A*',
+        ];
+
+        yield [
+            ['array<Foo::A*>', 'null'],
+            '/** @var array<Foo::A*>|null',
+        ];
+
+        yield [
+            ['null', 'true', 'false', '1', '-1', '1.5', '-1.5', '.5', '1.', "'a'", '"b"'],
+            '/** @var null|true|false|1|-1|1.5|-1.5|.5|1.|\'a\'|"b"',
+        ];
+
+        yield [
+            ['int', '"a"', 'A<B<C, D>, E<F::*|G[]>>'],
+            '/** @param int | "a" | A<B<C, D>, E<F::*|G[]>> $foo */',
+        ];
+
+        yield [
+            ['class-string<Foo>'],
+            '/** @var class-string<Foo> */',
+        ];
+
+        yield [
+            ['A', 'B'],
+            '/** @var A&B */',
+        ];
+
+        yield [
+            ['A', 'B'],
+            '/** @var A & B */',
+        ];
+
+        yield [
+            ['array{1: bool, 2: bool}'],
+            '/** @var array{1: bool, 2: bool} */',
+        ];
+
+        yield [
+            ['array{a: int|string, b?: bool}'],
+            '/** @var array{a: int|string, b?: bool} */',
+        ];
+
+        yield [
+            ['array{\'a\': "a", "b"?: \'b\'}'],
+            '/** @var array{\'a\': "a", "b"?: \'b\'} */',
+        ];
+
+        yield [
+            ['array { a : int | string , b ? : A<B, C> }'],
+            '/** @var array { a : int | string , b ? : A<B, C> } */',
+        ];
+
+        yield [
+            ['callable(string)'],
+            '/** @param callable(string) $function',
+        ];
+
+        yield [
+            ['callable(string): bool'],
+            '/** @param callable(string): bool $function',
+        ];
+
+        yield [
+            ['callable(array<int, string>, array<int, Foo>): bool'],
+            '/** @param callable(array<int, string>, array<int, Foo>): bool $function',
+        ];
+
+        yield [
+            ['array<int, callable(string): bool>'],
+            '/** @param array<int, callable(string): bool> $function',
+        ];
+
+        yield [
+            ['callable(string): callable(int)'],
+            '/** @param callable(string): callable(int) $function',
+        ];
+
+        yield [
+            ['callable(string) : callable(int) : bool'],
+            '/** @param callable(string) : callable(int) : bool $function',
+        ];
+
+        yield [
+            ['TheCollection<callable(Foo, Bar,Baz): Foo[]>', 'string[]', 'null'],
+            '* @param TheCollection<callable(Foo, Bar,Baz): Foo[]>|string[]|null $x',
+        ];
+
+        yield [
+            ['Closure(string)'],
+            '/** @param Closure(string) $function',
+        ];
+
+        yield [
+            ['closure()'],
+            '/** @param closure() $function',
+        ];
+
+        yield [
+            ['array  <  int   , callable  (  string  )  :   bool  >'],
+            '/** @param   array  <  int   , callable  (  string  )  :   bool  > $function',
         ];
     }
 
@@ -459,26 +509,30 @@ final class AnnotationTest extends TestCase
         $line = new Line($input);
         $tag = new Annotation([$line]);
 
-        static::assertSame($expected, $tag->getTypes());
+        self::assertSame($expected, $tag->getTypes());
 
         $tag->setTypes($new);
 
-        static::assertSame($new, $tag->getTypes());
+        self::assertSame($new, $tag->getTypes());
 
-        static::assertSame($output, $line->getContent());
+        self::assertSame($output, $line->getContent());
     }
 
-    public static function provideTypesCases(): array
+    public static function provideTypesCases(): iterable
     {
-        return [
-            [['Foo', 'null'], ['Bar[]'], '     * @param Foo|null $foo', '     * @param Bar[] $foo'],
-            [['false'], ['bool'], '*   @return            false', '*   @return            bool'],
-            [['RUNTIMEEEEeXCEPTION'], [\Throwable::class], "* \t@throws\t  \t RUNTIMEEEEeXCEPTION\t\t\t\t\t\t\t\n\n\n", "* \t@throws\t  \t Throwable\t\t\t\t\t\t\t\n\n\n"],
-            [['RUNTIMEEEEeXCEPTION'], [\Throwable::class], "*\t@throws\t  \t RUNTIMEEEEeXCEPTION\t\t\t\t\t\t\t\n\n\n", "*\t@throws\t  \t Throwable\t\t\t\t\t\t\t\n\n\n"],
-            [['RUNTIMEEEEeXCEPTION'], [\Throwable::class], "*@throws\t  \t RUNTIMEEEEeXCEPTION\t\t\t\t\t\t\t\n\n\n", "*@throws\t  \t Throwable\t\t\t\t\t\t\t\n\n\n"],
-            [['string'], ['string', 'null'], ' * @method string getString()', ' * @method string|null getString()'],
-            [['Foo', 'Bar'], ['Bar', 'Foo'], ' * @param Foo&Bar $x', ' * @param Bar&Foo $x'],
-        ];
+        yield [['Foo', 'null'], ['Bar[]'], '     * @param Foo|null $foo', '     * @param Bar[] $foo'];
+
+        yield [['false'], ['bool'], '*   @return            false', '*   @return            bool'];
+
+        yield [['RUNTIMEEEEeXCEPTION'], [\Throwable::class], "* \t@throws\t  \t RUNTIMEEEEeXCEPTION\t\t\t\t\t\t\t\n\n\n", "* \t@throws\t  \t Throwable\t\t\t\t\t\t\t\n\n\n"];
+
+        yield [['RUNTIMEEEEeXCEPTION'], [\Throwable::class], "*\t@throws\t  \t RUNTIMEEEEeXCEPTION\t\t\t\t\t\t\t\n\n\n", "*\t@throws\t  \t Throwable\t\t\t\t\t\t\t\n\n\n"];
+
+        yield [['RUNTIMEEEEeXCEPTION'], [\Throwable::class], "*@throws\t  \t RUNTIMEEEEeXCEPTION\t\t\t\t\t\t\t\n\n\n", "*@throws\t  \t Throwable\t\t\t\t\t\t\t\n\n\n"];
+
+        yield [['string'], ['string', 'null'], ' * @method string getString()', ' * @method string|null getString()'];
+
+        yield [['Foo', 'Bar'], ['Bar', 'Foo'], ' * @param Foo&Bar $x', ' * @param Bar&Foo $x'];
     }
 
     /**
@@ -491,23 +545,32 @@ final class AnnotationTest extends TestCase
         $line = new Line($input);
         $tag = new Annotation([$line]);
 
-        static::assertSame($expected, $tag->getNormalizedTypes());
+        self::assertSame($expected, $tag->getNormalizedTypes());
     }
 
-    public static function provideNormalizedTypesCases(): array
+    public static function provideNormalizedTypesCases(): iterable
     {
-        return [
-            [['null', 'string'], '* @param StRiNg|NuLl $foo'],
-            [['void'], '* @return Void'],
-            [['bar', 'baz', 'foo', 'null', 'qux'], '* @return Foo|Bar|Baz|Qux|null'],
-            [['bool', 'int'], '* @param bool|int $foo'],
-            [['bool', 'int'], '* @param bool|int ...$foo'],
-            [['bool', 'int'], '* @param bool|int &$foo'],
-            [['bool', 'int'], '* @param bool|int &...$foo'],
-            [['bool', 'int'], '* @param bool|int&$foo'],
-            [['bool', 'int'], '* @param bool|int&...$foo'],
-            [['bar', 'baz', 'foo'], '* @param Foo|Bar&Baz&$param'],
-        ];
+        yield [['null', 'string'], '* @param StRiNg|NuLl $foo'];
+
+        yield [['void'], '* @return Void'];
+
+        yield [['bar', 'baz', 'foo', 'null', 'qux'], '* @return Foo|Bar|Baz|Qux|null'];
+
+        yield [['bool', 'int'], '* @param bool|int $foo'];
+
+        yield [['bool', 'int'], '* @param bool|int ...$foo'];
+
+        yield [['bool', 'int'], '* @param bool|int &$foo'];
+
+        yield [['bool', 'int'], '* @param bool|int &...$foo'];
+
+        yield [['bool', 'int'], '* @param bool|int$foo'];
+
+        yield [['bool', 'int'], '* @param bool|int&$foo'];
+
+        yield [['bool', 'int'], '* @param bool|int&...$foo'];
+
+        yield [['bar', 'baz', 'foo'], '* @param Foo|Bar&Baz&$param'];
     }
 
     public function testGetTypesOnBadTag(): void
@@ -535,25 +598,25 @@ final class AnnotationTest extends TestCase
         $tags = Annotation::getTagsWithTypes();
 
         foreach ($tags as $tag) {
-            static::assertIsString($tag);
-            static::assertNotEmpty($tag);
+            self::assertIsString($tag);
+            self::assertNotEmpty($tag);
         }
     }
 
     /**
      * @param NamespaceUseAnalysis[] $namespaceUses
      *
-     * @dataProvider provideTypeExpressionCases
+     * @dataProvider provideGetTypeExpressionCases
      */
     public function testGetTypeExpression(string $line, ?NamespaceAnalysis $namespace, array $namespaceUses, ?string $expectedCommonType): void
     {
         $annotation = new Annotation([new Line($line)], $namespace, $namespaceUses);
         $result = $annotation->getTypeExpression();
 
-        static::assertSame($expectedCommonType, $result->getCommonType());
+        self::assertSame($expectedCommonType, $result->getCommonType());
     }
 
-    public static function provideTypeExpressionCases(): iterable
+    public static function provideGetTypeExpressionCases(): iterable
     {
         $appNamespace = new NamespaceAnalysis('App', 'App', 0, 999, 0, 999);
         $useTraversable = new NamespaceUseAnalysis('Traversable', 'Traversable', false, 0, 999, NamespaceUseAnalysis::TYPE_CLASS);
@@ -566,15 +629,15 @@ final class AnnotationTest extends TestCase
     }
 
     /**
-     * @dataProvider provideGetVariableCases
+     * @dataProvider provideGetVariableNameCases
      */
     public function testGetVariableName(string $line, ?string $expectedVariableName): void
     {
         $annotation = new Annotation([new Line($line)]);
-        static::assertSame($expectedVariableName, $annotation->getVariableName());
+        self::assertSame($expectedVariableName, $annotation->getVariableName());
     }
 
-    public static function provideGetVariableCases(): iterable
+    public static function provideGetVariableNameCases(): iterable
     {
         yield ['* @param int $foo', '$foo'];
 

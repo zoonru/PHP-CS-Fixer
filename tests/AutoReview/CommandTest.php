@@ -35,24 +35,20 @@ final class CommandTest extends TestCase
      */
     public function testCommandHasNameConst(Command $command): void
     {
-        static::assertNotNull($command::getDefaultName());
+        self::assertNotNull($command::getDefaultName());
     }
 
-    public static function provideCommandHasNameConstCases(): array
+    public static function provideCommandHasNameConstCases(): iterable
     {
         $application = new Application();
         $commands = $application->all();
 
-        $names = array_filter(array_keys($commands), static function (string $name) use ($commands): bool {
-            return
-                // is not an alias
-                !\in_array($name, $commands[$name]->getAliases(), true)
-                // and is our command
-                && str_starts_with(\get_class($commands[$name]), 'PhpCsFixer\\');
-        });
+        $names = array_filter(
+            array_keys($commands),
+            // is not an alias and is our command
+            static fn (string $name): bool => !\in_array($name, $commands[$name]->getAliases(), true) && str_starts_with(\get_class($commands[$name]), 'PhpCsFixer\\')
+        );
 
-        return array_map(static function (string $name) use ($commands): array {
-            return [$commands[$name]];
-        }, $names);
+        return array_map(static fn (string $name): array => [$commands[$name]], $names);
     }
 }

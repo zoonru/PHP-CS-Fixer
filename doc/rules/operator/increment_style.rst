@@ -12,7 +12,7 @@ Configuration
 
 Whether to use pre- or post-increment and decrement operators.
 
-Allowed values: ``'post'``, ``'pre'``
+Allowed values: ``'post'`` and ``'pre'``
 
 Default value: ``'pre'``
 
@@ -54,8 +54,10 @@ Rule sets
 
 The rule is part of the following rule sets:
 
-@PhpCsFixer
-  Using the `@PhpCsFixer <./../../ruleSets/PhpCsFixer.rst>`_ rule set will enable the ``increment_style`` rule with the default config.
+- `@PhpCsFixer <./../../ruleSets/PhpCsFixer.rst>`_
+- `@Symfony <./../../ruleSets/Symfony.rst>`_
 
-@Symfony
-  Using the `@Symfony <./../../ruleSets/Symfony.rst>`_ rule set will enable the ``increment_style`` rule with the default config.
+Source class
+------------
+
+`PhpCsFixer\\Fixer\\Operator\\IncrementStyleFixer <./../src/Fixer/Operator/IncrementStyleFixer.php>`_

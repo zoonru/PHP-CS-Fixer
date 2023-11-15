@@ -38,5 +38,9 @@ Rule sets
 
 The rule is part of the following rule set:
 
-@PhpCsFixer
-  Using the `@PhpCsFixer <./../../ruleSets/PhpCsFixer.rst>`_ rule set will enable the ``phpdoc_no_empty_return`` rule.
+- `@PhpCsFixer <./../../ruleSets/PhpCsFixer.rst>`_
+
+Source class
+------------
+
+`PhpCsFixer\\Fixer\\Phpdoc\\PhpdocNoEmptyReturnFixer <./../src/Fixer/Phpdoc/PhpdocNoEmptyReturnFixer.php>`_

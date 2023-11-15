@@ -19,19 +19,23 @@ use PhpCsFixer\RuleSet\AbstractRuleSetDescription;
 /**
  * @internal
  *
- * Last updated to PER Coding Style v1.0.0.
+ * @deprecated Use `@PER-CS2.0` instead.
+ *
+ * @TODO 4.0 remove me
+ *
+ * Last updated to PER Coding Style v2.0.
  */
 final class PERSet extends AbstractRuleSetDescription
 {
     public function getRules(): array
     {
         return [
-            '@PSR12' => true,
+            '@PER-CS2.0' => true,
         ];
     }
 
     public function getDescription(): string
     {
-        return 'Rules that follow `PER Coding Style <https://www.php-fig.org/per/coding-style/>`_.';
+        return 'Alias for the PER-CS rules. It is recommended you use ``@PER-CS2.0`` instead.';
     }
 }

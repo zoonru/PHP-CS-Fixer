@@ -11,9 +11,9 @@ Configuration
 ``syntax``
 ~~~~~~~~~~
 
-Whether to use the ``long`` or ``short`` ``list`` syntax.
+Whether to use the ``long`` or ``short`` syntax for array destructuring.
 
-Allowed values: ``'long'``, ``'short'``
+Allowed values: ``'long'`` and ``'short'``
 
 Default value: ``'short'``
 
@@ -51,20 +51,14 @@ Rule sets
 
 The rule is part of the following rule sets:
 
-@PHP71Migration
-  Using the `@PHP71Migration <./../../ruleSets/PHP71Migration.rst>`_ rule set will enable the ``list_syntax`` rule with the default config.
+- `@PHP71Migration <./../../ruleSets/PHP71Migration.rst>`_
+- `@PHP73Migration <./../../ruleSets/PHP73Migration.rst>`_
+- `@PHP74Migration <./../../ruleSets/PHP74Migration.rst>`_
+- `@PHP80Migration <./../../ruleSets/PHP80Migration.rst>`_
+- `@PHP81Migration <./../../ruleSets/PHP81Migration.rst>`_
+- `@PHP82Migration <./../../ruleSets/PHP82Migration.rst>`_
 
-@PHP73Migration
-  Using the `@PHP73Migration <./../../ruleSets/PHP73Migration.rst>`_ rule set will enable the ``list_syntax`` rule with the default config.
+Source class
+------------
 
-@PHP74Migration
-  Using the `@PHP74Migration <./../../ruleSets/PHP74Migration.rst>`_ rule set will enable the ``list_syntax`` rule with the default config.
-
-@PHP80Migration
-  Using the `@PHP80Migration <./../../ruleSets/PHP80Migration.rst>`_ rule set will enable the ``list_syntax`` rule with the default config.
-
-@PHP81Migration
-  Using the `@PHP81Migration <./../../ruleSets/PHP81Migration.rst>`_ rule set will enable the ``list_syntax`` rule with the default config.
-
-@PHP82Migration
-  Using the `@PHP82Migration <./../../ruleSets/PHP82Migration.rst>`_ rule set will enable the ``list_syntax`` rule with the default config.
+`PhpCsFixer\\Fixer\\ListNotation\\ListSyntaxFixer <./../src/Fixer/ListNotation/ListSyntaxFixer.php>`_

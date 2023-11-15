@@ -40,7 +40,7 @@ Default value: ``['@compiler_optimized']``
 
 Only fix function calls that are made within a namespace or fix all.
 
-Allowed values: ``'all'``, ``'namespaced'``
+Allowed values: ``'all'`` and ``'namespaced'``
 
 Default value: ``'all'``
 
@@ -197,12 +197,16 @@ Rule sets
 
 The rule is part of the following rule sets:
 
-@PhpCsFixer:risky
-  Using the `@PhpCsFixer:risky <./../../ruleSets/PhpCsFixerRisky.rst>`_ rule set will enable the ``native_function_invocation`` rule with the config below:
+- `@PhpCsFixer:risky <./../../ruleSets/PhpCsFixerRisky.rst>`_ with config:
 
   ``['include' => ['@compiler_optimized'], 'scope' => 'namespaced', 'strict' => true]``
 
-@Symfony:risky
-  Using the `@Symfony:risky <./../../ruleSets/SymfonyRisky.rst>`_ rule set will enable the ``native_function_invocation`` rule with the config below:
+- `@Symfony:risky <./../../ruleSets/SymfonyRisky.rst>`_ with config:
 
   ``['include' => ['@compiler_optimized'], 'scope' => 'namespaced', 'strict' => true]``
+
+
+Source class
+------------
+
+`PhpCsFixer\\Fixer\\FunctionNotation\\NativeFunctionInvocationFixer <./../src/Fixer/FunctionNotation/NativeFunctionInvocationFixer.php>`_

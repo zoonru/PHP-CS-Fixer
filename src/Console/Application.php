@@ -14,6 +14,7 @@ declare(strict_types=1);
 
 namespace PhpCsFixer\Console;
 
+use PhpCsFixer\Console\Command\CheckCommand;
 use PhpCsFixer\Console\Command\DescribeCommand;
 use PhpCsFixer\Console\Command\FixCommand;
 use PhpCsFixer\Console\Command\HelpCommand;
@@ -39,8 +40,8 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 final class Application extends BaseApplication
 {
-    public const VERSION = '3.16.1-DEV';
-    public const VERSION_CODENAME = 'BoY42';
+    public const VERSION = '3.38.3-DEV';
+    public const VERSION_CODENAME = 'CI Marathon';
 
     private ToolInfo $toolInfo;
 
@@ -52,6 +53,7 @@ final class Application extends BaseApplication
 
         // in alphabetical order
         $this->add(new DescribeCommand());
+        $this->add(new CheckCommand($this->toolInfo));
         $this->add(new FixCommand($this->toolInfo));
         $this->add(new ListFilesCommand($this->toolInfo));
         $this->add(new ListSetsCommand());
@@ -67,9 +69,6 @@ final class Application extends BaseApplication
         return (int) explode('.', self::VERSION)[0];
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function doRun(InputInterface $input, OutputInterface $output): int
     {
         $stdErr = $output instanceof ConsoleOutputInterface
@@ -110,9 +109,6 @@ final class Application extends BaseApplication
         return $result;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getLongVersion(): string
     {
         $commit = '@git-commit@';
@@ -131,9 +127,6 @@ final class Application extends BaseApplication
         ]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function getDefaultCommands(): array
     {
         return [new HelpCommand(), new ListCommand()];

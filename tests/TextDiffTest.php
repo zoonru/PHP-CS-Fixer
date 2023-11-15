@@ -30,7 +30,7 @@ use Symfony\Component\Console\Tester\CommandTester;
 final class TextDiffTest extends TestCase
 {
     /**
-     * @dataProvider provideDiffReportingCases
+     * @dataProvider provideDiffReportingDecoratedCases
      */
     public function testDiffReportingDecorated(string $expected, string $format, bool $isDecorated): void
     {
@@ -52,25 +52,25 @@ final class TextDiffTest extends TestCase
         );
 
         if ($isDecorated !== $commandTester->getOutput()->isDecorated()) {
-            static::markTestSkipped(sprintf('Output should %sbe decorated.', $isDecorated ? '' : 'not '));
+            self::markTestSkipped(sprintf('Output should %sbe decorated.', $isDecorated ? '' : 'not '));
         }
 
         if ($isDecorated !== $commandTester->getOutput()->getFormatter()->isDecorated()) {
-            static::markTestSkipped(sprintf('Formatter should %sbe decorated.', $isDecorated ? '' : 'not '));
+            self::markTestSkipped(sprintf('Formatter should %sbe decorated.', $isDecorated ? '' : 'not '));
         }
 
-        static::assertStringMatchesFormat($expected, $commandTester->getDisplay(false));
+        self::assertStringMatchesFormat($expected, $commandTester->getDisplay(false));
     }
 
-    public static function provideDiffReportingCases(): iterable
+    public static function provideDiffReportingDecoratedCases(): iterable
     {
         $expected = <<<'TEST'
-%A$output->writeln('<error>'.(int)$output.'</error>');%A
-%A$output->writeln('<error>'.(int) $output.'</error>');%A
-%A$output->writeln('<error> TEST </error>');%A
-%A$output->writeln('<error>'.(int)$output.'</error>');%A
-%A$output->writeln('<error>'.(int) $output.'</error>');%A
-TEST;
+            %A$output->writeln('<error>'.(int)$output.'</error>');%A
+            %A$output->writeln('<error>'.(int) $output.'</error>');%A
+            %A$output->writeln('<error> TEST </error>');%A
+            %A$output->writeln('<error>'.(int)$output.'</error>');%A
+            %A$output->writeln('<error>'.(int) $output.'</error>');%A
+            TEST;
 
         foreach (['txt', 'xml', 'junit'] as $format) {
             yield [$expected, $format, true];
@@ -78,7 +78,7 @@ TEST;
             yield [$expected, $format, false];
         }
 
-        $expected = substr(json_encode($expected), 1, -1);
+        $expected = substr(json_encode($expected, JSON_THROW_ON_ERROR), 1, -1);
 
         yield [$expected, 'json', true];
 
@@ -94,7 +94,7 @@ TEST;
         $formats = $factory->registerBuiltInReporters()->getFormats();
         sort($formats);
 
-        static::assertSame(
+        self::assertSame(
             ['checkstyle', 'gitlab', 'json', 'junit', 'txt', 'xml'],
             $formats
         );

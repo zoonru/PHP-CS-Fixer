@@ -35,44 +35,47 @@ final class BlankLineAfterOpeningTagFixerTest extends AbstractFixerTestCase
         $this->doTest($expected, $input);
     }
 
-    public static function provideFixCases(): array
+    public static function provideFixCases(): iterable
     {
-        return [
-            [
-                '<?php
+        yield [
+            '<?php
 
     $a = 0;
     echo 1;',
-                '<?php
+            '<?php
     $a = 0;
     echo 1;',
-            ],
-            [
-                '<?php
+        ];
+
+        yield [
+            '<?php
 
     $b = 2;
     echo 3;',
-                '<?php     $b = 2;
+            '<?php     $b = 2;
     echo 3;',
-            ],
-            [
-                '<?php
+        ];
+
+        yield [
+            '<?php
     '.'
     $c = 4;
     echo 5;',
-            ],
-            [
-                '<?php
+        ];
+
+        yield [
+            '<?php
 
 $a = function(){
                     echo 1;
                 };',
-                '<?php $a = function(){
+            '<?php $a = function(){
                     echo 1;
                 };',
-            ],
-            [
-                '<?php
+        ];
+
+        yield [
+            '<?php
 
  class SomeClass
  {
@@ -80,54 +83,60 @@ $a = function(){
      const FOO = "bar";
  }
 ',
-            ],
-            [
-                '<?php $foo = true; ?>',
-            ],
-            [
-                '<?php $foo = true; ?>
+        ];
+
+        yield [
+            '<?php $foo = true; ?>',
+        ];
+
+        yield [
+            '<?php $foo = true; ?>
 ',
-            ],
-            [
-                '<?php
+        ];
+
+        yield [
+            '<?php
 
 $foo = true;
 ?>',
-                '<?php
+            '<?php
 $foo = true;
 ?>',
-            ],
-            [
-                '<?php
+        ];
+
+        yield [
+            '<?php
 
 $foo = true;
 $bar = false;
 ',
-                '<?php $foo = true;
+            '<?php $foo = true;
 $bar = false;
 ',
-            ],
-            [
-                '<?php
+        ];
+
+        yield [
+            '<?php
 
 $foo = true;
 ?>
 Html here
 <?php $bar = false;',
-            ],
-            [
-                '<?php
+        ];
+
+        yield [
+            '<?php
 $foo = true;
 ?>
 Html here
 <?php $bar = false;
 ',
-            ],
-            [
-                '<?= $bar;
+        ];
+
+        yield [
+            '<?= $bar;
 $foo = $bar;
 ?>',
-            ],
         ];
     }
 
@@ -141,17 +150,16 @@ $foo = $bar;
         $this->doTest($expected, $input);
     }
 
-    public static function provideMessyWhitespacesCases(): array
+    public static function provideMessyWhitespacesCases(): iterable
     {
-        return [
-            [
-                "<?php\r\n\r\n\$foo = true;\r\n",
-                "<?php \$foo = true;\r\n",
-            ],
-            [
-                "<?php\r\n\r\n\$foo = true;\r\n",
-                "<?php\r\n\$foo = true;\r\n",
-            ],
+        yield [
+            "<?php\r\n\r\n\$foo = true;\r\n",
+            "<?php \$foo = true;\r\n",
+        ];
+
+        yield [
+            "<?php\r\n\r\n\$foo = true;\r\n",
+            "<?php\r\n\$foo = true;\r\n",
         ];
     }
 }

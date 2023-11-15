@@ -12,7 +12,7 @@ Configuration
 
 Style of empty loop-condition.
 
-Allowed values: ``'for'``, ``'while'``
+Allowed values: ``'for'`` and ``'while'``
 
 Default value: ``'while'``
 
@@ -60,8 +60,10 @@ Rule sets
 
 The rule is part of the following rule sets:
 
-@PhpCsFixer
-  Using the `@PhpCsFixer <./../../ruleSets/PhpCsFixer.rst>`_ rule set will enable the ``empty_loop_condition`` rule with the default config.
+- `@PhpCsFixer <./../../ruleSets/PhpCsFixer.rst>`_
+- `@Symfony <./../../ruleSets/Symfony.rst>`_
 
-@Symfony
-  Using the `@Symfony <./../../ruleSets/Symfony.rst>`_ rule set will enable the ``empty_loop_condition`` rule with the default config.
+Source class
+------------
+
+`PhpCsFixer\\Fixer\\ControlStructure\\EmptyLoopConditionFixer <./../src/Fixer/ControlStructure/EmptyLoopConditionFixer.php>`_

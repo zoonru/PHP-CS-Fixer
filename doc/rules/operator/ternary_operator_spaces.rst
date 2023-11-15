@@ -22,14 +22,15 @@ Rule sets
 
 The rule is part of the following rule sets:
 
-@PER
-  Using the `@PER <./../../ruleSets/PER.rst>`_ rule set will enable the ``ternary_operator_spaces`` rule.
+- `@PER <./../../ruleSets/PER.rst>`_
+- `@PER-CS <./../../ruleSets/PER-CS.rst>`_
+- `@PER-CS1.0 <./../../ruleSets/PER-CS1.0.rst>`_
+- `@PER-CS2.0 <./../../ruleSets/PER-CS2.0.rst>`_
+- `@PSR12 <./../../ruleSets/PSR12.rst>`_
+- `@PhpCsFixer <./../../ruleSets/PhpCsFixer.rst>`_
+- `@Symfony <./../../ruleSets/Symfony.rst>`_
 
-@PSR12
-  Using the `@PSR12 <./../../ruleSets/PSR12.rst>`_ rule set will enable the ``ternary_operator_spaces`` rule.
+Source class
+------------
 
-@PhpCsFixer
-  Using the `@PhpCsFixer <./../../ruleSets/PhpCsFixer.rst>`_ rule set will enable the ``ternary_operator_spaces`` rule.
-
-@Symfony
-  Using the `@Symfony <./../../ruleSets/Symfony.rst>`_ rule set will enable the ``ternary_operator_spaces`` rule.
+`PhpCsFixer\\Fixer\\Operator\\TernaryOperatorSpacesFixer <./../src/Fixer/Operator/TernaryOperatorSpacesFixer.php>`_

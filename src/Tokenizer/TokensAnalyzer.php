@@ -286,6 +286,10 @@ final class TokensAnalyzer
 
         $index = $this->tokens->getPrevMeaningfulToken($index);
 
+        if (\defined('T_READONLY') && $this->tokens[$index]->isGivenKind(T_READONLY)) { // @TODO: drop condition when PHP 8.1+ is required
+            $index = $this->tokens->getPrevMeaningfulToken($index);
+        }
+
         while ($this->tokens[$index]->isGivenKind(CT::T_ATTRIBUTE_CLOSE)) {
             $index = $this->tokens->findBlockStart(Tokens::BLOCK_TYPE_ATTRIBUTE, $index);
             $index = $this->tokens->getPrevMeaningfulToken($index);
@@ -313,6 +317,40 @@ final class TokensAnalyzer
         }
 
         return $startParenthesisToken->equals('(');
+    }
+
+    public function getLastTokenIndexOfArrowFunction(int $index): int
+    {
+        if (!$this->tokens[$index]->isGivenKind(T_FN)) {
+            throw new \InvalidArgumentException(sprintf('Not an "arrow function" at given index %d.', $index));
+        }
+
+        $stopTokens = [')', ']', ',', ';', [T_CLOSE_TAG]];
+        $index = $this->tokens->getNextTokenOfKind($index, [[T_DOUBLE_ARROW]]);
+
+        while (true) {
+            $index = $this->tokens->getNextMeaningfulToken($index);
+
+            if ($this->tokens[$index]->equalsAny($stopTokens)) {
+                break;
+            }
+
+            $blockType = Tokens::detectBlockType($this->tokens[$index]);
+
+            if (null === $blockType) {
+                continue;
+            }
+
+            if ($blockType['isStart']) {
+                $index = $this->tokens->findBlockEnd($blockType['type'], $index);
+
+                continue;
+            }
+
+            break;
+        }
+
+        return $this->tokens->getPrevMeaningfulToken($index);
     }
 
     /**
@@ -627,6 +665,31 @@ final class TokensAnalyzer
         $beforeStartIndex = $tokens->getPrevMeaningfulToken($startIndex);
 
         return $tokens[$beforeStartIndex]->isGivenKind(T_DO);
+    }
+
+    /**
+     * @throws \LogicException when provided index does not point to token containing T_CASE
+     */
+    public function isEnumCase(int $caseIndex): bool
+    {
+        $tokens = $this->tokens;
+        $token = $tokens[$caseIndex];
+
+        if (!$token->isGivenKind(T_CASE)) {
+            throw new \LogicException(sprintf(
+                'No T_CASE given at index %d, got %s instead.',
+                $caseIndex,
+                $token->getName() ?? $token->getContent()
+            ));
+        }
+
+        if (!\defined('T_ENUM') || !$tokens->isTokenKindFound(T_ENUM)) {
+            return false;
+        }
+
+        $prevIndex = $tokens->getPrevTokenOfKind($caseIndex, [[T_ENUM], [T_SWITCH]]);
+
+        return null !== $prevIndex && $tokens[$prevIndex]->isGivenKind(T_ENUM);
     }
 
     public function isSuperGlobal(int $index): bool

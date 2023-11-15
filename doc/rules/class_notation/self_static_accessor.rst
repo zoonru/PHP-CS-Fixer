@@ -2,7 +2,7 @@
 Rule ``self_static_accessor``
 =============================
 
-Inside a ``final`` class or anonymous class ``self`` should be preferred to
+Inside an enum or ``final``/anonymous class, ``self`` should be preferred over
 ``static``.
 
 Examples
@@ -81,3 +81,34 @@ Example #4
    +        return self::class;
         }
     };
+
+Example #5
+~~~~~~~~~~
+
+.. code-block:: diff
+
+   --- Original
+   +++ New
+    <?php
+    enum Foo
+    {
+        public const A = 123;
+
+        public static function bar(): void
+        {
+   -        echo static::A;
+   +        echo self::A;
+        }
+    }
+
+Rule sets
+---------
+
+The rule is part of the following rule set:
+
+- `@PhpCsFixer <./../../ruleSets/PhpCsFixer.rst>`_
+
+Source class
+------------
+
+`PhpCsFixer\\Fixer\\ClassNotation\\SelfStaticAccessorFixer <./../src/Fixer/ClassNotation/SelfStaticAccessorFixer.php>`_

@@ -19,6 +19,8 @@ use PhpCsFixer\Console\Command\ListFilesCommand;
 use PhpCsFixer\Tests\TestCase;
 use PhpCsFixer\ToolInfo;
 use Symfony\Component\Console\Tester\CommandTester;
+use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\Filesystem\Path;
 
 /**
  * @internal
@@ -27,6 +29,18 @@ use Symfony\Component\Console\Tester\CommandTester;
  */
 final class ListFilesCommandTest extends TestCase
 {
+    private static ?Filesystem $filesystem;
+
+    public static function setUpBeforeClass(): void
+    {
+        self::$filesystem = new Filesystem();
+    }
+
+    public static function tearDownAfterClass(): void
+    {
+        self::$filesystem = null;
+    }
+
     public function testListWithConfig(): void
     {
         $commandTester = $this->doTestExecute([
@@ -37,8 +51,34 @@ final class ListFilesCommandTest extends TestCase
         // make the test also work on Windows
         $expectedPath = str_replace('/', \DIRECTORY_SEPARATOR, $expectedPath);
 
-        static::assertSame(0, $commandTester->getStatusCode());
-        static::assertSame(escapeshellarg($expectedPath).PHP_EOL, $commandTester->getDisplay());
+        self::assertSame(0, $commandTester->getStatusCode());
+        self::assertSame(escapeshellarg($expectedPath).PHP_EOL, $commandTester->getDisplay());
+    }
+
+    /**
+     * @requires OS Linux|Darwin
+     *
+     * Skip test on Windows as `getcwd()` includes the drive letter with a colon `:` which is illegal in filenames.
+     */
+    public function testListFilesDoesNotCorruptListWithGetcwdInName(): void
+    {
+        try {
+            $tmpDir = __DIR__.'/../../Fixtures/ListFilesTest/using-getcwd';
+            $tmpFile = $tmpDir.'/'.ltrim(getcwd(), '/').'-out.php';
+            self::$filesystem->dumpFile($tmpFile, '<?php function a() {  }');
+
+            $tmpFile = realpath($tmpFile);
+            self::assertFileExists($tmpFile);
+
+            $commandTester = $this->doTestExecute([
+                '--config' => __DIR__.'/../../Fixtures/ListFilesTest/.php-cs-fixer.using-getcwd.php',
+            ]);
+            $expectedPath = str_replace('/', \DIRECTORY_SEPARATOR, './'.Path::makeRelative($tmpFile, getcwd()));
+            self::assertSame(0, $commandTester->getStatusCode());
+            self::assertSame(escapeshellarg($expectedPath).PHP_EOL, $commandTester->getDisplay());
+        } finally {
+            self::$filesystem->remove($tmpDir);
+        }
     }
 
     /**

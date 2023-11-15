@@ -23,8 +23,10 @@ Rule sets
 
 The rule is part of the following rule sets:
 
-@PhpCsFixer
-  Using the `@PhpCsFixer <./../../ruleSets/PhpCsFixer.rst>`_ rule set will enable the ``lambda_not_used_import`` rule.
+- `@PhpCsFixer <./../../ruleSets/PhpCsFixer.rst>`_
+- `@Symfony <./../../ruleSets/Symfony.rst>`_
 
-@Symfony
-  Using the `@Symfony <./../../ruleSets/Symfony.rst>`_ rule set will enable the ``lambda_not_used_import`` rule.
+Source class
+------------
+
+`PhpCsFixer\\Fixer\\FunctionNotation\\LambdaNotUsedImportFixer <./../src/Fixer/FunctionNotation/LambdaNotUsedImportFixer.php>`_

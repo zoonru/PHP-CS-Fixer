@@ -16,33 +16,30 @@ namespace PhpCsFixer\Fixer\FunctionNotation;
 
 use PhpCsFixer\AbstractPhpdocToTypeDeclarationFixer;
 use PhpCsFixer\DocBlock\Annotation;
+use PhpCsFixer\FixerDefinition\CodeSample;
 use PhpCsFixer\FixerDefinition\FixerDefinition;
 use PhpCsFixer\FixerDefinition\FixerDefinitionInterface;
-use PhpCsFixer\FixerDefinition\VersionSpecification;
-use PhpCsFixer\FixerDefinition\VersionSpecificCodeSample;
 use PhpCsFixer\Tokenizer\Token;
 use PhpCsFixer\Tokenizer\Tokens;
 
 final class PhpdocToPropertyTypeFixer extends AbstractPhpdocToTypeDeclarationFixer
 {
+    private const TYPE_CHECK_TEMPLATE = '<?php class A { private %s $b; }';
+
     /**
      * @var array<string, true>
      */
     private array $skippedTypes = [
-        'mixed' => true,
         'resource' => true,
         'null' => true,
     ];
 
-    /**
-     * {@inheritdoc}
-     */
     public function getDefinition(): FixerDefinitionInterface
     {
         return new FixerDefinition(
             'EXPERIMENTAL: Takes `@var` annotation of non-mixed types and adjusts accordingly the property signature. Requires PHP >= 7.4.',
             [
-                new VersionSpecificCodeSample(
+                new CodeSample(
                     '<?php
 class Foo {
     /** @var int */
@@ -51,9 +48,8 @@ class Foo {
     private $bar;
 }
 ',
-                    new VersionSpecification(7_04_00)
                 ),
-                new VersionSpecificCodeSample(
+                new CodeSample(
                     '<?php
 class Foo {
     /** @var int */
@@ -62,7 +58,6 @@ class Foo {
     private $bar;
 }
 ',
-                    new VersionSpecification(7_04_00),
                     ['scalar_types' => false]
                 ),
             ],
@@ -71,9 +66,6 @@ class Foo {
         );
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function isCandidate(Tokens $tokens): bool
     {
         return $tokens->isTokenKindFound(T_DOC_COMMENT);
@@ -95,9 +87,6 @@ class Foo {
         return isset($this->skippedTypes[$type]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function applyFix(\SplFileInfo $file, Tokens $tokens): void
     {
         for ($index = $tokens->count() - 1; 0 < $index; --$index) {
@@ -105,6 +94,16 @@ class Foo {
                 $this->fixClass($tokens, $index);
             }
         }
+    }
+
+    protected function createTokensFromRawType(string $type): Tokens
+    {
+        $typeTokens = Tokens::fromCode(sprintf(self::TYPE_CHECK_TEMPLATE, $type));
+        $typeTokens->clearRange(0, 8);
+        $typeTokens->clearRange(\count($typeTokens) - 5, \count($typeTokens) - 1);
+        $typeTokens->clearEmptyTokens();
+
+        return $typeTokens;
     }
 
     private function fixClass(Tokens $tokens, int $index): void
@@ -146,6 +145,10 @@ class Foo {
             [$propertyType, $isNullable] = $typeInfo;
 
             if (\in_array($propertyType, ['callable', 'never', 'void'], true)) {
+                continue;
+            }
+
+            if (!$this->isValidSyntax(sprintf(self::TYPE_CHECK_TEMPLATE, $propertyType))) {
                 continue;
             }
 
@@ -216,11 +219,28 @@ class Foo {
                 continue;
             }
 
-            $typeInfo = $this->getCommonTypeFromAnnotation($annotation, false);
+            $typesExpression = $annotation->getTypeExpression();
 
-            if (!isset($propertyTypes[$propertyName])) {
-                $propertyTypes[$propertyName] = [];
-            } elseif ($typeInfo !== $propertyTypes[$propertyName]) {
+            if (null === $typesExpression) {
+                continue;
+            }
+
+            $typeInfo = $this->getCommonTypeInfo($typesExpression, false);
+            $unionTypes = null;
+
+            if (null === $typeInfo) {
+                $unionTypes = $this->getUnionTypes($typesExpression, false);
+            }
+
+            if (null === $typeInfo && null === $unionTypes) {
+                continue;
+            }
+
+            if (null !== $unionTypes) {
+                $typeInfo = [$unionTypes, false];
+            }
+
+            if (\array_key_exists($propertyName, $propertyTypes) && $typeInfo !== $propertyTypes[$propertyName]) {
                 return null;
             }
 

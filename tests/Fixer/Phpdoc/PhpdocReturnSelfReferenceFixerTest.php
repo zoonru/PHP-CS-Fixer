@@ -25,7 +25,7 @@ use PhpCsFixer\Tests\Test\AbstractFixerTestCase;
 final class PhpdocReturnSelfReferenceFixerTest extends AbstractFixerTestCase
 {
     /**
-     * @dataProvider provideDefaultConfigurationTestCases
+     * @dataProvider provideFixWithDefaultConfigurationCases
      */
     public function testFixWithDefaultConfiguration(string $expected, ?string $input = null): void
     {
@@ -33,25 +33,28 @@ final class PhpdocReturnSelfReferenceFixerTest extends AbstractFixerTestCase
         $this->doTest($expected, $input);
     }
 
-    public static function provideDefaultConfigurationTestCases(): array
+    public static function provideFixWithDefaultConfigurationCases(): iterable
     {
-        return [
-            [
-                '<?php interface A{/** @return    $this */public function test();}',
-                '<?php interface A{/** @return    this */public function test();}',
-            ],
-            [
-                '<?php interface B{/** @return self|int */function test();}',
-                '<?php interface B{/** @return $SELF|int */function test();}',
-            ],
-            [
-                '<?php class D {} /** @return {@this} */ require_once($a);echo 1;echo 1;echo 1;echo 1;echo 1;echo 1;echo 1;echo 1;',
-            ],
-            [
-                '<?php /** @return this */ require_once($a);echo 1;echo 1;echo 1;echo 1;echo 1;echo 1;echo 1;echo 1; class E {}',
-            ],
-            [
-                '<?php
+        yield [
+            '<?php interface A{/** @return    $this */public function test();}',
+            '<?php interface A{/** @return    this */public function test();}',
+        ];
+
+        yield [
+            '<?php interface B{/** @return self|int */function test();}',
+            '<?php interface B{/** @return $SELF|int */function test();}',
+        ];
+
+        yield [
+            '<?php class D {} /** @return {@this} */ require_once($a);echo 1;echo 1;echo 1;echo 1;echo 1;echo 1;echo 1;echo 1;',
+        ];
+
+        yield [
+            '<?php /** @return this */ require_once($a);echo 1;echo 1;echo 1;echo 1;echo 1;echo 1;echo 1;echo 1; class E {}',
+        ];
+
+        yield [
+            '<?php
 
 trait SomeTrait
 {
@@ -62,7 +65,7 @@ trait SomeTrait
     }
 }
 // class Foo { use Bla; } $a = (new Foo())->someTest();',
-                '<?php
+            '<?php
 
 trait SomeTrait
 {
@@ -73,14 +76,13 @@ trait SomeTrait
     }
 }
 // class Foo { use Bla; } $a = (new Foo())->someTest();',
-            ],
         ];
     }
 
     /**
      * @param array<string, string> $configuration
      *
-     * @dataProvider provideTestCases
+     * @dataProvider provideFixCases
      */
     public function testFix(string $expected, ?string $input = null, array $configuration = []): void
     {
@@ -88,14 +90,12 @@ trait SomeTrait
         $this->doTest($expected, $input);
     }
 
-    public static function provideTestCases(): array
+    public static function provideFixCases(): iterable
     {
-        return [
-            [
-                '<?php interface C{/** @return $self|int */function test();}',
-                null,
-                ['$static' => 'static'],
-            ],
+        yield [
+            '<?php interface C{/** @return $self|int */function test();}',
+            null,
+            ['$static' => 'static'],
         ];
     }
 
@@ -109,7 +109,7 @@ trait SomeTrait
 
         $expected = sprintf('<?php
 /**
- * Please do not use @return %s|static|self|this|$static|$self|@static|@self|@this as return type hint
+ * Please do not use @return %s|static|self|this|$static|$self|@static|@self|@this as return type declaration
  */
 class F
 {
@@ -127,7 +127,7 @@ class F
 
         $input = sprintf('<?php
 /**
- * Please do not use @return %s|static|self|this|$static|$self|@static|@self|@this as return type hint
+ * Please do not use @return %s|static|self|this|$static|$self|@static|@self|@this as return type declaration
  */
 class F
 {
@@ -146,16 +146,19 @@ class F
         $this->doTest($expected, $input);
     }
 
-    public static function provideGeneratedFixCases(): array
+    public static function provideGeneratedFixCases(): iterable
     {
-        return [
-            ['$this', 'this'],
-            ['$this', '@this'],
-            ['self', '$self'],
-            ['self', '@self'],
-            ['static', '$static'],
-            ['static', '@STATIC'],
-        ];
+        yield ['$this', 'this'];
+
+        yield ['$this', '@this'];
+
+        yield ['self', '$self'];
+
+        yield ['self', '@self'];
+
+        yield ['static', '$static'];
+
+        yield ['static', '@STATIC'];
     }
 
     /**
@@ -171,19 +174,18 @@ class F
         $this->fixer->configure($configuration);
     }
 
-    public static function provideInvalidConfigurationCases(): array
+    public static function provideInvalidConfigurationCases(): iterable
     {
-        return [
-            [
-                ['replacements' => [1 => 'a']],
-                'Invalid configuration: Unknown key "integer#1", expected any of "this", "@this", "$self", "@self", "$static", "@static".',
-            ],
-            [
-                ['replacements' => [
-                    'this' => 'foo',
-                ]],
-                'Invalid configuration: Unknown value "string#foo", expected any of "$this", "static", "self".',
-            ],
+        yield [
+            ['replacements' => [1 => 'a']],
+            'Invalid configuration: Unknown key "integer#1", expected any of "this", "@this", "$self", "@self", "$static" and "@static".',
+        ];
+
+        yield [
+            ['replacements' => [
+                'this' => 'foo',
+            ]],
+            'Invalid configuration: Unknown value "string#foo", expected any of "$this", "static" and "self".',
         ];
     }
 

@@ -26,7 +26,7 @@ final class AllowedValueSubsetTest extends TestCase
 {
     public function testConstructor(): void
     {
-        static::assertIsCallable(new AllowedValueSubset(['foo', 'bar']));
+        self::assertIsCallable(new AllowedValueSubset(['foo', 'bar']));
     }
 
     public static function provideGetAllowedValuesAreSortedCases(): iterable
@@ -52,7 +52,7 @@ final class AllowedValueSubsetTest extends TestCase
     {
         $subset = new AllowedValueSubset($input);
 
-        static::assertSame($expected, $subset->getAllowedValues());
+        self::assertSame($expected, $subset->getAllowedValues());
     }
 
     /**
@@ -64,64 +64,74 @@ final class AllowedValueSubsetTest extends TestCase
     {
         $subset = new AllowedValueSubset(['foo', 'bar']);
 
-        static::assertSame($expectedResult, $subset($inputValue));
+        self::assertSame($expectedResult, $subset($inputValue));
     }
 
-    public static function provideInvokeCases(): array
+    public static function provideInvokeCases(): iterable
     {
-        return [
-            [
-                ['foo', 'bar'],
-                true,
-            ],
-            [
-                ['bar', 'foo'],
-                true,
-            ],
-            [
-                ['foo'],
-                true,
-            ],
-            [
-                ['bar'],
-                true,
-            ],
-            [
-                [],
-                true,
-            ],
-            [
-                ['foo', 'bar', 'baz'],
-                false,
-            ],
-            [
-                ['baz'],
-                false,
-            ],
-            [
-                1,
-                false,
-            ],
-            [
-                1.2,
-                false,
-            ],
-            [
-                'foo',
-                false,
-            ],
-            [
-                new \stdClass(),
-                false,
-            ],
-            [
-                true,
-                false,
-            ],
-            [
-                null,
-                false,
-            ],
+        yield [
+            ['foo', 'bar'],
+            true,
+        ];
+
+        yield [
+            ['bar', 'foo'],
+            true,
+        ];
+
+        yield [
+            ['foo'],
+            true,
+        ];
+
+        yield [
+            ['bar'],
+            true,
+        ];
+
+        yield [
+            [],
+            true,
+        ];
+
+        yield [
+            ['foo', 'bar', 'baz'],
+            false,
+        ];
+
+        yield [
+            ['baz'],
+            false,
+        ];
+
+        yield [
+            1,
+            false,
+        ];
+
+        yield [
+            1.2,
+            false,
+        ];
+
+        yield [
+            'foo',
+            false,
+        ];
+
+        yield [
+            new \stdClass(),
+            false,
+        ];
+
+        yield [
+            true,
+            false,
+        ];
+
+        yield [
+            null,
+            false,
         ];
     }
 
@@ -131,6 +141,6 @@ final class AllowedValueSubsetTest extends TestCase
 
         $subset = new AllowedValueSubset($values);
 
-        static::assertSame($values, $subset->getAllowedValues());
+        self::assertSame($values, $subset->getAllowedValues());
     }
 }

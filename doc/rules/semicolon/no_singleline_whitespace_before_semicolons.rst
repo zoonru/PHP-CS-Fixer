@@ -22,8 +22,10 @@ Rule sets
 
 The rule is part of the following rule sets:
 
-@PhpCsFixer
-  Using the `@PhpCsFixer <./../../ruleSets/PhpCsFixer.rst>`_ rule set will enable the ``no_singleline_whitespace_before_semicolons`` rule.
+- `@PhpCsFixer <./../../ruleSets/PhpCsFixer.rst>`_
+- `@Symfony <./../../ruleSets/Symfony.rst>`_
 
-@Symfony
-  Using the `@Symfony <./../../ruleSets/Symfony.rst>`_ rule set will enable the ``no_singleline_whitespace_before_semicolons`` rule.
+Source class
+------------
+
+`PhpCsFixer\\Fixer\\Semicolon\\NoSinglelineWhitespaceBeforeSemicolonsFixer <./../src/Fixer/Semicolon/NoSinglelineWhitespaceBeforeSemicolonsFixer.php>`_

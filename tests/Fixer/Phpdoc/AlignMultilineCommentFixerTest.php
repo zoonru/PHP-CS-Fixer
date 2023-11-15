@@ -42,11 +42,10 @@ final class AlignMultilineCommentFixerTest extends AbstractFixerTestCase
         $this->doTest($expected, $input);
     }
 
-    public static function provideDefaultCases(): array
+    public static function provideDefaultCases(): iterable
     {
-        return [
-            [
-                '<?php
+        yield [
+            '<?php
 $a = 1;
     /**
      * Doc comment
@@ -56,7 +55,7 @@ $a = 1;
      * first without an asterisk
      * second without an asterisk or space
      */',
-                '<?php
+            '<?php
 $a = 1;
     /**
      * Doc comment
@@ -66,93 +65,103 @@ $a = 1;
     first without an asterisk
 second without an asterisk or space
    */',
-            ],
-            [
-                '<?php
+        ];
+
+        yield [
+            '<?php
     /**
      * Document start
      */',
-                '<?php
+            '<?php
     /**
 * Document start
     */',
-            ],
-            [
-                "<?php\n \n /**\n  * Two new lines\n  */",
-                "<?php\n \n /**\n* Two new lines\n*/",
-            ],
-            [
-                "<?php
+        ];
+
+        yield [
+            "<?php\n \n /**\n  * Two new lines\n  */",
+            "<?php\n \n /**\n* Two new lines\n*/",
+        ];
+
+        yield [
+            "<?php
 \t/**
 \t * Tabs as indentation
 \t */",
-                "<?php
+            "<?php
 \t/**
 * Tabs as indentation
         */",
-            ],
-            [
-                '<?php
+        ];
+
+        yield [
+            '<?php
 $a = 1;
 /**
  * Doc command without prior indentation
  */',
-                '<?php
+            '<?php
 $a = 1;
 /**
 * Doc command without prior indentation
 */',
-            ],
-            [
-                '<?php
+        ];
+
+        yield [
+            '<?php
 /**
  * Doc command without prior indentation
  * Document start
  */',
-                '<?php
+            '<?php
 /**
 * Doc command without prior indentation
 * Document start
 */',
-            ],
+        ];
 
-            // Untouched cases
-            [
-                '<?php
+        // Untouched cases
+        yield [
+            '<?php
     /*
      * Multiline comment
        *
 *
    */',
-            ],
-            [
-                '<?php
+        ];
+
+        yield [
+            '<?php
     /** inline doc comment */',
-            ],
-            [
-                '<?php
+        ];
+
+        yield [
+            '<?php
  $a=1;  /**
 *
  doc comment that doesn\'t start in a new line
 
 */',
-            ],
-            [
-                '<?php
+        ];
+
+        yield [
+            '<?php
     # Hash single line comments are untouched
      #
    #
       #',
-            ],
-            [
-                '<?php
+        ];
+
+        yield [
+            '<?php
     // Slash single line comments are untouched
      //
    //
       //',
-            ],
-            'uni code test' => [
-                '<?php
+        ];
+
+        yield 'uni code test' => [
+            '<?php
 class A
 {
     /**
@@ -167,7 +176,6 @@ class A
     {
     }
 }',
-            ],
         ];
     }
 
@@ -180,34 +188,35 @@ class A
         $this->doTest($expected, $input);
     }
 
-    public static function provideDocLikeMultilineCommentsCases(): array
+    public static function provideDocLikeMultilineCommentsCases(): iterable
     {
-        return [
-            [
-                '<?php
+        yield [
+            '<?php
     /*
      * Doc-like Multiline comment
      *
      *
      */',
-                '<?php
+            '<?php
     /*
      * Doc-like Multiline comment
        *
 *
    */',
-            ],
-            [
-                '<?php
+        ];
+
+        yield [
+            '<?php
     /*
      * Multiline comment with mixed content
        *
   Line without an asterisk
 *
    */',
-            ],
-            [
-                '<?php
+        ];
+
+        yield [
+            '<?php
     /*
      * Two empty lines
         *
@@ -215,7 +224,6 @@ class A
 
 *
    */',
-            ],
         ];
     }
 
@@ -228,25 +236,23 @@ class A
         $this->doTest($expected, $input);
     }
 
-    public static function provideMixedContentMultilineCommentsCases(): array
+    public static function provideMixedContentMultilineCommentsCases(): iterable
     {
-        return [
-            [
-                '<?php
+        yield [
+            '<?php
     /*
      * Multiline comment with mixed content
      *
   Line without an asterisk
      *
      */',
-                '<?php
+            '<?php
     /*
      * Multiline comment with mixed content
        *
   Line without an asterisk
 *
    */',
-            ],
         ];
     }
 

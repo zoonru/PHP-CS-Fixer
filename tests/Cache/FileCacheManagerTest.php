@@ -35,14 +35,14 @@ final class FileCacheManagerTest extends TestCase
     {
         $reflection = new \ReflectionClass(FileCacheManager::class);
 
-        static::assertTrue($reflection->isFinal());
+        self::assertTrue($reflection->isFinal());
     }
 
     public function testImplementsCacheManagerInterface(): void
     {
         $reflection = new \ReflectionClass(FileCacheManager::class);
 
-        static::assertTrue($reflection->implementsInterface(CacheManagerInterface::class));
+        self::assertTrue($reflection->implementsInterface(CacheManagerInterface::class));
     }
 
     public function testCreatesCacheIfHandlerReturnedNoCache(): void
@@ -51,9 +51,7 @@ final class FileCacheManagerTest extends TestCase
 
         $handlerProphecy = $this->prophesize(FileHandlerInterface::class);
         $handlerProphecy->read()->shouldBeCalled()->willReturn(null);
-        $handlerProphecy->write(Argument::that(static function (CacheInterface $cache) use ($signature): bool {
-            return $cache->getSignature() === $signature;
-        }))->shouldBeCalled();
+        $handlerProphecy->write(Argument::that(static fn (CacheInterface $cache): bool => $cache->getSignature() === $signature))->shouldBeCalled();
         $handler = $handlerProphecy->reveal();
 
         $manager = new FileCacheManager(
@@ -78,9 +76,7 @@ final class FileCacheManagerTest extends TestCase
 
         $handlerProphecy = $this->prophesize(FileHandlerInterface::class);
         $handlerProphecy->read()->shouldBeCalled()->willReturn($cache);
-        $handlerProphecy->write(Argument::that(static function (CacheInterface $cache) use ($signature): bool {
-            return $cache->getSignature() === $signature;
-        }))->shouldBeCalled();
+        $handlerProphecy->write(Argument::that(static fn (CacheInterface $cache): bool => $cache->getSignature() === $signature))->shouldBeCalled();
         $handler = $handlerProphecy->reveal();
 
         $manager = new FileCacheManager(
@@ -91,7 +87,7 @@ final class FileCacheManagerTest extends TestCase
         unset($manager);
     }
 
-    public function testUsesCacheIfCachedSignatureIsEqual(): void
+    public function testUsesCacheIfCachedSignatureIsEqualAndNoFileWasUpdated(): void
     {
         $cachedSignature = $this->prophesize(SignatureInterface::class)->reveal();
 
@@ -105,7 +101,7 @@ final class FileCacheManagerTest extends TestCase
 
         $handlerProphecy = $this->prophesize(FileHandlerInterface::class);
         $handlerProphecy->read()->shouldBeCalled()->willReturn($cache);
-        $handlerProphecy->write(Argument::is($cache))->shouldBeCalled();
+        $handlerProphecy->write(Argument::is($cache))->shouldNotBeCalled();
         $handler = $handlerProphecy->reveal();
 
         $manager = new FileCacheManager(
@@ -143,7 +139,7 @@ final class FileCacheManagerTest extends TestCase
             $signature
         );
 
-        static::assertTrue($manager->needFixing($file, $fileContent));
+        self::assertTrue($manager->needFixing($file, $fileContent));
     }
 
     public function testNeedFixingReturnsTrueIfCachedHashIsDifferent(): void
@@ -175,7 +171,7 @@ final class FileCacheManagerTest extends TestCase
             $signature
         );
 
-        static::assertTrue($manager->needFixing($file, $fileContent));
+        self::assertTrue($manager->needFixing($file, $fileContent));
     }
 
     public function testNeedFixingReturnsFalseIfCachedHashIsIdentical(): void
@@ -206,7 +202,7 @@ final class FileCacheManagerTest extends TestCase
             $signature
         );
 
-        static::assertFalse($manager->needFixing($file, $fileContent));
+        self::assertFalse($manager->needFixing($file, $fileContent));
     }
 
     public function testNeedFixingUsesRelativePathToFile(): void
@@ -244,7 +240,7 @@ final class FileCacheManagerTest extends TestCase
             $directoryProphecy->reveal()
         );
 
-        static::assertTrue($manager->needFixing($file, $fileContent));
+        self::assertTrue($manager->needFixing($file, $fileContent));
     }
 
     public function testSetFileSetsHashOfFileContent(): void
@@ -267,7 +263,7 @@ final class FileCacheManagerTest extends TestCase
         $handlerProphecy = $this->prophesize(FileHandlerInterface::class);
         $handlerProphecy->read()->willReturn($cache);
         $handlerProphecy->getFile()->willReturn($cacheFile);
-        $handlerProphecy->write(Argument::is($cache));
+        $handlerProphecy->write(Argument::is($cache))->shouldBeCalled();
         $handler = $handlerProphecy->reveal();
 
         $manager = new FileCacheManager(

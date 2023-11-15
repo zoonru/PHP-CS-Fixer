@@ -7,23 +7,32 @@ Orders the interfaces in an ``implements`` or ``interface extends`` clause.
 Configuration
 -------------
 
-``order``
-~~~~~~~~~
+``case_sensitive``
+~~~~~~~~~~~~~~~~~~
 
-How the interfaces should be ordered.
+Whether the sorting should be case sensitive.
 
-Allowed values: ``'alpha'``, ``'length'``
+Allowed types: ``bool``
 
-Default value: ``'alpha'``
+Default value: ``false``
 
 ``direction``
 ~~~~~~~~~~~~~
 
 Which direction the interfaces should be ordered.
 
-Allowed values: ``'ascend'``, ``'descend'``
+Allowed values: ``'ascend'`` and ``'descend'``
 
 Default value: ``'ascend'``
+
+``order``
+~~~~~~~~~
+
+How the interfaces should be ordered.
+
+Allowed values: ``'alpha'`` and ``'length'``
+
+Default value: ``'alpha'``
 
 Examples
 --------
@@ -95,3 +104,41 @@ With configuration: ``['order' => 'length', 'direction' => 'descend']``.
 
    -interface ExampleB extends MuchLonger, Short, Longer {}
    +interface ExampleB extends MuchLonger, Longer, Short {}
+
+Example #5
+~~~~~~~~~~
+
+With configuration: ``['order' => 'alpha']``.
+
+.. code-block:: diff
+
+   --- Original
+   +++ New
+    <?php
+
+   -final class ExampleA implements IgnorecaseB, IgNoReCaSeA, IgnoreCaseC {}
+   +final class ExampleA implements IgNoReCaSeA, IgnorecaseB, IgnoreCaseC {}
+
+   -interface ExampleB extends IgnorecaseB, IgNoReCaSeA, IgnoreCaseC {}
+   +interface ExampleB extends IgNoReCaSeA, IgnorecaseB, IgnoreCaseC {}
+
+Example #6
+~~~~~~~~~~
+
+With configuration: ``['order' => 'alpha', 'case_sensitive' => true]``.
+
+.. code-block:: diff
+
+   --- Original
+   +++ New
+    <?php
+
+   -final class ExampleA implements Casesensitivea, CaseSensitiveA, CasesensitiveA {}
+   +final class ExampleA implements CaseSensitiveA, CasesensitiveA, Casesensitivea {}
+
+   -interface ExampleB extends Casesensitivea, CaseSensitiveA, CasesensitiveA {}
+   +interface ExampleB extends CaseSensitiveA, CasesensitiveA, Casesensitivea {}
+Source class
+------------
+
+`PhpCsFixer\\Fixer\\ClassNotation\\OrderedInterfacesFixer <./../src/Fixer/ClassNotation/OrderedInterfacesFixer.php>`_

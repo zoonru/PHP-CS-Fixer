@@ -27,8 +27,10 @@ Rule sets
 
 The rule is part of the following rule sets:
 
-@PhpCsFixer
-  Using the `@PhpCsFixer <./../../ruleSets/PhpCsFixer.rst>`_ rule set will enable the ``no_empty_comment`` rule.
+- `@PhpCsFixer <./../../ruleSets/PhpCsFixer.rst>`_
+- `@Symfony <./../../ruleSets/Symfony.rst>`_
 
-@Symfony
-  Using the `@Symfony <./../../ruleSets/Symfony.rst>`_ rule set will enable the ``no_empty_comment`` rule.
+Source class
+------------
+
+`PhpCsFixer\\Fixer\\Comment\\NoEmptyCommentFixer <./../src/Fixer/Comment/NoEmptyCommentFixer.php>`_

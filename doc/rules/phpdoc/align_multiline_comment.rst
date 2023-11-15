@@ -15,7 +15,7 @@ Whether to fix PHPDoc comments only (``phpdocs_only``), any multi-line comment
 whose lines all start with an asterisk (``phpdocs_like``) or any multi-line
 comment (``all_multiline``).
 
-Allowed values: ``'all_multiline'``, ``'phpdocs_like'``, ``'phpdocs_only'``
+Allowed values: ``'all_multiline'``, ``'phpdocs_like'`` and ``'phpdocs_only'``
 
 Default value: ``'phpdocs_only'``
 
@@ -81,8 +81,10 @@ Rule sets
 
 The rule is part of the following rule sets:
 
-@PhpCsFixer
-  Using the `@PhpCsFixer <./../../ruleSets/PhpCsFixer.rst>`_ rule set will enable the ``align_multiline_comment`` rule with the default config.
+- `@PhpCsFixer <./../../ruleSets/PhpCsFixer.rst>`_
+- `@Symfony <./../../ruleSets/Symfony.rst>`_
 
-@Symfony
-  Using the `@Symfony <./../../ruleSets/Symfony.rst>`_ rule set will enable the ``align_multiline_comment`` rule with the default config.
+Source class
+------------
+
+`PhpCsFixer\\Fixer\\Phpdoc\\AlignMultilineCommentFixer <./../src/Fixer/Phpdoc/AlignMultilineCommentFixer.php>`_

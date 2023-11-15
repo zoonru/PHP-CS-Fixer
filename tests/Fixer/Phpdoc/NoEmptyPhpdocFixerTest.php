@@ -31,11 +31,10 @@ final class NoEmptyPhpdocFixerTest extends AbstractFixerTestCase
         $this->doTest($expected, $input);
     }
 
-    public static function provideFixCases(): array
+    public static function provideFixCases(): iterable
     {
-        return [
-            [
-                '<?php
+        yield [
+            '<?php
                     /** a */
 
                     '.'
@@ -51,7 +50,7 @@ final class NoEmptyPhpdocFixerTest extends AbstractFixerTestCase
 
                      /** *test* */
                 ',
-                '<?php
+            '<?php
                     /**  *//** a *//**  */
 
                     /**
@@ -73,7 +72,6 @@ final class NoEmptyPhpdocFixerTest extends AbstractFixerTestCase
 
                      /** *test* */
                 ',
-            ],
         ];
     }
 }

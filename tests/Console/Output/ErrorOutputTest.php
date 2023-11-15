@@ -29,7 +29,7 @@ use Symfony\Component\Console\Output\StreamOutput;
 final class ErrorOutputTest extends TestCase
 {
     /**
-     * @dataProvider provideTestCases
+     * @dataProvider provideErrorOutputCases
      */
     public function testErrorOutput(Error $error, int $verbosityLevel, int $lineNumber, int $exceptionLineNumber, string $process): void
     {
@@ -68,31 +68,31 @@ Files that were not fixed due to errors reported during %s:
         if ($verbosityLevel >= OutputInterface::VERBOSITY_DEBUG) {
             $startWith .= sprintf(
                 '
-      PhpCsFixer\Tests\Console\Output\ErrorOutputTest->getErrorAndLineNumber()
+      PhpCsFixer\Tests\Console\Output\ErrorOutputTest::getErrorAndLineNumber()
         in %s at line %d
-      PhpCsFixer\Tests\Console\Output\ErrorOutputTest->provideTestCases()
-      ReflectionMethod->invoke()
+      PhpCsFixer\Tests\Console\Output\ErrorOutputTest::provideErrorOutputCases()
 ',
                 __FILE__,
                 $lineNumber
             );
         }
 
-        static::assertStringStartsWith($startWith, $displayed);
+        self::assertStringStartsWith($startWith, $displayed);
     }
 
-    public function provideTestCases(): array
+    public static function provideErrorOutputCases(): iterable
     {
         $lineNumber = __LINE__;
-        [$exceptionLineNumber, $error] = $this->getErrorAndLineNumber(); // note: keep call and __LINE__ separated with one line break
+        [$exceptionLineNumber, $error] = self::getErrorAndLineNumber(); // note: keep call and __LINE__ separated with one line break
         ++$lineNumber;
 
-        return [
-            [$error, OutputInterface::VERBOSITY_NORMAL, $lineNumber, $exceptionLineNumber, 'VN'],
-            [$error, OutputInterface::VERBOSITY_VERBOSE, $lineNumber, $exceptionLineNumber, 'VV'],
-            [$error, OutputInterface::VERBOSITY_VERY_VERBOSE, $lineNumber, $exceptionLineNumber, 'VVV'],
-            [$error, OutputInterface::VERBOSITY_DEBUG, $lineNumber, $exceptionLineNumber, 'DEBUG'],
-        ];
+        yield [$error, OutputInterface::VERBOSITY_NORMAL, $lineNumber, $exceptionLineNumber, 'VN'];
+
+        yield [$error, OutputInterface::VERBOSITY_VERBOSE, $lineNumber, $exceptionLineNumber, 'VV'];
+
+        yield [$error, OutputInterface::VERBOSITY_VERY_VERBOSE, $lineNumber, $exceptionLineNumber, 'VVV'];
+
+        yield [$error, OutputInterface::VERBOSITY_DEBUG, $lineNumber, $exceptionLineNumber, 'DEBUG'];
     }
 
     public function testLintingExceptionOutputsAppliedFixersAndDiff(): void
@@ -100,13 +100,13 @@ Files that were not fixed due to errors reported during %s:
         $fixerName = uniqid('braces_');
         $diffSpecificContext = uniqid('added_');
         $diff = <<<EOT
---- Original
-+++ New
-@@ @@
- same line
--deleted
-+{$diffSpecificContext}
-EOT;
+            --- Original
+            +++ New
+            @@ @@
+             same line
+            -deleted
+            +{$diffSpecificContext}
+            EOT;
 
         $lintError = new Error(Error::TYPE_LINT, __FILE__, new LintingException(), [$fixerName], $diff);
 
@@ -129,13 +129,13 @@ EOT;
 
         $displayed = $this->readFullStreamOutput($output);
 
-        static::assertStringContainsString($fixerName, $displayed);
-        static::assertStringContainsString($diffSpecificContext, $displayed);
+        self::assertStringContainsString($fixerName, $displayed);
+        self::assertStringContainsString($diffSpecificContext, $displayed);
 
-        static::assertStringContainsString($noDiffLintFixerName, $displayed);
+        self::assertStringContainsString($noDiffLintFixerName, $displayed);
 
-        static::assertStringNotContainsString($invalidErrorFixerName, $displayed);
-        static::assertStringNotContainsString($invalidDiff, $displayed);
+        self::assertStringNotContainsString($invalidErrorFixerName, $displayed);
+        self::assertStringNotContainsString($invalidDiff, $displayed);
     }
 
     private function createStreamOutput(int $verbosityLevel): StreamOutput
@@ -151,6 +151,7 @@ EOT;
     {
         rewind($output->getStream());
         $displayed = stream_get_contents($output->getStream());
+
         // normalize line breaks,
         // as we output using SF `writeln` we are not sure what line ending has been used as it is
         // based on the platform/console/terminal used
@@ -160,7 +161,7 @@ EOT;
     /**
      * @return array{int, Error}
      */
-    private function getErrorAndLineNumber(): array
+    private static function getErrorAndLineNumber(): array
     {
         $lineNumber = __LINE__;
         $exception = new \RuntimeException(// note: keep exception constructor and __LINE__ separated with one line break

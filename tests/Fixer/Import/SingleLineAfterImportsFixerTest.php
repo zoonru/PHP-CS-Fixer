@@ -514,17 +514,16 @@ use some\a\ClassA; use function some\a\fn_a; use const some\c;
         $this->doTest($expected, $input);
     }
 
-    public static function provideMessyWhitespacesCases(): array
+    public static function provideMessyWhitespacesCases(): iterable
     {
-        return [
-            [
-                "<?php namespace A\\B;\r\n    use D;\r\n\r\n    class C {}",
-                "<?php namespace A\\B;\r\n    use D;\r\n\r\n\r\n    class C {}",
-            ],
-            [
-                "<?php namespace A\\B;\r\n    use D;\r\n\r\n    class C {}",
-                "<?php namespace A\\B;\r\n    use D;\r\n    class C {}",
-            ],
+        yield [
+            "<?php namespace A\\B;\r\n    use D;\r\n\r\n    class C {}",
+            "<?php namespace A\\B;\r\n    use D;\r\n\r\n\r\n    class C {}",
+        ];
+
+        yield [
+            "<?php namespace A\\B;\r\n    use D;\r\n\r\n    class C {}",
+            "<?php namespace A\\B;\r\n    use D;\r\n    class C {}",
         ];
     }
 }

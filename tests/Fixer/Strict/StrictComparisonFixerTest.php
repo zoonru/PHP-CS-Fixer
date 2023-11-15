@@ -26,20 +26,21 @@ use PhpCsFixer\Tests\Test\AbstractFixerTestCase;
 final class StrictComparisonFixerTest extends AbstractFixerTestCase
 {
     /**
-     * @dataProvider provideTestFixCases
+     * @dataProvider provideFixCases
      */
     public function testFix(string $expected, ?string $input = null): void
     {
         $this->doTest($expected, $input);
     }
 
-    public static function provideTestFixCases(): array
+    public static function provideFixCases(): iterable
     {
-        return [
-            ['<?php $a === $b;', '<?php $a == $b;'],
-            ['<?php $a !== $b;', '<?php $a != $b;'],
-            ['<?php $a !== $b;', '<?php $a <> $b;'],
-            ['<?php echo "$a === $b";'],
-        ];
+        yield ['<?php $a === $b;', '<?php $a == $b;'];
+
+        yield ['<?php $a !== $b;', '<?php $a != $b;'];
+
+        yield ['<?php $a !== $b;', '<?php $a <> $b;'];
+
+        yield ['<?php echo "$a === $b";'];
     }
 }

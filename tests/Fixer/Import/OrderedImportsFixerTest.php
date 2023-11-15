@@ -25,210 +25,287 @@ use PhpCsFixer\Tests\Test\AbstractFixerTestCase;
  */
 final class OrderedImportsFixerTest extends AbstractFixerTestCase
 {
-    public function testFixWithMultipleNamespace(): void
+    /**
+     * @dataProvider provideFixWithMultipleNamespaceCases
+     */
+    public function testFixWithMultipleNamespace(string $expected, string $input): void
+    {
+        $this->doTest($expected, $input);
+    }
+
+    public static function provideFixWithMultipleNamespaceCases(): iterable
     {
         $expected = <<<'EOF'
-<?php
+            <?php
 
-namespace FooRoo {
+            namespace FooRoo {
 
-    use Foo\Bar;
-    use Foo\Bar\Foo as Fooo, Foo\Bar\FooBar as FooBaz;
-     use Foo\Bir as FBB;
-    use Foo\Zar\Baz;
-    use SomeClass;
-       use Symfony\Annotation\Template, Zoo\Bar as ZooBar;
-    use Zoo\Tar1;
+                use Foo\Bar;
+                use Foo\Bar\Foo as Fooo, Foo\Bar\FooBar as FooBaz;
+                 use Foo\Bir as FBB;
+                use Foo\Zar\Baz;
+                use SomeClass;
+                   use Symfony\Annotation\Template, Zoo\Bar as ZooBar;
+                use Zoo\Tar1;
 
-    $a = new Bar();
-    $a = new FooBaz();
-    $a = new someclass();
+                $a = new Bar();
+                $a = new FooBaz();
+                $a = new someclass();
 
-    use Zoo\Tar2;
+                use Zoo\Tar2;
 
-    class AnnotatedClass
-    {
-        /**
-         * @Template(foobar=21)
-         * @param Entity $foo
-         */
-        public function doSomething($foo)
-        {
-            $bar = $foo->toArray();
-            /** @var ArrayInterface $bar */
+                class AnnotatedClass
+                {
+                    /**
+                     * @Template(foobar=21)
+                     * @param Entity $foo
+                     */
+                    public function doSomething($foo)
+                    {
+                        $bar = $foo->toArray();
+                        /** @var ArrayInterface $bar */
 
-            return function () use ($bar, $foo) {};
-        }
-    }
-}
+                        return function () use ($bar, $foo) {};
+                    }
+                }
+            }
 
-namespace BlaRoo {
+            namespace BlaRoo {
 
-    use Foo\Zar\Baz;
-  use SomeClass;
-    use Symfony\Annotation\Template;
-  use Symfony\Doctrine\Entities\Entity, Zoo\Bar;
+                use Foo\Zar\Baz;
+              use SomeClass;
+                use Symfony\Annotation\Template;
+              use Symfony\Doctrine\Entities\Entity, Zoo\Bar;
 
-    class AnnotatedClass
-    {
-        /**
-         * @Template(foobar=21)
-         * @param Entity $foo
-         */
-        public function doSomething($foo)
-        {
-            $bar = $foo->toArray();
-            /** @var ArrayInterface $bar */
+                class AnnotatedClass
+                {
+                    /**
+                     * @Template(foobar=21)
+                     * @param Entity $foo
+                     */
+                    public function doSomething($foo)
+                    {
+                        $bar = $foo->toArray();
+                        /** @var ArrayInterface $bar */
 
-            return function () use ($bar, $foo) {};
-        }
-    }
-}
-EOF;
+                        return function () use ($bar, $foo) {};
+                    }
+                }
+            }
+            EOF;
 
         $input = <<<'EOF'
-<?php
+            <?php
 
-namespace FooRoo {
+            namespace FooRoo {
 
-    use Foo\Bar\FooBar as FooBaz;
-    use Zoo\Bar as ZooBar, Zoo\Tar1;
-     use Foo\Bar;
-    use Foo\Zar\Baz;
-    use Symfony\Annotation\Template;
-       use Foo\Bar\Foo as Fooo, Foo\Bir as FBB;
-    use SomeClass;
+                use Foo\Bar\FooBar as FooBaz;
+                use Zoo\Bar as ZooBar, Zoo\Tar1;
+                 use Foo\Bar;
+                use Foo\Zar\Baz;
+                use Symfony\Annotation\Template;
+                   use Foo\Bar\Foo as Fooo, Foo\Bir as FBB;
+                use SomeClass;
 
-    $a = new Bar();
-    $a = new FooBaz();
-    $a = new someclass();
+                $a = new Bar();
+                $a = new FooBaz();
+                $a = new someclass();
 
-    use Zoo\Tar2;
+                use Zoo\Tar2;
 
-    class AnnotatedClass
-    {
-        /**
-         * @Template(foobar=21)
-         * @param Entity $foo
-         */
-        public function doSomething($foo)
-        {
-            $bar = $foo->toArray();
-            /** @var ArrayInterface $bar */
+                class AnnotatedClass
+                {
+                    /**
+                     * @Template(foobar=21)
+                     * @param Entity $foo
+                     */
+                    public function doSomething($foo)
+                    {
+                        $bar = $foo->toArray();
+                        /** @var ArrayInterface $bar */
 
-            return function () use ($bar, $foo) {};
-        }
-    }
-}
+                        return function () use ($bar, $foo) {};
+                    }
+                }
+            }
 
-namespace BlaRoo {
+            namespace BlaRoo {
 
-    use Foo\Zar\Baz;
-  use Zoo\Bar;
-    use SomeClass;
-  use Symfony\Annotation\Template, Symfony\Doctrine\Entities\Entity;
+                use Foo\Zar\Baz;
+              use Zoo\Bar;
+                use SomeClass;
+              use Symfony\Annotation\Template, Symfony\Doctrine\Entities\Entity;
 
-    class AnnotatedClass
-    {
-        /**
-         * @Template(foobar=21)
-         * @param Entity $foo
-         */
-        public function doSomething($foo)
-        {
-            $bar = $foo->toArray();
-            /** @var ArrayInterface $bar */
+                class AnnotatedClass
+                {
+                    /**
+                     * @Template(foobar=21)
+                     * @param Entity $foo
+                     */
+                    public function doSomething($foo)
+                    {
+                        $bar = $foo->toArray();
+                        /** @var ArrayInterface $bar */
 
-            return function () use ($bar, $foo) {};
-        }
-    }
-}
-EOF;
+                        return function () use ($bar, $foo) {};
+                    }
+                }
+            }
+            EOF;
 
-        $this->doTest($expected, $input);
+        yield [$expected, $input];
+
+        $expected = <<<'EOF'
+            <?php namespace Space1 {
+                use Foo\Bar\Foo;
+                use Symfony\Annotation\Template;
+            }
+
+            namespace Space2 { use A,B; }
+
+            namespace Space3 {
+                use Symfony\Annotation\Template;
+                use Symfony\Doctrine\Entities\Entity0, Zoo\Bar;
+                echo Bar::C;
+                use A\B;
+            }
+
+            namespace Space4{}
+            EOF;
+
+        $input = <<<'EOF'
+            <?php namespace Space1 {
+                use Symfony\Annotation\Template;
+                use Foo\Bar\Foo;
+            }
+
+            namespace Space2 { use B,A; }
+
+            namespace Space3 {
+                use Zoo\Bar;
+                use Symfony\Annotation\Template, Symfony\Doctrine\Entities\Entity0;
+                echo Bar::C;
+                use A\B;
+            }
+
+            namespace Space4{}
+            EOF;
+
+        yield [$expected, $input];
+
+        $expected =
+            '<?php
+                use B;
+                use C;
+                $foo = new C();
+                use A;
+            ';
+
+        $input =
+            '<?php
+                use C;
+                use B;
+                $foo = new C();
+                use A;
+            ';
+
+        yield [$expected, $input];
+
+        yield 'open-close groups' => [
+            '
+                <?php use X ?>
+                <?php use Z ?>
+                <?php echo X::class ?>
+                <?php use E ?>   output
+                <?php use F ?><?php echo E::class; use A; ?>
+            ',
+            '
+                <?php use Z ?>
+                <?php use X ?>
+                <?php echo X::class ?>
+                <?php use F ?>   output
+                <?php use E ?><?php echo E::class; use A; ?>
+            ',
+        ];
     }
 
     public function testFixWithComment(): void
     {
         $expected = <<<'EOF'
-The normal
-use of this fixer
-should not change this sentence nor those statements below
-use Zoo\Bar;
-use Foo\Bar;
-use Foo\Zar\Baz;
+            The normal
+            use of this fixer
+            should not change this sentence nor those statements below
+            use Zoo\Bar;
+            use Foo\Bar;
+            use Foo\Zar\Baz;
 
-<?php
+            <?php
 
-use Foo\Bar;
-use Foo\Bar\Foo as Fooo, Foo\Bar\FooBar /* He there */ as FooBaz;
- use Foo\Bir as FBB;
-use Foo\Zar\Baz;
-use SomeClass;
-   use /* check */Symfony\Annotation\Template, Symfony\Doctrine\Entities\Entity;
-use Zoo\Bar as ZooBar;
+            use Foo\Bar;
+            use Foo\Bar\Foo as Fooo, Foo\Bar\FooBar /* He there */ as FooBaz;
+             use Foo\Bir as FBB;
+            use Foo\Zar\Baz;
+            use SomeClass;
+               use /* check */Symfony\Annotation\Template, Zoo\Bar as ZooBar;
+            use Zoo\Tar;
 
-$a = new Bar();
-$a = new FooBaz();
-$a = new someclass();
+            $a = new Bar();
+            $a = new FooBaz();
+            $a = new someclass();
 
-use Zoo\Tar;
+            class AnnotatedClass
+            {
+                /**
+                 * @Template(foobar=21)
+                 * @param Entity $foo
+                 */
+                public function doSomething($foo)
+                {
+                    $bar = $foo->toArray();
+                    /** @var ArrayInterface $bar */
 
-class AnnotatedClass
-{
-    /**
-     * @Template(foobar=21)
-     * @param Entity $foo
-     */
-    public function doSomething($foo)
-    {
-        $bar = $foo->toArray();
-        /** @var ArrayInterface $bar */
-
-        return function () use ($bar, $foo) {};
-    }
-}
-EOF;
+                    return function () use ($bar, $foo) {};
+                }
+            }
+            EOF;
 
         $input = <<<'EOF'
-The normal
-use of this fixer
-should not change this sentence nor those statements below
-use Zoo\Bar;
-use Foo\Bar;
-use Foo\Zar\Baz;
+            The normal
+            use of this fixer
+            should not change this sentence nor those statements below
+            use Zoo\Bar;
+            use Foo\Bar;
+            use Foo\Zar\Baz;
 
-<?php
+            <?php
 
-use Foo\Bar\FooBar /* He there */ as FooBaz;
-use Zoo\Bar as ZooBar, Zoo\Tar;
- use Foo\Bar;
-use Foo\Zar\Baz;
-use /* check */Symfony\Annotation\Template;
-   use Foo\Bar\Foo as Fooo, Foo\Bir as FBB;
-use SomeClass;
+            use Foo\Bar\FooBar /* He there */ as FooBaz;
+            use Zoo\Bar as ZooBar, Zoo\Tar;
+             use Foo\Bar;
+            use Foo\Zar\Baz;
+            use /* check */Symfony\Annotation\Template;
+               use Foo\Bar\Foo as Fooo, Foo\Bir as FBB;
+            use SomeClass;
 
-$a = new Bar();
-$a = new FooBaz();
-$a = new someclass();
+            $a = new Bar();
+            $a = new FooBaz();
+            $a = new someclass();
 
-use Symfony\Doctrine\Entities\Entity;
+            class AnnotatedClass
+            {
+                /**
+                 * @Template(foobar=21)
+                 * @param Entity $foo
+                 */
+                public function doSomething($foo)
+                {
+                    $bar = $foo->toArray();
+                    /** @var ArrayInterface $bar */
 
-class AnnotatedClass
-{
-    /**
-     * @Template(foobar=21)
-     * @param Entity $foo
-     */
-    public function doSomething($foo)
-    {
-        $bar = $foo->toArray();
-        /** @var ArrayInterface $bar */
-
-        return function () use ($bar, $foo) {};
-    }
-}
-EOF;
+                    return function () use ($bar, $foo) {};
+                }
+            }
+            EOF;
 
         $this->doTest($expected, $input);
     }
@@ -236,74 +313,70 @@ EOF;
     public function testWithTraits(): void
     {
         $expected = <<<'EOF'
-<?php
+            <?php
 
-use Foo\Bar;
-use Foo\Bar\Foo as Fooo, Foo\Bar\FooBar as FooBaz;
- use Foo\Bir as FBB;
-use Foo\Zar\Baz;
-use SomeClass;
-   use Symfony\Annotation\Template, Symfony\Doctrine\Entities\Entity;
-use Zoo\Bar as ZooBar;
+            use Foo\Bar;
+            use Foo\Bar\Foo as Fooo, Foo\Bar\FooBar as FooBaz;
+             use Foo\Bir as FBB;
+            use Foo\Zar\Baz;
+            use SomeClass;
+               use Symfony\Annotation\Template, Zoo\Bar as ZooBar;
+            use Zoo\Tar;
 
-use Zoo\Tar;
+            trait Foo {}
 
-trait Foo {}
+            trait Zoo {}
 
-trait Zoo {}
+            class AnnotatedClass
+            {
+                use Foo, Bar;
 
-class AnnotatedClass
-{
-    use Foo, Bar;
+                /**
+                 * @Template(foobar=21)
+                 * @param Entity $foo
+                 */
+                public function doSomething($foo)
+                {
+                    $bar = $foo->toArray();
+                    /** @var ArrayInterface $bar */
 
-    /**
-     * @Template(foobar=21)
-     * @param Entity $foo
-     */
-    public function doSomething($foo)
-    {
-        $bar = $foo->toArray();
-        /** @var ArrayInterface $bar */
-
-        return function () use ($bar, $foo) {};
-    }
-}
-EOF;
+                    return function () use ($bar, $foo) {};
+                }
+            }
+            EOF;
 
         $input = <<<'EOF'
-<?php
+            <?php
 
-use Foo\Bar\FooBar as FooBaz;
-use Zoo\Bar as ZooBar, Zoo\Tar;
- use Foo\Bar;
-use Foo\Zar\Baz;
-use Symfony\Annotation\Template;
-   use Foo\Bar\Foo as Fooo, Foo\Bir as FBB;
-use SomeClass;
+            use Foo\Bar\FooBar as FooBaz;
+            use Zoo\Bar as ZooBar, Zoo\Tar;
+             use Foo\Bar;
+            use Foo\Zar\Baz;
+            use Symfony\Annotation\Template;
+               use Foo\Bar\Foo as Fooo, Foo\Bir as FBB;
+            use SomeClass;
 
-use Symfony\Doctrine\Entities\Entity;
+            trait Foo {}
 
-trait Foo {}
+            trait Zoo {}
 
-trait Zoo {}
+            class AnnotatedClass
+            {
+                use Foo, Bar;
 
-class AnnotatedClass
-{
-    use Foo, Bar;
+                /**
+                 * @Template(foobar=21)
+                 * @param Entity $foo
+                 */
+                public function doSomething($foo)
+                {
+                    $bar = $foo->toArray();
+                    /** @var ArrayInterface $bar */
 
-    /**
-     * @Template(foobar=21)
-     * @param Entity $foo
-     */
-    public function doSomething($foo)
-    {
-        $bar = $foo->toArray();
-        /** @var ArrayInterface $bar */
-
-        return function () use ($bar, $foo) {};
-    }
-}
-EOF;
+                    return function () use ($bar, $foo) {};
+                }
+            }
+            EOF;
 
         $this->doTest($expected, $input);
     }
@@ -311,90 +384,86 @@ EOF;
     public function testFixWithTraitImports(): void
     {
         $expected = <<<'EOF'
-The normal
-use of this fixer
-should not change this sentence nor those statements below
-use Zoo\Bar;
-use Foo\Bar;
-use Foo\Zar\Baz;
+            The normal
+            use of this fixer
+            should not change this sentence nor those statements below
+            use Zoo\Bar;
+            use Foo\Bar;
+            use Foo\Zar\Baz;
 
-<?php
+            <?php
 
-use Acme\MyReusableTrait;
-use Foo\Bar, Foo\Bar\Foo as Fooo;
- use Foo\Bar\FooBar as FooBaz;
-use Foo\Bir as FBB;
-use Foo\Zar\Baz;
-use SomeClass;
-   use Symfony\Annotation\Template, Symfony\Doctrine\Entities\Entity;
-use Zoo\Bar as ZooBar;
+            use Acme\MyReusableTrait;
+            use Foo\Bar, Foo\Bar\Foo as Fooo;
+             use Foo\Bar\FooBar as FooBaz;
+            use Foo\Bir as FBB;
+            use Foo\Zar\Baz;
+            use SomeClass;
+               use Symfony\Annotation\Template, Zoo\Bar as ZooBar;
+            use Zoo\Tar;
 
-$a = new Bar();
-$a = new FooBaz();
-$a = new someclass();
+            $a = new Bar();
+            $a = new FooBaz();
+            $a = new someclass();
 
-use Zoo\Tar;
+            class AnnotatedClass
+            {
+                use MyReusableTrait;
 
-class AnnotatedClass
-{
-    use MyReusableTrait;
+                /**
+                 * @Template(foobar=21)
+                 * @param Entity $foo
+                 */
+                public function doSomething($foo)
+                {
+                    $bar = $foo->toArray();
+                    /** @var ArrayInterface $bar */
 
-    /**
-     * @Template(foobar=21)
-     * @param Entity $foo
-     */
-    public function doSomething($foo)
-    {
-        $bar = $foo->toArray();
-        /** @var ArrayInterface $bar */
-
-        return function () use ($bar, $baz) {};
-    }
-}
-EOF;
+                    return function () use ($bar, $baz) {};
+                }
+            }
+            EOF;
 
         $input = <<<'EOF'
-The normal
-use of this fixer
-should not change this sentence nor those statements below
-use Zoo\Bar;
-use Foo\Bar;
-use Foo\Zar\Baz;
+            The normal
+            use of this fixer
+            should not change this sentence nor those statements below
+            use Zoo\Bar;
+            use Foo\Bar;
+            use Foo\Zar\Baz;
 
-<?php
+            <?php
 
-use Foo\Bar\FooBar as FooBaz;
-use Zoo\Bar as ZooBar, Zoo\Tar;
- use Foo\Bar;
-use Foo\Zar\Baz;
-use Acme\MyReusableTrait;
-use Symfony\Annotation\Template;
-   use Foo\Bar\Foo as Fooo, Foo\Bir as FBB;
-use SomeClass;
+            use Foo\Bar\FooBar as FooBaz;
+            use Zoo\Bar as ZooBar, Zoo\Tar;
+             use Foo\Bar;
+            use Foo\Zar\Baz;
+            use Acme\MyReusableTrait;
+            use Symfony\Annotation\Template;
+               use Foo\Bar\Foo as Fooo, Foo\Bir as FBB;
+            use SomeClass;
 
-$a = new Bar();
-$a = new FooBaz();
-$a = new someclass();
+            $a = new Bar();
+            $a = new FooBaz();
+            $a = new someclass();
 
-use Symfony\Doctrine\Entities\Entity;
+            class AnnotatedClass
+            {
+                use MyReusableTrait;
 
-class AnnotatedClass
-{
-    use MyReusableTrait;
+                /**
+                 * @Template(foobar=21)
+                 * @param Entity $foo
+                 */
+                public function doSomething($foo)
+                {
+                    $bar = $foo->toArray();
+                    /** @var ArrayInterface $bar */
 
-    /**
-     * @Template(foobar=21)
-     * @param Entity $foo
-     */
-    public function doSomething($foo)
-    {
-        $bar = $foo->toArray();
-        /** @var ArrayInterface $bar */
-
-        return function () use ($bar, $baz) {};
-    }
-}
-EOF;
+                    return function () use ($bar, $baz) {};
+                }
+            }
+            EOF;
 
         $this->doTest($expected, $input);
     }
@@ -402,38 +471,38 @@ EOF;
     public function testFixWithDifferentCases(): void
     {
         $expected = <<<'EOF'
-The normal
-use of this fixer
-should not change this sentence nor those statements below
-use Zoo\Baz;
-use abc\Bar;
+            The normal
+            use of this fixer
+            should not change this sentence nor those statements below
+            use Zoo\Baz;
+            use abc\Bar;
 
-<?php
+            <?php
 
-use abc\Bar;
-use Zoo\Baz;
+            use abc\Bar;
+            use Zoo\Baz;
 
-class Test
-{
-}
-EOF;
+            class Test
+            {
+            }
+            EOF;
 
         $input = <<<'EOF'
-The normal
-use of this fixer
-should not change this sentence nor those statements below
-use Zoo\Baz;
-use abc\Bar;
+            The normal
+            use of this fixer
+            should not change this sentence nor those statements below
+            use Zoo\Baz;
+            use abc\Bar;
 
-<?php
+            <?php
 
-use Zoo\Baz;
-use abc\Bar;
+            use Zoo\Baz;
+            use abc\Bar;
 
-class Test
-{
-}
-EOF;
+            class Test
+            {
+            }
+            EOF;
 
         $this->doTest($expected, $input);
     }
@@ -441,10 +510,10 @@ EOF;
     public function testWithoutUses(): void
     {
         $expected = <<<'EOF'
-<?php
+            <?php
 
-$c = 1;
-EOF;
+            $c = 1;
+            EOF;
 
         $this->doTest($expected);
     }
@@ -452,34 +521,34 @@ EOF;
     public function testOrderWithTrailingDigit(): void
     {
         $expected = <<<'EOF'
-<?php
+            <?php
 
-use abc\Bar;
-use abc2\Bar2;
-use xyz\abc\Bar6;
-use xyz\abc2\Bar7;
-use xyz\xyz\Bar4;
-use xyz\xyz\Bar5;
+            use abc\Bar;
+            use abc2\Bar2;
+            use xyz\abc\Bar6;
+            use xyz\abc2\Bar7;
+            use xyz\xyz\Bar4;
+            use xyz\xyz\Bar5;
 
-class Test
-{
-}
-EOF;
+            class Test
+            {
+            }
+            EOF;
 
         $input = <<<'EOF'
-<?php
+            <?php
 
-use abc2\Bar2;
-use abc\Bar;
-use xyz\abc2\Bar7;
-use xyz\abc\Bar6;
-use xyz\xyz\Bar4;
-use xyz\xyz\Bar5;
+            use abc2\Bar2;
+            use abc\Bar;
+            use xyz\abc2\Bar7;
+            use xyz\abc\Bar6;
+            use xyz\xyz\Bar4;
+            use xyz\xyz\Bar5;
 
-class Test
-{
-}
-EOF;
+            class Test
+            {
+            }
+            EOF;
 
         $this->doTest($expected, $input);
     }
@@ -487,18 +556,18 @@ EOF;
     public function testCodeWithImportsOnly(): void
     {
         $expected = <<<'EOF'
-<?php
+            <?php
 
-use Aaa;
-use Bbb;
-EOF;
+            use Aaa;
+            use Bbb;
+            EOF;
 
         $input = <<<'EOF'
-<?php
+            <?php
 
-use Bbb;
-use Aaa;
-EOF;
+            use Bbb;
+            use Aaa;
+            EOF;
 
         $this->doTest($expected, $input);
     }
@@ -565,84 +634,80 @@ B#
     {
         yield [
             <<<'EOF'
-The normal
-use of this fixer
-should not change this sentence nor those statements below
-use Zoo\Bar as ZooBar;
-use Foo\Bar;
-use Foo\Zar\Baz;
+                The normal
+                use of this fixer
+                should not change this sentence nor those statements below
+                use Zoo\Bar as ZooBar;
+                use Foo\Bar;
+                use Foo\Zar\Baz;
 
-<?php
+                <?php
 
-use Foo\Bar;
-use Foo\Bar\Foo as Fooo, Foo\Bar\FooBar as FooBaz;
- use Foo\Bir as FBB;
-use Foo\Zar\Baz;
-use SomeClass;
-   use Symfony\Annotation\Template, Symfony\Doctrine\Entities\Entity;
-use Zoo\Bar as ZooBar;
+                use Foo\Bar;
+                use Foo\Bar\Foo as Fooo, Foo\Bar\FooBar as FooBaz;
+                 use Foo\Bir as FBB;
+                use Foo\Zar\Baz;
+                use SomeClass;
+                   use Symfony\Annotation\Template, Zoo\Bar as ZooBar;
+                use Zoo\Tar;
 
-$a = new Bar();
-$a = new FooBaz();
-$a = new someclass();
+                $a = new Bar();
+                $a = new FooBaz();
+                $a = new someclass();
 
-use Zoo\Tar;
+                class AnnotatedClass
+                {
+                    /**
+                     * @Template(foobar=21)
+                     * @param Entity $foo
+                     */
+                    public function doSomething($foo)
+                    {
+                        $bar = $foo->toArray();
+                        /** @var ArrayInterface $bar */
 
-class AnnotatedClass
-{
-    /**
-     * @Template(foobar=21)
-     * @param Entity $foo
-     */
-    public function doSomething($foo)
-    {
-        $bar = $foo->toArray();
-        /** @var ArrayInterface $bar */
-
-        return function () use ($bar, $foo) {};
-    }
-}
-EOF
+                        return function () use ($bar, $foo) {};
+                    }
+                }
+                EOF
             ,
             <<<'EOF'
-The normal
-use of this fixer
-should not change this sentence nor those statements below
-use Zoo\Bar as ZooBar;
-use Foo\Bar;
-use Foo\Zar\Baz;
+                The normal
+                use of this fixer
+                should not change this sentence nor those statements below
+                use Zoo\Bar as ZooBar;
+                use Foo\Bar;
+                use Foo\Zar\Baz;
 
-<?php
+                <?php
 
-use Foo\Bar\FooBar as FooBaz;
-use Zoo\Bar as ZooBar, Zoo\Tar;
- use Foo\Bar;
-use Foo\Zar\Baz;
-use Symfony\Annotation\Template;
-   use Foo\Bar\Foo as Fooo, Foo\Bir as FBB;
-use SomeClass;
+                use Foo\Bar\FooBar as FooBaz;
+                use Zoo\Bar as ZooBar, Zoo\Tar;
+                 use Foo\Bar;
+                use Foo\Zar\Baz;
+                use Symfony\Annotation\Template;
+                   use Foo\Bar\Foo as Fooo, Foo\Bir as FBB;
+                use SomeClass;
 
-$a = new Bar();
-$a = new FooBaz();
-$a = new someclass();
+                $a = new Bar();
+                $a = new FooBaz();
+                $a = new someclass();
 
-use Symfony\Doctrine\Entities\Entity;
+                class AnnotatedClass
+                {
+                    /**
+                     * @Template(foobar=21)
+                     * @param Entity $foo
+                     */
+                    public function doSomething($foo)
+                    {
+                        $bar = $foo->toArray();
+                        /** @var ArrayInterface $bar */
 
-class AnnotatedClass
-{
-    /**
-     * @Template(foobar=21)
-     * @param Entity $foo
-     */
-    public function doSomething($foo)
-    {
-        $bar = $foo->toArray();
-        /** @var ArrayInterface $bar */
-
-        return function () use ($bar, $foo) {};
-    }
-}
-EOF
+                        return function () use ($bar, $foo) {};
+                    }
+                }
+                EOF
             ,
         ];
 
@@ -1072,12 +1137,22 @@ use function some\a\{fn_a, fn_b, fn_c,};
                 'imports_order' => [OrderedImportsFixer::IMPORT_TYPE_CLASS, OrderedImportsFixer::IMPORT_TYPE_CONST, OrderedImportsFixer::IMPORT_TYPE_FUNCTION],
             ],
         ];
+
+        yield [
+            '<?php use const CONST_A, CONST_B, CONST_C;',
+            '<?php use const CONST_C, CONST_B, CONST_A;',
+        ];
+
+        yield [
+            '<?php use function Foo\A, Foo\B, Foo\C;',
+            '<?php use function Foo\B, Foo\C, Foo\A;',
+        ];
     }
 
     public function testUnknownOrderTypes(): void
     {
         $this->expectException(InvalidFixerConfigurationException::class);
-        $this->expectExceptionMessage('[ordered_imports] Invalid configuration: Unknown sort types "foo", "bar".');
+        $this->expectExceptionMessage('[ordered_imports] Invalid configuration: Unknown sort types "foo" and "bar".');
 
         $this->fixer->configure([
             'sort_algorithm' => OrderedImportsFixer::SORT_ALPHA,
@@ -1129,30 +1204,30 @@ use function some\a\{fn_a, fn_b, fn_c,};
         $this->fixer->configure($configuration);
     }
 
-    public static function provideInvalidSortAlgorithmCases(): array
+    public static function provideInvalidSortAlgorithmCases(): iterable
     {
-        return [
+        yield [
             [
-                [
-                    'sort_algorithm' => 'dope',
-                    'imports_order' => null,
-                ],
-                '"dope"',
+                'sort_algorithm' => 'dope',
+                'imports_order' => null,
             ],
+            '"dope"',
+        ];
+
+        yield [
             [
-                [
-                    'sort_algorithm' => [OrderedImportsFixer::SORT_ALPHA, OrderedImportsFixer::SORT_LENGTH],
-                    'imports_order' => null,
-                ],
-                'array',
+                'sort_algorithm' => [OrderedImportsFixer::SORT_ALPHA, OrderedImportsFixer::SORT_LENGTH],
+                'imports_order' => null,
             ],
+            'array',
+        ];
+
+        yield [
             [
-                [
-                    'sort_algorithm' => new \stdClass(),
-                    'imports_order' => null,
-                ],
-                \stdClass::class,
+                'sort_algorithm' => new \stdClass(),
+                'imports_order' => null,
             ],
+            \stdClass::class,
         ];
     }
 
@@ -1164,52 +1239,85 @@ use function some\a\{fn_a, fn_b, fn_c,};
         ]);
 
         $expected = <<<'EOF'
-<?php
+            <?php
 
-use Acme;
-use Bar1;
-use Barr;
-use Fooo;
+            use Acme;
+            use Bar1;
+            use Barr;
+            use Fooo;
 
-class AnnotatedClass
-{
-    /**
-     * @Template(foobar=21)
-     * @param Entity $foo
-     */
-    public function doSomething($foo)
-    {
-        $bar = $foo->toArray();
-        /** @var ArrayInterface $bar */
+            class AnnotatedClass
+            {
+                /**
+                 * @Template(foobar=21)
+                 * @param Entity $foo
+                 */
+                public function doSomething($foo)
+                {
+                    $bar = $foo->toArray();
+                    /** @var ArrayInterface $bar */
 
-        return function () use ($bar, $foo) {};
-    }
-}
-EOF;
+                    return function () use ($bar, $foo) {};
+                }
+            }
+            EOF;
 
         $input = <<<'EOF'
-<?php
+            <?php
 
-use Acme;
-use Fooo;
-use Barr;
-use Bar1;
+            use Acme;
+            use Fooo;
+            use Barr;
+            use Bar1;
 
-class AnnotatedClass
-{
-    /**
-     * @Template(foobar=21)
-     * @param Entity $foo
-     */
-    public function doSomething($foo)
-    {
-        $bar = $foo->toArray();
-        /** @var ArrayInterface $bar */
+            class AnnotatedClass
+            {
+                /**
+                 * @Template(foobar=21)
+                 * @param Entity $foo
+                 */
+                public function doSomething($foo)
+                {
+                    $bar = $foo->toArray();
+                    /** @var ArrayInterface $bar */
 
-        return function () use ($bar, $foo) {};
+                    return function () use ($bar, $foo) {};
+                }
+            }
+            EOF;
+
+        $this->doTest($expected, $input);
     }
-}
-EOF;
+
+    public function testByLengthFixWithSameLengthAndCaseSensitive(): void
+    {
+        $this->fixer->configure([
+            'sort_algorithm' => OrderedImportsFixer::SORT_LENGTH,
+            'imports_order' => null,
+            'case_sensitive' => true,
+        ]);
+
+        $expected = <<<'EOF'
+            <?php
+
+            use Acme;
+            use BaRr;
+            use Bar1;
+            use Fooo;
+
+            class AnnotatedClass { }
+            EOF;
+
+        $input = <<<'EOF'
+            <?php
+
+            use Acme;
+            use Fooo;
+            use Bar1;
+            use BaRr;
+
+            class AnnotatedClass { }
+            EOF;
 
         $this->doTest($expected, $input);
     }
@@ -1222,122 +1330,122 @@ EOF;
         ]);
 
         $expected = <<<'EOF'
-<?php
+            <?php
 
-namespace FooRoo {
+            namespace FooRoo {
 
-    use Foo\Bar;
-    use Zoo\Tar1, Zoo\Tar2;
-    use SomeClass;
-    use Foo\Zar\Baz;
-    use Foo\Bir as FBB;
-    use Zoo\Bar as ZooBar, Foo\Bar\Foo as Fooo;
-    use Foo\Bar\FooBar as FooBaz;
+                use Foo\Bar;
+                use Zoo\Tar1, Zoo\Tar2;
+                use SomeClass;
+                use Foo\Zar\Baz;
+                use Foo\Bir as FBB;
+                use Zoo\Bar as ZooBar, Foo\Bar\Foo as Fooo;
+                use Foo\Bar\FooBar as FooBaz;
 
-    $a = new Bar();
-    $a = new FooBaz();
-    $a = new someclass();
+                use Symfony\Annotation\Template;
 
-    use Symfony\Annotation\Template;
+                $a = new Bar();
+                $a = new FooBaz();
+                $a = new someclass();
 
-    class AnnotatedClass
-    {
-        /**
-         * @Template(foobar=21)
-         * @param Entity $foo
-         */
-        public function doSomething($foo)
-        {
-            $bar = $foo->toArray();
-            /** @var ArrayInterface $bar */
+                class AnnotatedClass
+                {
+                    /**
+                     * @Template(foobar=21)
+                     * @param Entity $foo
+                     */
+                    public function doSomething($foo)
+                    {
+                        $bar = $foo->toArray();
+                        /** @var ArrayInterface $bar */
 
-            return function () use ($bar, $foo) {};
-        }
-    }
-}
+                        return function () use ($bar, $foo) {};
+                    }
+                }
+            }
 
-namespace BlaRoo {
+            namespace BlaRoo {
 
-    use Zoo\Bar;
-    use SomeClass;
-    use Foo\Zar\Baz;
-    use Symfony\Annotation\Template, Symfony\Doctrine\Entities\Entity;
+                use Zoo\Bar;
+                use SomeClass;
+                use Foo\Zar\Baz;
+                use Symfony\Annotation\Template, Symfony\Doctrine\Entities\Entity;
 
-    class AnnotatedClass
-    {
-        /**
-         * @Template(foobar=21)
-         * @param Entity $foo
-         */
-        public function doSomething($foo)
-        {
-            $bar = $foo->toArray();
-            /** @var ArrayInterface $bar */
+                class AnnotatedClass
+                {
+                    /**
+                     * @Template(foobar=21)
+                     * @param Entity $foo
+                     */
+                    public function doSomething($foo)
+                    {
+                        $bar = $foo->toArray();
+                        /** @var ArrayInterface $bar */
 
-            return function () use ($bar, $foo) {};
-        }
-    }
-}
-EOF;
+                        return function () use ($bar, $foo) {};
+                    }
+                }
+            }
+            EOF;
 
         $input = <<<'EOF'
-<?php
+            <?php
 
-namespace FooRoo {
+            namespace FooRoo {
 
-    use Foo\Bar\FooBar as FooBaz;
-    use Zoo\Bar as ZooBar, Zoo\Tar1;
-    use Foo\Bar;
-    use Foo\Zar\Baz;
-    use Symfony\Annotation\Template;
-    use Foo\Bar\Foo as Fooo, Foo\Bir as FBB;
-    use SomeClass;
+                use Foo\Bar\FooBar as FooBaz;
+                use Zoo\Bar as ZooBar, Zoo\Tar1;
+                use Foo\Bar;
+                use Foo\Zar\Baz;
+                use Symfony\Annotation\Template;
+                use Foo\Bar\Foo as Fooo, Foo\Bir as FBB;
+                use SomeClass;
 
-    $a = new Bar();
-    $a = new FooBaz();
-    $a = new someclass();
+                use Zoo\Tar2;
 
-    use Zoo\Tar2;
+                $a = new Bar();
+                $a = new FooBaz();
+                $a = new someclass();
 
-    class AnnotatedClass
-    {
-        /**
-         * @Template(foobar=21)
-         * @param Entity $foo
-         */
-        public function doSomething($foo)
-        {
-            $bar = $foo->toArray();
-            /** @var ArrayInterface $bar */
+                class AnnotatedClass
+                {
+                    /**
+                     * @Template(foobar=21)
+                     * @param Entity $foo
+                     */
+                    public function doSomething($foo)
+                    {
+                        $bar = $foo->toArray();
+                        /** @var ArrayInterface $bar */
 
-            return function () use ($bar, $foo) {};
-        }
-    }
-}
+                        return function () use ($bar, $foo) {};
+                    }
+                }
+            }
 
-namespace BlaRoo {
+            namespace BlaRoo {
 
-    use Foo\Zar\Baz;
-    use Zoo\Bar;
-    use SomeClass;
-    use Symfony\Annotation\Template, Symfony\Doctrine\Entities\Entity;
+                use Foo\Zar\Baz;
+                use Zoo\Bar;
+                use SomeClass;
+                use Symfony\Annotation\Template, Symfony\Doctrine\Entities\Entity;
 
-    class AnnotatedClass
-    {
-        /**
-         * @Template(foobar=21)
-         * @param Entity $foo
-         */
-        public function doSomething($foo)
-        {
-            $bar = $foo->toArray();
-            /** @var ArrayInterface $bar */
+                class AnnotatedClass
+                {
+                    /**
+                     * @Template(foobar=21)
+                     * @param Entity $foo
+                     */
+                    public function doSomething($foo)
+                    {
+                        $bar = $foo->toArray();
+                        /** @var ArrayInterface $bar */
 
-            return function () use ($bar, $foo) {};
-        }
-    }
-}
-EOF;
+                        return function () use ($bar, $foo) {};
+                    }
+                }
+            }
+            EOF;
 
         $this->doTest($expected, $input);
     }
@@ -1350,84 +1458,84 @@ EOF;
         ]);
 
         $expected = <<<'EOF'
-The normal
-use of this fixer
-should not change this sentence nor those statements below
-use Zoo\Bar;
-use Foo\Bar;
-use Foo\Zar\Baz;
+            The normal
+            use of this fixer
+            should not change this sentence nor those statements below
+            use Zoo\Bar;
+            use Foo\Bar;
+            use Foo\Zar\Baz;
 
-<?php
+            <?php
 
-use Foo\Bar;
-use Zoo\Tar, SomeClass;
-use Foo\Zar\Baz;
-use Foo\Bir as FBB;
-use Zoo\Bar as ZooBar;
-use Foo\Bar\Foo as Fooo, Foo\Bar\FooBar /* He there */ as FooBaz;
-use /* FIXME */Symfony\Annotation\Template;
+            use Foo\Bar;
+            use Zoo\Tar, SomeClass;
+            use Foo\Zar\Baz;
+            use Foo\Bir as FBB;
+            use Zoo\Bar as ZooBar;
+            use Foo\Bar\Foo as Fooo, Foo\Bar\FooBar /* He there */ as FooBaz;
+            use /* FIXME */Symfony\Annotation\Template;
 
-$a = new Bar();
-$a = new FooBaz();
-$a = new someclass();
+            $a = new Bar();
+            $a = new FooBaz();
+            $a = new someclass();
 
-use Symfony\Doctrine\Entities\Entity;
+            use Symfony\Doctrine\Entities\Entity;
 
-class AnnotatedClass
-{
-    /**
-     * @Template(foobar=21)
-     * @param Entity $foo
-     */
-    public function doSomething($foo)
-    {
-        $bar = $foo->toArray();
-        /** @var ArrayInterface $bar */
+            class AnnotatedClass
+            {
+                /**
+                 * @Template(foobar=21)
+                 * @param Entity $foo
+                 */
+                public function doSomething($foo)
+                {
+                    $bar = $foo->toArray();
+                    /** @var ArrayInterface $bar */
 
-        return function () use ($bar, $foo) {};
-    }
-}
-EOF;
+                    return function () use ($bar, $foo) {};
+                }
+            }
+            EOF;
 
         $input = <<<'EOF'
-The normal
-use of this fixer
-should not change this sentence nor those statements below
-use Zoo\Bar;
-use Foo\Bar;
-use Foo\Zar\Baz;
+            The normal
+            use of this fixer
+            should not change this sentence nor those statements below
+            use Zoo\Bar;
+            use Foo\Bar;
+            use Foo\Zar\Baz;
 
-<?php
+            <?php
 
-use Foo\Bar\FooBar /* He there */ as FooBaz;
-use Zoo\Bar as ZooBar, Zoo\Tar;
-use Foo\Bar;
-use Foo\Zar\Baz;
-use /* FIXME */Symfony\Annotation\Template;
-use Foo\Bar\Foo as Fooo, Foo\Bir as FBB;
-use SomeClass;
+            use Foo\Bar\FooBar /* He there */ as FooBaz;
+            use Zoo\Bar as ZooBar, Zoo\Tar;
+            use Foo\Bar;
+            use Foo\Zar\Baz;
+            use /* FIXME */Symfony\Annotation\Template;
+            use Foo\Bar\Foo as Fooo, Foo\Bir as FBB;
+            use SomeClass;
 
-$a = new Bar();
-$a = new FooBaz();
-$a = new someclass();
+            $a = new Bar();
+            $a = new FooBaz();
+            $a = new someclass();
 
-use Symfony\Doctrine\Entities\Entity;
+            use Symfony\Doctrine\Entities\Entity;
 
-class AnnotatedClass
-{
-    /**
-     * @Template(foobar=21)
-     * @param Entity $foo
-     */
-    public function doSomething($foo)
-    {
-        $bar = $foo->toArray();
-        /** @var ArrayInterface $bar */
+            class AnnotatedClass
+            {
+                /**
+                 * @Template(foobar=21)
+                 * @param Entity $foo
+                 */
+                public function doSomething($foo)
+                {
+                    $bar = $foo->toArray();
+                    /** @var ArrayInterface $bar */
 
-        return function () use ($bar, $foo) {};
-    }
-}
-EOF;
+                    return function () use ($bar, $foo) {};
+                }
+            }
+            EOF;
 
         $this->doTest($expected, $input);
     }
@@ -1440,74 +1548,74 @@ EOF;
         ]);
 
         $expected = <<<'EOF'
-<?php
+            <?php
 
-use Foo\Bar;
-use Zoo\Tar, SomeClass;
-use Foo\Zar\Baz;
-use Foo\Bir as FBB;
-use Zoo\Bar as ZooBar;
-use Foo\Bar\Foo as Fooo, Foo\Bar\FooBar as FooBaz;
-use Symfony\Annotation\Template;
+            use Foo\Bar;
+            use Zoo\Tar, SomeClass;
+            use Foo\Zar\Baz;
+            use Foo\Bir as FBB;
+            use Zoo\Bar as ZooBar;
+            use Foo\Bar\Foo as Fooo, Foo\Bar\FooBar as FooBaz;
+            use Symfony\Annotation\Template;
 
-use Symfony\Doctrine\Entities\Entity;
+            use Symfony\Doctrine\Entities\Entity;
 
-trait Foo {}
+            trait Foo {}
 
-trait Zoo {}
+            trait Zoo {}
 
-class AnnotatedClass
-{
-    use Foo, Bar;
+            class AnnotatedClass
+            {
+                use Foo, Bar;
 
-    /**
-     * @Template(foobar=21)
-     * @param Entity $foo
-     */
-    public function doSomething($foo)
-    {
-        $bar = $foo->toArray();
-        /** @var ArrayInterface $bar */
+                /**
+                 * @Template(foobar=21)
+                 * @param Entity $foo
+                 */
+                public function doSomething($foo)
+                {
+                    $bar = $foo->toArray();
+                    /** @var ArrayInterface $bar */
 
-        return function () use ($bar, $foo) {};
-    }
-}
-EOF;
+                    return function () use ($bar, $foo) {};
+                }
+            }
+            EOF;
 
         $input = <<<'EOF'
-<?php
+            <?php
 
-use Foo\Bar\FooBar as FooBaz;
-use Zoo\Bar as ZooBar, Zoo\Tar;
-use Foo\Bar;
-use Foo\Zar\Baz;
-use Symfony\Annotation\Template;
-use Foo\Bar\Foo as Fooo, Foo\Bir as FBB;
-use SomeClass;
+            use Foo\Bar\FooBar as FooBaz;
+            use Zoo\Bar as ZooBar, Zoo\Tar;
+            use Foo\Bar;
+            use Foo\Zar\Baz;
+            use Symfony\Annotation\Template;
+            use Foo\Bar\Foo as Fooo, Foo\Bir as FBB;
+            use SomeClass;
 
-use Symfony\Doctrine\Entities\Entity;
+            use Symfony\Doctrine\Entities\Entity;
 
-trait Foo {}
+            trait Foo {}
 
-trait Zoo {}
+            trait Zoo {}
 
-class AnnotatedClass
-{
-    use Foo, Bar;
+            class AnnotatedClass
+            {
+                use Foo, Bar;
 
-    /**
-     * @Template(foobar=21)
-     * @param Entity $foo
-     */
-    public function doSomething($foo)
-    {
-        $bar = $foo->toArray();
-        /** @var ArrayInterface $bar */
+                /**
+                 * @Template(foobar=21)
+                 * @param Entity $foo
+                 */
+                public function doSomething($foo)
+                {
+                    $bar = $foo->toArray();
+                    /** @var ArrayInterface $bar */
 
-        return function () use ($bar, $foo) {};
-    }
-}
-EOF;
+                    return function () use ($bar, $foo) {};
+                }
+            }
+            EOF;
 
         $this->doTest($expected, $input);
     }
@@ -1520,90 +1628,90 @@ EOF;
         ]);
 
         $expected = <<<'EOF'
-The normal
-use of this fixer
-should not change this sentence nor those statements below
-use Zoo\Bar;
-use Foo\Bar;
-use Foo\Zar\Baz;
+            The normal
+            use of this fixer
+            should not change this sentence nor those statements below
+            use Zoo\Bar;
+            use Foo\Bar;
+            use Foo\Zar\Baz;
 
-<?php
+            <?php
 
-use Foo\Bar;
-use Zoo\Tar, SomeClass;
-use Foo\Zar\Baz;
-use Foo\Bir as FBB;
-use Zoo\Bar as ZooBar;
-use Foo\Bar\Foo as Fooo;
-use Acme\MyReusableTrait, Foo\Bar\FooBar as FooBaz;
-use Symfony\Annotation\Template;
+            use Foo\Bar;
+            use Zoo\Tar, SomeClass;
+            use Foo\Zar\Baz;
+            use Foo\Bir as FBB;
+            use Zoo\Bar as ZooBar;
+            use Foo\Bar\Foo as Fooo;
+            use Acme\MyReusableTrait, Foo\Bar\FooBar as FooBaz;
+            use Symfony\Annotation\Template;
 
-$a = new Bar();
-$a = new FooBaz();
-$a = new someclass();
+            $a = new Bar();
+            $a = new FooBaz();
+            $a = new someclass();
 
-use Symfony\Doctrine\Entities\Entity;
+            use Symfony\Doctrine\Entities\Entity;
 
-class AnnotatedClass
-{
-    use MyReusableTrait;
+            class AnnotatedClass
+            {
+                use MyReusableTrait;
 
-    /**
-     * @Template(foobar=21)
-     * @param Entity $foo
-     */
-    public function doSomething($foo)
-    {
-        $bar = $foo->toArray();
-        /** @var ArrayInterface $bar */
+                /**
+                 * @Template(foobar=21)
+                 * @param Entity $foo
+                 */
+                public function doSomething($foo)
+                {
+                    $bar = $foo->toArray();
+                    /** @var ArrayInterface $bar */
 
-        return function () use ($bar, $baz) {};
-    }
-}
-EOF;
+                    return function () use ($bar, $baz) {};
+                }
+            }
+            EOF;
 
         $input = <<<'EOF'
-The normal
-use of this fixer
-should not change this sentence nor those statements below
-use Zoo\Bar;
-use Foo\Bar;
-use Foo\Zar\Baz;
+            The normal
+            use of this fixer
+            should not change this sentence nor those statements below
+            use Zoo\Bar;
+            use Foo\Bar;
+            use Foo\Zar\Baz;
 
-<?php
+            <?php
 
-use Foo\Bar\FooBar as FooBaz;
-use Zoo\Bar as ZooBar, Zoo\Tar;
-use Foo\Bar;
-use Foo\Zar\Baz;
-use Acme\MyReusableTrait;
-use Symfony\Annotation\Template;
-use Foo\Bar\Foo as Fooo, Foo\Bir as FBB;
-use SomeClass;
+            use Foo\Bar\FooBar as FooBaz;
+            use Zoo\Bar as ZooBar, Zoo\Tar;
+            use Foo\Bar;
+            use Foo\Zar\Baz;
+            use Acme\MyReusableTrait;
+            use Symfony\Annotation\Template;
+            use Foo\Bar\Foo as Fooo, Foo\Bir as FBB;
+            use SomeClass;
 
-$a = new Bar();
-$a = new FooBaz();
-$a = new someclass();
+            $a = new Bar();
+            $a = new FooBaz();
+            $a = new someclass();
 
-use Symfony\Doctrine\Entities\Entity;
+            use Symfony\Doctrine\Entities\Entity;
 
-class AnnotatedClass
-{
-    use MyReusableTrait;
+            class AnnotatedClass
+            {
+                use MyReusableTrait;
 
-    /**
-     * @Template(foobar=21)
-     * @param Entity $foo
-     */
-    public function doSomething($foo)
-    {
-        $bar = $foo->toArray();
-        /** @var ArrayInterface $bar */
+                /**
+                 * @Template(foobar=21)
+                 * @param Entity $foo
+                 */
+                public function doSomething($foo)
+                {
+                    $bar = $foo->toArray();
+                    /** @var ArrayInterface $bar */
 
-        return function () use ($bar, $baz) {};
-    }
-}
-EOF;
+                    return function () use ($bar, $baz) {};
+                }
+            }
+            EOF;
 
         $this->doTest($expected, $input);
     }
@@ -1616,38 +1724,38 @@ EOF;
         ]);
 
         $expected = <<<'EOF'
-The normal
-use of this fixer
-should not change this sentence nor those statements below
-use Zoo\Baz;
-use abc\Bar;
+            The normal
+            use of this fixer
+            should not change this sentence nor those statements below
+            use Zoo\Baz;
+            use abc\Bar;
 
-<?php
+            <?php
 
-use abc\Bar;
-use Zoo\Baz;
+            use abc\Bar;
+            use Zoo\Baz;
 
-class Test
-{
-}
-EOF;
+            class Test
+            {
+            }
+            EOF;
 
         $input = <<<'EOF'
-The normal
-use of this fixer
-should not change this sentence nor those statements below
-use Zoo\Baz;
-use abc\Bar;
+            The normal
+            use of this fixer
+            should not change this sentence nor those statements below
+            use Zoo\Baz;
+            use abc\Bar;
 
-<?php
+            <?php
 
-use Zoo\Baz;
-use abc\Bar;
+            use Zoo\Baz;
+            use abc\Bar;
 
-class Test
-{
-}
-EOF;
+            class Test
+            {
+            }
+            EOF;
 
         $this->doTest($expected, $input);
     }
@@ -1660,34 +1768,34 @@ EOF;
         ]);
 
         $expected = <<<'EOF'
-<?php
+            <?php
 
-use abc\Bar;
-use abc2\Bar2;
-use xyz\abc\Bar6;
-use xyz\xyz\Bar4;
-use xyz\xyz\Bar5;
-use xyz\abc2\Bar7;
+            use abc\Bar;
+            use abc2\Bar2;
+            use xyz\abc\Bar6;
+            use xyz\xyz\Bar4;
+            use xyz\xyz\Bar5;
+            use xyz\abc2\Bar7;
 
-class Test
-{
-}
-EOF;
+            class Test
+            {
+            }
+            EOF;
 
         $input = <<<'EOF'
-<?php
+            <?php
 
-use abc2\Bar2;
-use abc\Bar;
-use xyz\abc2\Bar7;
-use xyz\abc\Bar6;
-use xyz\xyz\Bar4;
-use xyz\xyz\Bar5;
+            use abc2\Bar2;
+            use abc\Bar;
+            use xyz\abc2\Bar7;
+            use xyz\abc\Bar6;
+            use xyz\xyz\Bar4;
+            use xyz\xyz\Bar5;
 
-class Test
-{
-}
-EOF;
+            class Test
+            {
+            }
+            EOF;
 
         $this->doTest($expected, $input);
     }
@@ -1700,18 +1808,18 @@ EOF;
         ]);
 
         $expected = <<<'EOF'
-<?php
+            <?php
 
-use Aaa;
-use Bbb;
-EOF;
+            use Aaa;
+            use Bbb;
+            EOF;
 
         $input = <<<'EOF'
-<?php
+            <?php
 
-use Bbb;
-use Aaa;
-EOF;
+            use Bbb;
+            use Aaa;
+            EOF;
 
         $this->doTest($expected, $input);
     }
@@ -1724,10 +1832,10 @@ EOF;
         ]);
 
         $expected = <<<'EOF'
-<?php
+            <?php
 
-$c = 1;
-EOF;
+            $c = 1;
+            EOF;
 
         $this->doTest($expected);
     }
@@ -1745,94 +1853,94 @@ EOF;
         $this->doTest($expected, $input);
     }
 
-    public static function provideFixByLengthCases(): array
+    public static function provideFixByLengthCases(): iterable
     {
-        return [
-            [
-                <<<'EOF'
-The normal
-use of this fixer
-should not change this sentence nor those statements below
-use Zoo\Bar as ZooBar;
-use Foo\Bar;
-use Foo\Zar\Baz;
+        yield [
+            <<<'EOF'
+                The normal
+                use of this fixer
+                should not change this sentence nor those statements below
+                use Zoo\Bar as ZooBar;
+                use Foo\Bar;
+                use Foo\Zar\Baz;
 
-<?php
+                <?php
 
-use Foo\Bar;
-use Zoo\Tar, SomeClass;
- use Foo\Zar\Baz;
-use Foo\Bir as FBB;
-use Zoo\Bar as ZooBar;
-   use Foo\Bar\Foo as Fooo, Foo\Bar\FooBar as FooBaz;
-use Symfony\Annotation\Template;
+                use Foo\Bar;
+                use Zoo\Tar, SomeClass;
+                 use Foo\Zar\Baz;
+                use Foo\Bir as FBB;
+                use Zoo\Bar as ZooBar;
+                   use Foo\Bar\Foo as Fooo, Foo\Bar\FooBar as FooBaz;
+                use Symfony\Annotation\Template;
 
-$a = new Bar();
-$a = new FooBaz();
-$a = new someclass();
+                $a = new Bar();
+                $a = new FooBaz();
+                $a = new someclass();
 
-use Symfony\Doctrine\Entities\Entity;
+                use Symfony\Doctrine\Entities\Entity;
 
-class AnnotatedClass
-{
-    /**
-     * @Template(foobar=21)
-     * @param Entity $foo
-     */
-    public function doSomething($foo)
-    {
-        $bar = $foo->toArray();
-        /** @var ArrayInterface $bar */
+                class AnnotatedClass
+                {
+                    /**
+                     * @Template(foobar=21)
+                     * @param Entity $foo
+                     */
+                    public function doSomething($foo)
+                    {
+                        $bar = $foo->toArray();
+                        /** @var ArrayInterface $bar */
 
-        return function () use ($bar, $foo) {};
-    }
-}
-EOF
-                ,
+                        return function () use ($bar, $foo) {};
+                    }
+                }
+                EOF
+            ,
 
-                <<<'EOF'
-The normal
-use of this fixer
-should not change this sentence nor those statements below
-use Zoo\Bar as ZooBar;
-use Foo\Bar;
-use Foo\Zar\Baz;
+            <<<'EOF'
+                The normal
+                use of this fixer
+                should not change this sentence nor those statements below
+                use Zoo\Bar as ZooBar;
+                use Foo\Bar;
+                use Foo\Zar\Baz;
 
-<?php
+                <?php
 
-use Foo\Bar\FooBar as FooBaz;
-use Zoo\Bar as ZooBar, Zoo\Tar;
- use Foo\Bar;
-use Foo\Zar\Baz;
-use Symfony\Annotation\Template;
-   use Foo\Bar\Foo as Fooo, Foo\Bir as FBB;
-use SomeClass;
+                use Foo\Bar\FooBar as FooBaz;
+                use Zoo\Bar as ZooBar, Zoo\Tar;
+                 use Foo\Bar;
+                use Foo\Zar\Baz;
+                use Symfony\Annotation\Template;
+                   use Foo\Bar\Foo as Fooo, Foo\Bir as FBB;
+                use SomeClass;
 
-$a = new Bar();
-$a = new FooBaz();
-$a = new someclass();
+                $a = new Bar();
+                $a = new FooBaz();
+                $a = new someclass();
 
-use Symfony\Doctrine\Entities\Entity;
+                use Symfony\Doctrine\Entities\Entity;
 
-class AnnotatedClass
-{
-    /**
-     * @Template(foobar=21)
-     * @param Entity $foo
-     */
-    public function doSomething($foo)
-    {
-        $bar = $foo->toArray();
-        /** @var ArrayInterface $bar */
+                class AnnotatedClass
+                {
+                    /**
+                     * @Template(foobar=21)
+                     * @param Entity $foo
+                     */
+                    public function doSomething($foo)
+                    {
+                        $bar = $foo->toArray();
+                        /** @var ArrayInterface $bar */
 
-        return function () use ($bar, $foo) {};
-    }
-}
-EOF
-                ,
-            ],
-            [
-                '<?php
+                        return function () use ($bar, $foo) {};
+                    }
+                }
+                EOF
+            ,
+        ];
+
+        yield [
+            '<?php
 use A\B;
 use Foo\Bar\Biz;
 use some\b\{
@@ -1847,7 +1955,7 @@ use Some\Biz\Barz\Boozz\Foz\Which\Is\Really\Long;
 use const some\b\{ConstG, ConstX, ConstY, ConstZ};
 use some\c\{ClassR, ClassT, ClassV as V, NiceClassName};
 ',
-                '<?php
+            '<?php
 use function some\a\{fn_a, fn_b, fn_c};
 use Foo\Bar\Biz;
 use some\c\{ClassR, ClassT, ClassV as V, NiceClassName};
@@ -1862,19 +1970,19 @@ use const some\b\{ConstX, ConstY, ConstZ, ConstG};
 use some\b\{ClassA, ClassB, ClassC as C};
 use some\a\{  ClassY,ClassZ, /*z*/ ClassX as X};
 ',
-            ],
-            [
-                '<?php
+        ];
+
+        yield [
+            '<?php
 use const ZZZ;
 use function B;
 use function A123;
 ',
-                '<?php
+            '<?php
 use function B;
 use function A123;
 use const ZZZ;
 ',
-            ],
         ];
     }
 
@@ -1891,11 +1999,10 @@ use const ZZZ;
         $this->doTest($expected, $input);
     }
 
-    public static function provideFixTypesOrderAndLengthCases(): array
+    public static function provideFixTypesOrderAndLengthCases(): iterable
     {
-        return [
-            [
-                '<?php
+        yield [
+            '<?php
 use A\B;
 use Some\Bar;
 use Foo\Zar\Baz;
@@ -1912,7 +2019,7 @@ use function some\a\{fn_a, fn_b};
 use function some\f\{fn_c, fn_d, fn_e};
 use function some\b\{fn_k, fn_l, func_m};
 ',
-                '<?php
+            '<?php
 use const some\a\{ConstA, ConstB, ConstC};
 use some\a\{ClassA, ClassB, ClassC as C};
 use Foo\Zar\Baz;
@@ -1929,7 +2036,6 @@ use function some\a\{fn_a, fn_b};
 use const some\b\{ConstD, ConstE, ConstF};
 use function some\f\{fn_c, fn_d, fn_e};
 ',
-            ],
         ];
     }
 
@@ -1950,9 +2056,8 @@ use function some\f\{fn_c, fn_d, fn_e};
 
     public static function provideFixTypesOrderAndAlphabetCases(): iterable
     {
-        return [
-            [
-                '<?php
+        yield [
+            '<?php
 use Aaa\Bbb;
 use Aaa\Ccc;
 use Bar\Biz\Boooz\Bum;
@@ -1974,7 +2079,7 @@ use function some\b\{fn_c, fn_d, fn_e};
 use function some\c\{fn_f};
 use function some\f\{fn_g, fn_h, fn_i};
 ',
-                '<?php
+            '<?php
 use Aaa\Ccc;
 use Foo\Zar\Baz;
 use function some\f\{fn_g, fn_h, fn_i};
@@ -1996,8 +2101,7 @@ use Aaa\Bbb;
 use const some\b\{ConstE};
 use function some\a\{fn_a, fn_b};
 ',
-                [OrderedImportsFixer::IMPORT_TYPE_CLASS, OrderedImportsFixer::IMPORT_TYPE_CONST, OrderedImportsFixer::IMPORT_TYPE_FUNCTION],
-            ],
+            [OrderedImportsFixer::IMPORT_TYPE_CLASS, OrderedImportsFixer::IMPORT_TYPE_CONST, OrderedImportsFixer::IMPORT_TYPE_FUNCTION],
         ];
     }
 
@@ -2016,11 +2120,10 @@ use function some\a\{fn_a, fn_b};
         $this->doTest($expected, $input);
     }
 
-    public static function provideFixTypesOrderAndNoneCases(): array
+    public static function provideFixTypesOrderAndNoneCases(): iterable
     {
-        return [
-            [
-                '<?php
+        yield [
+            '<?php
 use Aaa\Ccc;
 use Foo\Zar\Baz;
 use some\a\{ClassA};
@@ -2042,7 +2145,7 @@ use function some\a\{fn_x};
 use function some\b\{fn_c, fn_d, fn_e};
 use function some\a\{fn_a, fn_b};
 ',
-                '<?php
+            '<?php
 use Aaa\Ccc;
 use Foo\Zar\Baz;
 use function some\f\{fn_g, fn_h, fn_i};
@@ -2064,8 +2167,7 @@ use Aaa\Bbb;
 use const some\b\{ConstE};
 use function some\a\{fn_a, fn_b};
 ',
-                [OrderedImportsFixer::IMPORT_TYPE_CLASS, OrderedImportsFixer::IMPORT_TYPE_CONST, OrderedImportsFixer::IMPORT_TYPE_FUNCTION],
-            ],
+            [OrderedImportsFixer::IMPORT_TYPE_CLASS, OrderedImportsFixer::IMPORT_TYPE_CONST, OrderedImportsFixer::IMPORT_TYPE_FUNCTION],
         ];
     }
 
@@ -2077,45 +2179,72 @@ use function some\a\{fn_a, fn_b};
         ]);
 
         $expected = <<<'EOF'
-The normal
-use of this fixer
-should not change this sentence nor those statements below
-use Zoo\Bar as ZooBar;
-use Foo\Bar;
-use Foo\Zar\Baz;
+            The normal
+            use of this fixer
+            should not change this sentence nor those statements below
+            use Zoo\Bar as ZooBar;
+            use Foo\Bar;
+            use Foo\Zar\Baz;
 
-<?php
+            <?php
 
-use Foo\Bar\FooBar as FooBaz;
-use Zoo\Bar as ZooBar, Zoo\Tar;
- use Foo\Bar;
-use Foo\Zar\Baz;
-use Symfony\Annotation\Template;
-   use Foo\Bar\Foo as Fooo, Foo\Bir as FBB;
-use SomeClass;
+            use Foo\Bar\FooBar as FooBaz;
+            use Zoo\Bar as ZooBar, Zoo\Tar;
+             use Foo\Bar;
+            use Foo\Zar\Baz;
+            use Symfony\Annotation\Template;
+               use Foo\Bar\Foo as Fooo, Foo\Bir as FBB;
+            use SomeClass;
 
-$a = new Bar();
-$a = new FooBaz();
-$a = new someclass();
+            $a = new Bar();
+            $a = new FooBaz();
+            $a = new someclass();
 
-use Symfony\Doctrine\Entities\Entity;
+            use Symfony\Doctrine\Entities\Entity;
 
-class AnnotatedClass
-{
-    /**
-     * @Template(foobar=21)
-     * @param Entity $foo
-     */
-    public function doSomething($foo)
-    {
-        $bar = $foo->toArray();
-        /** @var ArrayInterface $bar */
+            class AnnotatedClass
+            {
+                /**
+                 * @Template(foobar=21)
+                 * @param Entity $foo
+                 */
+                public function doSomething($foo)
+                {
+                    $bar = $foo->toArray();
+                    /** @var ArrayInterface $bar */
 
-        return function () use ($bar, $foo) {};
-    }
-}
-EOF;
+                    return function () use ($bar, $foo) {};
+                }
+            }
+            EOF;
 
         $this->doTest($expected);
+    }
+
+    public function testFixWithCaseSensitive(): void
+    {
+        $this->fixer->configure([
+            'case_sensitive' => true,
+        ]);
+
+        $expected = <<<'EOF'
+            <?php
+
+            use AA;
+            use Aaa;
+
+            class Foo { }
+            EOF;
+
+        $input = <<<'EOF'
+            <?php
+
+            use Aaa;
+            use AA;
+
+            class Foo { }
+            EOF;
+
+        $this->doTest($expected, $input);
     }
 }

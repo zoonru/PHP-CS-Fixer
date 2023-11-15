@@ -32,6 +32,17 @@ use Symfony\Component\Yaml\Yaml;
  */
 final class CiConfigurationTest extends TestCase
 {
+    public function testThatPhpVersionEnvsAreSetProperly(): void
+    {
+        self::assertSame(
+            [
+                'PHP_MAX' => $this->getMaxPhpVersionFromEntryFile(),
+                'PHP_MIN' => $this->getMinPhpVersionFromEntryFile(),
+            ],
+            $this->getGitHubCiEnvs(),
+        );
+    }
+
     public function testTestJobsRunOnEachPhp(): void
     {
         $supportedVersions = [];
@@ -47,16 +58,16 @@ final class CiConfigurationTest extends TestCase
             $supportedMinPhp = 8;
         }
 
-        $supportedVersions = array_merge(
-            $supportedVersions,
-            self::generateMinorVersionsRange($supportedMinPhp, $supportedMaxPhp)
-        );
+        $supportedVersions = [
+            ...$supportedVersions,
+            ...self::generateMinorVersionsRange($supportedMinPhp, $supportedMaxPhp),
+        ];
 
-        static::assertTrue(\count($supportedVersions) > 0);
+        self::assertTrue(\count($supportedVersions) > 0);
 
         $ciVersions = $this->getAllPhpVersionsUsedByCiForTests();
 
-        static::assertNotEmpty($ciVersions);
+        self::assertNotEmpty($ciVersions);
 
         self::assertSupportedPhpVersionsAreCoveredByCiJobs($supportedVersions, $ciVersions);
         self::assertUpcomingPhpVersionIsCoveredByCiJob(end($supportedVersions), $ciVersions);
@@ -73,11 +84,11 @@ final class CiConfigurationTest extends TestCase
             $expectedPhp = (string) ((float) $expectedPhp - 0.1);
         }
 
-        static::assertGreaterThanOrEqual(1, \count($ciVersionsForDeployments));
-        static::assertGreaterThanOrEqual(1, \count($ciVersions));
+        self::assertGreaterThanOrEqual(1, \count($ciVersionsForDeployments));
+        self::assertGreaterThanOrEqual(1, \count($ciVersions));
 
         foreach ($ciVersionsForDeployments as $ciVersionsForDeployment) {
-            static::assertTrue(
+            self::assertTrue(
                 version_compare($expectedPhp, $ciVersionsForDeployment, 'eq'),
                 sprintf('Expects %s to be %s', $ciVersionsForDeployment, $expectedPhp)
             );
@@ -101,7 +112,7 @@ final class CiConfigurationTest extends TestCase
     private static function ensureTraversableContainsIdenticalIsAvailable(): void
     {
         if (!class_exists(TraversableContainsIdentical::class)) {
-            static::markTestSkipped('TraversableContainsIdentical not available.');
+            self::markTestSkipped('TraversableContainsIdentical not available.');
         }
     }
 
@@ -117,7 +128,7 @@ final class CiConfigurationTest extends TestCase
 
         self::ensureTraversableContainsIdenticalIsAvailable();
 
-        static::assertThat($ciVersions, static::logicalOr(
+        self::assertThat($ciVersions, self::logicalOr(
             // if `$lastsupportedVersion` is already a snapshot version
             new TraversableContainsIdentical(sprintf('%.1fsnapshot', $lastSupportedVersion)),
             // if `$lastsupportedVersion` is not snapshot version, expect CI to run snapshot of next PHP version
@@ -138,12 +149,12 @@ final class CiConfigurationTest extends TestCase
         $lastSupportedVersion = array_pop($supportedVersions);
 
         foreach ($supportedVersions as $expectedVersion) {
-            static::assertContains($expectedVersion, $ciVersions);
+            self::assertContains($expectedVersion, $ciVersions);
         }
 
         self::ensureTraversableContainsIdenticalIsAvailable();
 
-        static::assertThat($ciVersions, static::logicalOr(
+        self::assertThat($ciVersions, self::logicalOr(
             new TraversableContainsIdentical($lastSupportedVersion),
             new TraversableContainsIdentical(sprintf('%.1fsnapshot', $lastSupportedVersion))
         ));
@@ -154,13 +165,7 @@ final class CiConfigurationTest extends TestCase
      */
     private function getAllPhpVersionsUsedByCiForDeployments(): array
     {
-        $jobs = array_filter($this->getGitHubJobs(), static function (array $job): bool {
-            return isset($job['execute-deployment']) && 'yes' === $job['execute-deployment'];
-        });
-
-        return array_map(static function ($job): string {
-            return \is_string($job['php-version']) ? $job['php-version'] : sprintf('%.1f', $job['php-version']);
-        }, $jobs);
+        return array_map(static fn ($job): string => \is_string($job['php-version']) ? $job['php-version'] : sprintf('%.1f', $job['php-version']), $this->getGitHubDeploymentJobs());
     }
 
     /**
@@ -174,7 +179,7 @@ final class CiConfigurationTest extends TestCase
     private function convertPhpVerIdToNiceVer(string $verId): string
     {
         $matchResult = Preg::match('/^(?<major>\d{1,2})(?<minor>\d{2})(?<patch>\d{2})$/', $verId, $capture);
-        if (1 !== $matchResult) {
+        if (!$matchResult) {
             throw new \LogicException(sprintf('Can\'t parse version "%s" id.', $verId));
         }
 
@@ -218,13 +223,23 @@ final class CiConfigurationTest extends TestCase
     }
 
     /**
-     * @return list<array<string, scalar>>
+     * @return array<string, string>
      */
-    private function getGitHubJobs(): array
+    private function getGitHubCiEnvs(): array
     {
         $yaml = Yaml::parse(file_get_contents(__DIR__.'/../../.github/workflows/ci.yml'));
 
-        return $yaml['jobs']['tests']['strategy']['matrix']['include'];
+        return $yaml['env'];
+    }
+
+    /**
+     * @return list<array<string, scalar>>
+     */
+    private function getGitHubDeploymentJobs(): array
+    {
+        $yaml = Yaml::parse(file_get_contents(__DIR__.'/../../.github/workflows/ci.yml'));
+
+        return $yaml['jobs']['deployment']['strategy']['matrix']['include'];
     }
 
     /**

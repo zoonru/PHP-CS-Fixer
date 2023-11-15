@@ -30,7 +30,7 @@ use PhpCsFixer\Tests\TestCase;
 final class TagComparatorTest extends TestCase
 {
     /**
-     * @dataProvider provideComparatorCases
+     * @dataProvider provideComparatorTogetherCases
      *
      * @group legacy
      */
@@ -41,26 +41,32 @@ final class TagComparatorTest extends TestCase
 
         $this->expectDeprecation('%AMethod PhpCsFixer\DocBlock\TagComparator::shouldBeTogether is deprecated and will be removed in version 4.0.');
 
-        static::assertSame($expected, TagComparator::shouldBeTogether($tag1, $tag2));
+        self::assertSame($expected, TagComparator::shouldBeTogether($tag1, $tag2));
     }
 
-    public static function provideComparatorCases(): array
+    public static function provideComparatorTogetherCases(): iterable
     {
-        return [
-            ['return', 'return', true],
-            ['param', 'param', true],
-            ['return', 'param', false],
-            ['var', 'foo', false],
-            ['api', 'deprecated', false],
-            ['author', 'copyright', true],
-            ['author', 'since', false],
-            ['link', 'see', true],
-            ['category', 'package', true],
-        ];
+        yield ['return', 'return', true];
+
+        yield ['param', 'param', true];
+
+        yield ['return', 'param', false];
+
+        yield ['var', 'foo', false];
+
+        yield ['api', 'deprecated', false];
+
+        yield ['author', 'copyright', true];
+
+        yield ['author', 'since', false];
+
+        yield ['link', 'see', true];
+
+        yield ['category', 'package', true];
     }
 
     /**
-     * @dataProvider provideComparatorWithDefinedGroupsCases
+     * @dataProvider provideComparatorTogetherWithDefinedGroupsCases
      *
      * @param string[][] $groups
      *
@@ -73,24 +79,30 @@ final class TagComparatorTest extends TestCase
 
         $this->expectDeprecation('%AMethod PhpCsFixer\DocBlock\TagComparator::shouldBeTogether is deprecated and will be removed in version 4.0.');
 
-        static::assertSame(
+        self::assertSame(
             $expected,
             TagComparator::shouldBeTogether($tag1, $tag2, $groups)
         );
     }
 
-    public static function provideComparatorWithDefinedGroupsCases(): array
+    public static function provideComparatorTogetherWithDefinedGroupsCases(): iterable
     {
-        return [
-            [[['param', 'return']], 'return', 'return', true],
-            [[], 'param', 'return', false],
-            [[['param', 'return']], 'return', 'param', true],
-            [[['param', 'return']], 'var', 'foo', false],
-            [[['param', 'return']], 'api', 'deprecated', false],
-            [[['param', 'return']], 'author', 'copyright', false],
-            [[['param', 'return'], ['author', 'since']], 'author', 'since', true],
-            [array_merge(TagComparator::DEFAULT_GROUPS, [['param', 'return']]), 'link', 'see', true],
-            [[['param', 'return']], 'category', 'package', false],
-        ];
+        yield [[['param', 'return']], 'return', 'return', true];
+
+        yield [[], 'param', 'return', false];
+
+        yield [[['param', 'return']], 'return', 'param', true];
+
+        yield [[['param', 'return']], 'var', 'foo', false];
+
+        yield [[['param', 'return']], 'api', 'deprecated', false];
+
+        yield [[['param', 'return']], 'author', 'copyright', false];
+
+        yield [[['param', 'return'], ['author', 'since']], 'author', 'since', true];
+
+        yield [[...TagComparator::DEFAULT_GROUPS, ['param', 'return']], 'link', 'see', true];
+
+        yield [[['param', 'return']], 'category', 'package', false];
     }
 }

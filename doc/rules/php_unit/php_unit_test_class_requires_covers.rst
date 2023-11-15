@@ -33,5 +33,9 @@ Rule sets
 
 The rule is part of the following rule set:
 
-@PhpCsFixer
-  Using the `@PhpCsFixer <./../../ruleSets/PhpCsFixer.rst>`_ rule set will enable the ``php_unit_test_class_requires_covers`` rule.
+- `@PhpCsFixer <./../../ruleSets/PhpCsFixer.rst>`_
+
+Source class
+------------
+
+`PhpCsFixer\\Fixer\\PhpUnit\\PhpUnitTestClassRequiresCoversFixer <./../src/Fixer/PhpUnit/PhpUnitTestClassRequiresCoversFixer.php>`_

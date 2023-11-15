@@ -29,26 +29,26 @@ final class NewVersionCheckerTest extends TestCase
     {
         $checker = new NewVersionChecker($this->createGithubClientStub());
 
-        static::assertSame('v2.4.1', $checker->getLatestVersion());
+        self::assertSame('v2.4.1', $checker->getLatestVersion());
     }
 
     /**
-     * @dataProvider provideLatestVersionOfMajorCases
+     * @dataProvider provideGetLatestVersionOfMajorCases
      */
     public function testGetLatestVersionOfMajor(int $majorVersion, ?string $expectedVersion): void
     {
         $checker = new NewVersionChecker($this->createGithubClientStub());
 
-        static::assertSame($expectedVersion, $checker->getLatestVersionOfMajor($majorVersion));
+        self::assertSame($expectedVersion, $checker->getLatestVersionOfMajor($majorVersion));
     }
 
-    public static function provideLatestVersionOfMajorCases(): array
+    public static function provideGetLatestVersionOfMajorCases(): iterable
     {
-        return [
-            [1, 'v1.13.2'],
-            [2, 'v2.4.1'],
-            [4, null],
-        ];
+        yield [1, 'v1.13.2'];
+
+        yield [2, 'v2.4.1'];
+
+        yield [4, null];
     }
 
     /**
@@ -58,20 +58,18 @@ final class NewVersionCheckerTest extends TestCase
     {
         $checker = new NewVersionChecker($this->createGithubClientStub());
 
-        static::assertSame(
+        self::assertSame(
             $expectedResult,
             $checker->compareVersions($versionA, $versionB)
         );
-        static::assertSame(
+        self::assertSame(
             -$expectedResult,
             $checker->compareVersions($versionB, $versionA)
         );
     }
 
-    public static function provideCompareVersionsCases(): array
+    public static function provideCompareVersionsCases(): iterable
     {
-        $cases = [];
-
         foreach ([
             ['1.0.0-alpha', '1.0.0', -1],
             ['1.0.0-beta', '1.0.0', -1],
@@ -82,22 +80,23 @@ final class NewVersionCheckerTest extends TestCase
             ['1.0.0', '2.0.0', -1],
         ] as $case) {
             // X.Y.Z vs. X.Y.Z
-            $cases[] = $case;
+            yield $case;
 
             // vX.Y.Z vs. X.Y.Z
             $case[0] = 'v'.$case[0];
-            $cases[] = $case;
+
+            yield $case;
 
             // vX.Y.Z vs. vX.Y.Z
             $case[1] = 'v'.$case[1];
-            $cases[] = $case;
+
+            yield $case;
 
             // X.Y.Z vs. vX.Y.Z
             $case[0] = substr($case[0], 1);
-            $cases[] = $case;
-        }
 
-        return $cases;
+            yield $case;
+        }
     }
 
     private function createGithubClientStub(): GithubClientInterface

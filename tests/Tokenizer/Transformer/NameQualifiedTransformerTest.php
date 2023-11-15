@@ -36,6 +36,8 @@ final class NameQualifiedTransformerTest extends AbstractTransformerTestCase
      * @param null|Token[] $input
      *
      * @dataProvider provideProcessCases
+     *
+     * @requires PHP 8.0
      */
     public function testProcess(array $expected, array $input = null): void
     {
@@ -50,22 +52,18 @@ final class NameQualifiedTransformerTest extends AbstractTransformerTestCase
             $this->transformer->process($tokens, $tokens[$i], $i);
         }
 
-        static::assertTokens($expectedTokens, $tokens);
+        self::assertTokens($expectedTokens, $tokens);
 
         if (null === $input) {
-            static::assertFalse($tokens->isChanged());
+            self::assertFalse($tokens->isChanged());
         } else {
             self::testProcess($expected);
-            static::assertTrue($tokens->isChanged());
+            self::assertTrue($tokens->isChanged());
         }
     }
 
     public static function provideProcessCases(): iterable
     {
-        if (\PHP_VERSION_ID < 8_00_00) {
-            return; // PHPUnit still calls this for no reason on non PHP8.0
-        }
-
         yield 'string' => [
             [
                 new Token([T_OPEN_TAG, "<?php\n"]),
@@ -74,39 +72,41 @@ final class NameQualifiedTransformerTest extends AbstractTransformerTestCase
             ],
         ];
 
-        yield 'relative 1' => [
-            [
-                new Token([T_OPEN_TAG, "<?php\n"]),
-                new Token([T_NAMESPACE, 'namespace']),
-                new Token([T_NS_SEPARATOR, '\\']),
-                new Token([T_STRING, 'Transformer']),
-                new Token(';'),
-            ],
-            [
-                new Token([T_OPEN_TAG, "<?php\n"]),
-                new Token([T_NAME_RELATIVE, 'namespace\Transformer']),
-                new Token(';'),
-            ],
-        ];
+        if (\defined('T_NAME_RELATIVE')) { // @TODO: drop condition when PHP 8.0+ is required
+            yield 'relative 1' => [
+                [
+                    new Token([T_OPEN_TAG, "<?php\n"]),
+                    new Token([T_NAMESPACE, 'namespace']),
+                    new Token([T_NS_SEPARATOR, '\\']),
+                    new Token([T_STRING, 'Transformer']),
+                    new Token(';'),
+                ],
+                [
+                    new Token([T_OPEN_TAG, "<?php\n"]),
+                    new Token([T_NAME_RELATIVE, 'namespace\Transformer']),
+                    new Token(';'),
+                ],
+            ];
 
-        yield 'relative 2' => [
-            [
-                new Token([T_OPEN_TAG, "<?php\n"]),
-                new Token([T_NAMESPACE, 'namespace']),
-                new Token([T_NS_SEPARATOR, '\\']),
-                new Token([T_STRING, 'Transformer']),
-                new Token([T_NS_SEPARATOR, '\\']),
-                new Token([T_STRING, 'Foo']),
-                new Token([T_NS_SEPARATOR, '\\']),
-                new Token([T_STRING, 'Bar']),
-                new Token(';'),
-            ],
-            [
-                new Token([T_OPEN_TAG, "<?php\n"]),
-                new Token([T_NAME_RELATIVE, 'namespace\Transformer\Foo\Bar']),
-                new Token(';'),
-            ],
-        ];
+            yield 'relative 2' => [
+                [
+                    new Token([T_OPEN_TAG, "<?php\n"]),
+                    new Token([T_NAMESPACE, 'namespace']),
+                    new Token([T_NS_SEPARATOR, '\\']),
+                    new Token([T_STRING, 'Transformer']),
+                    new Token([T_NS_SEPARATOR, '\\']),
+                    new Token([T_STRING, 'Foo']),
+                    new Token([T_NS_SEPARATOR, '\\']),
+                    new Token([T_STRING, 'Bar']),
+                    new Token(';'),
+                ],
+                [
+                    new Token([T_OPEN_TAG, "<?php\n"]),
+                    new Token([T_NAME_RELATIVE, 'namespace\Transformer\Foo\Bar']),
+                    new Token(';'),
+                ],
+            ];
+        }
 
         yield 'name fully qualified 1' => [
             [
@@ -161,7 +161,7 @@ final class NameQualifiedTransformerTest extends AbstractTransformerTestCase
      */
     public function testPriority(array $expected, string $source): void
     {
-        static::assertTokens(Tokens::fromArray($expected), Tokens::fromCode($source));
+        self::assertTokens(Tokens::fromArray($expected), Tokens::fromCode($source));
     }
 
     public static function providePriorityCases(): iterable

@@ -16,6 +16,7 @@ namespace PhpCsFixer\Tests\Console\Report\FixReport;
 
 use PhpCsFixer\Console\Report\FixReport\JsonReporter;
 use PhpCsFixer\Console\Report\FixReport\ReporterInterface;
+use PhpCsFixer\Tests\Test\Assert\AssertJsonSchemaTrait;
 
 /**
  * @author Boris Gorbylev <ekho@ekho.name>
@@ -27,98 +28,102 @@ use PhpCsFixer\Console\Report\FixReport\ReporterInterface;
  */
 final class JsonReporterTest extends AbstractReporterTestCase
 {
-    protected function createSimpleReport(): string
+    use AssertJsonSchemaTrait;
+
+    protected static function createSimpleReport(): string
     {
         return <<<'JSON'
-{
-    "files": [
-        {
-            "name": "someFile.php"
-        }
-    ],
-    "time": {
-        "total": 0
-    },
-    "memory": 0
-}
-JSON;
+            {
+                "files": [
+                    {
+                        "diff": "--- Original\n+++ New\n@@ -2,7 +2,7 @@\n\n class Foo\n {\n-    public function bar($foo = 1, $bar)\n+    public function bar($foo, $bar)\n     {\n     }\n }",
+                        "name": "someFile.php"
+                    }
+                ],
+                "time": {
+                    "total": 0
+                },
+                "memory": 0
+            }
+            JSON;
     }
 
-    protected function createWithDiffReport(): string
+    protected static function createWithDiffReport(): string
     {
         return <<<'JSON'
-{
-    "files": [
-        {
-            "name": "someFile.php",
-            "diff": "this text is a diff ;)"
-        }
-    ],
-    "time": {
-        "total": 0
-    },
-    "memory": 0
-}
-JSON;
+            {
+                "files": [
+                    {
+                        "name": "someFile.php",
+                        "diff": "--- Original\n+++ New\n@@ -2,7 +2,7 @@\n\n class Foo\n {\n-    public function bar($foo = 1, $bar)\n+    public function bar($foo, $bar)\n     {\n     }\n }"
+                    }
+                ],
+                "time": {
+                    "total": 0
+                },
+                "memory": 0
+            }
+            JSON;
     }
 
-    protected function createWithAppliedFixersReport(): string
+    protected static function createWithAppliedFixersReport(): string
     {
         return <<<'JSON'
-{
-    "files": [
-        {
-            "name": "someFile.php",
-            "appliedFixers":["some_fixer_name_here_1", "some_fixer_name_here_2"]
-        }
-    ],
-    "time": {
-        "total": 0
-    },
-    "memory": 0
-}
-JSON;
+            {
+                "files": [
+                    {
+                        "name": "someFile.php",
+                        "appliedFixers":["some_fixer_name_here_1", "some_fixer_name_here_2"]
+                    }
+                ],
+                "time": {
+                    "total": 0
+                },
+                "memory": 0
+            }
+            JSON;
     }
 
-    protected function createWithTimeAndMemoryReport(): string
+    protected static function createWithTimeAndMemoryReport(): string
     {
         return <<<'JSON'
-{
-    "files": [
-        {
-            "name": "someFile.php"
-        }
-    ],
-    "memory": 2.5,
-    "time": {
-        "total": 1.234
-    }
-}
-JSON;
+            {
+                "files": [
+                    {
+                        "diff": "--- Original\n+++ New\n@@ -2,7 +2,7 @@\n\n class Foo\n {\n-    public function bar($foo = 1, $bar)\n+    public function bar($foo, $bar)\n     {\n     }\n }",
+                        "name": "someFile.php"
+                    }
+                ],
+                "memory": 2.5,
+                "time": {
+                    "total": 1.234
+                }
+            }
+            JSON;
     }
 
-    protected function createComplexReport(): string
+    protected static function createComplexReport(): string
     {
         return <<<'JSON'
-{
-    "files": [
-        {
-            "name": "someFile.php",
-            "appliedFixers":["some_fixer_name_here_1", "some_fixer_name_here_2"],
-            "diff": "this text is a diff ;)"
-        },
-        {
-            "name": "anotherFile.php",
-            "appliedFixers":["another_fixer_name_here"],
-            "diff": "another diff here ;)"
-        }
-    ],
-    "memory": 2.5,
-    "time": {
-        "total": 1.234
-    }
-}
-JSON;
+            {
+                "files": [
+                    {
+                        "name": "someFile.php",
+                        "appliedFixers":["some_fixer_name_here_1", "some_fixer_name_here_2"],
+                        "diff": "this text is a diff ;)"
+                    },
+                    {
+                        "name": "anotherFile.php",
+                        "appliedFixers":["another_fixer_name_here"],
+                        "diff": "another diff here ;)"
+                    }
+                ],
+                "memory": 2.5,
+                "time": {
+                    "total": 1.234
+                }
+            }
+            JSON;
     }
 
     protected function createReporter(): ReporterInterface
@@ -131,47 +136,23 @@ JSON;
         return 'json';
     }
 
-    protected function createNoErrorReport(): string
+    protected static function createNoErrorReport(): string
     {
         return <<<'JSON'
-{
-    "files": [
-    ],
-    "time": {
-        "total": 0
-    },
-    "memory": 0
-}
-JSON;
+            {
+                "files": [
+                ],
+                "time": {
+                    "total": 0
+                },
+                "memory": 0
+            }
+            JSON;
     }
 
     protected function assertFormat(string $expected, string $input): void
     {
-        static::assertJsonSchema($input);
-        static::assertJsonStringEqualsJsonString($expected, $input);
-    }
-
-    private static function assertJsonSchema(string $json): void
-    {
-        $jsonPath = __DIR__.'/../../../../doc/schemas/fix/schema.json';
-
-        $data = json_decode($json);
-
-        $validator = new \JsonSchema\Validator();
-        $validator->validate(
-            $data,
-            (object) ['$ref' => 'file://'.realpath($jsonPath)]
-        );
-
-        static::assertTrue(
-            $validator->isValid(),
-            implode(
-                "\n",
-                array_map(
-                    static fn (array $item): string => sprintf('Property `%s`: %s.', $item['property'], $item['message']),
-                    $validator->getErrors(),
-                )
-            )
-        );
+        self::assertJsonSchema(__DIR__.'/../../../../doc/schemas/fix/schema.json', $input);
+        self::assertJsonStringEqualsJsonString($expected, $input);
     }
 }

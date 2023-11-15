@@ -40,9 +40,9 @@ final class FixerFactoryTest extends TestCase
 
         foreach (self::getFixerWithFixedPosition() as $fixerName => $offset) {
             if ($offset < 0) {
-                static::assertSame($fixerName, $fixers[\count($fixers) + $offset]->getName(), $fixerName);
+                self::assertSame($fixerName, $fixers[\count($fixers) + $offset]->getName(), $fixerName);
             } else {
-                static::assertSame($fixerName, $fixers[$offset]->getName(), $fixerName);
+                self::assertSame($fixerName, $fixers[$offset]->getName(), $fixerName);
             }
         }
     }
@@ -63,7 +63,7 @@ final class FixerFactoryTest extends TestCase
                 foreach ($edges as $edge) {
                     $second = $fixers[$edge];
 
-                    static::assertLessThan($first->getPriority(), $second->getPriority(), sprintf('"%s" should have less priority than "%s"', $edge, $fixerName));
+                    self::assertLessThan($first->getPriority(), $second->getPriority(), sprintf('"%s" should have less priority than "%s"', $edge, $fixerName));
                 }
             }
         }
@@ -72,7 +72,7 @@ final class FixerFactoryTest extends TestCase
     /**
      * @param string[] $edges
      *
-     * @dataProvider provideFixersPriorityCasesHaveIntegrationCases
+     * @dataProvider provideFixersPriorityCasesHaveIntegrationTestCases
      */
     public function testFixersPriorityCasesHaveIntegrationTest(string $fixerName, array $edges): void
     {
@@ -91,6 +91,7 @@ final class FixerFactoryTest extends TestCase
                 'native_function_casing' => true,
                 'no_spaces_after_function_name' => true,
                 'no_spaces_inside_parenthesis' => true,
+                'spaces_inside_parentheses' => true,
             ],
         ];
 
@@ -119,25 +120,25 @@ final class FixerFactoryTest extends TestCase
             sort($expected);
             sort($actual);
 
-            static::assertSame(
+            self::assertSame(
                 sprintf('Integration of fixers: %s,%s.', $fixerName, $edge),
                 $test->getTitle(),
                 sprintf('Please fix the title in "%s".', $file)
             );
 
-            static::assertCount(2, $rules, sprintf('Only the two rules that are tested for priority should be in the ruleset of "%s".', $file));
+            self::assertCount(2, $rules, sprintf('Only the two rules that are tested for priority should be in the ruleset of "%s".', $file));
 
             foreach ($rules as $name => $config) {
-                static::assertNotFalse($config, sprintf('The rule "%s" in "%s" may not be disabled for the test.', $name, $file));
+                self::assertNotFalse($config, sprintf('The rule "%s" in "%s" may not be disabled for the test.', $name, $file));
             }
 
-            static::assertSame($expected, $actual, sprintf('The ruleset of "%s" must contain the rules for the priority test.', $file));
+            self::assertSame($expected, $actual, sprintf('The ruleset of "%s" must contain the rules for the priority test.', $file));
         }
 
-        static::assertCount(0, $missingIntegrationsTests, sprintf("There shall be an integration test. How do you know that priority set up is good, if there is no integration test to check it?\nMissing:\n- %s", implode("\n- ", $missingIntegrationsTests)));
+        self::assertCount(0, $missingIntegrationsTests, sprintf("There shall be an integration test. How do you know that priority set up is good, if there is no integration test to check it?\nMissing:\n- %s", implode("\n- ", $missingIntegrationsTests)));
     }
 
-    public static function provideFixersPriorityCasesHaveIntegrationCases(): iterable
+    public static function provideFixersPriorityCasesHaveIntegrationTestCases(): iterable
     {
         foreach (self::getFixersPriorityGraph() as $fixerName => $edges) {
             yield $fixerName => [$fixerName, $edges];
@@ -145,15 +146,15 @@ final class FixerFactoryTest extends TestCase
     }
 
     /**
-     * @dataProvider provideIntegrationTestFilesCases
+     * @dataProvider providePriorityIntegrationTestFilesAreListedInPriorityGraphCases
      */
-    public function testPriorityIntegrationTestFilesAreListedAsPriorityCases(\SplFileInfo $file): void
+    public function testPriorityIntegrationTestFilesAreListedInPriorityGraph(\SplFileInfo $file): void
     {
         $fileName = $file->getFilename();
 
-        static::assertTrue($file->isFile(), sprintf('Expected only files in the priority integration test directory, got "%s".', $fileName));
-        static::assertFalse($file->isLink(), sprintf('No (sym)links expected the priority integration test directory, got "%s".', $fileName));
-        static::assertSame(
+        self::assertTrue($file->isFile(), sprintf('Expected only files in the priority integration test directory, got "%s".', $fileName));
+        self::assertFalse($file->isLink(), sprintf('No (sym)links expected the priority integration test directory, got "%s".', $fileName));
+        self::assertSame(
             1,
             preg_match('#^([a-z][a-z0-9_]*),([a-z][a-z_]*)(?:_\d{1,3})?\.test(-(in|out)\.php)?$#', $fileName, $matches),
             sprintf('File with unexpected name "%s" in the priority integration test directory.', $fileName)
@@ -162,13 +163,13 @@ final class FixerFactoryTest extends TestCase
         [, $fixerName1, $fixerName2] = $matches;
         $graph = self::getFixersPriorityGraph();
 
-        static::assertTrue(
+        self::assertTrue(
             isset($graph[$fixerName1]) && \in_array($fixerName2, $graph[$fixerName1], true),
             sprintf('Missing priority test entry for file "%s".', $fileName)
         );
     }
 
-    public static function provideIntegrationTestFilesCases(): iterable
+    public static function providePriorityIntegrationTestFilesAreListedInPriorityGraphCases(): iterable
     {
         foreach (new \DirectoryIterator(self::getIntegrationPriorityDirectory()) as $candidate) {
             if (!$candidate->isDot()) {
@@ -182,12 +183,12 @@ final class FixerFactoryTest extends TestCase
         $previous = '';
 
         foreach (self::getFixersPriorityGraph() as $fixerName => $edges) {
-            static::assertLessThan(0, strcmp($previous, $fixerName), sprintf('Not sorted "%s" "%s".', $previous, $fixerName));
+            self::assertLessThan(0, strcmp($previous, $fixerName), sprintf('Not sorted "%s" "%s".', $previous, $fixerName));
 
             $edgesSorted = $edges;
             sort($edgesSorted);
 
-            static::assertSame($edgesSorted, $edges, sprintf('Fixer "%s" edges are not sorted', $fixerName));
+            self::assertSame($edgesSorted, $edges, sprintf('Fixer "%s" edges are not sorted', $fixerName));
             $previous = $fixerName;
         }
     }
@@ -254,9 +255,9 @@ final class FixerFactoryTest extends TestCase
             $phpDoc = $method->getDocComment();
 
             if (false === $phpDoc) {
-                $fixersPhpDocIssues[$fixerName] = sprintf("PHPDoc for %s::getPriority is missing.\nExpected:\n%s", $fixerName, $expectedMessage);
+                $fixersPhpDocIssues[$fixerName] = sprintf("PHPDoc for %s::getPriority is missing.\nExpected:\n%s", $fixers[$fixerName]['short_classname'], $expectedMessage);
             } elseif ($expectedMessage !== $phpDoc) {
-                $fixersPhpDocIssues[$fixerName] = sprintf("PHPDoc for %s::getPriority is not as expected.\nExpected:\n%s", $fixerName, $expectedMessage);
+                $fixersPhpDocIssues[$fixerName] = sprintf("PHPDoc for %s::getPriority is not as expected.\nExpected:\n%s", $fixers[$fixerName]['short_classname'], $expectedMessage);
             }
         }
 
@@ -267,21 +268,18 @@ final class FixerFactoryTest extends TestCase
             ksort($fixersPhpDocIssues);
 
             foreach ($fixersPhpDocIssues as $fixerName => $issue) {
-                $message .= sprintf("\n--------------------------------------------------\n%s\n%s", $fixers[$fixerName]['short_classname'], $issue);
+                $message .= sprintf("\n--------------------------------------------------\n[%s] %s", $fixerName, $issue);
             }
 
-            static::fail($message);
+            self::fail($message);
         }
     }
 
     public function testFixerWithNoneDefaultPriorityIsTested(): void
     {
         $knownIssues = [ // should only shrink
-            'final_class' => true,
             'no_trailing_comma_in_singleline_function_call' => true, // had prio case but no longer, left prio the same for BC reasons, rule has been deprecated
-            'psr_autoloading' => true,
             'simple_to_complex_string_variable' => true, // had prio case but no longer, left prio the same for BC reasons
-            'single_blank_line_before_namespace' => true,
         ];
 
         $factory = new FixerFactory();
@@ -321,11 +319,11 @@ final class FixerFactoryTest extends TestCase
             if (isset($missing[$knownIssue])) {
                 unset($missing[$knownIssue]);
             } else {
-                static::fail(sprintf('No longer found known issue "%s", please update the set.', $knownIssue));
+                self::fail(sprintf('No longer found known issue "%s", please update the set.', $knownIssue));
             }
         }
 
-        static::assertEmpty($missing, 'Fixers without default priority and without priority tests: "'.implode('", "', array_keys($missing)).'."');
+        self::assertEmpty($missing, 'Fixers with non-default priority and yet without priority unit tests [vide "getFixersPriorityGraph()" and "getPhpDocFixersPriorityGraph()"]: "'.implode('", "', array_keys($missing)).'."');
     }
 
     /**
@@ -343,6 +341,8 @@ final class FixerFactoryTest extends TestCase
             ],
             'array_syntax' => [
                 'binary_operator_spaces',
+                'single_space_after_construct',
+                'single_space_around_construct',
                 'ternary_operator_spaces',
             ],
             'assign_null_coalescing_to_coalesce_equal' => [
@@ -356,10 +356,15 @@ final class FixerFactoryTest extends TestCase
                 'single_quote',
             ],
             'blank_line_after_opening_tag' => [
+                'blank_lines_before_namespace',
                 'no_blank_lines_before_namespace',
             ],
             'braces' => [
                 'heredoc_indentation',
+            ],
+            'braces_position' => [
+                'single_line_empty_body',
+                'statement_indentation',
             ],
             'class_attributes_separation' => [
                 'braces',
@@ -369,9 +374,13 @@ final class FixerFactoryTest extends TestCase
             ],
             'class_definition' => [
                 'braces',
+                'single_line_empty_body',
             ],
             'class_keyword_remove' => [
                 'no_unused_imports',
+            ],
+            'clean_namespace' => [
+                'php_unit_data_provider_return_type',
             ],
             'combine_consecutive_issets' => [
                 'multiline_whitespace_before_semicolons',
@@ -379,6 +388,7 @@ final class FixerFactoryTest extends TestCase
                 'no_spaces_inside_parenthesis',
                 'no_trailing_whitespace',
                 'no_whitespace_in_blank_line',
+                'spaces_inside_parentheses',
             ],
             'combine_consecutive_unsets' => [
                 'no_extra_blank_lines',
@@ -389,11 +399,17 @@ final class FixerFactoryTest extends TestCase
             'combine_nested_dirname' => [
                 'method_argument_space',
                 'no_spaces_inside_parenthesis',
+                'spaces_inside_parentheses',
             ],
             'control_structure_braces' => [
+                'braces_position',
                 'control_structure_continuation_position',
                 'curly_braces_position',
                 'no_multiple_statements_per_line',
+            ],
+            'curly_braces_position' => [
+                'single_line_empty_body',
+                'statement_indentation',
             ],
             'declare_strict_types' => [
                 'blank_line_after_opening_tag',
@@ -422,6 +438,10 @@ final class FixerFactoryTest extends TestCase
                 'heredoc_to_nowdoc',
                 'single_quote',
             ],
+            'final_class' => [
+                'protected_to_private',
+                'self_static_accessor',
+            ],
             'final_internal_class' => [
                 'protected_to_private',
                 'self_static_accessor',
@@ -433,6 +453,7 @@ final class FixerFactoryTest extends TestCase
                 'method_argument_space',
             ],
             'function_to_constant' => [
+                'native_constant_invocation',
                 'native_function_casing',
                 'no_extra_blank_lines',
                 'no_singleline_whitespace_before_semicolons',
@@ -457,6 +478,8 @@ final class FixerFactoryTest extends TestCase
                 'ordered_imports',
             ],
             'header_comment' => [
+                'blank_lines_before_namespace',
+                'single_blank_line_before_namespace',
                 'single_line_comment_style',
             ],
             'implode_call' => [
@@ -464,6 +487,7 @@ final class FixerFactoryTest extends TestCase
             ],
             'increment_style' => [
                 'no_spaces_inside_parenthesis',
+                'spaces_inside_parentheses',
             ],
             'indentation_type' => [
                 'phpdoc_indent',
@@ -474,13 +498,21 @@ final class FixerFactoryTest extends TestCase
             'lambda_not_used_import' => [
                 'method_argument_space',
                 'no_spaces_inside_parenthesis',
+                'spaces_inside_parentheses',
             ],
             'list_syntax' => [
                 'binary_operator_spaces',
                 'ternary_operator_spaces',
             ],
+            'long_to_shorthand_operator' => [
+                'binary_operator_spaces',
+                'no_extra_blank_lines',
+                'no_singleline_whitespace_before_semicolons',
+                'standardize_increment',
+            ],
             'method_argument_space' => [
                 'array_indentation',
+                'statement_indentation',
             ],
             'modernize_strpos' => [
                 'binary_operator_spaces',
@@ -492,6 +524,7 @@ final class FixerFactoryTest extends TestCase
                 'php_unit_dedicate_assert',
                 'single_space_after_construct',
                 'single_space_around_construct',
+                'spaces_inside_parentheses',
             ],
             'modernize_types_casting' => [
                 'no_unneeded_control_parentheses',
@@ -506,6 +539,9 @@ final class FixerFactoryTest extends TestCase
                 'global_namespace_import',
             ],
             'new_with_braces' => [
+                'class_definition',
+            ],
+            'new_with_parentheses' => [
                 'class_definition',
             ],
             'no_alias_functions' => [
@@ -565,6 +601,10 @@ final class FixerFactoryTest extends TestCase
                 'binary_operator_spaces',
                 'method_argument_space',
             ],
+            'no_multiple_statements_per_line' => [
+                'braces_position',
+                'curly_braces_position',
+            ],
             'no_php4_constructor' => [
                 'ordered_class_elements',
             ],
@@ -586,6 +626,12 @@ final class FixerFactoryTest extends TestCase
             'no_superfluous_phpdoc_tags' => [
                 'no_empty_phpdoc',
                 'void_return',
+            ],
+            'no_unneeded_braces' => [
+                'no_useless_else',
+                'no_useless_return',
+                'return_assignment',
+                'simplified_if_return',
             ],
             'no_unneeded_control_parentheses' => [
                 'concat_space',
@@ -620,6 +666,7 @@ final class FixerFactoryTest extends TestCase
                 'set_type_to_cast',
             ],
             'no_useless_else' => [
+                'blank_line_before_statement',
                 'braces',
                 'combine_consecutive_unsets',
                 'no_break_comment',
@@ -628,12 +675,14 @@ final class FixerFactoryTest extends TestCase
                 'no_useless_return',
                 'no_whitespace_in_blank_line',
                 'simplified_if_return',
+                'statement_indentation',
             ],
             'no_useless_return' => [
                 'blank_line_before_statement',
                 'no_extra_blank_lines',
                 'no_whitespace_in_blank_line',
                 'single_line_comment_style',
+                'single_line_empty_body',
             ],
             'no_useless_sprintf' => [
                 'method_argument_space',
@@ -641,9 +690,16 @@ final class FixerFactoryTest extends TestCase
                 'no_empty_statement',
                 'no_extra_blank_lines',
                 'no_spaces_inside_parenthesis',
+                'spaces_inside_parentheses',
+            ],
+            'nullable_type_declaration' => [
+                'ordered_types',
+                'types_spaces',
             ],
             'nullable_type_declaration_for_default_null_value' => [
                 'no_unreachable_default_argument_value',
+                'nullable_type_declaration',
+                'ordered_types',
             ],
             'ordered_class_elements' => [
                 'class_attributes_separation',
@@ -653,8 +709,15 @@ final class FixerFactoryTest extends TestCase
             'ordered_imports' => [
                 'blank_line_between_import_groups',
             ],
+            'ordered_types' => [
+                'types_spaces',
+            ],
             'php_unit_construct' => [
                 'php_unit_dedicate_assert',
+            ],
+            'php_unit_data_provider_return_type' => [
+                'return_to_yield_from',
+                'return_type_declaration',
             ],
             'php_unit_dedicate_assert' => [
                 'no_unused_imports',
@@ -666,10 +729,14 @@ final class FixerFactoryTest extends TestCase
             ],
             'php_unit_internal_class' => [
                 'final_internal_class',
+                'phpdoc_separation',
             ],
             'php_unit_no_expectation_annotation' => [
                 'no_empty_phpdoc',
                 'php_unit_expectation',
+            ],
+            'php_unit_size_class' => [
+                'phpdoc_separation',
             ],
             'php_unit_test_annotation' => [
                 'no_empty_phpdoc',
@@ -679,15 +746,14 @@ final class FixerFactoryTest extends TestCase
             'php_unit_test_case_static_method_calls' => [
                 'self_static_accessor',
             ],
+            'php_unit_test_class_requires_covers' => [
+                'phpdoc_separation',
+            ],
             'phpdoc_add_missing_param_annotation' => [
                 'no_empty_phpdoc',
                 'no_superfluous_phpdoc_tags',
                 'phpdoc_align',
                 'phpdoc_order',
-            ],
-            'phpdoc_annotation_without_dot' => [
-                'phpdoc_types',
-                'phpdoc_types_order',
             ],
             'phpdoc_line_span' => [
                 'no_superfluous_phpdoc_tags',
@@ -720,6 +786,11 @@ final class FixerFactoryTest extends TestCase
                 'phpdoc_separation',
                 'phpdoc_trim',
             ],
+            'phpdoc_readonly_class_comment_to_keyword' => [
+                'no_empty_phpdoc',
+                'no_extra_blank_lines',
+                'phpdoc_align',
+            ],
             'phpdoc_return_self_reference' => [
                 'no_superfluous_phpdoc_tags',
             ],
@@ -741,6 +812,7 @@ final class FixerFactoryTest extends TestCase
             'phpdoc_to_return_type' => [
                 'fully_qualified_strict_types',
                 'no_superfluous_phpdoc_tags',
+                'return_to_yield_from',
                 'return_type_declaration',
             ],
             'phpdoc_types' => [
@@ -752,15 +824,22 @@ final class FixerFactoryTest extends TestCase
                 'native_function_casing',
                 'no_spaces_after_function_name',
                 'no_spaces_inside_parenthesis',
+                'spaces_inside_parentheses',
             ],
             'protected_to_private' => [
                 'ordered_class_elements',
+            ],
+            'psr_autoloading' => [
+                'self_accessor',
             ],
             'regular_callable_call' => [
                 'native_function_invocation',
             ],
             'return_assignment' => [
                 'blank_line_before_statement',
+            ],
+            'return_to_yield_from' => [
+                'yield_from_array_to_yields',
             ],
             'semicolon_after_instruction' => [
                 'simplified_if_return',
@@ -797,10 +876,16 @@ final class FixerFactoryTest extends TestCase
             'single_space_around_construct' => [
                 'braces',
                 'function_declaration',
+                'nullable_type_declaration',
             ],
             'single_trait_insert_per_statement' => [
                 'braces',
                 'space_after_semicolon',
+            ],
+            'spaces_inside_parentheses' => [
+                'function_to_constant',
+                'get_class_to_class_keyword',
+                'string_length_to_empty',
             ],
             'standardize_increment' => [
                 'increment_style',
@@ -834,12 +919,22 @@ final class FixerFactoryTest extends TestCase
                 'not_operator_with_space',
                 'not_operator_with_successor_space',
             ],
+            'use_arrow_functions' => [
+                'function_declaration',
+            ],
             'visibility_required' => [
                 'class_attributes_separation',
             ],
             'void_return' => [
                 'phpdoc_no_empty_return',
                 'return_type_declaration',
+            ],
+            'yield_from_array_to_yields' => [
+                'blank_line_before_statement',
+                'no_extra_blank_lines',
+                'no_multiple_statements_per_line',
+                'no_whitespace_in_blank_line',
+                'statement_indentation',
             ],
         ];
     }
@@ -869,9 +964,7 @@ final class FixerFactoryTest extends TestCase
 
         $docFixerNames = array_filter(
             array_keys(self::getAllFixers()),
-            static function (string $name): bool {
-                return str_contains($name, 'phpdoc');
-            }
+            static fn (string $name): bool => str_contains($name, 'phpdoc')
         );
 
         foreach ($docFixerNames as $docFixerName) {

@@ -36,19 +36,19 @@ final class PhpUnitInternalClassFixerTest extends AbstractFixerTestCase
         $this->doTest($expected, $input);
     }
 
-    public static function provideFixCases(): array
+    public static function provideFixCases(): iterable
     {
-        return [
-            'It does not change normal classes' => [
-                '<?php
+        yield 'It does not change normal classes' => [
+            '<?php
 
 class Hello
 {
 }
 ',
-            ],
-            'It marks a test class as internal' => [
-                '<?php
+        ];
+
+        yield 'It marks a test class as internal' => [
+            '<?php
 
 /**
  * @internal
@@ -57,26 +57,26 @@ class Test extends TestCase
 {
 }
 ',
-                '<?php
+            '<?php
 
 class Test extends TestCase
 {
 }
 ',
-            ],
-            'It adds an internal tag to a class that already has a doc block' => [
-                '<?php
+        ];
+
+        yield 'It adds an internal tag to a class that already has a doc block' => [
+            '<?php
 
 /**
  * @coversNothing
- *
  * @internal
  */
 class Test extends TestCase
 {
 }
 ',
-                '<?php
+            '<?php
 
 /**
  * @coversNothing
@@ -85,9 +85,10 @@ class Test extends TestCase
 {
 }
 ',
-            ],
-            'It does not change a class that is already internal' => [
-                '<?php
+        ];
+
+        yield 'It does not change a class that is already internal' => [
+            '<?php
 
 /**
  * @internal
@@ -96,9 +97,10 @@ class Test extends TestCase
 {
 }
 ',
-            ],
-            'It does not change a class that is already internal and has other annotations' => [
-                '<?php
+        ];
+
+        yield 'It does not change a class that is already internal and has other annotations' => [
+            '<?php
 
 /**
  * @author me
@@ -110,9 +112,10 @@ class Test extends TestCase
 {
 }
 ',
-            ],
-            'It works on other indentation levels' => [
-                '<?php
+        ];
+
+        yield 'It works on other indentation levels' => [
+            '<?php
 
 if (class_exists("Foo\Bar")) {
     /**
@@ -123,7 +126,7 @@ if (class_exists("Foo\Bar")) {
     }
 }
 ',
-                '<?php
+            '<?php
 
 if (class_exists("Foo\Bar")) {
     class Test Extends TestCase
@@ -131,9 +134,10 @@ if (class_exists("Foo\Bar")) {
     }
 }
 ',
-            ],
-            'It works on other indentation levels when the class has other annotations' => [
-                '<?php
+        ];
+
+        yield 'It works on other indentation levels when the class has other annotations' => [
+            '<?php
 
 if (class_exists("Foo\Bar")) {
     /**
@@ -141,7 +145,6 @@ if (class_exists("Foo\Bar")) {
      *
      *
      * @covers \Other\Class
-     *
      * @internal
      */
     class Test Extends TestCase
@@ -149,7 +152,7 @@ if (class_exists("Foo\Bar")) {
     }
 }
 ',
-                '<?php
+            '<?php
 
 if (class_exists("Foo\Bar")) {
     /**
@@ -163,9 +166,10 @@ if (class_exists("Foo\Bar")) {
     }
 }
 ',
-            ],
-            'It works for tab ident' => [
-                '<?php
+        ];
+
+        yield 'It works for tab ident' => [
+            '<?php
 
 if (class_exists("Foo\Bar")) {
 	/**
@@ -173,7 +177,6 @@ if (class_exists("Foo\Bar")) {
 	 *
 	 *
 	 * @covers \Other\Class
-	 *
 	 * @internal
 	 */
 	class Test Extends TestCase
@@ -181,7 +184,7 @@ if (class_exists("Foo\Bar")) {
 	}
 }
 ',
-                '<?php
+            '<?php
 
 if (class_exists("Foo\Bar")) {
 	/**
@@ -195,13 +198,13 @@ if (class_exists("Foo\Bar")) {
 	}
 }
 ',
-            ],
-            'It always adds @internal to the bottom of the doc block' => [
-                '<?php
+        ];
+
+        yield 'It always adds @internal to the bottom of the doc block' => [
+            '<?php
 
 /**
  * @coversNothing
- *
  *
  *
  *
@@ -222,7 +225,7 @@ class Test extends TestCase
 {
 }
 ',
-                '<?php
+            '<?php
 
 /**
  * @coversNothing
@@ -245,46 +248,49 @@ class Test extends TestCase
 {
 }
 ',
-            ],
-            'It does not change a class with a single line internal doc block' => [
-                '<?php
+        ];
+
+        yield 'It does not change a class with a single line internal doc block' => [
+            '<?php
 
 /** @internal */
 class Test extends TestCase
 {
 }
 ',
-            ],
-            'It adds an internal tag to a class that already has a one linedoc block' => [
-                '<?php
+        ];
+
+        yield 'It adds an internal tag to a class that already has a one linedoc block' => [
+            '<?php
 
 /**
  * @coversNothing
- *
  * @internal
  */
 class Test extends TestCase
 {
 }
 ',
-                '<?php
+            '<?php
 
 /** @coversNothing */
 class Test extends TestCase
 {
 }
 ',
-            ],
-            'By default it will not mark an abstract class as internal' => [
-                '<?php
+        ];
+
+        yield 'By default it will not mark an abstract class as internal' => [
+            '<?php
 
 abstract class Test extends TestCase
 {
 }
 ',
-            ],
-            'If abstract is added as an option, abstract classes will be marked internal' => [
-                '<?php
+        ];
+
+        yield 'If abstract is added as an option, abstract classes will be marked internal' => [
+            '<?php
 
 /**
  * @internal
@@ -293,42 +299,45 @@ abstract class Test extends TestCase
 {
 }
 ',
-                '<?php
+            '<?php
 
 abstract class Test extends TestCase
 {
 }
 ',
-                [
-                    'types' => ['abstract'],
-                ],
+            [
+                'types' => ['abstract'],
             ],
-            'If final is not added as an option, final classes will not be marked internal' => [
-                '<?php
+        ];
+
+        yield 'If final is not added as an option, final classes will not be marked internal' => [
+            '<?php
 
 final class Test extends TestCase
 {
 }
 ',
-                null,
-                [
-                    'types' => ['abstract'],
-                ],
+            null,
+            [
+                'types' => ['abstract'],
             ],
-            'If normal is not added as an option, normal classes will not be marked internal' => [
-                '<?php
+        ];
+
+        yield 'If normal is not added as an option, normal classes will not be marked internal' => [
+            '<?php
 
 class Test extends TestCase
 {
 }
 ',
-                null,
-                [
-                    'types' => ['abstract'],
-                ],
+            null,
+            [
+                'types' => ['abstract'],
             ],
-            'It works correctly with multiple classes in one file, even when one of them is not allowed' => [
-                '<?php
+        ];
+
+        yield 'It works correctly with multiple classes in one file, even when one of them is not allowed' => [
+            '<?php
 
 /**
  * @internal
@@ -352,7 +361,7 @@ class Test extends TestCase
 {
 }
 ',
-                '<?php
+            '<?php
 
 class Test extends TestCase
 {
@@ -370,7 +379,6 @@ class Test extends TestCase
 {
 }
 ',
-            ],
         ];
     }
 
@@ -414,7 +422,6 @@ class Test extends TestCase
 
             /**
              * @coversNothing
-             *
              * @internal
              */
             #[SimpleTest]
@@ -461,7 +468,6 @@ class Test extends TestCase
 
             /**
              * @coversNothing
-             *
              * @internal
              */
             #[SimpleTest]
@@ -512,6 +518,7 @@ final readonly class Test extends TestCase
 
         yield [
             '<?php
+
 /**
  * @internal
  */

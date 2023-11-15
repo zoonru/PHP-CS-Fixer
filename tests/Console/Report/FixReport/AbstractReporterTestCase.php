@@ -46,7 +46,7 @@ abstract class AbstractReporterTestCase extends TestCase
 
     final public function testGetFormat(): void
     {
-        static::assertSame(
+        self::assertSame(
             $this->getFormat(),
             $this->reporter->getFormat()
         );
@@ -62,110 +62,143 @@ abstract class AbstractReporterTestCase extends TestCase
         $this->assertFormat($expectedReport, $actualReport);
     }
 
-    final public function provideGenerateCases(): array
+    final public static function provideGenerateCases(): iterable
     {
-        return [
-            'no errors' => [
-                $this->createNoErrorReport(),
-                new ReportSummary(
-                    [],
-                    10,
-                    0,
-                    0,
-                    false,
-                    false,
-                    false
-                ),
-            ],
-            'simple' => [
-                $this->createSimpleReport(),
-                new ReportSummary(
-                    [
-                        'someFile.php' => [
-                            'appliedFixers' => ['some_fixer_name_here'],
-                            'diff' => '',
-                        ],
+        yield 'no errors' => [
+            static::createNoErrorReport(),
+            new ReportSummary(
+                [],
+                10,
+                0,
+                0,
+                false,
+                false,
+                false
+            ),
+        ];
+
+        yield 'simple' => [
+            static::createSimpleReport(),
+            new ReportSummary(
+                [
+                    'someFile.php' => [
+                        'appliedFixers' => ['some_fixer_name_here'],
+                        'diff' => '--- Original
++++ New
+@@ -2,7 +2,7 @@
+
+ class Foo
+ {
+-    public function bar($foo = 1, $bar)
++    public function bar($foo, $bar)
+     {
+     }
+ }',
                     ],
-                    10,
-                    0,
-                    0,
-                    false,
-                    false,
-                    false
-                ),
-            ],
-            'with diff' => [
-                $this->createWithDiffReport(),
-                new ReportSummary(
-                    [
-                        'someFile.php' => [
-                            'appliedFixers' => ['some_fixer_name_here'],
-                            'diff' => 'this text is a diff ;)',
-                        ],
+                ],
+                10,
+                0,
+                0,
+                false,
+                false,
+                false
+            ),
+        ];
+
+        yield 'with diff' => [
+            static::createWithDiffReport(),
+            new ReportSummary(
+                [
+                    'someFile.php' => [
+                        'appliedFixers' => ['some_fixer_name_here'],
+                        'diff' => '--- Original
++++ New
+@@ -2,7 +2,7 @@
+
+ class Foo
+ {
+-    public function bar($foo = 1, $bar)
++    public function bar($foo, $bar)
+     {
+     }
+ }',
                     ],
-                    10,
-                    0,
-                    0,
-                    false,
-                    false,
-                    false
-                ),
-            ],
-            'with applied fixers' => [
-                $this->createWithAppliedFixersReport(),
-                new ReportSummary(
-                    [
-                        'someFile.php' => [
-                            'appliedFixers' => ['some_fixer_name_here_1', 'some_fixer_name_here_2'],
-                            'diff' => '',
-                        ],
+                ],
+                10,
+                0,
+                0,
+                false,
+                false,
+                false
+            ),
+        ];
+
+        yield 'with applied fixers' => [
+            static::createWithAppliedFixersReport(),
+            new ReportSummary(
+                [
+                    'someFile.php' => [
+                        'appliedFixers' => ['some_fixer_name_here_1', 'some_fixer_name_here_2'],
+                        'diff' => '',
                     ],
-                    10,
-                    0,
-                    0,
-                    true,
-                    false,
-                    false
-                ),
-            ],
-            'with time and memory' => [
-                $this->createWithTimeAndMemoryReport(),
-                new ReportSummary(
-                    [
-                        'someFile.php' => [
-                            'appliedFixers' => ['some_fixer_name_here'],
-                            'diff' => '',
-                        ],
+                ],
+                10,
+                0,
+                0,
+                true,
+                false,
+                false
+            ),
+        ];
+
+        yield 'with time and memory' => [
+            static::createWithTimeAndMemoryReport(),
+            new ReportSummary(
+                [
+                    'someFile.php' => [
+                        'appliedFixers' => ['some_fixer_name_here'],
+                        'diff' => '--- Original
++++ New
+@@ -2,7 +2,7 @@
+
+ class Foo
+ {
+-    public function bar($foo = 1, $bar)
++    public function bar($foo, $bar)
+     {
+     }
+ }',
                     ],
-                    10,
-                    1234,
-                    2621440, // 2.5 * 1024 * 1024
-                    false,
-                    false,
-                    false
-                ),
-            ],
-            'complex' => [
-                $this->createComplexReport(),
-                new ReportSummary(
-                    [
-                        'someFile.php' => [
-                            'appliedFixers' => ['some_fixer_name_here_1', 'some_fixer_name_here_2'],
-                            'diff' => 'this text is a diff ;)',
-                        ],
-                        'anotherFile.php' => [
-                            'appliedFixers' => ['another_fixer_name_here'],
-                            'diff' => 'another diff here ;)',
-                        ],
+                ],
+                10,
+                1234,
+                2621440, // 2.5 * 1024 * 1024
+                false,
+                false,
+                false
+            ),
+        ];
+
+        yield 'complex' => [
+            static::createComplexReport(),
+            new ReportSummary(
+                [
+                    'someFile.php' => [
+                        'appliedFixers' => ['some_fixer_name_here_1', 'some_fixer_name_here_2'],
+                        'diff' => 'this text is a diff ;)',
                     ],
-                    10,
-                    1234,
-                    2621440, // 2.5 * 1024 * 1024
-                    true,
-                    true,
-                    true
-                ),
-            ],
+                    'anotherFile.php' => [
+                        'appliedFixers' => ['another_fixer_name_here'],
+                        'diff' => 'another diff here ;)',
+                    ],
+                ],
+                10,
+                1234,
+                2621440, // 2.5 * 1024 * 1024
+                true,
+                true,
+                true
+            ),
         ];
     }
 
@@ -173,17 +206,17 @@ abstract class AbstractReporterTestCase extends TestCase
 
     abstract protected function getFormat(): string;
 
-    abstract protected function createNoErrorReport(): string;
+    abstract protected static function createNoErrorReport(): string;
 
-    abstract protected function createSimpleReport(): string;
+    abstract protected static function createSimpleReport(): string;
 
-    abstract protected function createWithDiffReport(): string;
+    abstract protected static function createWithDiffReport(): string;
 
-    abstract protected function createWithAppliedFixersReport(): string;
+    abstract protected static function createWithAppliedFixersReport(): string;
 
-    abstract protected function createWithTimeAndMemoryReport(): string;
+    abstract protected static function createWithTimeAndMemoryReport(): string;
 
-    abstract protected function createComplexReport(): string;
+    abstract protected static function createComplexReport(): string;
 
     abstract protected function assertFormat(string $expected, string $input): void;
 }

@@ -22,8 +22,10 @@ Rule sets
 
 The rule is part of the following rule sets:
 
-@PhpCsFixer
-  Using the `@PhpCsFixer <./../../ruleSets/PhpCsFixer.rst>`_ rule set will enable the ``declare_parentheses`` rule.
+- `@PhpCsFixer <./../../ruleSets/PhpCsFixer.rst>`_
+- `@Symfony <./../../ruleSets/Symfony.rst>`_
 
-@Symfony
-  Using the `@Symfony <./../../ruleSets/Symfony.rst>`_ rule set will enable the ``declare_parentheses`` rule.
+Source class
+------------
+
+`PhpCsFixer\\Fixer\\LanguageConstruct\\DeclareParenthesesFixer <./../src/Fixer/LanguageConstruct/DeclareParenthesesFixer.php>`_

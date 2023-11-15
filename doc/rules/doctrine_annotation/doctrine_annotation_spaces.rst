@@ -14,21 +14,30 @@ assignment operator; there must be one space around array assignment operator.
 Configuration
 -------------
 
-``ignored_tags``
-~~~~~~~~~~~~~~~~
+``after_argument_assignments``
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-List of tags that must not be treated as Doctrine Annotations.
+Whether to add, remove or ignore spaces after argument assignment operator.
 
-Allowed types: ``array``
+Allowed types: ``null`` and ``bool``
 
-Default value: ``['abstract', 'access', 'code', 'deprec', 'encode', 'exception', 'final', 'ingroup', 'inheritdoc', 'inheritDoc', 'magic', 'name', 'toc', 'tutorial', 'private', 'static', 'staticvar', 'staticVar', 'throw', 'api', 'author', 'category', 'copyright', 'deprecated', 'example', 'filesource', 'global', 'ignore', 'internal', 'license', 'link', 'method', 'package', 'param', 'property', 'property-read', 'property-write', 'return', 'see', 'since', 'source', 'subpackage', 'throws', 'todo', 'TODO', 'usedBy', 'uses', 'var', 'version', 'after', 'afterClass', 'backupGlobals', 'backupStaticAttributes', 'before', 'beforeClass', 'codeCoverageIgnore', 'codeCoverageIgnoreStart', 'codeCoverageIgnoreEnd', 'covers', 'coversDefaultClass', 'coversNothing', 'dataProvider', 'depends', 'expectedException', 'expectedExceptionCode', 'expectedExceptionMessage', 'expectedExceptionMessageRegExp', 'group', 'large', 'medium', 'preserveGlobalState', 'requires', 'runTestsInSeparateProcesses', 'runInSeparateProcess', 'small', 'test', 'testdox', 'ticket', 'uses', 'SuppressWarnings', 'noinspection', 'package_version', 'enduml', 'startuml', 'psalm', 'phpstan', 'template', 'fix', 'FIXME', 'fixme', 'override']``
+Default value: ``false``
 
-``around_parentheses``
-~~~~~~~~~~~~~~~~~~~~~~
+``after_array_assignments_colon``
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Whether to fix spaces around parentheses.
+Whether to add, remove or ignore spaces after array assignment ``:`` operator.
 
-Allowed types: ``bool``
+Allowed types: ``null`` and ``bool``
+
+Default value: ``true``
+
+``after_array_assignments_equals``
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Whether to add, remove or ignore spaces after array assignment ``=`` operator.
+
+Allowed types: ``null`` and ``bool``
 
 Default value: ``true``
 
@@ -41,59 +50,50 @@ Allowed types: ``bool``
 
 Default value: ``true``
 
+``around_parentheses``
+~~~~~~~~~~~~~~~~~~~~~~
+
+Whether to fix spaces around parentheses.
+
+Allowed types: ``bool``
+
+Default value: ``true``
+
 ``before_argument_assignments``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Whether to add, remove or ignore spaces before argument assignment operator.
 
-Allowed types: ``null``, ``bool``
+Allowed types: ``null`` and ``bool``
 
 Default value: ``false``
-
-``after_argument_assignments``
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Whether to add, remove or ignore spaces after argument assignment operator.
-
-Allowed types: ``null``, ``bool``
-
-Default value: ``false``
-
-``before_array_assignments_equals``
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Whether to add, remove or ignore spaces before array ``=`` assignment operator.
-
-Allowed types: ``null``, ``bool``
-
-Default value: ``true``
-
-``after_array_assignments_equals``
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Whether to add, remove or ignore spaces after array assignment ``=`` operator.
-
-Allowed types: ``null``, ``bool``
-
-Default value: ``true``
 
 ``before_array_assignments_colon``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Whether to add, remove or ignore spaces before array ``:`` assignment operator.
 
-Allowed types: ``null``, ``bool``
+Allowed types: ``null`` and ``bool``
 
 Default value: ``true``
 
-``after_array_assignments_colon``
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+``before_array_assignments_equals``
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Whether to add, remove or ignore spaces after array assignment ``:`` operator.
+Whether to add, remove or ignore spaces before array ``=`` assignment operator.
 
-Allowed types: ``null``, ``bool``
+Allowed types: ``null`` and ``bool``
 
 Default value: ``true``
+
+``ignored_tags``
+~~~~~~~~~~~~~~~~
+
+List of tags that must not be treated as Doctrine Annotations.
+
+Allowed types: ``array``
+
+Default value: ``['abstract', 'access', 'code', 'deprec', 'encode', 'exception', 'final', 'ingroup', 'inheritdoc', 'inheritDoc', 'magic', 'name', 'toc', 'tutorial', 'private', 'static', 'staticvar', 'staticVar', 'throw', 'api', 'author', 'category', 'copyright', 'deprecated', 'example', 'filesource', 'global', 'ignore', 'internal', 'license', 'link', 'method', 'package', 'param', 'property', 'property-read', 'property-write', 'return', 'see', 'since', 'source', 'subpackage', 'throws', 'todo', 'TODO', 'usedBy', 'uses', 'var', 'version', 'after', 'afterClass', 'backupGlobals', 'backupStaticAttributes', 'before', 'beforeClass', 'codeCoverageIgnore', 'codeCoverageIgnoreStart', 'codeCoverageIgnoreEnd', 'covers', 'coversDefaultClass', 'coversNothing', 'dataProvider', 'depends', 'expectedException', 'expectedExceptionCode', 'expectedExceptionMessage', 'expectedExceptionMessageRegExp', 'group', 'large', 'medium', 'preserveGlobalState', 'requires', 'runTestsInSeparateProcesses', 'runInSeparateProcess', 'small', 'test', 'testdox', 'ticket', 'uses', 'SuppressWarnings', 'noinspection', 'package_version', 'enduml', 'startuml', 'psalm', 'phpstan', 'template', 'fix', 'FIXME', 'fixme', 'override']``
 
 Examples
 --------
@@ -147,7 +147,12 @@ Rule sets
 
 The rule is part of the following rule set:
 
-@DoctrineAnnotation
-  Using the `@DoctrineAnnotation <./../../ruleSets/DoctrineAnnotation.rst>`_ rule set will enable the ``doctrine_annotation_spaces`` rule with the config below:
+- `@DoctrineAnnotation <./../../ruleSets/DoctrineAnnotation.rst>`_ with config:
 
   ``['before_array_assignments_colon' => false]``
+
+
+Source class
+------------
+
+`PhpCsFixer\\Fixer\\DoctrineAnnotation\\DoctrineAnnotationSpacesFixer <./../src/Fixer/DoctrineAnnotation/DoctrineAnnotationSpacesFixer.php>`_

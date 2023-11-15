@@ -22,7 +22,7 @@ Configuration
 
 The call type to use for referring to PHPUnit methods.
 
-Allowed values: ``'self'``, ``'static'``, ``'this'``
+Allowed values: ``'self'``, ``'static'`` and ``'this'``
 
 Default value: ``'static'``
 
@@ -88,5 +88,12 @@ Rule sets
 
 The rule is part of the following rule set:
 
-@PhpCsFixer:risky
-  Using the `@PhpCsFixer:risky <./../../ruleSets/PhpCsFixerRisky.rst>`_ rule set will enable the ``php_unit_test_case_static_method_calls`` rule with the default config.
+- `@PhpCsFixer:risky <./../../ruleSets/PhpCsFixerRisky.rst>`_ with config:
+
+  ``['call_type' => 'self']``
+
+
+Source class
+------------
+
+`PhpCsFixer\\Fixer\\PhpUnit\\PhpUnitTestCaseStaticMethodCallsFixer <./../src/Fixer/PhpUnit/PhpUnitTestCaseStaticMethodCallsFixer.php>`_

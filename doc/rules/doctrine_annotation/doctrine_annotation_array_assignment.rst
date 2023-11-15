@@ -21,7 +21,7 @@ Default value: ``['abstract', 'access', 'code', 'deprec', 'encode', 'exception',
 
 The operator to use.
 
-Allowed values: ``':'``, ``'='``
+Allowed values: ``':'`` and ``'='``
 
 Default value: ``'='``
 
@@ -65,7 +65,12 @@ Rule sets
 
 The rule is part of the following rule set:
 
-@DoctrineAnnotation
-  Using the `@DoctrineAnnotation <./../../ruleSets/DoctrineAnnotation.rst>`_ rule set will enable the ``doctrine_annotation_array_assignment`` rule with the config below:
+- `@DoctrineAnnotation <./../../ruleSets/DoctrineAnnotation.rst>`_ with config:
 
   ``['operator' => ':']``
+
+
+Source class
+------------
+
+`PhpCsFixer\\Fixer\\DoctrineAnnotation\\DoctrineAnnotationArrayAssignmentFixer <./../src/Fixer/DoctrineAnnotation/DoctrineAnnotationArrayAssignmentFixer.php>`_

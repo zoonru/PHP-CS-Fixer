@@ -497,22 +497,21 @@ EOT
      *
      * @requires PHP 8.0
      */
-    public function test80DoNotFix(string $input): void
+    public function testDoNotFix80(string $input): void
     {
         $this->doTest($input);
     }
 
-    public static function provideDoNotFix80Cases(): array
+    public static function provideDoNotFix80Cases(): iterable
     {
-        return [
-            ['<?php
+        yield ['<?php
 
 function test(#[TestAttribute] ?User $user) {}
-'],
-            ['<?php
+'];
+
+        yield ['<?php
 
 function test(#[TestAttribute] ?User $user = null) {}
-'],
-        ];
+'];
     }
 }

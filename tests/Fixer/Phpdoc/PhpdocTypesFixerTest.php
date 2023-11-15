@@ -202,7 +202,7 @@ final class PhpdocTypesFixerTest extends AbstractFixerTestCase
     /**
      * @param self|array|Foo $bar
      *
-     * @return int|float|callback
+     * @return int|float|boolean|Double
      */
 
 ',
@@ -210,7 +210,7 @@ final class PhpdocTypesFixerTest extends AbstractFixerTestCase
     /**
      * @param SELF|Array|Foo $bar
      *
-     * @return inT|Float|callback
+     * @return inT|Float|boolean|Double
      */
 
 ',
@@ -223,7 +223,6 @@ final class PhpdocTypesFixerTest extends AbstractFixerTestCase
              * @param array<int, object> $a
              * @param array<iterable> $b
              * @param array<parent|$this|self> $c
-             * @param array<\int, \object> $d
              * @param iterable<Foo\Int\Bar|Foo\Int|Int\Bar> $thisShouldNotBeChanged
              * @param iterable<BOOLBOOLBOOL|INTINTINT|ARRAY_BOOL_INT_STRING_> $thisShouldNotBeChangedNeither
              *
@@ -234,7 +233,6 @@ final class PhpdocTypesFixerTest extends AbstractFixerTestCase
              * @param ARRAY<INT, OBJECT> $a
              * @param ARRAY<ITERABLE> $b
              * @param array<Parent|$This|Self> $c
-             * @param ARRAY<\INT, \OBJECT> $d
              * @param iterable<Foo\Int\Bar|Foo\Int|Int\Bar> $thisShouldNotBeChanged
              * @param iterable<BOOLBOOLBOOL|INTINTINT|ARRAY_BOOL_INT_STRING_> $thisShouldNotBeChangedNeither
              *
@@ -261,8 +259,70 @@ final class PhpdocTypesFixerTest extends AbstractFixerTestCase
                     * @return array{FOO: bool, NULL: null|int, BAR: string|BAZ}
                     */',
             '<?php /**
-                    * @return array{FOO: BOOL, NULL: NULL|INT, BAR: STRING|BAZ}
+                    * @return ARRAY{FOO: BOOL, NULL: NULL|INT, BAR: STRING|BAZ}
                     */',
+        ];
+
+        yield 'union with \'NULL\'' => [
+            '<?php /**
+                    * @return \'NULL\'|null|false
+                    */',
+            '<?php /**
+                    * @return \'NULL\'|NULL|false
+                    */',
+        ];
+
+        yield 'union with "NULL"' => [
+            '<?php /**
+                    * @return null|"NULL"|false
+                    */',
+            '<?php /**
+                    * @return NULL|"NULL"|false
+                    */',
+        ];
+
+        yield 'method with reserved identifier' => [
+            '<?php /**
+                    * @method bool BOOL(): void
+                    */',
+            '<?php /**
+                    * @method BOOL BOOL(): void
+                    */',
+        ];
+
+        yield 'no space between type and variable' => [
+            '<?php /** @param null|string$foo */',
+            '<?php /** @param NULL|STRING$foo */',
+        ];
+
+        yield '"Callback" class in phpdoc must not be lowered' => [
+            '<?php
+    /**
+     * @param Callback $foo
+     *
+     * @return Callback
+     */
+',
+        ];
+
+        yield 'param with extra chevrons' => [
+            '<?php /** @param array <3> $value */',
+            '<?php /** @param ARRAY <3> $value */',
+        ];
+
+        yield 'param with extra parentheses' => [
+            '<?php /** @param \Closure (int) $value */',
+            '<?php /** @param \Closure (INT) $value */',
+        ];
+
+        yield 'param with union type and extra parentheses' => [
+            '<?php /** @param \Closure (float|int) $value */',
+            '<?php /** @param \Closure (FLOAT|INT) $value */',
+        ];
+
+        yield 'return with union type and extra parentheses' => [
+            '<?php /** @return float|int (number) count of something */',
+            '<?php /** @return FLOAT|INT (number) count of something */',
         ];
     }
 

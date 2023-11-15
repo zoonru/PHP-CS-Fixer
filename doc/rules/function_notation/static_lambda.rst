@@ -2,7 +2,7 @@
 Rule ``static_lambda``
 ======================
 
-Lambdas not (indirect) referencing ``$this`` must be declared ``static``.
+Lambdas not (indirectly) referencing ``$this`` must be declared ``static``.
 
 Warning
 -------
@@ -27,3 +27,15 @@ Example #1
    +$a = static function () use ($b)
     {   echo $b;
     };
+
+Rule sets
+---------
+
+The rule is part of the following rule set:
+
+- `@PhpCsFixer:risky <./../../ruleSets/PhpCsFixerRisky.rst>`_
+
+Source class
+------------
+
+`PhpCsFixer\\Fixer\\FunctionNotation\\StaticLambdaFixer <./../src/Fixer/FunctionNotation/StaticLambdaFixer.php>`_

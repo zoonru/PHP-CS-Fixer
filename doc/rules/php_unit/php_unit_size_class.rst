@@ -19,7 +19,7 @@ Configuration
 
 Define a specific group to be used in case no group is already in use.
 
-Allowed values: ``'large'``, ``'medium'``, ``'small'``
+Allowed values: ``'large'``, ``'medium'`` and ``'small'``
 
 Default value: ``'small'``
 
@@ -36,6 +36,7 @@ Example #1
    --- Original
    +++ New
     <?php
+   +
    +/**
    + * @small
    + */
@@ -51,7 +52,12 @@ With configuration: ``['group' => 'medium']``.
    --- Original
    +++ New
     <?php
+   +
    +/**
    + * @medium
    + */
     class MyTest extends TestCase {}
+Source class
+------------
+
+`PhpCsFixer\\Fixer\\PhpUnit\\PhpUnitSizeClassFixer <./../src/Fixer/PhpUnit/PhpUnitSizeClassFixer.php>`_

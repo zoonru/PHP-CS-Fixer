@@ -34,64 +34,69 @@ final class BlankLineAfterNamespaceFixerTest extends AbstractFixerTestCase
         $this->doTest($expected, $input);
     }
 
-    public static function provideFixCases(): array
+    public static function provideFixCases(): iterable
     {
-        return [
-            [
-                '<?php namespace A\B?>
+        yield [
+            '<?php namespace A\B?>
                 <?php
                     for($i=0; $i<10; ++$i) {echo $i;}',
-            ],
-            [
-                '<?php namespace A\B?>',
-            ],
-            [
-                '<?php
+        ];
+
+        yield [
+            '<?php namespace A\B?>',
+        ];
+
+        yield [
+            '<?php
 namespace A\B;
 
 class C {}
 ',
-                '<?php
+            '<?php
 namespace A\B;
 
 
 
 class C {}
 ',
-            ],
-            [
-                '<?php
+        ];
+
+        yield [
+            '<?php
 namespace A\B;
 
 class C {}
 ',
-                '<?php
+            '<?php
 namespace A\B;
 class C {}
 ',
-            ],
-            [
-                '<?php
+        ];
+
+        yield [
+            '<?php
 namespace A\B;
 
 class C {}
 ',
-                '<?php
+            '<?php
 namespace A\B;  class C {}
 ',
-            ],
-            [
-                '<?php
+        ];
+
+        yield [
+            '<?php
 namespace A\B;
 
 class C {}
 ',
-                '<?php
+            '<?php
 namespace A\B;class C {}
 ',
-            ],
-            [
-                '<?php
+        ];
+
+        yield [
+            '<?php
 namespace A\B {
     class C {
         public $foo;
@@ -99,120 +104,132 @@ namespace A\B {
     }
 }
 ',
-            ],
-            [
-                "<?php\rnamespace A\\B;
+        ];
+
+        yield [
+            "<?php\rnamespace A\\B;
 
 class C {}\r",
-                "<?php\rnamespace A\\B;\r\r\r\r\r\rclass C {}\r",
-            ],
-            [
-                '<?php
+            "<?php\rnamespace A\\B;\r\r\r\r\r\rclass C {}\r",
+        ];
+
+        yield [
+            '<?php
 namespace A\B;
 
 namespace\C\func();
 foo();
 ',
-            ],
-            [
-                '<?php
+        ];
+
+        yield [
+            '<?php
 namespace Foo;
 ',
-                '<?php
+            '<?php
 namespace Foo;
 
 
 
 ',
-            ],
-            [
-                '<?php
+        ];
+
+        yield [
+            '<?php
 namespace Foo;
 ',
-                '<?php
+            '<?php
 namespace Foo;',
-            ],
-            [
-                '<?php
+        ];
+
+        yield [
+            '<?php
 namespace Foo;
 
 ?>',
-                '<?php
+            '<?php
 namespace Foo;
 
 
 
 ?>',
-            ],
-            [
-                '<?php
+        ];
+
+        yield [
+            '<?php
     namespace Foo;
 
     class Bar {}',
-            ],
-            [
-                '<?php
+        ];
+
+        yield [
+            '<?php
   namespace Foo;
 
       class Bar {}',
-                '<?php
+            '<?php
   namespace Foo;
       class Bar {}',
-            ],
-            [
-                '<?php
+        ];
+
+        yield [
+            '<?php
     namespace My\NS;
 
     class X extends Y {}',
-            ],
-            [
-                '<?php
+        ];
+
+        yield [
+            '<?php
 namespace My\NS; // comment
 
 class X extends Y {}',
-            ],
-            [
-                '<?php
+        ];
+
+        yield [
+            '<?php
 namespace My\NS; /* comment */
 
 class X extends Y {}',
-            ],
-            [
-                '<?php
+        ];
+
+        yield [
+            '<?php
 namespace My\NS; /*
 comment 1
 comment 2
 */
 
 class X extends Y {}',
-                '<?php
+            '<?php
 namespace My\NS; /*
 comment 1
 comment 2
 */
 class X extends Y {}',
-            ],
-            [
-                '<?php
+        ];
+
+        yield [
+            '<?php
 namespace My\NS; /** comment */
 
 class X extends Y {}',
-            ],
-            [
-                '<?php
+        ];
+
+        yield [
+            '<?php
 namespace My\NS; /**
 comment 1
 comment 2
 */
 
 class X extends Y {}',
-                '<?php
+            '<?php
 namespace My\NS; /**
 comment 1
 comment 2
 */
 class X extends Y {}',
-            ],
         ];
     }
 
@@ -226,17 +243,16 @@ class X extends Y {}',
         $this->doTest($expected, $input);
     }
 
-    public static function provideMessyWhitespacesCases(): array
+    public static function provideMessyWhitespacesCases(): iterable
     {
-        return [
-            [
-                "<?php namespace A\\B;\r\n\r\nclass C {}",
-                '<?php namespace A\\B;  class C {}',
-            ],
-            [
-                "<?php namespace A\\B;\r\n\r\nclass C {}",
-                "<?php namespace A\\B;\r\n\r\n\r\n\r\n\r\n\r\nclass C {}",
-            ],
+        yield [
+            "<?php namespace A\\B;\r\n\r\nclass C {}",
+            '<?php namespace A\\B;  class C {}',
+        ];
+
+        yield [
+            "<?php namespace A\\B;\r\n\r\nclass C {}",
+            "<?php namespace A\\B;\r\n\r\n\r\n\r\n\r\n\r\nclass C {}",
         ];
     }
 }

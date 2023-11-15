@@ -37,8 +37,10 @@ Rule sets
 
 The rule is part of the following rule sets:
 
-@PhpCsFixer
-  Using the `@PhpCsFixer <./../../ruleSets/PhpCsFixer.rst>`_ rule set will enable the ``php_unit_fqcn_annotation`` rule.
+- `@PhpCsFixer <./../../ruleSets/PhpCsFixer.rst>`_
+- `@Symfony <./../../ruleSets/Symfony.rst>`_
 
-@Symfony
-  Using the `@Symfony <./../../ruleSets/Symfony.rst>`_ rule set will enable the ``php_unit_fqcn_annotation`` rule.
+Source class
+------------
+
+`PhpCsFixer\\Fixer\\PhpUnit\\PhpUnitFqcnAnnotationFixer <./../src/Fixer/PhpUnit/PhpUnitFqcnAnnotationFixer.php>`_

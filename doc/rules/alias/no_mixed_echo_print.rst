@@ -12,7 +12,7 @@ Configuration
 
 The desired language construct.
 
-Allowed values: ``'echo'``, ``'print'``
+Allowed values: ``'echo'`` and ``'print'``
 
 Default value: ``'echo'``
 
@@ -48,8 +48,10 @@ Rule sets
 
 The rule is part of the following rule sets:
 
-@PhpCsFixer
-  Using the `@PhpCsFixer <./../../ruleSets/PhpCsFixer.rst>`_ rule set will enable the ``no_mixed_echo_print`` rule with the default config.
+- `@PhpCsFixer <./../../ruleSets/PhpCsFixer.rst>`_
+- `@Symfony <./../../ruleSets/Symfony.rst>`_
 
-@Symfony
-  Using the `@Symfony <./../../ruleSets/Symfony.rst>`_ rule set will enable the ``no_mixed_echo_print`` rule with the default config.
+Source class
+------------
+
+`PhpCsFixer\\Fixer\\Alias\\NoMixedEchoPrintFixer <./../src/Fixer/Alias/NoMixedEchoPrintFixer.php>`_

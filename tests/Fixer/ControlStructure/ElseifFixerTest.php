@@ -26,74 +26,80 @@ use PhpCsFixer\Tests\Test\AbstractFixerTestCase;
 final class ElseifFixerTest extends AbstractFixerTestCase
 {
     /**
-     * @dataProvider provideTestFixCases
+     * @dataProvider provideFixCases
      */
     public function testFix(string $expected, ?string $input = null): void
     {
         $this->doTest($expected, $input);
     }
 
-    public static function provideTestFixCases(): array
+    public static function provideFixCases(): iterable
     {
-        return [
-            ['<?php if ($some) { $test = true; } else { $test = false; }'],
-            [
-                '<?php if ($some) { $test = true; } elseif ($some !== "test") { $test = false; }',
-                '<?php if ($some) { $test = true; } else if ($some !== "test") { $test = false; }',
-            ],
-            [
-                '<?php if ($some) { $test = true; } elseif ($some !== "test") { $test = false; }',
-                '<?php if ($some) { $test = true; } else  if ($some !== "test") { $test = false; }',
-            ],
-            [
-                '<?php $js = \'if (foo.a) { foo.a = "OK"; } else if (foo.b) { foo.b = "OK"; }\';',
-            ],
-            [
-                '<?php
+        yield ['<?php if ($some) { $test = true; } else { $test = false; }'];
+
+        yield [
+            '<?php if ($some) { $test = true; } elseif ($some !== "test") { $test = false; }',
+            '<?php if ($some) { $test = true; } else if ($some !== "test") { $test = false; }',
+        ];
+
+        yield [
+            '<?php if ($some) { $test = true; } elseif ($some !== "test") { $test = false; }',
+            '<?php if ($some) { $test = true; } else  if ($some !== "test") { $test = false; }',
+        ];
+
+        yield [
+            '<?php $js = \'if (foo.a) { foo.a = "OK"; } else if (foo.b) { foo.b = "OK"; }\';',
+        ];
+
+        yield [
+            '<?php
                     if ($a) {
                         $x = 1;
                     } elseif ($b) {
                         $x = 2;
                     }',
-                '<?php
+            '<?php
                     if ($a) {
                         $x = 1;
                     } else
                     if ($b) {
                         $x = 2;
                     }',
-            ],
-            [
-                '<?php
+        ];
+
+        yield [
+            '<?php
                     if ($a) {
                     } elseif/**/ ($b) {
                     }
                 ',
-                '<?php
+            '<?php
                     if ($a) {
                     } else /**/ if ($b) {
                     }
                 ',
-            ],
-            [
-                '<?php
+        ];
+
+        yield [
+            '<?php
                     if ($a) {
                     } elseif//
                         ($b) {
                     }
                 ',
-                '<?php
+            '<?php
                     if ($a) {
                     } else //
                         if ($b) {
                     }
                 ',
-            ],
-            [
-                '<?php if ($a) {} /**/elseif ($b){}',
-                '<?php if ($a) {} /**/else if ($b){}',
-            ],
-            ['<?php if ($x) { foo(); } else if ($y): bar(); endif;'],
         ];
+
+        yield [
+            '<?php if ($a) {} /**/elseif ($b){}',
+            '<?php if ($a) {} /**/else if ($b){}',
+        ];
+
+        yield ['<?php if ($x) { foo(); } else if ($y): bar(); endif;'];
     }
 }

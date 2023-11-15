@@ -41,7 +41,7 @@ final class ControlCaseStructuresAnalyzerTest extends TestCase
         $tokens = Tokens::fromCode($source);
         $analyses = iterator_to_array(ControlCaseStructuresAnalyzer::findControlStructures($tokens, [T_SWITCH]));
 
-        static::assertCount(\count($expectedAnalyses), $analyses);
+        self::assertCount(\count($expectedAnalyses), $analyses);
 
         foreach ($expectedAnalyses as $index => $expectedAnalysis) {
             self::assertAnalysis($expectedAnalysis, $analyses[$index]);
@@ -332,7 +332,7 @@ endswitch ?>',
         $tokens = Tokens::fromCode($source);
         $analyses = iterator_to_array(ControlCaseStructuresAnalyzer::findControlStructures($tokens, $types));
 
-        static::assertCount(\count($expectedAnalyses), $analyses);
+        self::assertCount(\count($expectedAnalyses), $analyses);
 
         foreach ($expectedAnalyses as $index => $expectedAnalysis) {
             self::assertAnalysis($expectedAnalysis, $analyses[$index]);
@@ -402,36 +402,26 @@ $expressionResult = match ($condition) {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage(sprintf('Unexpected type "%d".', T_IF));
 
-        foreach (ControlCaseStructuresAnalyzer::findControlStructures($tokens, [T_IF]) as $analysis) {
-            echo 1; // we need to use `foreach` here to prevent PHP removing the call as optimization
-        }
+        // we use `iterator_to_array` to ensure generator is consumed and it has possibility to raise exception
+        iterator_to_array(ControlCaseStructuresAnalyzer::findControlStructures($tokens, [T_IF]));
     }
 
     private static function assertAnalysis(AbstractControlCaseStructuresAnalysis $expectedAnalysis, AbstractControlCaseStructuresAnalysis $analysis): void
     {
-        $serializeExpected = serialize($expectedAnalysis);
-        $serializeActual = serialize($analysis);
-
-        if ($serializeExpected === $serializeActual) {
-            static::assertTrue(true);
-
-            return;
-        }
-
-        static::assertSame($expectedAnalysis->getIndex(), $analysis->getIndex(), 'index');
-        static::assertSame($expectedAnalysis->getOpenIndex(), $analysis->getOpenIndex(), 'open index');
-        static::assertSame($expectedAnalysis->getCloseIndex(), $analysis->getCloseIndex(), 'close index');
-        static::assertInstanceOf(\get_class($expectedAnalysis), $analysis);
+        self::assertSame($expectedAnalysis->getIndex(), $analysis->getIndex(), 'index');
+        self::assertSame($expectedAnalysis->getOpenIndex(), $analysis->getOpenIndex(), 'open index');
+        self::assertSame($expectedAnalysis->getCloseIndex(), $analysis->getCloseIndex(), 'close index');
+        self::assertInstanceOf(\get_class($expectedAnalysis), $analysis);
 
         if ($expectedAnalysis instanceof MatchAnalysis || $expectedAnalysis instanceof SwitchAnalysis) {
             $expectedDefault = $expectedAnalysis->getDefaultAnalysis();
             $actualDefault = $analysis->getDefaultAnalysis(); // @phpstan-ignore-line already type checked against expected
 
             if (null === $expectedDefault) {
-                static::assertNull($actualDefault, 'default not null');
+                self::assertNull($actualDefault, 'default not null');
             } else {
-                static::assertSame($expectedDefault->getIndex(), $actualDefault->getIndex(), 'default index');
-                static::assertSame($expectedDefault->getColonIndex(), $actualDefault->getColonIndex(), 'default colon index');
+                self::assertSame($expectedDefault->getIndex(), $actualDefault->getIndex(), 'default index');
+                self::assertSame($expectedDefault->getColonIndex(), $actualDefault->getColonIndex(), 'default colon index');
             }
         }
 
@@ -439,14 +429,17 @@ $expressionResult = match ($condition) {
             $expectedCases = $expectedAnalysis->getCases();
             $actualCases = $analysis->getCases(); // @phpstan-ignore-line already type checked against expected
 
-            static::assertCount(\count($expectedCases), $actualCases);
+            self::assertCount(\count($expectedCases), $actualCases);
 
             foreach ($expectedCases as $i => $expectedCase) {
-                static::assertSame($expectedCase->getIndex(), $actualCases[$i]->getIndex(), 'case index');
-                static::assertSame($expectedCase->getColonIndex(), $actualCases[$i]->getColonIndex(), 'case colon index');
+                self::assertSame($expectedCase->getIndex(), $actualCases[$i]->getIndex(), 'case index');
+                self::assertSame($expectedCase->getColonIndex(), $actualCases[$i]->getColonIndex(), 'case colon index');
             }
         }
 
-        static::assertSame($serializeExpected, $serializeActual);
+        self::assertSame(
+            serialize($expectedAnalysis),
+            serialize($analysis)
+        );
     }
 }

@@ -14,6 +14,7 @@ declare(strict_types=1);
 
 namespace PhpCsFixer\RuleSet\Sets;
 
+use PhpCsFixer\Fixer\Phpdoc\PhpdocSeparationFixer;
 use PhpCsFixer\RuleSet\AbstractRuleSetDescription;
 
 /**
@@ -34,6 +35,10 @@ final class SymfonySet extends AbstractRuleSetDescription
                     'return',
                 ],
             ],
+            'braces_position' => [
+                'allow_single_line_anonymous_functions' => true,
+                'allow_single_line_empty_anonymous_classes' => true,
+            ],
             'cast_spaces' => true,
             'class_attributes_separation' => [
                 'elements' => [
@@ -46,16 +51,11 @@ final class SymfonySet extends AbstractRuleSetDescription
             'class_reference_name_casing' => true,
             'clean_namespace' => true,
             'concat_space' => true,
-            'curly_braces_position' => [
-                'allow_single_line_anonymous_functions' => true,
-                'allow_single_line_empty_anonymous_classes' => true,
-            ],
             'declare_parentheses' => true,
             'echo_tag_syntax' => true,
             'empty_loop_body' => ['style' => 'braces'],
             'empty_loop_condition' => true,
             'fully_qualified_strict_types' => true,
-            'function_typehint_space' => true,
             'general_phpdoc_tag_rename' => [
                 'replacements' => [
                     'inheritDocs' => 'inheritDoc',
@@ -77,7 +77,7 @@ final class SymfonySet extends AbstractRuleSetDescription
                 'on_multiline' => 'ignore',
             ],
             'native_function_casing' => true,
-            'native_function_type_declaration_casing' => true,
+            'native_type_declaration_casing' => true,
             'no_alias_language_construct_call' => true,
             'no_alternative_syntax' => true,
             'no_binary_string' => true,
@@ -108,10 +108,12 @@ final class SymfonySet extends AbstractRuleSetDescription
             'no_singleline_whitespace_before_semicolons' => true,
             'no_spaces_around_offset' => true,
             'no_superfluous_phpdoc_tags' => [
-                'allow_mixed' => true,
-                'allow_unused_params' => true,
+                'remove_inheritdoc' => true,
             ],
             'no_trailing_comma_in_singleline' => true,
+            'no_unneeded_braces' => [
+                'namespaces' => true,
+            ],
             'no_unneeded_control_parentheses' => [
                 'statements' => [
                     'break',
@@ -125,9 +127,6 @@ final class SymfonySet extends AbstractRuleSetDescription
                     'yield_from',
                 ],
             ],
-            'no_unneeded_curly_braces' => [
-                'namespaces' => true,
-            ],
             'no_unneeded_import_alias' => true,
             'no_unset_cast' => true,
             'no_unused_imports' => true,
@@ -135,6 +134,7 @@ final class SymfonySet extends AbstractRuleSetDescription
             'no_useless_nullsafe_operator' => true,
             'no_whitespace_before_comma_in_array' => true,
             'normalize_index_brace' => true,
+            'nullable_type_declaration_for_default_null_value' => ['use_nullable_type_declaration' => false],
             'object_operator_without_whitespace' => true,
             'operator_linebreak' => [
                 'only_booleans' => true,
@@ -166,7 +166,12 @@ final class SymfonySet extends AbstractRuleSetDescription
             ],
             'phpdoc_return_self_reference' => true,
             'phpdoc_scalar' => true,
-            'phpdoc_separation' => true,
+            'phpdoc_separation' => [
+                'groups' => [
+                    ['Annotation', 'NamedArgumentConstructor', 'Target'],
+                    ...PhpdocSeparationFixer::OPTION_GROUPS_DEFAULT,
+                ],
+            ],
             'phpdoc_single_line_var_spacing' => true,
             'phpdoc_summary' => true,
             'phpdoc_tag_type' => [
@@ -183,7 +188,6 @@ final class SymfonySet extends AbstractRuleSetDescription
                 'sort_algorithm' => 'none',
             ],
             'phpdoc_var_without_name' => true,
-            'protected_to_private' => true,
             'semicolon_after_instruction' => true,
             'simple_to_complex_string_variable' => true,
             'single_class_element_per_statement' => true,
@@ -205,8 +209,8 @@ final class SymfonySet extends AbstractRuleSetDescription
             'switch_continue_to_break' => true,
             'trailing_comma_in_multiline' => true,
             'trim_array_spaces' => true,
+            'type_declaration_spaces' => true,
             'types_spaces' => true,
-            'unary_operator_spaces' => true,
             'whitespace_after_comma_in_array' => true,
             'yoda_style' => true,
         ];

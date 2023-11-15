@@ -60,14 +60,14 @@ final class RuleSetTest extends TestCase
             $fixers[$fixer->getName()] = $fixer;
         }
 
-        static::assertArrayHasKey($ruleName, $fixers, sprintf('RuleSet "%s" contains unknown rule.', $setName));
+        self::assertArrayHasKey($ruleName, $fixers, sprintf('RuleSet "%s" contains unknown rule.', $setName));
 
         if (true === $ruleConfig) {
             return; // rule doesn't need configuration.
         }
 
         $fixer = $fixers[$ruleName];
-        static::assertInstanceOf(ConfigurableFixerInterface::class, $fixer, sprintf('RuleSet "%s" contains configuration for rule "%s" which cannot be configured.', $setName, $ruleName));
+        self::assertInstanceOf(ConfigurableFixerInterface::class, $fixer, sprintf('RuleSet "%s" contains configuration for rule "%s" which cannot be configured.', $setName, $ruleName));
 
         try {
             $fixer->configure($ruleConfig); // test fixer accepts the configuration
@@ -105,7 +105,7 @@ final class RuleSetTest extends TestCase
             $defaultConfig[$option->getName()] = $option->getDefault();
         }
 
-        static::assertNotSame(
+        self::assertNotSame(
             $this->sortNestedArray($defaultConfig, $ruleName),
             $this->sortNestedArray($ruleConfig, $ruleName),
             sprintf('Rule "%s" (in RuleSet "%s") has default config passed.', $ruleName, $setName)
@@ -123,7 +123,7 @@ final class RuleSetTest extends TestCase
 
         $fixer = current($factory->getFixers());
 
-        static::assertNotInstanceOf(DeprecatedFixerInterface::class, $fixer, sprintf('RuleSet "%s" contains deprecated rule "%s".', $setName, $ruleName));
+        self::assertNotInstanceOf(DeprecatedFixerInterface::class, $fixer, sprintf('RuleSet "%s" contains deprecated rule "%s".', $setName, $ruleName));
     }
 
     public static function provideAllRulesFromSetsCases(): iterable
@@ -145,7 +145,7 @@ final class RuleSetTest extends TestCase
     {
         $setNames = RuleSets::getSetDefinitionNames();
 
-        static::assertNotEmpty($setNames);
+        self::assertNotEmpty($setNames);
     }
 
     public function testResolveRulesWithInvalidSet(): void
@@ -175,7 +175,7 @@ final class RuleSetTest extends TestCase
             'strict_comparison' => true,
         ]);
 
-        static::assertSameRules(
+        self::assertSameRules(
             [
                 'braces' => true,
                 'full_opening_tag' => true,
@@ -193,14 +193,14 @@ final class RuleSetTest extends TestCase
             'strict_comparison' => true,
         ]);
 
-        static::assertSameRules(
+        self::assertSameRules(
             [
                 'blank_line_after_namespace' => true,
                 'class_definition' => true,
                 'constant_case' => true,
                 'control_structure_braces' => true,
                 'control_structure_continuation_position' => true,
-                'curly_braces_position' => true,
+                'braces_position' => true,
                 'elseif' => true,
                 'encoding' => true,
                 'full_opening_tag' => true,
@@ -208,19 +208,19 @@ final class RuleSetTest extends TestCase
                 'indentation_type' => true,
                 'line_ending' => true,
                 'lowercase_keywords' => true,
-                'method_argument_space' => ['on_multiline' => 'ensure_fully_multiline'],
+                'method_argument_space' => ['attribute_placement' => 'ignore', 'on_multiline' => 'ensure_fully_multiline'],
                 'no_break_comment' => true,
                 'no_closing_tag' => true,
                 'no_multiple_statements_per_line' => true,
                 'no_space_around_double_colon' => true,
                 'no_spaces_after_function_name' => true,
-                'no_spaces_inside_parenthesis' => true,
                 'no_trailing_whitespace' => true,
                 'no_trailing_whitespace_in_comment' => true,
                 'single_blank_line_at_eof' => true,
                 'single_class_element_per_statement' => ['elements' => ['property']],
                 'single_import_per_statement' => true,
                 'single_line_after_imports' => true,
+                'spaces_inside_parentheses' => true,
                 'statement_indentation' => true,
                 'strict_comparison' => true,
                 'switch_case_semicolon_to_colon' => true,
@@ -239,33 +239,33 @@ final class RuleSetTest extends TestCase
             'encoding' => true,
         ]);
 
-        static::assertSameRules(
+        self::assertSameRules(
             [
                 'blank_line_after_namespace' => true,
                 'constant_case' => true,
                 'class_definition' => true,
                 'control_structure_braces' => true,
                 'control_structure_continuation_position' => true,
-                'curly_braces_position' => true,
+                'braces_position' => true,
                 'elseif' => true,
                 'encoding' => true,
                 'function_declaration' => true,
                 'indentation_type' => true,
                 'line_ending' => true,
                 'lowercase_keywords' => true,
-                'method_argument_space' => ['on_multiline' => 'ensure_fully_multiline'],
+                'method_argument_space' => ['attribute_placement' => 'ignore', 'on_multiline' => 'ensure_fully_multiline'],
                 'no_break_comment' => true,
                 'no_closing_tag' => true,
                 'no_multiple_statements_per_line' => true,
                 'no_spaces_after_function_name' => true,
                 'no_space_around_double_colon' => true,
-                'no_spaces_inside_parenthesis' => true,
                 'no_trailing_whitespace' => true,
                 'no_trailing_whitespace_in_comment' => true,
                 'single_blank_line_at_eof' => true,
                 'single_class_element_per_statement' => ['elements' => ['property']],
                 'single_import_per_statement' => true,
                 'single_line_after_imports' => true,
+                'spaces_inside_parentheses' => true,
                 'statement_indentation' => true,
                 'switch_case_semicolon_to_colon' => true,
                 'switch_case_space' => true,
@@ -278,7 +278,7 @@ final class RuleSetTest extends TestCase
     /**
      * @param array<string, array<string, mixed>|bool> $set
      *
-     * @dataProvider provideSafeSetCases
+     * @dataProvider provideRiskyRulesInSetCases
      */
     public function testRiskyRulesInSet(array $set, bool $safe): void
     {
@@ -289,7 +289,7 @@ final class RuleSetTest extends TestCase
                 ->getFixers()
             ;
         } catch (InvalidForEnvFixerConfigurationException $exception) {
-            static::markTestSkipped($exception->getMessage());
+            self::markTestSkipped($exception->getMessage());
         }
 
         $fixerNames = [];
@@ -299,7 +299,7 @@ final class RuleSetTest extends TestCase
             }
         }
 
-        static::assertCount(
+        self::assertCount(
             0,
             $fixerNames,
             sprintf(
@@ -310,7 +310,7 @@ final class RuleSetTest extends TestCase
         );
     }
 
-    public static function provideSafeSetCases(): iterable
+    public static function provideRiskyRulesInSetCases(): iterable
     {
         foreach (RuleSets::getSetDefinitionNames() as $name) {
             yield $name => [
@@ -349,7 +349,7 @@ final class RuleSetTest extends TestCase
     }
 
     /**
-     * @dataProvider provideAllSetCases
+     * @dataProvider provideDuplicateRuleConfigurationInSetDefinitionsCases
      */
     public function testDuplicateRuleConfigurationInSetDefinitions(RuleSetDescriptionInterface $set): void
     {
@@ -384,14 +384,14 @@ final class RuleSetTest extends TestCase
             return;
         }
 
-        static::fail(sprintf(
+        self::fail(sprintf(
             '"%s" defines rules the same as it extends from: %s',
             $set->getName(),
             implode(', ', $duplicates),
         ));
     }
 
-    public static function provideAllSetCases(): iterable
+    public static function provideDuplicateRuleConfigurationInSetDefinitionsCases(): iterable
     {
         foreach (RuleSets::getSetDefinitions() as $name => $set) {
             yield $name => [$set];
@@ -403,7 +403,7 @@ final class RuleSetTest extends TestCase
      */
     public function testPhpUnitTargetVersionHasSet(string $version): void
     {
-        static::assertContains(
+        self::assertContains(
             sprintf('@PHPUnit%sMigration:risky', str_replace('.', '', $version)),
             RuleSets::getSetDefinitionNames(),
             sprintf('PHPUnit target version %s is missing its set in %s.', $version, RuleSet::class)
@@ -527,6 +527,6 @@ final class RuleSetTest extends TestCase
         ksort($expected);
         ksort($actual);
 
-        static::assertSame($expected, $actual);
+        self::assertSame($expected, $actual);
     }
 }

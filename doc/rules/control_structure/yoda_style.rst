@@ -9,33 +9,6 @@ Write conditions in Yoda style (``true``), non-Yoda style (``['equal' => false,
 Configuration
 -------------
 
-``equal``
-~~~~~~~~~
-
-Style for equal (``==``, ``!=``) statements.
-
-Allowed types: ``bool``, ``null``
-
-Default value: ``true``
-
-``identical``
-~~~~~~~~~~~~~
-
-Style for identical (``===``, ``!==``) statements.
-
-Allowed types: ``bool``, ``null``
-
-Default value: ``true``
-
-``less_and_greater``
-~~~~~~~~~~~~~~~~~~~~
-
-Style for less and greater than (``<``, ``<=``, ``>``, ``>=``) statements.
-
-Allowed types: ``bool``, ``null``
-
-Default value: ``null``
-
 ``always_move_variable``
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -45,6 +18,33 @@ style.
 Allowed types: ``bool``
 
 Default value: ``false``
+
+``equal``
+~~~~~~~~~
+
+Style for equal (``==``, ``!=``) statements.
+
+Allowed types: ``bool`` and ``null``
+
+Default value: ``true``
+
+``identical``
+~~~~~~~~~~~~~
+
+Style for identical (``===``, ``!==``) statements.
+
+Allowed types: ``bool`` and ``null``
+
+Default value: ``true``
+
+``less_and_greater``
+~~~~~~~~~~~~~~~~~~~~
+
+Style for less and greater than (``<``, ``<=``, ``>``, ``>=``) statements.
+
+Allowed types: ``bool`` and ``null``
+
+Default value: ``null``
 
 Examples
 --------
@@ -114,8 +114,10 @@ Rule sets
 
 The rule is part of the following rule sets:
 
-@PhpCsFixer
-  Using the `@PhpCsFixer <./../../ruleSets/PhpCsFixer.rst>`_ rule set will enable the ``yoda_style`` rule with the default config.
+- `@PhpCsFixer <./../../ruleSets/PhpCsFixer.rst>`_
+- `@Symfony <./../../ruleSets/Symfony.rst>`_
 
-@Symfony
-  Using the `@Symfony <./../../ruleSets/Symfony.rst>`_ rule set will enable the ``yoda_style`` rule with the default config.
+Source class
+------------
+
+`PhpCsFixer\\Fixer\\ControlStructure\\YodaStyleFixer <./../src/Fixer/ControlStructure/YodaStyleFixer.php>`_

@@ -87,7 +87,7 @@ final class PhpdocNoAliasTagFixerTest extends AbstractFixerTestCase
     }
 
     /**
-     * @dataProvider providePropertyCases
+     * @dataProvider providePropertyFixCases
      */
     public function testPropertyFix(string $expected, ?string $input = null): void
     {
@@ -99,34 +99,34 @@ final class PhpdocNoAliasTagFixerTest extends AbstractFixerTestCase
         $this->doTest($expected, $input);
     }
 
-    public static function providePropertyCases(): array
+    public static function providePropertyFixCases(): iterable
     {
-        return [
-            [
-                '<?php
+        yield [
+            '<?php
     /**
      *
      */',
-            ],
-            [
-                '<?php
+        ];
+
+        yield [
+            '<?php
     /**
      * @property string $foo
      */',
-                '<?php
+            '<?php
     /**
      * @property-read string $foo
      */',
-            ],
-            [
-                '<?php /** @property mixed $bar */',
-                '<?php /** @property-write mixed $bar */',
-            ],
+        ];
+
+        yield [
+            '<?php /** @property mixed $bar */',
+            '<?php /** @property-write mixed $bar */',
         ];
     }
 
     /**
-     * @dataProvider provideTypeToVarCases
+     * @dataProvider provideTypeToVarFixCases
      */
     public function testTypeToVarFix(string $expected, ?string $input = null): void
     {
@@ -137,31 +137,33 @@ final class PhpdocNoAliasTagFixerTest extends AbstractFixerTestCase
         $this->doTest($expected, $input);
     }
 
-    public static function provideTypeToVarCases(): array
+    public static function provideTypeToVarFixCases(): iterable
     {
-        return [
-            [
-                '<?php
+        yield [
+            '<?php
     /**
      *
      */',
-            ],
-            [
-                '<?php
+        ];
+
+        yield [
+            '<?php
     /**
      * @var string Hello!
      */',
-                '<?php
+            '<?php
     /**
      * @type string Hello!
      */',
-            ],
-            [
-                '<?php /** @var string Hello! */',
-                '<?php /** @type string Hello! */',
-            ],
-            [
-                '<?php
+        ];
+
+        yield [
+            '<?php /** @var string Hello! */',
+            '<?php /** @type string Hello! */',
+        ];
+
+        yield [
+            '<?php
     /**
      * Initializes this class with the given options.
      *
@@ -170,7 +172,7 @@ final class PhpdocNoAliasTagFixerTest extends AbstractFixerTestCase
      *     @var string $label    The display name for this element
      * }
      */',
-                '<?php
+            '<?php
     /**
      * Initializes this class with the given options.
      *
@@ -179,12 +181,11 @@ final class PhpdocNoAliasTagFixerTest extends AbstractFixerTestCase
      *     @type string $label    The display name for this element
      * }
      */',
-            ],
         ];
     }
 
     /**
-     * @dataProvider provideVarToTypeCases
+     * @dataProvider provideVarToTypeFixCases
      */
     public function testVarToTypeFix(string $expected, ?string $input = null): void
     {
@@ -195,31 +196,33 @@ final class PhpdocNoAliasTagFixerTest extends AbstractFixerTestCase
         $this->doTest($expected, $input);
     }
 
-    public static function provideVarToTypeCases(): array
+    public static function provideVarToTypeFixCases(): iterable
     {
-        return [
-            [
-                '<?php
+        yield [
+            '<?php
     /**
      *
      */',
-            ],
-            [
-                '<?php
+        ];
+
+        yield [
+            '<?php
     /**
      * @type string Hello!
      */',
-                '<?php
+            '<?php
     /**
      * @var string Hello!
      */',
-            ],
-            [
-                '<?php /** @type string Hello! */',
-                '<?php /** @var string Hello! */',
-            ],
-            [
-                '<?php
+        ];
+
+        yield [
+            '<?php /** @type string Hello! */',
+            '<?php /** @var string Hello! */',
+        ];
+
+        yield [
+            '<?php
     /**
      * Initializes this class with the given options.
      *
@@ -228,7 +231,7 @@ final class PhpdocNoAliasTagFixerTest extends AbstractFixerTestCase
      *     @type string $label    The display name for this element
      * }
      */',
-                '<?php
+            '<?php
     /**
      * Initializes this class with the given options.
      *
@@ -237,7 +240,6 @@ final class PhpdocNoAliasTagFixerTest extends AbstractFixerTestCase
      *     @var string $label    The display name for this element
      * }
      */',
-            ],
         ];
     }
 
@@ -261,25 +263,26 @@ final class PhpdocNoAliasTagFixerTest extends AbstractFixerTestCase
         $this->doTest($expected, $input);
     }
 
-    public static function provideDefaultConfigCases(): array
+    public static function provideDefaultConfigCases(): iterable
     {
-        return [
-            [
-                '<?php /** @see  https://github.com/php-fig/fig-standards/blob/master/proposed/phpdoc.md#710-link-deprecated */',
-                '<?php /** @link  https://github.com/php-fig/fig-standards/blob/master/proposed/phpdoc.md#710-link-deprecated */',
-            ],
-            [
-                '<?php /** @property mixed $bar */',
-                '<?php /** @property-write mixed $bar */',
-            ],
-            [
-                '<?php /** @property mixed $bar */',
-                '<?php /** @property-read mixed $bar */',
-            ],
-            [
-                '<?php /** @var string Hello! */',
-                '<?php /** @type string Hello! */',
-            ],
+        yield [
+            '<?php /** @see  https://github.com/php-fig/fig-standards/blob/master/proposed/phpdoc.md#710-link-deprecated */',
+            '<?php /** @link  https://github.com/php-fig/fig-standards/blob/master/proposed/phpdoc.md#710-link-deprecated */',
+        ];
+
+        yield [
+            '<?php /** @property mixed $bar */',
+            '<?php /** @property-write mixed $bar */',
+        ];
+
+        yield [
+            '<?php /** @property mixed $bar */',
+            '<?php /** @property-read mixed $bar */',
+        ];
+
+        yield [
+            '<?php /** @var string Hello! */',
+            '<?php /** @type string Hello! */',
         ];
     }
 }

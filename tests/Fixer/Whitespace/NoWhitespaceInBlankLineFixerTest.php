@@ -34,111 +34,125 @@ final class NoWhitespaceInBlankLineFixerTest extends AbstractFixerTestCase
         $this->doTest($expected, $input);
     }
 
-    public static function provideFixCases(): array
+    public static function provideFixCases(): iterable
     {
-        return [
-            [
-                "<?php\n",
-            ],
-            [
-                '<?php  ',
-            ],
-            [
-                '<?php
+        yield [
+            "<?php\n",
+        ];
+
+        yield [
+            '<?php  ',
+        ];
+
+        yield [
+            '<?php
 ',
-                '<?php
+            '<?php
   ',
-            ],
-            [
-                '<?php
+        ];
+
+        yield [
+            '<?php
 
 ',
-                '<?php
+            '<?php
      '.'
   ',
-            ],
-            [
-                '<?php
+        ];
+
+        yield [
+            '<?php
 
 $a = 1; ',
-                '<?php
+            '<?php
      '.'
 $a = 1; ',
-            ],
-            [
-                '<?php
+        ];
+
+        yield [
+            '<?php
 $r = 5 +6;                   '.'
 
 $t = true> 9;       '.'
 ',
-            ],
-            [
-                '<?php
+        ];
+
+        yield [
+            '<?php
     $a = 1;   ',
-            ],
-            [
-                "<?php
+        ];
+
+        yield [
+            "<?php
 \t\$b = 1;\t\t",
-            ],
-            [
-                '<?php
+        ];
+
+        yield [
+            '<?php
     $b = 2;
 ',
-                '<?php
+            '<?php
     $b = 2;
     ',
-            ],
-            [
-                '<?php
+        ];
+
+        yield [
+            '<?php
     $b = 3;
 
 
 ',
-                '<?php
+            '<?php
     $b = 3;
     '.'
     '.'
     ',
-            ],
-            [
-                '<?php
+        ];
+
+        yield [
+            '<?php
     $b = 4;
 
 
 
     $b += 4;',
-                '<?php
+            '<?php
     $b = 4;
     '.'
     '.'
     '.'
     $b += 4;',
-            ],
-            [
-                "<?php\n\n\n\$b = 5;",
-                "<?php\n                \n\t\n\$b = 5;",
-            ],
-            [
-                "<?php\necho 1;\n?>\n\n\n\n",
-            ],
-            [
-                "<?php\necho <<<HTML\ndata     \n  \n \t  \n     \nHTML\n;\n//a",
-            ],
-            [
-                "<?php\n\$sql = 'SELECT * FROM products WHERE description = \"This product\n   \nis nice\"';",
-            ],
-            [
-                '<?php
+        ];
+
+        yield [
+            "<?php\n\n\n\$b = 5;",
+            "<?php\n                \n\t\n\$b = 5;",
+        ];
+
+        yield [
+            "<?php\necho 1;\n?>\n\n\n\n",
+        ];
+
+        yield [
+            "<?php\necho <<<HTML\ndata     \n  \n \t  \n     \nHTML\n;\n//a",
+        ];
+
+        yield [
+            "<?php\n\$sql = 'SELECT * FROM products WHERE description = \"This product\n   \nis nice\"';",
+        ];
+
+        yield [
+            '<?php
     /**
      * @const Foo.
      */
     const FOO = "BAR";
 ',
-            ],
-            [
-                "<?php\n\n    \$a = 1;\n\n    \$b = 2;",
-                "<?php\n\n    \$a = 1;\n    \n    \$b = 2;",
-            ],
+        ];
+
+        yield [
+            "<?php\n\n    \$a = 1;\n\n    \$b = 2;",
+            "<?php\n\n    \$a = 1;\n    \n    \$b = 2;",
         ];
     }
 
@@ -152,13 +166,11 @@ $t = true> 9;       '.'
         $this->doTest($expected, $input);
     }
 
-    public static function provideMessyWhitespacesCases(): array
+    public static function provideMessyWhitespacesCases(): iterable
     {
-        return [
-            [
-                "<?php\r\n\r\n    \$a = 1;\r\n\r\n    \$b = 2;",
-                "<?php\r\n\r\n    \$a = 1;\r\n    \r\n    \$b = 2;",
-            ],
+        yield [
+            "<?php\r\n\r\n    \$a = 1;\r\n\r\n    \$b = 2;",
+            "<?php\r\n\r\n    \$a = 1;\r\n    \r\n    \$b = 2;",
         ];
     }
 }

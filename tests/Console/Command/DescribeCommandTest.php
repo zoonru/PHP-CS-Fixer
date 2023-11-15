@@ -23,6 +23,7 @@ use PhpCsFixer\FixerConfiguration\FixerOptionBuilder;
 use PhpCsFixer\FixerDefinition\CodeSample;
 use PhpCsFixer\FixerDefinition\FixerDefinition;
 use PhpCsFixer\FixerFactory;
+use PhpCsFixer\Tests\Fixtures\DescribeCommand\DescribeFixtureFixer;
 use PhpCsFixer\Tests\TestCase;
 use PhpCsFixer\Tokenizer\Token;
 use Prophecy\Argument;
@@ -47,8 +48,8 @@ Fixer applying this rule is risky.
 Can break stuff.
 
 Fixer is configurable using following options:
-* functions (a subset of ['foo', 'test']): list of `function` names to fix; defaults to ['foo', 'test']; DEPRECATED alias: funcs
 * deprecated_option (bool): a deprecated option; defaults to false. DEPRECATED: use option `functions` instead.
+* functions (a subset of ['foo', 'test']): list of `function` names to fix; defaults to ['foo', 'test']; DEPRECATED alias: funcs
 
 Fixing examples:
  * Example #1. Fixing with the default configuration.
@@ -72,7 +73,7 @@ Fixing examples:
    ----------- end diff -----------
 
 ';
-        static::assertSame($expected, $this->execute('Foo/bar', false)->getDisplay(true));
+        self::assertSame($expected, $this->execute('Foo/bar', false)->getDisplay(true));
     }
 
     public function testExecuteOutputWithDecoration(): void
@@ -86,8 +87,8 @@ Replaces bad stuff with good stuff.
 Can break stuff.
 
 Fixer is configurable using following options:
-* \033[32mfunctions\033[39m (a subset of \e[33m['foo', 'test']\e[39m): list of \033[32m`function`\033[39m names to fix; defaults to \033[33m['foo', 'test']\033[39m; \e[37;41mDEPRECATED\e[39;49m alias: \033[33mfuncs\033[39m
 * \033[32mdeprecated_option\033[39m (\033[33mbool\033[39m): a deprecated option; defaults to \e[33mfalse\e[39m. \033[37;41mDEPRECATED\033[39;49m: use option \e[32m`functions`\e[39m instead.
+* \033[32mfunctions\033[39m (a subset of \e[33m['foo', 'test']\e[39m): list of \033[32m`function`\033[39m names to fix; defaults to \033[33m['foo', 'test']\033[39m; \e[37;41mDEPRECATED\e[39;49m alias: \033[33mfuncs\033[39m
 
 Fixing examples:
  * Example #1. Fixing with the \033[33mdefault\033[39m configuration.
@@ -113,12 +114,12 @@ Fixing examples:
 ";
         $actual = $this->execute('Foo/bar', true)->getDisplay(true);
 
-        static::assertSame($expected, $actual);
+        self::assertSame($expected, $actual);
     }
 
     public function testExecuteStatusCode(): void
     {
-        static::assertSame(0, $this->execute('Foo/bar', false)->getStatusCode());
+        self::assertSame(0, $this->execute('Foo/bar', false)->getStatusCode());
     }
 
     public function testExecuteWithUnknownRuleName(): void
@@ -208,7 +209,42 @@ Fixing examples:
             ]
         );
 
-        static::assertStringContainsString(\get_class($mock), $commandTester->getDisplay(true));
+        self::assertStringContainsString(\get_class($mock), $commandTester->getDisplay(true));
+    }
+
+    public function testCommandDescribesCustomFixer(): void
+    {
+        $application = new Application();
+        $application->add(new DescribeCommand());
+
+        $command = $application->find('describe');
+
+        $commandTester = new CommandTester($command);
+        $commandTester->execute([
+            'command' => $command->getName(),
+            'name' => (new DescribeFixtureFixer())->getName(),
+            '--config' => __DIR__.'/../../Fixtures/DescribeCommand/.php-cs-fixer.fixture.php',
+        ]);
+
+        $expected =
+"Description of Vendor/describe_fixture rule.
+Fixture for describe command.
+
+Fixing examples:
+ * Example #1.
+   ---------- begin diff ----------
+   --- Original
+   +++ New
+   @@ -1,2 +1,2 @@
+    <?php
+   -echo 'describe fixture';
+   +echo 'fixture for describe';
+   ".'
+   ----------- end diff -----------
+
+';
+        self::assertSame($expected, $commandTester->getDisplay(true));
+        self::assertSame(0, $commandTester->getStatusCode());
     }
 
     private function execute(string $name, bool $decorated): CommandTester
@@ -253,17 +289,17 @@ Fixing examples:
         ));
 
         $things = false;
-        $fixer->configure([])->will(function () use (&$things): void {
+        $fixer->configure([])->will(static function () use (&$things): void {
             $things = false;
         });
-        $fixer->configure(['functions' => ['foo', 'bar']])->will(function () use (&$things): void {
+        $fixer->configure(['functions' => ['foo', 'bar']])->will(static function () use (&$things): void {
             $things = true;
         });
 
         $fixer->fix(
             Argument::type(\SplFileInfo::class),
             Argument::type(\PhpCsFixer\Tokenizer\Tokens::class)
-        )->will(function (array $arguments) use (&$things): void {
+        )->will(static function (array $arguments) use (&$things): void {
             $arguments[1][3] = new Token([
                 $arguments[1][3]->getId(),
                 $things ? '\'good stuff and good thing\'' : '\'good stuff and bad thing\'',

@@ -13,7 +13,7 @@ Configuration
 
 The desired language construct.
 
-Allowed values: ``'long'``, ``'short'``
+Allowed values: ``'long'`` and ``'short'``
 
 Default value: ``'long'``
 
@@ -22,7 +22,7 @@ Default value: ``'long'``
 
 The function to be used to expand the short echo tags.
 
-Allowed values: ``'echo'``, ``'print'``
+Allowed values: ``'echo'`` and ``'print'``
 
 Default value: ``'echo'``
 
@@ -121,8 +121,10 @@ Rule sets
 
 The rule is part of the following rule sets:
 
-@PhpCsFixer
-  Using the `@PhpCsFixer <./../../ruleSets/PhpCsFixer.rst>`_ rule set will enable the ``echo_tag_syntax`` rule with the default config.
+- `@PhpCsFixer <./../../ruleSets/PhpCsFixer.rst>`_
+- `@Symfony <./../../ruleSets/Symfony.rst>`_
 
-@Symfony
-  Using the `@Symfony <./../../ruleSets/Symfony.rst>`_ rule set will enable the ``echo_tag_syntax`` rule with the default config.
+Source class
+------------
+
+`PhpCsFixer\\Fixer\\PhpTag\\EchoTagSyntaxFixer <./../src/Fixer/PhpTag/EchoTagSyntaxFixer.php>`_

@@ -57,112 +57,152 @@ final class JunitReporterTest extends AbstractReporterTestCase
         return 'junit';
     }
 
-    protected function createNoErrorReport(): string
+    protected static function createNoErrorReport(): string
     {
         return <<<'XML'
-<?xml version="1.0" encoding="UTF-8"?>
-<testsuites>
-  <testsuite name="PHP CS Fixer" tests="1" assertions="1" failures="0" errors="0">
-    <testcase name="All OK" assertions="1"/>
-  </testsuite>
-</testsuites>
-XML;
+            <?xml version="1.0" encoding="UTF-8"?>
+            <testsuites>
+              <testsuite name="PHP CS Fixer" tests="1" assertions="1" failures="0" errors="0">
+                <testcase name="All OK" assertions="1"/>
+              </testsuite>
+            </testsuites>
+            XML;
     }
 
-    protected function createSimpleReport(): string
+    protected static function createSimpleReport(): string
     {
         return <<<'XML'
-<?xml version="1.0" encoding="UTF-8"?>
-<testsuites>
-  <testsuite name="PHP CS Fixer" tests="1" assertions="1" failures="1" errors="0">
-    <testcase name="someFile" file="someFile.php" assertions="1">
-      <failure type="code_style">Wrong code style</failure>
-    </testcase>
-  </testsuite>
-</testsuites>
-XML;
+            <?xml version="1.0" encoding="UTF-8"?>
+            <testsuites>
+              <testsuite name="PHP CS Fixer" tests="1" assertions="1" failures="1" errors="0">
+                <testcase name="someFile" file="someFile.php" assertions="1">
+                  <failure type="code_style">Wrong code style
+
+            Diff:
+            ---------------
+
+            --- Original
+            +++ New
+            @@ -2,7 +2,7 @@
+
+             class Foo
+             {
+            -    public function bar($foo = 1, $bar)
+            +    public function bar($foo, $bar)
+                 {
+                 }
+             }</failure>
+                </testcase>
+              </testsuite>
+            </testsuites>
+            XML;
     }
 
-    protected function createWithDiffReport(): string
+    protected static function createWithDiffReport(): string
     {
         return <<<'XML'
-<?xml version="1.0" encoding="UTF-8"?>
-<testsuites>
-  <testsuite name="PHP CS Fixer" tests="1" assertions="1" failures="1" errors="0">
-    <testcase name="someFile" file="someFile.php" assertions="1">
-      <failure type="code_style"><![CDATA[Wrong code style
+            <?xml version="1.0" encoding="UTF-8"?>
+            <testsuites>
+              <testsuite name="PHP CS Fixer" tests="1" assertions="1" failures="1" errors="0">
+                <testcase name="someFile" file="someFile.php" assertions="1">
+                  <failure type="code_style"><![CDATA[Wrong code style
 
-Diff:
----------------
+            Diff:
+            ---------------
 
-this text is a diff ;)]]></failure>
-    </testcase>
-  </testsuite>
-</testsuites>
-XML;
+            --- Original
+            +++ New
+            @@ -2,7 +2,7 @@
+
+             class Foo
+             {
+            -    public function bar($foo = 1, $bar)
+            +    public function bar($foo, $bar)
+                 {
+                 }
+             }]]></failure>
+                </testcase>
+              </testsuite>
+            </testsuites>
+            XML;
     }
 
-    protected function createWithAppliedFixersReport(): string
+    protected static function createWithAppliedFixersReport(): string
     {
         return <<<'XML'
-<?xml version="1.0" encoding="UTF-8"?>
-<testsuites>
-  <testsuite name="PHP CS Fixer" tests="1" assertions="2" failures="2" errors="0">
-    <testcase name="someFile" file="someFile.php" assertions="2">
-      <failure type="code_style">applied fixers:
----------------
-* some_fixer_name_here_1
-* some_fixer_name_here_2</failure>
-    </testcase>
-  </testsuite>
-</testsuites>
-XML;
+            <?xml version="1.0" encoding="UTF-8"?>
+            <testsuites>
+              <testsuite name="PHP CS Fixer" tests="1" assertions="2" failures="2" errors="0">
+                <testcase name="someFile" file="someFile.php" assertions="2">
+                  <failure type="code_style">applied fixers:
+            ---------------
+            * some_fixer_name_here_1
+            * some_fixer_name_here_2</failure>
+                </testcase>
+              </testsuite>
+            </testsuites>
+            XML;
     }
 
-    protected function createWithTimeAndMemoryReport(): string
+    protected static function createWithTimeAndMemoryReport(): string
     {
         return <<<'XML'
-<?xml version="1.0" encoding="UTF-8"?>
-<testsuites>
-  <testsuite name="PHP CS Fixer" tests="1" assertions="1" failures="1" errors="0" time="1.234">
-    <testcase name="someFile" file="someFile.php" assertions="1">
-      <failure type="code_style">Wrong code style</failure>
-    </testcase>
-  </testsuite>
-</testsuites>
-XML;
+            <?xml version="1.0" encoding="UTF-8"?>
+            <testsuites>
+              <testsuite name="PHP CS Fixer" tests="1" assertions="1" failures="1" errors="0" time="1.234">
+                <testcase name="someFile" file="someFile.php" assertions="1">
+                  <failure type="code_style">Wrong code style
+
+            Diff:
+            ---------------
+
+            --- Original
+            +++ New
+            @@ -2,7 +2,7 @@
+
+             class Foo
+             {
+            -    public function bar($foo = 1, $bar)
+            +    public function bar($foo, $bar)
+                 {
+                 }
+             }</failure>
+                </testcase>
+              </testsuite>
+            </testsuites>
+            XML;
     }
 
-    protected function createComplexReport(): string
+    protected static function createComplexReport(): string
     {
         return <<<'XML'
-<?xml version="1.0"?>
-<testsuites>
-  <testsuite assertions="3" errors="0" failures="3" name="PHP CS Fixer" tests="2" time="1.234">
-    <testcase assertions="2" file="someFile.php" name="someFile">
-      <failure type="code_style">applied fixers:
----------------
-* some_fixer_name_here_1
-* some_fixer_name_here_2
+            <?xml version="1.0"?>
+            <testsuites>
+              <testsuite assertions="3" errors="0" failures="3" name="PHP CS Fixer" tests="2" time="1.234">
+                <testcase assertions="2" file="someFile.php" name="someFile">
+                  <failure type="code_style">applied fixers:
+            ---------------
+            * some_fixer_name_here_1
+            * some_fixer_name_here_2
 
-Diff:
----------------
+            Diff:
+            ---------------
 
-this text is a diff ;)</failure>
-    </testcase>
-    <testcase assertions="1" file="anotherFile.php" name="anotherFile">
-      <failure type="code_style">applied fixers:
----------------
-* another_fixer_name_here
+            this text is a diff ;)</failure>
+                </testcase>
+                <testcase assertions="1" file="anotherFile.php" name="anotherFile">
+                  <failure type="code_style">applied fixers:
+            ---------------
+            * another_fixer_name_here
 
-Diff:
----------------
+            Diff:
+            ---------------
 
-another diff here ;)</failure>
-    </testcase>
-  </testsuite>
-</testsuites>
-XML;
+            another diff here ;)</failure>
+                </testcase>
+              </testsuite>
+            </testsuites>
+            XML;
     }
 
     protected function assertFormat(string $expected, string $input): void
@@ -170,8 +210,8 @@ XML;
         $formatter = new OutputFormatter();
         $input = $formatter->format($input);
 
-        static::assertThat($input, new XmlMatchesXsd(self::$xsd));
-        static::assertXmlStringEqualsXmlString($expected, $input);
+        self::assertThat($input, new XmlMatchesXsd(self::$xsd));
+        self::assertXmlStringEqualsXmlString($expected, $input);
     }
 
     protected function createReporter(): ReporterInterface

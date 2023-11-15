@@ -20,6 +20,7 @@ use PhpCsFixer\Tests\AbstractDoctrineAnnotationFixerTestCase;
  * @internal
  *
  * @covers \PhpCsFixer\AbstractDoctrineAnnotationFixer
+ * @covers \PhpCsFixer\Doctrine\Annotation\DocLexer
  * @covers \PhpCsFixer\Fixer\DoctrineAnnotation\DoctrineAnnotationIndentationFixer
  */
 final class DoctrineAnnotationIndentationFixerTest extends AbstractDoctrineAnnotationFixerTestCase
@@ -43,9 +44,9 @@ final class DoctrineAnnotationIndentationFixerTest extends AbstractDoctrineAnnot
         $this->doTest($expected, $input);
     }
 
-    public static function provideFixCases(): array
+    public static function provideFixCases(): iterable
     {
-        $cases = self::createTestCases([
+        yield from self::createTestCases([
             ['
 /**
  * Foo.
@@ -339,7 +340,7 @@ final class DoctrineAnnotationIndentationFixerTest extends AbstractDoctrineAnnot
 '],
         ]);
 
-        $cases[] = [
+        yield [
             '<?php
 
 /**
@@ -347,8 +348,6 @@ final class DoctrineAnnotationIndentationFixerTest extends AbstractDoctrineAnnot
  */
 ',
         ];
-
-        return $cases;
     }
 
     /**
@@ -362,7 +361,7 @@ final class DoctrineAnnotationIndentationFixerTest extends AbstractDoctrineAnnot
         $this->doTest($expected, $input);
     }
 
-    public static function provideFixWithIndentedMixedLinesCases(): array
+    public static function provideFixWithIndentedMixedLinesCases(): iterable
     {
         return self::createTestCases([
             ['

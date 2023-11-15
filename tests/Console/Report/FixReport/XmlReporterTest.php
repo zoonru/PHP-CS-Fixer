@@ -48,101 +48,135 @@ final class XmlReporterTest extends AbstractReporterTestCase
         self::$xsd = null;
     }
 
-    protected function createNoErrorReport(): string
+    protected static function createNoErrorReport(): string
     {
         return <<<'XML'
-<?xml version="1.0" encoding="UTF-8"?>
-<report>
-  <files />
-</report>
-XML;
+            <?xml version="1.0" encoding="UTF-8"?>
+            <report>
+              <files />
+            </report>
+            XML;
     }
 
-    protected function createSimpleReport(): string
+    protected static function createSimpleReport(): string
     {
         return <<<'XML'
-<?xml version="1.0" encoding="UTF-8"?>
-<report>
-  <files>
-    <file id="1" name="someFile.php"/>
-  </files>
-</report>
-XML;
+            <?xml version="1.0" encoding="UTF-8"?>
+            <report>
+              <files>
+                <file id="1" name="someFile.php">
+                  <diff>--- Original
+            +++ New
+            @@ -2,7 +2,7 @@
+
+             class Foo
+             {
+            -    public function bar($foo = 1, $bar)
+            +    public function bar($foo, $bar)
+                 {
+                 }
+             }</diff>
+                </file>
+              </files>
+            </report>
+            XML;
     }
 
-    protected function createWithDiffReport(): string
+    protected static function createWithDiffReport(): string
     {
         return <<<'XML'
-<?xml version="1.0" encoding="UTF-8"?>
-<report>
-  <files>
-    <file id="1" name="someFile.php">
-      <diff><![CDATA[this text is a diff ;)]]></diff>
-    </file>
-  </files>
-</report>
-XML;
+            <?xml version="1.0" encoding="UTF-8"?>
+            <report>
+              <files>
+                <file id="1" name="someFile.php">
+                  <diff>--- Original
+            +++ New
+            @@ -2,7 +2,7 @@
+
+             class Foo
+             {
+            -    public function bar($foo = 1, $bar)
+            +    public function bar($foo, $bar)
+                 {
+                 }
+             }</diff>
+                </file>
+              </files>
+            </report>
+            XML;
     }
 
-    protected function createWithAppliedFixersReport(): string
+    protected static function createWithAppliedFixersReport(): string
     {
         return <<<'XML'
-<?xml version="1.0" encoding="UTF-8"?>
-<report>
-  <files>
-    <file id="1" name="someFile.php">
-      <applied_fixers>
-        <applied_fixer name="some_fixer_name_here_1"/>
-        <applied_fixer name="some_fixer_name_here_2"/>
-      </applied_fixers>
-    </file>
-  </files>
-</report>
-XML;
+            <?xml version="1.0" encoding="UTF-8"?>
+            <report>
+              <files>
+                <file id="1" name="someFile.php">
+                  <applied_fixers>
+                    <applied_fixer name="some_fixer_name_here_1"/>
+                    <applied_fixer name="some_fixer_name_here_2"/>
+                  </applied_fixers>
+                </file>
+              </files>
+            </report>
+            XML;
     }
 
-    protected function createWithTimeAndMemoryReport(): string
+    protected static function createWithTimeAndMemoryReport(): string
     {
         return <<<'XML'
-<?xml version="1.0" encoding="UTF-8"?>
-<report>
-  <files>
-    <file id="1" name="someFile.php"/>
-  </files>
-  <time unit="s">
-    <total value="1.234"/>
-  </time>
-  <memory value="2.5" unit="MB"/>
-</report>
-XML;
+            <?xml version="1.0" encoding="UTF-8"?>
+            <report>
+              <files>
+                <file id="1" name="someFile.php">
+                  <diff>--- Original
+            +++ New
+            @@ -2,7 +2,7 @@
+
+             class Foo
+             {
+            -    public function bar($foo = 1, $bar)
+            +    public function bar($foo, $bar)
+                 {
+                 }
+             }</diff>
+                </file>
+              </files>
+              <time unit="s">
+                <total value="1.234"/>
+              </time>
+              <memory value="2.5" unit="MB"/>
+            </report>
+            XML;
     }
 
-    protected function createComplexReport(): string
+    protected static function createComplexReport(): string
     {
         return <<<'XML'
-<?xml version="1.0" encoding="UTF-8"?>
-<report>
-  <files>
-    <file id="1" name="someFile.php">
-      <applied_fixers>
-        <applied_fixer name="some_fixer_name_here_1"/>
-        <applied_fixer name="some_fixer_name_here_2"/>
-      </applied_fixers>
-      <diff>this text is a diff ;)</diff>
-    </file>
-    <file id="2" name="anotherFile.php">
-      <applied_fixers>
-        <applied_fixer name="another_fixer_name_here"/>
-      </applied_fixers>
-      <diff>another diff here ;)</diff>
-    </file>
-  </files>
-  <time unit="s">
-    <total value="1.234"/>
-  </time>
-  <memory value="2.5" unit="MB"/>
-</report>
-XML;
+            <?xml version="1.0" encoding="UTF-8"?>
+            <report>
+              <files>
+                <file id="1" name="someFile.php">
+                  <applied_fixers>
+                    <applied_fixer name="some_fixer_name_here_1"/>
+                    <applied_fixer name="some_fixer_name_here_2"/>
+                  </applied_fixers>
+                  <diff>this text is a diff ;)</diff>
+                </file>
+                <file id="2" name="anotherFile.php">
+                  <applied_fixers>
+                    <applied_fixer name="another_fixer_name_here"/>
+                  </applied_fixers>
+                  <diff>another diff here ;)</diff>
+                </file>
+              </files>
+              <time unit="s">
+                <total value="1.234"/>
+              </time>
+              <memory value="2.5" unit="MB"/>
+            </report>
+            XML;
     }
 
     protected function createReporter(): ReporterInterface
@@ -160,7 +194,7 @@ XML;
         $formatter = new OutputFormatter();
         $input = $formatter->format($input);
 
-        static::assertThat($input, new XmlMatchesXsd(self::$xsd));
-        static::assertXmlStringEqualsXmlString($expected, $input);
+        self::assertThat($input, new XmlMatchesXsd(self::$xsd));
+        self::assertXmlStringEqualsXmlString($expected, $input);
     }
 }

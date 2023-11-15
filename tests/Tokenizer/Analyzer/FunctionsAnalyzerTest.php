@@ -370,14 +370,14 @@ class(){};
     /**
      * @param array<string, ArgumentAnalysis> $expected
      *
-     * @dataProvider provideFunctionsWithArgumentsCases
+     * @dataProvider provideFunctionArgumentInfoCases
      */
     public function testFunctionArgumentInfo(string $code, int $methodIndex, array $expected): void
     {
         $tokens = Tokens::fromCode($code);
         $analyzer = new FunctionsAnalyzer();
 
-        static::assertSame(serialize($expected), serialize($analyzer->getFunctionArguments($tokens, $methodIndex)));
+        self::assertSame(serialize($expected), serialize($analyzer->getFunctionArguments($tokens, $methodIndex)));
     }
 
     /**
@@ -389,174 +389,182 @@ class(){};
         $analyzer = new FunctionsAnalyzer();
         $actual = $analyzer->getFunctionReturnType($tokens, $methodIndex);
 
-        static::assertSame(serialize($expected), serialize($actual));
+        self::assertSame(serialize($expected), serialize($actual));
     }
 
-    public static function provideFunctionsWithArgumentsCases(): iterable
+    public static function provideFunctionArgumentInfoCases(): iterable
     {
-        yield from [
-            ['<?php function(){};', 1, []],
-            ['<?php function($a){};', 1, [
-                '$a' => new ArgumentAnalysis(
-                    '$a',
-                    3,
-                    null,
-                    null
-                ),
-            ]],
-            ['<?php function($a, $b){};', 1, [
-                '$a' => new ArgumentAnalysis(
-                    '$a',
-                    3,
-                    null,
-                    null
-                ),
-                '$b' => new ArgumentAnalysis(
-                    '$b',
-                    6,
-                    null,
-                    null
-                ),
-            ]],
-            ['<?php function($a, $b = array(1,2), $c = 3){};', 1, [
-                '$a' => new ArgumentAnalysis(
-                    '$a',
-                    3,
-                    null,
-                    null
-                ),
-                '$b' => new ArgumentAnalysis(
-                    '$b',
-                    6,
-                    'array(1,2)',
-                    null
-                ),
-                '$c' => new ArgumentAnalysis(
-                    '$c',
-                    18,
-                    '3',
-                    null
-                ),
-            ]],
-            ['<?php function(array $a = array()){};', 1, [
-                '$a' => new ArgumentAnalysis(
-                    '$a',
-                    5,
-                    'array()',
-                    new TypeAnalysis(
-                        'array',
-                        3,
-                        3
-                    )
-                ),
-            ]],
-            ['<?php function(array ... $a){};', 1, [
-                '$a' => new ArgumentAnalysis(
-                    '$a',
-                    7,
-                    null,
-                    new TypeAnalysis(
-                        'array',
-                        3,
-                        3
-                    )
-                ),
-            ]],
-            ['<?php function(\Foo\Bar $a){};', 1, [
-                '$a' => new ArgumentAnalysis(
-                    '$a',
-                    8,
-                    null,
-                    new TypeAnalysis(
-                        '\Foo\Bar',
-                        3,
-                        6
-                    )
-                ),
-            ]],
-        ];
+        yield ['<?php function(){};', 1, []];
 
-        yield from [
-            ['<?php fn() => null;', 1, []],
-            ['<?php fn($a) => null;', 1, [
-                '$a' => new ArgumentAnalysis(
-                    '$a',
+        yield ['<?php function($a){};', 1, [
+            '$a' => new ArgumentAnalysis(
+                '$a',
+                3,
+                null,
+                null
+            ),
+        ]];
+
+        yield ['<?php function($a, $b){};', 1, [
+            '$a' => new ArgumentAnalysis(
+                '$a',
+                3,
+                null,
+                null
+            ),
+            '$b' => new ArgumentAnalysis(
+                '$b',
+                6,
+                null,
+                null
+            ),
+        ]];
+
+        yield ['<?php function($a, $b = array(1,2), $c = 3){};', 1, [
+            '$a' => new ArgumentAnalysis(
+                '$a',
+                3,
+                null,
+                null
+            ),
+            '$b' => new ArgumentAnalysis(
+                '$b',
+                6,
+                'array(1,2)',
+                null
+            ),
+            '$c' => new ArgumentAnalysis(
+                '$c',
+                18,
+                '3',
+                null
+            ),
+        ]];
+
+        yield ['<?php function(array $a = array()){};', 1, [
+            '$a' => new ArgumentAnalysis(
+                '$a',
+                5,
+                'array()',
+                new TypeAnalysis(
+                    'array',
                     3,
-                    null,
-                    null
-                ),
-            ]],
-            ['<?php fn($a, $b) => null;', 1, [
-                '$a' => new ArgumentAnalysis(
-                    '$a',
+                    3
+                )
+            ),
+        ]];
+
+        yield ['<?php function(array ... $a){};', 1, [
+            '$a' => new ArgumentAnalysis(
+                '$a',
+                7,
+                null,
+                new TypeAnalysis(
+                    'array',
                     3,
-                    null,
-                    null
-                ),
-                '$b' => new ArgumentAnalysis(
-                    '$b',
-                    6,
-                    null,
-                    null
-                ),
-            ]],
-            ['<?php fn($a, $b = array(1,2), $c = 3) => null;', 1, [
-                '$a' => new ArgumentAnalysis(
-                    '$a',
+                    3
+                )
+            ),
+        ]];
+
+        yield ['<?php function(\Foo\Bar $a){};', 1, [
+            '$a' => new ArgumentAnalysis(
+                '$a',
+                8,
+                null,
+                new TypeAnalysis(
+                    '\Foo\Bar',
                     3,
-                    null,
-                    null
-                ),
-                '$b' => new ArgumentAnalysis(
-                    '$b',
-                    6,
-                    'array(1,2)',
-                    null
-                ),
-                '$c' => new ArgumentAnalysis(
-                    '$c',
-                    18,
-                    '3',
-                    null
-                ),
-            ]],
-            ['<?php fn(array $a = array()) => null;', 1, [
-                '$a' => new ArgumentAnalysis(
-                    '$a',
-                    5,
-                    'array()',
-                    new TypeAnalysis(
-                        'array',
-                        3,
-                        3
-                    )
-                ),
-            ]],
-            ['<?php fn(array ... $a) => null;', 1, [
-                '$a' => new ArgumentAnalysis(
-                    '$a',
-                    7,
-                    null,
-                    new TypeAnalysis(
-                        'array',
-                        3,
-                        3
-                    )
-                ),
-            ]],
-            ['<?php fn(\Foo\Bar $a) => null;', 1, [
-                '$a' => new ArgumentAnalysis(
-                    '$a',
-                    8,
-                    null,
-                    new TypeAnalysis(
-                        '\Foo\Bar',
-                        3,
-                        6
-                    )
-                ),
-            ]],
-        ];
+                    6
+                )
+            ),
+        ]];
+
+        yield ['<?php fn() => null;', 1, []];
+
+        yield ['<?php fn($a) => null;', 1, [
+            '$a' => new ArgumentAnalysis(
+                '$a',
+                3,
+                null,
+                null
+            ),
+        ]];
+
+        yield ['<?php fn($a, $b) => null;', 1, [
+            '$a' => new ArgumentAnalysis(
+                '$a',
+                3,
+                null,
+                null
+            ),
+            '$b' => new ArgumentAnalysis(
+                '$b',
+                6,
+                null,
+                null
+            ),
+        ]];
+
+        yield ['<?php fn($a, $b = array(1,2), $c = 3) => null;', 1, [
+            '$a' => new ArgumentAnalysis(
+                '$a',
+                3,
+                null,
+                null
+            ),
+            '$b' => new ArgumentAnalysis(
+                '$b',
+                6,
+                'array(1,2)',
+                null
+            ),
+            '$c' => new ArgumentAnalysis(
+                '$c',
+                18,
+                '3',
+                null
+            ),
+        ]];
+
+        yield ['<?php fn(array $a = array()) => null;', 1, [
+            '$a' => new ArgumentAnalysis(
+                '$a',
+                5,
+                'array()',
+                new TypeAnalysis(
+                    'array',
+                    3,
+                    3
+                )
+            ),
+        ]];
+
+        yield ['<?php fn(array ... $a) => null;', 1, [
+            '$a' => new ArgumentAnalysis(
+                '$a',
+                7,
+                null,
+                new TypeAnalysis(
+                    'array',
+                    3,
+                    3
+                )
+            ),
+        ]];
+
+        yield ['<?php fn(\Foo\Bar $a) => null;', 1, [
+            '$a' => new ArgumentAnalysis(
+                '$a',
+                8,
+                null,
+                new TypeAnalysis(
+                    '\Foo\Bar',
+                    3,
+                    6
+                )
+            ),
+        ]];
 
         if (\PHP_VERSION_ID < 8_00_00) {
             yield ['<?php fn(\Foo/** TODO: change to something else */\Bar $a) => null;', 1, [
@@ -624,7 +632,7 @@ class(){};
         $tokens = Tokens::fromCode($code);
         $analyzer = new FunctionsAnalyzer();
 
-        static::assertSame($isTheSameClassCall, $analyzer->isTheSameClassCall($tokens, $index));
+        self::assertSame($isTheSameClassCall, $analyzer->isTheSameClassCall($tokens, $index));
     }
 
     public static function provideIsTheSameClassCallCases(): iterable
@@ -701,7 +709,7 @@ class(){};
     /**
      * @param array<string, ArgumentAnalysis> $expected
      *
-     * @dataProvider provideFunctionsWithArgumentsPhp80Cases
+     * @dataProvider provideFunctionArgumentInfoPhp80Cases
      *
      * @requires PHP 8.0
      */
@@ -710,10 +718,10 @@ class(){};
         $tokens = Tokens::fromCode($code);
         $analyzer = new FunctionsAnalyzer();
 
-        static::assertSame(serialize($expected), serialize($analyzer->getFunctionArguments($tokens, $methodIndex)));
+        self::assertSame(serialize($expected), serialize($analyzer->getFunctionArguments($tokens, $methodIndex)));
     }
 
-    public static function provideFunctionsWithArgumentsPhp80Cases(): iterable
+    public static function provideFunctionArgumentInfoPhp80Cases(): iterable
     {
         yield ['<?php function($aa,){};', 1, [
             '$aa' => new ArgumentAnalysis(
@@ -755,7 +763,7 @@ class(){};
             }
         }
 
-        static::assertSame(
+        self::assertSame(
             $expectedIndices,
             $actualIndices,
             sprintf(

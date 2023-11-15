@@ -17,7 +17,7 @@ character.
 
 Allowed types: ``string[][]``
 
-Default value: ``[['deprecated', 'link', 'see', 'since'], ['author', 'copyright', 'license'], ['category', 'package', 'subpackage'], ['property', 'property-read', 'property-write']]``
+Default value: ``[['author', 'copyright', 'license'], ['category', 'package', 'subpackage'], ['property', 'property-read', 'property-write'], ['deprecated', 'link', 'see', 'since']]``
 
 ``skip_unlisted_annotations``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -155,8 +155,16 @@ Rule sets
 
 The rule is part of the following rule sets:
 
-@PhpCsFixer
-  Using the `@PhpCsFixer <./../../ruleSets/PhpCsFixer.rst>`_ rule set will enable the ``phpdoc_separation`` rule with the default config.
+- `@PhpCsFixer <./../../ruleSets/PhpCsFixer.rst>`_ with config:
 
-@Symfony
-  Using the `@Symfony <./../../ruleSets/Symfony.rst>`_ rule set will enable the ``phpdoc_separation`` rule with the default config.
+  ``['groups' => [['Annotation', 'NamedArgumentConstructor', 'Target'], ['author', 'copyright', 'license'], ['category', 'package', 'subpackage'], ['property', 'property-read', 'property-write'], ['deprecated', 'link', 'see', 'since']]]``
+
+- `@Symfony <./../../ruleSets/Symfony.rst>`_ with config:
+
+  ``['groups' => [['Annotation', 'NamedArgumentConstructor', 'Target'], ['author', 'copyright', 'license'], ['category', 'package', 'subpackage'], ['property', 'property-read', 'property-write'], ['deprecated', 'link', 'see', 'since']]]``
+
+
+Source class
+------------
+
+`PhpCsFixer\\Fixer\\Phpdoc\\PhpdocSeparationFixer <./../src/Fixer/Phpdoc/PhpdocSeparationFixer.php>`_

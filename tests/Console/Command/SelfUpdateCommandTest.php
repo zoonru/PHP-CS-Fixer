@@ -47,8 +47,8 @@ final class SelfUpdateCommandTest extends TestCase
 
         file_put_contents($this->getToolPath(), 'Current PHP CS Fixer.');
 
-        file_put_contents("{$this->root->url()}/{$this->getNewMinorReleaseVersion()}.phar", 'New minor version of PHP CS Fixer.');
-        file_put_contents("{$this->root->url()}/{$this->getNewMajorReleaseVersion()}.phar", 'New major version of PHP CS Fixer.');
+        file_put_contents($this->root->url().'/'.self::getNewMinorReleaseVersion().'.phar', 'New minor version of PHP CS Fixer.');
+        file_put_contents($this->root->url().'/'.self::getNewMajorReleaseVersion().'.phar', 'New major version of PHP CS Fixer.');
     }
 
     protected function tearDown(): void
@@ -78,15 +78,14 @@ final class SelfUpdateCommandTest extends TestCase
         $application = new Application();
         $application->add($command);
 
-        static::assertSame($command, $application->find($name));
+        self::assertSame($command, $application->find($name));
     }
 
-    public static function provideCommandNameCases(): array
+    public static function provideCommandNameCases(): iterable
     {
-        return [
-            ['self-update'],
-            ['selfupdate'],
-        ];
+        yield ['self-update'];
+
+        yield ['selfupdate'];
     }
 
     /**
@@ -107,7 +106,7 @@ final class SelfUpdateCommandTest extends TestCase
         $versionChecker->getLatestVersion()->willReturn($latestVersion);
 
         $versionChecker
-            ->getLatestVersionOfMajor($this->getCurrentMajorVersion())
+            ->getLatestVersionOfMajor(self::getCurrentMajorVersion())
             ->willReturn($latestMinorVersion)
         ;
 
@@ -117,9 +116,7 @@ final class SelfUpdateCommandTest extends TestCase
 
         $versionChecker
             ->compareVersions(Argument::type('string'), Argument::type('string'))
-            ->will(function (array $arguments) use ($actualVersionCheck): int {
-                return $actualVersionCheck->compareVersions($arguments[0], $arguments[1]);
-            })
+            ->will(static fn (array $arguments): int => $actualVersionCheck->compareVersions($arguments[0], $arguments[1]))
         ;
 
         $command = new SelfUpdateCommand(
@@ -130,17 +127,17 @@ final class SelfUpdateCommandTest extends TestCase
 
         $commandTester = $this->execute($command, $input, $decorated);
 
-        static::assertSame($expectedFileContents, file_get_contents($this->getToolPath()));
-        static::assertDisplay($expectedDisplay, $commandTester);
-        static::assertSame(0, $commandTester->getStatusCode());
+        self::assertSame($expectedFileContents, file_get_contents($this->getToolPath()));
+        self::assertDisplay($expectedDisplay, $commandTester);
+        self::assertSame(0, $commandTester->getStatusCode());
     }
 
-    public function provideExecuteCases(): array
+    public static function provideExecuteCases(): iterable
     {
         $currentVersion = Application::VERSION;
-        $minorRelease = $this->getNewMinorReleaseVersion();
-        $majorRelease = $this->getNewMajorReleaseVersion();
-        $major = $this->getNewMajorVersion();
+        $minorRelease = self::getNewMinorReleaseVersion();
+        $majorRelease = self::getNewMajorReleaseVersion();
+        $major = self::getNewMajorVersion();
 
         $currentContents = 'Current PHP CS Fixer.';
         $minorContents = 'New minor version of PHP CS Fixer.';
@@ -150,81 +147,122 @@ final class SelfUpdateCommandTest extends TestCase
         $newMinorDisplay = "\033[32mPHP CS Fixer updated\033[39m (\033[33m{$currentVersion}\033[39m -> \033[33m{$minorRelease}\033[39m)\n";
         $newMajorDisplay = "\033[32mPHP CS Fixer updated\033[39m (\033[33m{$currentVersion}\033[39m -> \033[33m{$majorRelease}\033[39m)\n";
         $majorInfoNoMinorDisplay = <<<OUTPUT
-\033[32mA new major version of PHP CS Fixer is available\033[39m (\033[33m{$majorRelease}\033[39m)
-\033[32mBefore upgrading please read\033[39m https://github.com/PHP-CS-Fixer/PHP-CS-Fixer/blob/{$majorRelease}/UPGRADE-v{$major}.md
-\033[32mIf you are ready to upgrade run this command with\033[39m \033[33m-f\033[39m
-\033[32mChecking for new minor/patch version...\033[39m
-\033[32mNo minor update for PHP CS Fixer.\033[39m
+            \033[32mA new major version of PHP CS Fixer is available\033[39m (\033[33m{$majorRelease}\033[39m)
+            \033[32mBefore upgrading please read\033[39m https://github.com/PHP-CS-Fixer/PHP-CS-Fixer/blob/{$majorRelease}/UPGRADE-v{$major}.md
+            \033[32mIf you are ready to upgrade run this command with\033[39m \033[33m-f\033[39m
+            \033[32mChecking for new minor/patch version...\033[39m
+            \033[32mNo minor update for PHP CS Fixer.\033[39m
 
-OUTPUT;
+            OUTPUT;
         $majorInfoNewMinorDisplay = <<<OUTPUT
-\033[32mA new major version of PHP CS Fixer is available\033[39m (\033[33m{$majorRelease}\033[39m)
-\033[32mBefore upgrading please read\033[39m https://github.com/PHP-CS-Fixer/PHP-CS-Fixer/blob/{$majorRelease}/UPGRADE-v{$major}.md
-\033[32mIf you are ready to upgrade run this command with\033[39m \033[33m-f\033[39m
-\033[32mChecking for new minor/patch version...\033[39m
-\033[32mPHP CS Fixer updated\033[39m (\033[33m{$currentVersion}\033[39m -> \033[33m{$minorRelease}\033[39m)
+            \033[32mA new major version of PHP CS Fixer is available\033[39m (\033[33m{$majorRelease}\033[39m)
+            \033[32mBefore upgrading please read\033[39m https://github.com/PHP-CS-Fixer/PHP-CS-Fixer/blob/{$majorRelease}/UPGRADE-v{$major}.md
+            \033[32mIf you are ready to upgrade run this command with\033[39m \033[33m-f\033[39m
+            \033[32mChecking for new minor/patch version...\033[39m
+            \033[32mPHP CS Fixer updated\033[39m (\033[33m{$currentVersion}\033[39m -> \033[33m{$minorRelease}\033[39m)
 
-OUTPUT;
+            OUTPUT;
 
-        return [
-            // no new version available
-            [Application::VERSION, Application::VERSION, [], true, $currentContents, $upToDateDisplay],
-            [Application::VERSION, Application::VERSION, [], false, $currentContents, $upToDateDisplay],
-            [Application::VERSION, Application::VERSION, ['--force' => true], true, $currentContents, $upToDateDisplay],
-            [Application::VERSION, Application::VERSION, ['-f' => true], false, $currentContents, $upToDateDisplay],
-            [Application::VERSION, Application::VERSION, ['--force' => true], true, $currentContents, $upToDateDisplay],
-            [Application::VERSION, Application::VERSION, ['-f' => true], false, $currentContents, $upToDateDisplay],
+        // no new version available
+        yield [Application::VERSION, Application::VERSION, [], true, $currentContents, $upToDateDisplay];
 
-            // new minor version available
-            [$minorRelease, $minorRelease, [], true, $minorContents, $newMinorDisplay],
-            [$minorRelease, $minorRelease, ['--force' => true], true, $minorContents, $newMinorDisplay],
-            [$minorRelease, $minorRelease, ['-f' => true], true, $minorContents, $newMinorDisplay],
-            [$minorRelease, $minorRelease, [], false, $minorContents, $newMinorDisplay],
-            [$minorRelease, $minorRelease, ['--force' => true], false, $minorContents, $newMinorDisplay],
-            [$minorRelease, $minorRelease, ['-f' => true], false, $minorContents, $newMinorDisplay],
+        yield [Application::VERSION, Application::VERSION, [], false, $currentContents, $upToDateDisplay];
 
-            // new major version available
-            [$majorRelease, Application::VERSION, [], true, $currentContents, $majorInfoNoMinorDisplay],
-            [$majorRelease, Application::VERSION, [], false, $currentContents, $majorInfoNoMinorDisplay],
-            [$majorRelease, Application::VERSION, ['--force' => true], true, $majorContents, $newMajorDisplay],
-            [$majorRelease, Application::VERSION, ['-f' => true], false, $majorContents, $newMajorDisplay],
-            [$majorRelease, Application::VERSION, ['--force' => true], true, $majorContents, $newMajorDisplay],
-            [$majorRelease, Application::VERSION, ['-f' => true], false, $majorContents, $newMajorDisplay],
+        yield [Application::VERSION, Application::VERSION, ['--force' => true], true, $currentContents, $upToDateDisplay];
 
-            // new minor version and new major version available
-            [$majorRelease, $minorRelease, [], true, $minorContents, $majorInfoNewMinorDisplay],
-            [$majorRelease, $minorRelease, [], false, $minorContents, $majorInfoNewMinorDisplay],
-            [$majorRelease, $minorRelease, ['--force' => true], true, $majorContents, $newMajorDisplay],
-            [$majorRelease, $minorRelease, ['-f' => true], false, $majorContents, $newMajorDisplay],
-            [$majorRelease, $minorRelease, ['--force' => true], true, $majorContents, $newMajorDisplay],
-            [$majorRelease, $minorRelease, ['-f' => true], false, $majorContents, $newMajorDisplay],
+        yield [Application::VERSION, Application::VERSION, ['-f' => true], false, $currentContents, $upToDateDisplay];
 
-            // weird/unexpected versions
-            ['v0.1.0', 'v0.1.0', [], true, $currentContents, $upToDateDisplay],
-            ['v0.1.0', 'v0.1.0', [], false, $currentContents, $upToDateDisplay],
-            ['v0.1.0', 'v0.1.0', ['--force' => true], true, $currentContents, $upToDateDisplay],
-            ['v0.1.0', 'v0.1.0', ['-f' => true], false, $currentContents, $upToDateDisplay],
-            ['v0.1.0', 'v0.1.0', ['--force' => true], true, $currentContents, $upToDateDisplay],
-            ['v0.1.0', 'v0.1.0', ['-f' => true], false, $currentContents, $upToDateDisplay],
-            ['v0.1.0', null, [], true, $currentContents, $upToDateDisplay],
-            ['v0.1.0', null, [], false, $currentContents, $upToDateDisplay],
-            ['v0.1.0', null, ['--force' => true], true, $currentContents, $upToDateDisplay],
-            ['v0.1.0', null, ['-f' => true], false, $currentContents, $upToDateDisplay],
-            ['v0.1.0', null, ['--force' => true], true, $currentContents, $upToDateDisplay],
-            ['v0.1.0', null, ['-f' => true], false, $currentContents, $upToDateDisplay],
-            ['v0.1.0', Application::VERSION, [], true, $currentContents, $upToDateDisplay],
-            ['v0.1.0', Application::VERSION, [], false, $currentContents, $upToDateDisplay],
-            ['v0.1.0', Application::VERSION, ['--force' => true], true, $currentContents, $upToDateDisplay],
-            ['v0.1.0', Application::VERSION, ['-f' => true], false, $currentContents, $upToDateDisplay],
-            ['v0.1.0', Application::VERSION, ['--force' => true], true, $currentContents, $upToDateDisplay],
-            ['v0.1.0', Application::VERSION, ['-f' => true], false, $currentContents, $upToDateDisplay],
-            [Application::VERSION, 'v0.1.0', [], true, $currentContents, $upToDateDisplay],
-            [Application::VERSION, 'v0.1.0', [], false, $currentContents, $upToDateDisplay],
-            [Application::VERSION, 'v0.1.0', ['--force' => true], true, $currentContents, $upToDateDisplay],
-            [Application::VERSION, 'v0.1.0', ['-f' => true], false, $currentContents, $upToDateDisplay],
-            [Application::VERSION, 'v0.1.0', ['--force' => true], true, $currentContents, $upToDateDisplay],
-            [Application::VERSION, 'v0.1.0', ['-f' => true], false, $currentContents, $upToDateDisplay],
-        ];
+        yield [Application::VERSION, Application::VERSION, ['--force' => true], true, $currentContents, $upToDateDisplay];
+
+        yield [Application::VERSION, Application::VERSION, ['-f' => true], false, $currentContents, $upToDateDisplay];
+
+        // new minor version available
+        yield [$minorRelease, $minorRelease, [], true, $minorContents, $newMinorDisplay];
+
+        yield [$minorRelease, $minorRelease, ['--force' => true], true, $minorContents, $newMinorDisplay];
+
+        yield [$minorRelease, $minorRelease, ['-f' => true], true, $minorContents, $newMinorDisplay];
+
+        yield [$minorRelease, $minorRelease, [], false, $minorContents, $newMinorDisplay];
+
+        yield [$minorRelease, $minorRelease, ['--force' => true], false, $minorContents, $newMinorDisplay];
+
+        yield [$minorRelease, $minorRelease, ['-f' => true], false, $minorContents, $newMinorDisplay];
+
+        // new major version available
+        yield [$majorRelease, Application::VERSION, [], true, $currentContents, $majorInfoNoMinorDisplay];
+
+        yield [$majorRelease, Application::VERSION, [], false, $currentContents, $majorInfoNoMinorDisplay];
+
+        yield [$majorRelease, Application::VERSION, ['--force' => true], true, $majorContents, $newMajorDisplay];
+
+        yield [$majorRelease, Application::VERSION, ['-f' => true], false, $majorContents, $newMajorDisplay];
+
+        yield [$majorRelease, Application::VERSION, ['--force' => true], true, $majorContents, $newMajorDisplay];
+
+        yield [$majorRelease, Application::VERSION, ['-f' => true], false, $majorContents, $newMajorDisplay];
+
+        // new minor version and new major version available
+        yield [$majorRelease, $minorRelease, [], true, $minorContents, $majorInfoNewMinorDisplay];
+
+        yield [$majorRelease, $minorRelease, [], false, $minorContents, $majorInfoNewMinorDisplay];
+
+        yield [$majorRelease, $minorRelease, ['--force' => true], true, $majorContents, $newMajorDisplay];
+
+        yield [$majorRelease, $minorRelease, ['-f' => true], false, $majorContents, $newMajorDisplay];
+
+        yield [$majorRelease, $minorRelease, ['--force' => true], true, $majorContents, $newMajorDisplay];
+
+        yield [$majorRelease, $minorRelease, ['-f' => true], false, $majorContents, $newMajorDisplay];
+
+        // weird/unexpected versions
+        yield ['v0.1.0', 'v0.1.0', [], true, $currentContents, $upToDateDisplay];
+
+        yield ['v0.1.0', 'v0.1.0', [], false, $currentContents, $upToDateDisplay];
+
+        yield ['v0.1.0', 'v0.1.0', ['--force' => true], true, $currentContents, $upToDateDisplay];
+
+        yield ['v0.1.0', 'v0.1.0', ['-f' => true], false, $currentContents, $upToDateDisplay];
+
+        yield ['v0.1.0', 'v0.1.0', ['--force' => true], true, $currentContents, $upToDateDisplay];
+
+        yield ['v0.1.0', 'v0.1.0', ['-f' => true], false, $currentContents, $upToDateDisplay];
+
+        yield ['v0.1.0', null, [], true, $currentContents, $upToDateDisplay];
+
+        yield ['v0.1.0', null, [], false, $currentContents, $upToDateDisplay];
+
+        yield ['v0.1.0', null, ['--force' => true], true, $currentContents, $upToDateDisplay];
+
+        yield ['v0.1.0', null, ['-f' => true], false, $currentContents, $upToDateDisplay];
+
+        yield ['v0.1.0', null, ['--force' => true], true, $currentContents, $upToDateDisplay];
+
+        yield ['v0.1.0', null, ['-f' => true], false, $currentContents, $upToDateDisplay];
+
+        yield ['v0.1.0', Application::VERSION, [], true, $currentContents, $upToDateDisplay];
+
+        yield ['v0.1.0', Application::VERSION, [], false, $currentContents, $upToDateDisplay];
+
+        yield ['v0.1.0', Application::VERSION, ['--force' => true], true, $currentContents, $upToDateDisplay];
+
+        yield ['v0.1.0', Application::VERSION, ['-f' => true], false, $currentContents, $upToDateDisplay];
+
+        yield ['v0.1.0', Application::VERSION, ['--force' => true], true, $currentContents, $upToDateDisplay];
+
+        yield ['v0.1.0', Application::VERSION, ['-f' => true], false, $currentContents, $upToDateDisplay];
+
+        yield [Application::VERSION, 'v0.1.0', [], true, $currentContents, $upToDateDisplay];
+
+        yield [Application::VERSION, 'v0.1.0', [], false, $currentContents, $upToDateDisplay];
+
+        yield [Application::VERSION, 'v0.1.0', ['--force' => true], true, $currentContents, $upToDateDisplay];
+
+        yield [Application::VERSION, 'v0.1.0', ['-f' => true], false, $currentContents, $upToDateDisplay];
+
+        yield [Application::VERSION, 'v0.1.0', ['--force' => true], true, $currentContents, $upToDateDisplay];
+
+        yield [Application::VERSION, 'v0.1.0', ['-f' => true], false, $currentContents, $upToDateDisplay];
     }
 
     /**
@@ -240,8 +278,8 @@ OUTPUT;
     ): void {
         $versionChecker = $this->prophesize(\PhpCsFixer\Console\SelfUpdate\NewVersionCheckerInterface::class);
 
-        $newMajorVersion = $this->getNewMajorReleaseVersion();
-        $versionChecker->getLatestVersion()->will(function () use ($latestVersionSuccess, $newMajorVersion): string {
+        $newMajorVersion = self::getNewMajorReleaseVersion();
+        $versionChecker->getLatestVersion()->will(static function () use ($latestVersionSuccess, $newMajorVersion): string {
             if ($latestVersionSuccess) {
                 return $newMajorVersion;
             }
@@ -249,10 +287,10 @@ OUTPUT;
             throw new \RuntimeException('Foo.');
         });
 
-        $newMinorVersion = $this->getNewMinorReleaseVersion();
+        $newMinorVersion = self::getNewMinorReleaseVersion();
         $versionChecker
-            ->getLatestVersionOfMajor($this->getCurrentMajorVersion())
-            ->will(function () use ($latestMinorVersionSuccess, $newMinorVersion): string {
+            ->getLatestVersionOfMajor(self::getCurrentMajorVersion())
+            ->will(static function () use ($latestMinorVersionSuccess, $newMinorVersion): string {
                 if ($latestMinorVersionSuccess) {
                     return $newMinorVersion;
                 }
@@ -269,35 +307,50 @@ OUTPUT;
 
         $commandTester = $this->execute($command, $input, $decorated);
 
-        static::assertDisplay(
+        self::assertDisplay(
             "\033[37;41mUnable to determine newest version: Foo.\033[39;49m\n",
             $commandTester
         );
-        static::assertSame(1, $commandTester->getStatusCode());
+        self::assertSame(1, $commandTester->getStatusCode());
     }
 
-    public static function provideExecuteWhenNotAbleToGetLatestVersionsCases(): array
+    public static function provideExecuteWhenNotAbleToGetLatestVersionsCases(): iterable
     {
-        return [
-            [false, false, [], true],
-            [false, false, ['--force' => true], true],
-            [false, false, ['-f' => true], true],
-            [false, false, [], false],
-            [false, false, ['--force' => true], false],
-            [false, false, ['-f' => true], false],
-            [true, false, [], true],
-            [true, false, ['--force' => true], true],
-            [true, false, ['-f' => true], true],
-            [true, false, [], false],
-            [true, false, ['--force' => true], false],
-            [true, false, ['-f' => true], false],
-            [false, true, [], true],
-            [false, true, ['--force' => true], true],
-            [false, true, ['-f' => true], true],
-            [false, true, [], false],
-            [false, true, ['--force' => true], false],
-            [false, true, ['-f' => true], false],
-        ];
+        yield [false, false, [], true];
+
+        yield [false, false, ['--force' => true], true];
+
+        yield [false, false, ['-f' => true], true];
+
+        yield [false, false, [], false];
+
+        yield [false, false, ['--force' => true], false];
+
+        yield [false, false, ['-f' => true], false];
+
+        yield [true, false, [], true];
+
+        yield [true, false, ['--force' => true], true];
+
+        yield [true, false, ['-f' => true], true];
+
+        yield [true, false, [], false];
+
+        yield [true, false, ['--force' => true], false];
+
+        yield [true, false, ['-f' => true], false];
+
+        yield [false, true, [], true];
+
+        yield [false, true, ['--force' => true], true];
+
+        yield [false, true, ['-f' => true], true];
+
+        yield [false, true, [], false];
+
+        yield [false, true, ['--force' => true], false];
+
+        yield [false, true, ['-f' => true], false];
     }
 
     /**
@@ -315,23 +368,26 @@ OUTPUT;
 
         $commandTester = $this->execute($command, $input, $decorated);
 
-        static::assertDisplay(
+        self::assertDisplay(
             "\033[37;41mSelf-update is available only for PHAR version.\033[39;49m\n",
             $commandTester
         );
-        static::assertSame(1, $commandTester->getStatusCode());
+        self::assertSame(1, $commandTester->getStatusCode());
     }
 
-    public static function provideExecuteWhenNotInstalledAsPharCases(): array
+    public static function provideExecuteWhenNotInstalledAsPharCases(): iterable
     {
-        return [
-            [[], true],
-            [['--force' => true], true],
-            [['-f' => true], true],
-            [[], false],
-            [['--force' => true], false],
-            [['-f' => true], false],
-        ];
+        yield [[], true];
+
+        yield [['--force' => true], true];
+
+        yield [['-f' => true], true];
+
+        yield [[], false];
+
+        yield [['--force' => true], false];
+
+        yield [['-f' => true], false];
     }
 
     /**
@@ -362,7 +418,7 @@ OUTPUT;
             $expectedDisplay = preg_replace("/\033\\[(\\d+;)*\\d+m/", '', $expectedDisplay);
         }
 
-        static::assertSame(
+        self::assertSame(
             $expectedDisplay,
             $commandTester->getDisplay(true)
         );
@@ -376,9 +432,7 @@ OUTPUT;
         $toolInfo->isInstalledAsPhar()->willReturn($isInstalledAsPhar);
         $toolInfo
             ->getPharDownloadUri(Argument::type('string'))
-            ->will(function (array $arguments) use ($root): string {
-                return "{$root->url()}/{$arguments[0]}.phar";
-            })
+            ->will(static fn (array $arguments): string => "{$root->url()}/{$arguments[0]}.phar")
         ;
 
         return $toolInfo->reveal();
@@ -389,23 +443,23 @@ OUTPUT;
         return "{$this->root->url()}/php-cs-fixer";
     }
 
-    private function getCurrentMajorVersion(): int
+    private static function getCurrentMajorVersion(): int
     {
         return (int) preg_replace('/^v?(\d+).*$/', '$1', Application::VERSION);
     }
 
-    private function getNewMinorReleaseVersion(): string
+    private static function getNewMinorReleaseVersion(): string
     {
-        return "{$this->getCurrentMajorVersion()}.999.0";
+        return self::getCurrentMajorVersion().'.999.0';
     }
 
-    private function getNewMajorVersion(): int
+    private static function getNewMajorVersion(): int
     {
-        return $this->getCurrentMajorVersion() + 1;
+        return self::getCurrentMajorVersion() + 1;
     }
 
-    private function getNewMajorReleaseVersion(): string
+    private static function getNewMajorReleaseVersion(): string
     {
-        return $this->getNewMajorVersion().'.0.0';
+        return self::getNewMajorVersion().'.0.0';
     }
 }

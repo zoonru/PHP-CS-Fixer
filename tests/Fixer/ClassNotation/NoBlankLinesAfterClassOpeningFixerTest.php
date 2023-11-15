@@ -35,18 +35,16 @@ final class NoBlankLinesAfterClassOpeningFixerTest extends AbstractFixerTestCase
     }
 
     /**
-     * @dataProvider provideTraitsCases
+     * @dataProvider provideFixTraitsCases
      */
     public function testFixTraits(string $expected, ?string $input = null): void
     {
         $this->doTest($expected, $input);
     }
 
-    public static function provideFixCases(): array
+    public static function provideFixCases(): iterable
     {
-        $cases = [];
-
-        $cases[] = [
+        yield [
             '<?php
 class Good
 {
@@ -66,7 +64,7 @@ class Good
 }',
         ];
 
-        $cases[] = [
+        yield [
             '<?php
 class Good
 {
@@ -92,7 +90,7 @@ class Good
 }',
         ];
 
-        $cases[] = [
+        yield [
             '<?php
 interface Good
 {
@@ -113,7 +111,7 @@ interface Good
         ];
 
         // check if some fancy whitespaces aren't modified
-        $cases[] = [
+        yield [
             '<?php
 class Good
 {public
@@ -128,7 +126,7 @@ class Good
         ];
 
         // check if line with spaces is removed when next token is indented
-        $cases[] = [
+        yield [
             '<?php
 class Foo
 {
@@ -145,7 +143,7 @@ class Foo
         ];
 
         // check if line with spaces is removed when next token is not indented
-        $cases[] = [
+        yield [
             '<?php
 class Foo
 {
@@ -160,15 +158,11 @@ function bar() {}
 }
 ',
         ];
-
-        return $cases;
     }
 
-    public static function provideTraitsCases(): array
+    public static function provideFixTraitsCases(): iterable
     {
-        $cases = [];
-
-        $cases[] = [
+        yield [
             '<?php
 trait Good
 {
@@ -187,8 +181,6 @@ trait Good
     public function firstMethod() {}
 }',
         ];
-
-        return $cases;
     }
 
     /**
@@ -201,17 +193,16 @@ trait Good
         $this->doTest($expected, $input);
     }
 
-    public static function provideMessyWhitespacesCases(): array
+    public static function provideMessyWhitespacesCases(): iterable
     {
-        return [
-            [
-                "<?php\nclass Foo\n{\r\n    public function bar() {}\n}",
-                "<?php\nclass Foo\n{\n\n    public function bar() {}\n}",
-            ],
-            [
-                "<?php\nclass Foo\n{\r\n    public function bar() {}\n}",
-                "<?php\nclass Foo\n{\r\n\r\n    public function bar() {}\n}",
-            ],
+        yield [
+            "<?php\nclass Foo\n{\r\n    public function bar() {}\n}",
+            "<?php\nclass Foo\n{\n\n    public function bar() {}\n}",
+        ];
+
+        yield [
+            "<?php\nclass Foo\n{\r\n    public function bar() {}\n}",
+            "<?php\nclass Foo\n{\r\n\r\n    public function bar() {}\n}",
         ];
     }
 

@@ -33,48 +33,54 @@ final class ObjectOperatorWithoutWhitespaceFixerTest extends AbstractFixerTestCa
         $this->doTest($expected, $input);
     }
 
-    public static function provideFixCases(): array
+    public static function provideFixCases(): iterable
     {
-        return [
-            [
-                '<?php $object->method();',
-                '<?php $object   ->method();',
-            ],
-            [
-                '<?php $object->method();',
-                '<?php $object   ->   method();',
-            ],
-            [
-                '<?php $object->method();',
-                '<?php $object->   method();',
-            ],
-            [
-                '<?php $object->method();',
-                '<?php $object	->method();',
-            ],
-            [
-                '<?php $object->method();',
-                '<?php $object->	method();',
-            ],
-            [
-                '<?php $object->method();',
-                '<?php $object	->	method();',
-            ],
-            [
-                '<?php echo "use it as -> you want";',
-            ],
-            // Ensure that doesn't break chained multi-line statements
-            [
-                '<?php $object->method()
+        yield [
+            '<?php $object->method();',
+            '<?php $object   ->method();',
+        ];
+
+        yield [
+            '<?php $object->method();',
+            '<?php $object   ->   method();',
+        ];
+
+        yield [
+            '<?php $object->method();',
+            '<?php $object->   method();',
+        ];
+
+        yield [
+            '<?php $object->method();',
+            '<?php $object	->method();',
+        ];
+
+        yield [
+            '<?php $object->method();',
+            '<?php $object->	method();',
+        ];
+
+        yield [
+            '<?php $object->method();',
+            '<?php $object	->	method();',
+        ];
+
+        yield [
+            '<?php echo "use it as -> you want";',
+        ];
+
+        // Ensure that doesn't break chained multi-line statements
+        yield [
+            '<?php $object->method()
                         ->method2()
                         ->method3();',
-            ],
-            [
-                '<?php $this
+        ];
+
+        yield [
+            '<?php $this
              ->add()
              // Some comment
              ->delete();',
-            ],
         ];
     }
 

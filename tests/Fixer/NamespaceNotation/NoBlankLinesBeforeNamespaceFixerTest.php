@@ -22,7 +22,6 @@ use PhpCsFixer\WhitespacesFixerConfig;
  *
  * @internal
  *
- * @covers \PhpCsFixer\AbstractLinesBeforeNamespaceFixer
  * @covers \PhpCsFixer\Fixer\NamespaceNotation\NoBlankLinesBeforeNamespaceFixer
  */
 final class NoBlankLinesBeforeNamespaceFixerTest extends AbstractFixerTestCase
@@ -38,71 +37,77 @@ final class NoBlankLinesBeforeNamespaceFixerTest extends AbstractFixerTestCase
         $this->doTest($expected, $input);
     }
 
-    public static function provideFixCases(): array
+    public static function provideFixCases(): iterable
     {
-        return [
-            ['<?php namespace Some\Name\Space;'],
-            ["<?php\nnamespace X;"],
-            ["<?php\nnamespace X;", "<?php\n\n\n\nnamespace X;"],
-            ["<?php\r\nnamespace X;"],
-            ["<?php\nnamespace X;", "<?php\r\n\r\n\r\n\r\nnamespace X;"],
-            ["<?php\r\nnamespace X;", "<?php\r\n\r\n\r\n\r\nnamespace X;", new WhitespacesFixerConfig('    ', "\r\n")],
-            ["<?php\n\nnamespace\\Sub\\Foo::bar();"],
-            [
-                '<?php
+        yield ['<?php namespace Some\Name\Space;'];
+
+        yield ["<?php\nnamespace X;"];
+
+        yield ["<?php\nnamespace X;", "<?php\n\n\n\nnamespace X;"];
+
+        yield ["<?php\r\nnamespace X;"];
+
+        yield ["<?php\nnamespace X;", "<?php\r\n\r\n\r\n\r\nnamespace X;"];
+
+        yield ["<?php\r\nnamespace X;", "<?php\r\n\r\n\r\n\r\nnamespace X;", new WhitespacesFixerConfig('    ', "\r\n")];
+
+        yield ["<?php\n\nnamespace\\Sub\\Foo::bar();"];
+
+        yield [
+            '<?php
     // Foo
     namespace Foo;
 ',
-                '<?php
+            '<?php
     // Foo
     '.'
     namespace Foo;
 ',
-            ],
-            [
-                '<?php
+        ];
+
+        yield [
+            '<?php
 // Foo
 namespace Foo;
 ',
-                '<?php
+            '<?php
 // Foo
     '.'
 namespace Foo;
 ',
-            ],
         ];
     }
 
     public function testFixExampleWithComment(): void
     {
         $expected = <<<'EOF'
-<?php
+            <?php
 
-/*
- * This file is part of the PHP CS utility.
- *
- * (c) Fabien Potencier <fabien@symfony.com>
- *
- * This source file is subject to the MIT license that is bundled
- * with this source code in the file LICENSE.
- */
-namespace PhpCsFixer\Fixer\Contrib;
-EOF;
+            /*
+             * This file is part of the PHP CS utility.
+             *
+             * (c) Fabien Potencier <fabien@symfony.com>
+             *
+             * This source file is subject to the MIT license that is bundled
+             * with this source code in the file LICENSE.
+             */
+            namespace PhpCsFixer\Fixer\Contrib;
+            EOF;
 
         $input = <<<'EOF'
-<?php
+            <?php
 
-/*
- * This file is part of the PHP CS utility.
- *
- * (c) Fabien Potencier <fabien@symfony.com>
- *
- * This source file is subject to the MIT license that is bundled
- * with this source code in the file LICENSE.
- */
+            /*
+             * This file is part of the PHP CS utility.
+             *
+             * (c) Fabien Potencier <fabien@symfony.com>
+             *
+             * This source file is subject to the MIT license that is bundled
+             * with this source code in the file LICENSE.
+             */
 
-namespace PhpCsFixer\Fixer\Contrib;
-EOF;
+            namespace PhpCsFixer\Fixer\Contrib;
+            EOF;
 
         $this->doTest($expected, $input);
     }

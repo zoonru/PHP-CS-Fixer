@@ -33,91 +33,109 @@ final class UnaryOperatorSpacesFixerTest extends AbstractFixerTestCase
         $this->doTest($expected, $input);
     }
 
-    public static function provideFixCases(): array
+    public static function provideFixCases(): iterable
     {
-        return [
-            [
-                '<?php $a= 1;$a#
+        yield [
+            '<?php $a= 1;$a#
 ++#
 ;#',
-            ],
-            [
-                '<?php $a++;',
-                '<?php $a ++;',
-            ],
-            [
-                '<?php $a--;',
-                '<?php $a --;',
-            ],
-            [
-                '<?php ++$a;',
-                '<?php ++ $a;',
-            ],
-            [
-                '<?php --$a;',
-                '<?php -- $a;',
-            ],
-            [
-                '<?php $a = !$b;',
-                '<?php $a = ! $b;',
-            ],
-            [
-                '<?php $a = !!$b;',
-                '<?php $a = ! ! $b;',
-            ],
-            [
-                '<?php $a = ~$b;',
-                '<?php $a = ~ $b;',
-            ],
-            [
-                '<?php $a = &$b;',
-                '<?php $a = & $b;',
-            ],
-            [
-                '<?php $a=&$b;',
-            ],
-            [
-                '<?php $a * -$b;',
-                '<?php $a * - $b;',
-            ],
-            [
-                '<?php $a *-$b;',
-                '<?php $a *- $b;',
-            ],
-            [
-                '<?php $a*-$b;',
-            ],
-            [
-                '<?php function &foo(){}',
-                '<?php function & foo(){}',
-            ],
-            [
-                '<?php function &foo(){}',
-                '<?php function &   foo(){}',
-            ],
-            [
-                '<?php function foo(&$a, array &$b, Bar &$c) {}',
-                '<?php function foo(& $a, array & $b, Bar & $c) {}',
-            ],
-            [
-                '<?php function foo($a, ...$b) {}',
-                '<?php function foo($a, ... $b) {}',
-            ],
-            [
-                '<?php function foo(&...$a) {}',
-                '<?php function foo(& ... $a) {}',
-            ],
-            [
-                '<?php function foo(array ...$a) {}',
-            ],
-            [
-                '<?php foo(...$a);',
-                '<?php foo(... $a);',
-            ],
-            [
-                '<?php foo($a, ...$b);',
-                '<?php foo($a, ... $b);',
-            ],
+        ];
+
+        yield [
+            '<?php $a++;',
+            '<?php $a ++;',
+        ];
+
+        yield [
+            '<?php $a--;',
+            '<?php $a --;',
+        ];
+
+        yield [
+            '<?php ++$a;',
+            '<?php ++ $a;',
+        ];
+
+        yield [
+            '<?php --$a;',
+            '<?php -- $a;',
+        ];
+
+        yield [
+            '<?php $a = !$b;',
+            '<?php $a = ! $b;',
+        ];
+
+        yield [
+            '<?php $a = !!$b;',
+            '<?php $a = ! ! $b;',
+        ];
+
+        yield [
+            '<?php $a = ~$b;',
+            '<?php $a = ~ $b;',
+        ];
+
+        yield [
+            '<?php $a = &$b;',
+            '<?php $a = & $b;',
+        ];
+
+        yield [
+            '<?php $a=&$b;',
+        ];
+
+        yield [
+            '<?php $a * -$b;',
+            '<?php $a * - $b;',
+        ];
+
+        yield [
+            '<?php $a *-$b;',
+            '<?php $a *- $b;',
+        ];
+
+        yield [
+            '<?php $a*-$b;',
+        ];
+
+        yield [
+            '<?php function &foo(){}',
+            '<?php function & foo(){}',
+        ];
+
+        yield [
+            '<?php function &foo(){}',
+            '<?php function &   foo(){}',
+        ];
+
+        yield [
+            '<?php function foo(&$a, array &$b, Bar &$c) {}',
+            '<?php function foo(& $a, array & $b, Bar & $c) {}',
+        ];
+
+        yield [
+            '<?php function foo($a, ...$b) {}',
+            '<?php function foo($a, ... $b) {}',
+        ];
+
+        yield [
+            '<?php function foo(&...$a) {}',
+            '<?php function foo(& ... $a) {}',
+        ];
+
+        yield [
+            '<?php function foo(array ...$a) {}',
+        ];
+
+        yield [
+            '<?php foo(...$a);',
+            '<?php foo(... $a);',
+        ];
+
+        yield [
+            '<?php foo($a, ...$b);',
+            '<?php foo($a, ... $b);',
         ];
     }
 }

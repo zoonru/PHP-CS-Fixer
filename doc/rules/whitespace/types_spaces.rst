@@ -13,7 +13,7 @@ Configuration
 
 Spacing to apply around union type and intersection type operators.
 
-Allowed values: ``'none'``, ``'single'``
+Allowed values: ``'none'`` and ``'single'``
 
 Default value: ``'none'``
 
@@ -23,7 +23,7 @@ Default value: ``'none'``
 Spacing to apply around type operator when catching exceptions of multiple
 types, use ``null`` to follow the value configured for ``space``.
 
-Allowed values: ``'none'``, ``'single'``, ``null``
+Allowed values: ``'none'``, ``'single'`` and ``null``
 
 Default value: ``null``
 
@@ -84,8 +84,10 @@ Rule sets
 
 The rule is part of the following rule sets:
 
-@PhpCsFixer
-  Using the `@PhpCsFixer <./../../ruleSets/PhpCsFixer.rst>`_ rule set will enable the ``types_spaces`` rule with the default config.
+- `@PhpCsFixer <./../../ruleSets/PhpCsFixer.rst>`_
+- `@Symfony <./../../ruleSets/Symfony.rst>`_
 
-@Symfony
-  Using the `@Symfony <./../../ruleSets/Symfony.rst>`_ rule set will enable the ``types_spaces`` rule with the default config.
+Source class
+------------
+
+`PhpCsFixer\\Fixer\\Whitespace\\TypesSpacesFixer <./../src/Fixer/Whitespace/TypesSpacesFixer.php>`_

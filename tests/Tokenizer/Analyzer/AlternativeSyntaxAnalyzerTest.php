@@ -35,7 +35,7 @@ final class AlternativeSyntaxAnalyzerTest extends TestCase
         $tokens = Tokens::fromCode($source);
 
         for ($index = $tokens->count() - 1; $index >= 0; --$index) {
-            static::assertSame(
+            self::assertSame(
                 \in_array($index, $expectedPositives, true),
                 (new AlternativeSyntaxAnalyzer())->belongsToAlternativeSyntax($tokens, $index),
                 '@ index: '.$index
@@ -87,13 +87,13 @@ final class AlternativeSyntaxAnalyzerTest extends TestCase
     }
 
     /**
-     * @dataProvider provideFindBlockEndCases
+     * @dataProvider provideItFindsTheEndOfAnAlternativeSyntaxBlockCases
      */
     public function testItFindsTheEndOfAnAlternativeSyntaxBlock(string $code, int $startIndex, int $expectedResult): void
     {
         $analyzer = new AlternativeSyntaxAnalyzer();
 
-        static::assertSame(
+        self::assertSame(
             $expectedResult,
             $analyzer->findAlternativeSyntaxBlockEnd(
                 Tokens::fromCode($code),
@@ -102,7 +102,7 @@ final class AlternativeSyntaxAnalyzerTest extends TestCase
         );
     }
 
-    public static function provideFindBlockEndCases(): iterable
+    public static function provideItFindsTheEndOfAnAlternativeSyntaxBlockCases(): iterable
     {
         yield ['<?php if ($foo): foo(); endif;', 1, 13];
 
@@ -125,33 +125,33 @@ final class AlternativeSyntaxAnalyzerTest extends TestCase
         yield ['<?php switch ($foo): case 1: foo(); endswitch;', 1, 18];
 
         $nested = <<<'PHP'
-        <?php
-        switch (foo()):
-            case 1:
-                switch (foo2()):
-                    case 2:
-                        if (bar()) {
+            <?php
+            switch (foo()):
+                case 1:
+                    switch (foo2()):
+                        case 2:
+                            if (bar()) {
 
-                        }
-                        switch (foo2()):
-                            case 4:
-                            {
-                                switch (foo3()) {
-                                    case 4:
-                                    {
+                            }
+                            switch (foo2()):
+                                case 4:
+                                {
+                                    switch (foo3()) {
+                                        case 4:
+                                        {
 
+                                        }
                                     }
                                 }
-                            }
-                        endswitch;
-                endswitch;
-            case 2:
-                switch (foo5()) {
-                    case 4:
-                        echo 1;
-                }
-        endswitch;
-        PHP;
+                            endswitch;
+                    endswitch;
+                case 2:
+                    switch (foo5()) {
+                        case 4:
+                            echo 1;
+                    }
+            endswitch;
+            PHP;
 
         yield [$nested, 1, 113];
 
@@ -181,7 +181,7 @@ final class AlternativeSyntaxAnalyzerTest extends TestCase
     }
 
     /**
-     * @dataProvider provideFindInvalidBlockEndCases
+     * @dataProvider provideItThrowsOnInvalidAlternativeSyntaxBlockStartIndexCases
      */
     public function testItThrowsOnInvalidAlternativeSyntaxBlockStartIndex(string $code, int $startIndex, string $expectedMessage): void
     {
@@ -195,7 +195,7 @@ final class AlternativeSyntaxAnalyzerTest extends TestCase
         $analyzer->findAlternativeSyntaxBlockEnd($tokens, $startIndex);
     }
 
-    public static function provideFindInvalidBlockEndCases(): iterable
+    public static function provideItThrowsOnInvalidAlternativeSyntaxBlockStartIndexCases(): iterable
     {
         yield ['<?php if ($foo): foo(); endif;', 0, 'Token at index 0 is not the start of an alternative syntax block.'];
 

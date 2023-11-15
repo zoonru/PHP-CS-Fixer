@@ -31,5 +31,9 @@ Rule sets
 
 The rule is part of the following rule set:
 
-@PhpCsFixer:risky
-  Using the `@PhpCsFixer:risky <./../../ruleSets/PhpCsFixerRisky.rst>`_ rule set will enable the ``strict_comparison`` rule.
+- `@PhpCsFixer:risky <./../../ruleSets/PhpCsFixerRisky.rst>`_
+
+Source class
+------------
+
+`PhpCsFixer\\Fixer\\Strict\\StrictComparisonFixer <./../src/Fixer/Strict/StrictComparisonFixer.php>`_

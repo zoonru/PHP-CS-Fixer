@@ -37,8 +37,10 @@ Rule sets
 
 The rule is part of the following rule sets:
 
-@PhpCsFixer
-  Using the `@PhpCsFixer <./../../ruleSets/PhpCsFixer.rst>`_ rule set will enable the ``phpdoc_trim_consecutive_blank_line_separation`` rule.
+- `@PhpCsFixer <./../../ruleSets/PhpCsFixer.rst>`_
+- `@Symfony <./../../ruleSets/Symfony.rst>`_
 
-@Symfony
-  Using the `@Symfony <./../../ruleSets/Symfony.rst>`_ rule set will enable the ``phpdoc_trim_consecutive_blank_line_separation`` rule.
+Source class
+------------
+
+`PhpCsFixer\\Fixer\\Phpdoc\\PhpdocTrimConsecutiveBlankLineSeparationFixer <./../src/Fixer/Phpdoc/PhpdocTrimConsecutiveBlankLineSeparationFixer.php>`_

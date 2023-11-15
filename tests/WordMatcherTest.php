@@ -33,42 +33,46 @@ final class WordMatcherTest extends TestCase
     public function testMatch(?string $expected, string $needle, array $candidates): void
     {
         $matcher = new WordMatcher($candidates);
-        static::assertSame($expected, $matcher->match($needle));
+        self::assertSame($expected, $matcher->match($needle));
     }
 
-    public static function provideMatchCases(): array
+    /**
+     * @return iterable<array{?string, string, string[]}>
+     */
+    public static function provideMatchCases(): iterable
     {
-        return [
+        yield [
+            null,
+            'foo',
             [
-                null,
-                'foo',
-                [
-                    'no_blank_lines_after_class_opening',
-                    'no_blank_lines_after_phpdoc',
-                ],
-            ],
-            [
+                'no_blank_lines_after_class_opening',
                 'no_blank_lines_after_phpdoc',
-                'no_blank_lines_after_phpdocs',
-                [
-                    'no_blank_lines_after_class_opening',
-                    'no_blank_lines_after_phpdoc',
-                ],
             ],
+        ];
+
+        yield [
+            'no_blank_lines_after_phpdoc',
+            'no_blank_lines_after_phpdocs',
+            [
+                'no_blank_lines_after_class_opening',
+                'no_blank_lines_after_phpdoc',
+            ],
+        ];
+
+        yield [
+            'no_blank_lines_after_foo',
+            'no_blank_lines_foo',
             [
                 'no_blank_lines_after_foo',
-                'no_blank_lines_foo',
-                [
-                    'no_blank_lines_after_foo',
-                    'no_blank_lines_before_foo',
-                ],
+                'no_blank_lines_before_foo',
             ],
+        ];
+
+        yield [
+            null,
+            'braces',
             [
-                null,
-                'braces',
-                [
-                    'elseif',
-                ],
+                'elseif',
             ],
         ];
     }

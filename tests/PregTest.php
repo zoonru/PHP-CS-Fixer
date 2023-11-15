@@ -39,26 +39,32 @@ final class PregTest extends TestCase
      */
     public function testMatch(string $pattern, string $subject): void
     {
-        $expectedResult = preg_match($pattern, $subject, $expectedMatches);
+        $expectedResult = 1 === preg_match($pattern, $subject, $expectedMatches);
         $actualResult = Preg::match($pattern, $subject, $actualMatches);
 
-        static::assertSame($expectedResult, $actualResult);
-        static::assertSame($expectedMatches, $actualMatches);
+        self::assertSame($expectedResult, $actualResult);
+        self::assertSame($expectedMatches, $actualMatches);
     }
 
     public static function providePatternValidationCases(): iterable
     {
-        yield from [
-            'invalid_blank' => ['', null, PregException::class],
-            'invalid_open' => ["\1", null, PregException::class, "'\1' found"],
-            'valid_control_character_delimiter' => ["\1\1", 1],
-            'invalid_control_character_modifier' => ["\1\1\1", null, PregException::class, ' Unknown modifier '],
-            'valid_slate' => ['//', 1],
-            'valid_paired' => ['()', 1],
-            'paired_non_utf8_only' => ["((*UTF8)\xFF)", null, PregException::class, 'UTF-8'],
-            'valid_paired_non_utf8_only' => ["(\xFF)", 1],
-            'php_version_dependent' => ['([\\R])', 0, PregException::class, 'Compilation failed: escape sequence is invalid '],
-        ];
+        yield 'invalid_blank' => ['', null, PregException::class];
+
+        yield 'invalid_open' => ["\1", null, PregException::class, "'\1' found"];
+
+        yield 'valid_control_character_delimiter' => ["\1\1", true];
+
+        yield 'invalid_control_character_modifier' => ["\1\1\1", null, PregException::class, ' Unknown modifier '];
+
+        yield 'valid_slate' => ['//', true];
+
+        yield 'valid_paired' => ['()', true];
+
+        yield 'paired_non_utf8_only' => ["((*UTF8)\xFF)", null, PregException::class, 'UTF-8'];
+
+        yield 'valid_paired_non_utf8_only' => ["(\xFF)", true];
+
+        yield 'php_version_dependent' => ['([\\R])', false, PregException::class, 'Compilation failed: escape sequence is invalid '];
 
         $nullByteMessage = \PHP_VERSION_ID >= 8_02_00 ? 'NUL is not a valid modifier' : 'Null byte in regex';
 
@@ -68,7 +74,7 @@ final class PregTest extends TestCase
     /**
      * @dataProvider providePatternValidationCases
      */
-    public function testPatternValidation(string $pattern, ?int $expected = null, ?string $expectedException = null, ?string $expectedMessage = null): void
+    public function testPatternValidation(string $pattern, ?bool $expected = null, ?string $expectedException = null, ?string $expectedMessage = null): void
     {
         $setup = function () use ($expectedException, $expectedMessage): bool {
             $i = 0;
@@ -95,7 +101,7 @@ final class PregTest extends TestCase
         }
 
         if (null !== $expected) {
-            static::assertSame($expected, $actual);
+            self::assertSame($expected, $actual);
 
             return;
         }
@@ -108,7 +114,7 @@ final class PregTest extends TestCase
     /**
      * @dataProvider providePatternValidationCases
      */
-    public function testPatternsValidation(string $pattern, ?int $expected = null, ?string $expectedException = null, ?string $expectedMessage = null): void
+    public function testPatternsValidation(string $pattern, ?bool $expected = null, ?string $expectedException = null, ?string $expectedMessage = null): void
     {
         $setup = function () use ($expectedException, $expectedMessage): bool {
             $i = 0;
@@ -136,7 +142,7 @@ final class PregTest extends TestCase
         }
 
         if (null !== $expected) {
-            static::assertSame((bool) $expected, $actual);
+            self::assertSame($expected, $actual);
 
             return;
         }
@@ -162,8 +168,8 @@ final class PregTest extends TestCase
         $expectedResult = preg_match_all($pattern, $subject, $expectedMatches);
         $actualResult = Preg::matchAll($pattern, $subject, $actualMatches);
 
-        static::assertSame($expectedResult, $actualResult);
-        static::assertSame($expectedMatches, $actualMatches);
+        self::assertSame($expectedResult, $actualResult);
+        self::assertSame($expectedMatches, $actualMatches);
     }
 
     public function testReplaceFailing(): void
@@ -185,7 +191,7 @@ final class PregTest extends TestCase
         $expectedResult = preg_replace($pattern, 'foo', $subject);
         $actualResult = Preg::replace($pattern, 'foo', $subject);
 
-        static::assertSame($expectedResult, $actualResult);
+        self::assertSame($expectedResult, $actualResult);
     }
 
     public function testReplaceCallbackFailing(): void
@@ -209,18 +215,20 @@ final class PregTest extends TestCase
         $expectedResult = preg_replace_callback($pattern, $callback, $subject);
         $actualResult = Preg::replaceCallback($pattern, $callback, $subject);
 
-        static::assertSame($expectedResult, $actualResult);
+        self::assertSame($expectedResult, $actualResult);
     }
 
-    public static function provideCommonCases(): array
+    public static function provideCommonCases(): iterable
     {
-        return [
-            ['/u/u', 'u'],
-            ['/u/u', 'u/u'],
-            ['/./', \chr(224).'bc'],
-            ['/à/', 'àbc'],
-            ['/'.\chr(224).'|í/', 'àbc'],
-        ];
+        yield ['/u/u', 'u'];
+
+        yield ['/u/u', 'u/u'];
+
+        yield ['/./', \chr(224).'bc'];
+
+        yield ['/à/', 'àbc'];
+
+        yield ['/'.\chr(224).'|í/', 'àbc'];
     }
 
     public function testSplitFailing(): void
@@ -239,7 +247,7 @@ final class PregTest extends TestCase
         $expectedResult = preg_split($pattern, $subject);
         $actualResult = Preg::split($pattern, $subject);
 
-        static::assertSame($expectedResult, $actualResult);
+        self::assertSame($expectedResult, $actualResult);
     }
 
     public function testCorrectnessForUtf8String(): void
@@ -250,8 +258,8 @@ final class PregTest extends TestCase
         Preg::match($pattern, $subject, $methodMatches);
         preg_match($pattern, $subject, $functionMatches);
 
-        static::assertSame(['à'], $methodMatches);
-        static::assertNotSame(['à'], $functionMatches);
+        self::assertSame(['à'], $methodMatches);
+        self::assertNotSame(['à'], $functionMatches);
     }
 
     public function testCorrectnessForNonUtf8String(): void
@@ -262,7 +270,7 @@ final class PregTest extends TestCase
         Preg::match($pattern, $subject, $methodMatches);
         preg_match($pattern, $subject, $functionMatches);
 
-        static::assertSame([\chr(224)], $methodMatches);
-        static::assertNotSame([\chr(224)], $functionMatches);
+        self::assertSame([\chr(224)], $methodMatches);
+        self::assertNotSame([\chr(224)], $functionMatches);
     }
 }

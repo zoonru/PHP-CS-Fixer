@@ -43,28 +43,27 @@ final class ArrayTypehintTransformerTest extends AbstractTransformerTestCase
         );
     }
 
-    public static function provideProcessCases(): array
+    public static function provideProcessCases(): iterable
     {
-        return [
-            [
-                '<?php
+        yield [
+            '<?php
 $a = array(1, 2, 3);
 function foo (array /** @type array */ $bar)
 {
 }',
-                [
-                    5 => T_ARRAY,
-                    22 => CT::T_ARRAY_TYPEHINT,
-                ],
-            ],
             [
-                '<?php
+                5 => T_ARRAY,
+                22 => CT::T_ARRAY_TYPEHINT,
+            ],
+        ];
+
+        yield [
+            '<?php
 $a = array(1, 2, 3);
 $fn = fn(array /** @type array */ $bar) => null;',
-                [
-                    5 => T_ARRAY,
-                    23 => CT::T_ARRAY_TYPEHINT,
-                ],
+            [
+                5 => T_ARRAY,
+                23 => CT::T_ARRAY_TYPEHINT,
             ],
         ];
     }

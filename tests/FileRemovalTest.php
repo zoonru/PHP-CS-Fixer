@@ -46,7 +46,85 @@ final class FileRemovalTest extends TestCase
         }
     }
 
+    public function testCleanRemovesObservedFiles(): void
+    {
+        $fs = $this->getMockFileSystem();
+
+        $fileRemoval = new FileRemoval();
+
+        $fileRemoval->observe($fs->url().'/foo.php');
+        $fileRemoval->observe($fs->url().'/baz.php');
+
+        $fileRemoval->clean();
+
+        self::assertFileDoesNotExist($fs->url().'/foo.php');
+        self::assertFileDoesNotExist($fs->url().'/baz.php');
+        self::assertFileExists($fs->url().'/bar.php');
+    }
+
+    public function testDestructRemovesObservedFiles(): void
+    {
+        $fs = $this->getMockFileSystem();
+
+        $fileRemoval = new FileRemoval();
+
+        $fileRemoval->observe($fs->url().'/foo.php');
+        $fileRemoval->observe($fs->url().'/baz.php');
+
+        $fileRemoval->__destruct();
+
+        self::assertFileDoesNotExist($fs->url().'/foo.php');
+        self::assertFileDoesNotExist($fs->url().'/baz.php');
+        self::assertFileExists($fs->url().'/bar.php');
+    }
+
+    public function testDeleteObservedFile(): void
+    {
+        $fs = $this->getMockFileSystem();
+
+        $fileRemoval = new FileRemoval();
+
+        $fileRemoval->observe($fs->url().'/foo.php');
+        $fileRemoval->observe($fs->url().'/baz.php');
+
+        $fileRemoval->delete($fs->url().'/foo.php');
+
+        self::assertFileDoesNotExist($fs->url().'/foo.php');
+        self::assertFileExists($fs->url().'/baz.php');
+    }
+
+    public function testDeleteNonObservedFile(): void
+    {
+        $fs = $this->getMockFileSystem();
+
+        $fileRemoval = new FileRemoval();
+
+        $fileRemoval->delete($fs->url().'/foo.php');
+
+        self::assertFileDoesNotExist($fs->url().'/foo.php');
+    }
+
+    public function testSleep(): void
+    {
+        $this->expectException(\BadMethodCallException::class);
+        $this->expectExceptionMessage('Cannot serialize PhpCsFixer\FileRemoval');
+
+        $fileRemoval = new FileRemoval();
+        $fileRemoval->__sleep();
+    }
+
+    public function testWakeup(): void
+    {
+        $this->expectException(\BadMethodCallException::class);
+        $this->expectExceptionMessage('Cannot unserialize PhpCsFixer\FileRemoval');
+
+        $fileRemoval = new FileRemoval();
+        $fileRemoval->__wakeup();
+    }
+
     /**
+     * Must NOT be run as first test, see https://github.com/PHP-CS-Fixer/PHP-CS-Fixer/pull/7104.
+     *
      * @runInSeparateProcess
      *
      * @doesNotPerformAssertions
@@ -71,84 +149,8 @@ final class FileRemovalTest extends TestCase
      */
     public function testShutdownRemovesObservedFiles(): void
     {
-        static::assertFileDoesNotExist(sys_get_temp_dir().'/cs_fixer_foo.php');
-        static::assertFileExists(sys_get_temp_dir().'/cs_fixer_bar.php');
-    }
-
-    public function testCleanRemovesObservedFiles(): void
-    {
-        $fs = $this->getMockFileSystem();
-
-        $fileRemoval = new FileRemoval();
-
-        $fileRemoval->observe($fs->url().'/foo.php');
-        $fileRemoval->observe($fs->url().'/baz.php');
-
-        $fileRemoval->clean();
-
-        static::assertFileDoesNotExist($fs->url().'/foo.php');
-        static::assertFileDoesNotExist($fs->url().'/baz.php');
-        static::assertFileExists($fs->url().'/bar.php');
-    }
-
-    public function testDestructRemovesObservedFiles(): void
-    {
-        $fs = $this->getMockFileSystem();
-
-        $fileRemoval = new FileRemoval();
-
-        $fileRemoval->observe($fs->url().'/foo.php');
-        $fileRemoval->observe($fs->url().'/baz.php');
-
-        $fileRemoval->__destruct();
-
-        static::assertFileDoesNotExist($fs->url().'/foo.php');
-        static::assertFileDoesNotExist($fs->url().'/baz.php');
-        static::assertFileExists($fs->url().'/bar.php');
-    }
-
-    public function testDeleteObservedFile(): void
-    {
-        $fs = $this->getMockFileSystem();
-
-        $fileRemoval = new FileRemoval();
-
-        $fileRemoval->observe($fs->url().'/foo.php');
-        $fileRemoval->observe($fs->url().'/baz.php');
-
-        $fileRemoval->delete($fs->url().'/foo.php');
-
-        static::assertFileDoesNotExist($fs->url().'/foo.php');
-        static::assertFileExists($fs->url().'/baz.php');
-    }
-
-    public function testDeleteNonObservedFile(): void
-    {
-        $fs = $this->getMockFileSystem();
-
-        $fileRemoval = new FileRemoval();
-
-        $fileRemoval->delete($fs->url().'/foo.php');
-
-        static::assertFileDoesNotExist($fs->url().'/foo.php');
-    }
-
-    public function testSleep(): void
-    {
-        $this->expectException(\BadMethodCallException::class);
-        $this->expectExceptionMessage('Cannot serialize PhpCsFixer\FileRemoval');
-
-        $fileRemoval = new FileRemoval();
-        $fileRemoval->__sleep();
-    }
-
-    public function testWakeup(): void
-    {
-        $this->expectException(\BadMethodCallException::class);
-        $this->expectExceptionMessage('Cannot unserialize PhpCsFixer\FileRemoval');
-
-        $fileRemoval = new FileRemoval();
-        $fileRemoval->__wakeup();
+        self::assertFileDoesNotExist(sys_get_temp_dir().'/cs_fixer_foo.php');
+        self::assertFileExists(sys_get_temp_dir().'/cs_fixer_bar.php');
     }
 
     private function getMockFileSystem(): vfsStreamDirectory

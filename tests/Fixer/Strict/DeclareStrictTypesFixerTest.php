@@ -32,11 +32,10 @@ final class DeclareStrictTypesFixerTest extends AbstractFixerTestCase
         $this->doTest($expected, $input);
     }
 
-    public static function provideFixCases(): array
+    public static function provideFixCases(): iterable
     {
-        return [
-            [
-                '<?php
+        yield [
+            '<?php
 declare(ticks=1);
 //
 declare(strict_types=1);
@@ -44,80 +43,91 @@ declare(strict_types=1);
 namespace A\B\C;
 class A {
 }',
-            ],
-            [
-                '<?php declare/* A b C*/(strict_types=1);',
-            ],
-            [
-                '<?php /**/ /**/ deClarE  (strict_types=1)    ?>Test',
-                '<?php /**/ /**/ deClarE  (STRICT_TYPES=1)    ?>Test',
-            ],
-            [
-                '<?php            DECLARE  (    strict_types=1   )   ;',
-            ],
-            [
-                '<?php
+        ];
+
+        yield [
+            '<?php declare/* A b C*/(strict_types=1);',
+        ];
+
+        yield [
+            '<?php /**/ /**/ deClarE  (strict_types=1)    ?>Test',
+            '<?php /**/ /**/ deClarE  (STRICT_TYPES=1)    ?>Test',
+        ];
+
+        yield [
+            '<?php            DECLARE  (    strict_types=1   )   ;',
+        ];
+
+        yield [
+            '<?php
                 /**/
                 declare(strict_types=1);',
-            ],
-            [
-                '<?php declare(strict_types=1);
+        ];
+
+        yield [
+            '<?php declare(strict_types=1);
 
                 phpinfo();',
-                '<?php
+            '<?php
 
                 phpinfo();',
-            ],
-            [
-                '<?php declare(strict_types=1);
+        ];
+
+        yield [
+            '<?php declare(strict_types=1);
 
 /**
  * Foo
  */
 phpinfo();',
-                '<?php
+            '<?php
 
 /**
  * Foo
  */
 phpinfo();',
-            ],
-            [
-                '<?php declare(strict_types=1);
+        ];
+
+        yield [
+            '<?php declare(strict_types=1);
 
 // comment after empty line',
-                '<?php
+            '<?php
 
 // comment after empty line',
-            ],
-            [
-                '<?php declare(strict_types=1);
+        ];
+
+        yield [
+            '<?php declare(strict_types=1);
 // comment without empty line before',
-                '<?php
+            '<?php
 // comment without empty line before',
-            ],
-            [
-                '<?php declare(strict_types=1);
+        ];
+
+        yield [
+            '<?php declare(strict_types=1);
 phpinfo();',
-                '<?php phpinfo();',
-            ],
-            [
-                '<?php declare(strict_types=1);
+            '<?php phpinfo();',
+        ];
+
+        yield [
+            '<?php declare(strict_types=1);
 $a = 456;
 ',
-                '<?php
+            '<?php
 $a = 456;
 ',
-            ],
-            [
-                '<?php declare(strict_types=1);
+        ];
+
+        yield [
+            '<?php declare(strict_types=1);
 /**/',
-                '<?php /**/',
-            ],
-            [
-                '<?php declare(strict_types=1);',
-                '<?php declare(strict_types=0);',
-            ],
+            '<?php /**/',
+        ];
+
+        yield [
+            '<?php declare(strict_types=1);',
+            '<?php declare(strict_types=0);',
         ];
     }
 
@@ -129,12 +139,11 @@ $a = 456;
         $this->doTest($input);
     }
 
-    public static function provideDoNotFixCases(): array
+    public static function provideDoNotFixCases(): iterable
     {
-        return [
-            ['  <?php echo 123;'], // first statement must be an open tag
-            ['<?= 123;'], // first token open with echo is not fixed
-        ];
+        yield ['  <?php echo 123;']; // first statement must be an open tag
+
+        yield ['<?= 123;']; // first token open with echo is not fixed
     }
 
     /**
@@ -147,17 +156,16 @@ $a = 456;
         $this->doTest($expected, $input);
     }
 
-    public static function provideMessyWhitespacesCases(): array
+    public static function provideMessyWhitespacesCases(): iterable
     {
-        return [
-            [
-                "<?php declare(strict_types=1);\r\nphpinfo();",
-                "<?php\r\n\tphpinfo();",
-            ],
-            [
-                "<?php declare(strict_types=1);\r\nphpinfo();",
-                "<?php\nphpinfo();",
-            ],
+        yield [
+            "<?php declare(strict_types=1);\r\nphpinfo();",
+            "<?php\r\n\tphpinfo();",
+        ];
+
+        yield [
+            "<?php declare(strict_types=1);\r\nphpinfo();",
+            "<?php\nphpinfo();",
         ];
     }
 }

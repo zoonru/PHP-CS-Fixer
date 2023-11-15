@@ -16,6 +16,7 @@ namespace PhpCsFixer\Tests\Console\Report\ListSetsReport;
 
 use PhpCsFixer\Console\Report\ListSetsReport\JsonReporter;
 use PhpCsFixer\Console\Report\ListSetsReport\ReporterInterface;
+use PhpCsFixer\Tests\Test\Assert\AssertJsonSchemaTrait;
 
 /**
  * @author Dariusz Rumiński <dariusz.ruminski@gmail.com>
@@ -26,6 +27,8 @@ use PhpCsFixer\Console\Report\ListSetsReport\ReporterInterface;
  */
 final class JsonReporterTest extends AbstractReporterTestCase
 {
+    use AssertJsonSchemaTrait;
+
     protected function createReporter(): ReporterInterface
     {
         return new JsonReporter();
@@ -38,11 +41,11 @@ final class JsonReporterTest extends AbstractReporterTestCase
 
     protected function assertFormat(string $expected, string $input): void
     {
-        static::assertJsonSchema($input);
-        static::assertJsonStringEqualsJsonString($expected, $input);
+        self::assertJsonSchema(__DIR__.'/../../../../doc/schemas/list-sets/schema.json', $input);
+        self::assertJsonStringEqualsJsonString($expected, $input);
     }
 
-    protected function createSimpleReport(): string
+    protected static function createSimpleReport(): string
     {
         return '{
     "sets": {
@@ -58,29 +61,5 @@ final class JsonReporterTest extends AbstractReporterTestCase
         }
     }
 }';
-    }
-
-    private static function assertJsonSchema(string $json): void
-    {
-        $jsonPath = __DIR__.'/../../../../doc/schemas/list-sets/schema.json';
-
-        $data = json_decode($json);
-
-        $validator = new \JsonSchema\Validator();
-        $validator->validate(
-            $data,
-            (object) ['$ref' => 'file://'.realpath($jsonPath)]
-        );
-
-        static::assertTrue(
-            $validator->isValid(),
-            implode(
-                "\n",
-                array_map(
-                    static fn (array $item): string => sprintf('Property `%s`: %s.', $item['property'], $item['message']),
-                    $validator->getErrors(),
-                )
-            )
-        );
     }
 }

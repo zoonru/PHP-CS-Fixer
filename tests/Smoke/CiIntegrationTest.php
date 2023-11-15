@@ -32,7 +32,7 @@ use PhpCsFixer\Console\Application;
  *
  * @large
  */
-final class CiIntegrationTest extends AbstractSmokeTest
+final class CiIntegrationTest extends AbstractSmokeTestCase
 {
     /**
      * @var string
@@ -48,26 +48,26 @@ final class CiIntegrationTest extends AbstractSmokeTest
         try {
             CommandExecutor::create('composer --version', __DIR__)->getResult();
         } catch (\RuntimeException $e) {
-            static::markTestSkippedOrFail('Missing `composer` env script. Details:'."\n".$e->getMessage());
+            self::fail('Missing `composer` env script. Details:'."\n".$e->getMessage());
         }
 
         try {
             CommandExecutor::create('composer check', __DIR__.'/../..')->getResult();
         } catch (\RuntimeException $e) {
-            static::markTestSkippedOrFail('Composer check failed. Details:'."\n".$e->getMessage());
+            self::fail('Composer check failed. Details:'."\n".$e->getMessage());
         }
 
         try {
             self::executeScript([
                 'rm -rf .git',
-                'git init -q',
+                'git init --initial-branch=master -q',
                 'git config user.name test',
                 'git config user.email test',
                 'git add .',
                 'git commit -m "init" -q',
             ]);
         } catch (\RuntimeException $e) {
-            static::markTestSkippedOrFail($e->getMessage());
+            self::fail($e->getMessage());
         }
     }
 
@@ -127,7 +127,7 @@ final class CiIntegrationTest extends AbstractSmokeTest
             'echo "$CHANGED_FILES"',
         ]);
 
-        static::assertSame(implode("\n", $expectedResult1Lines)."\n", $result1->getOutput());
+        self::assertSame(implode("\n", $expectedResult1Lines)."\n", $result1->getOutput());
 
         $result2 = self::executeScript([
             $steps[0],
@@ -137,7 +137,7 @@ final class CiIntegrationTest extends AbstractSmokeTest
             'echo "${EXTRA_ARGS}"',
         ]);
 
-        static::assertSame(implode("\n", $expectedResult2Lines), $result2->getOutput());
+        self::assertSame(implode("\n", $expectedResult2Lines), $result2->getOutput());
 
         $result3 = self::executeScript([
             $steps[0],
@@ -185,105 +185,106 @@ Ignoring environment requirements because `PHP_CS_FIXER_IGNORE_ENV` is set. Exec
             preg_quote('Legend: .-no changes, F-fixed, S-skipped (cached or empty file), I-invalid file syntax (file ignored), E-error', '/')
         );
 
-        static::assertMatchesRegularExpression($pattern, $result3->getError());
+        self::assertMatchesRegularExpression($pattern, $result3->getError());
 
         preg_match($pattern, $result3->getError(), $matches);
 
-        static::assertArrayHasKey(1, $matches);
-        static::assertSame(substr_count($expectedResult3FilesDots, '.'), substr_count($matches[1], '.'));
-        static::assertSame(substr_count($expectedResult3FilesDots, 'S'), substr_count($matches[1], 'S'));
+        self::assertArrayHasKey(1, $matches);
+        self::assertSame(substr_count($expectedResult3FilesDots, '.'), substr_count($matches[1], '.'));
+        self::assertSame(substr_count($expectedResult3FilesDots, 'S'), substr_count($matches[1], 'S'));
 
-        static::assertMatchesRegularExpression(
+        self::assertMatchesRegularExpression(
             '/^\s*Found \d+ of \d+ files that can be fixed in \d+\.\d+ seconds, \d+\.\d+ MB memory used\s*$/',
             $result3->getOutput()
         );
     }
 
-    public static function provideIntegrationCases(): array
+    public static function provideIntegrationCases(): iterable
     {
-        return [
-            'random-changes' => [
-                'random-changes',
-                [
-                    'touch dir\ a/file.php',
-                    'rm -r dir\ c',
-                    'echo "" >> dir\ b/file\ b.php',
-                    'echo "echo 1;" >> dir\ b/file\ b.php',
-                    'git add .',
-                    'git commit -m "Random changes" -q',
-                ],
-                [
-                    'dir a/file.php',
-                    'dir b/file b.php',
-                ],
-                [
-                    '--path-mode=intersection',
-                    '--',
-                    'dir a/file.php',
-                    'dir b/file b.php',
-                    '',
-                ],
-                'S.                                                                  2 / 2 (100%)',
+        yield 'random-changes' => [
+            'random-changes',
+            [
+                'touch dir\ a/file.php',
+                'rm -r dir\ c',
+                'echo "" >> dir\ b/file\ b.php',
+                'echo "echo 1;" >> dir\ b/file\ b.php',
+                'git add .',
+                'git commit -m "Random changes" -q',
             ],
-            'changes-including-dist-config-file' => [
-                'changes-including-dist-config-file',
-                [
-                    'echo "" >> dir\ b/file\ b.php',
-                    'echo "echo 1;" >> dir\ b/file\ b.php',
-                    // `sed -i ...` is not handled the same on Linux and macOS
-                    'sed -e \'s/@Symfony/@PSR2/\' .php-cs-fixer.dist.php > .php-cs-fixer.dist.php.new',
-                    'mv .php-cs-fixer.dist.php.new .php-cs-fixer.dist.php',
-                    'git add .',
-                    'git commit -m "Random changes including config file" -q',
-                ],
-                [
-                    '.php-cs-fixer.dist.php',
-                    'dir b/file b.php',
-                ],
-                [
-                    '',
-                    '',
-                ],
-                '...                                                                 3 / 3 (100%)',
+            [
+                'dir a/file.php',
+                'dir b/file b.php',
             ],
-            'changes-including-custom-config-file-creation' => [
-                'changes-including-custom-config-file-creation',
-                [
-                    'echo "" >> dir\ b/file\ b.php',
-                    'echo "echo 1;" >> dir\ b/file\ b.php',
-                    'sed -e \'s/@Symfony/@PSR2/\' .php-cs-fixer.dist.php > .php-cs-fixer.php',
-                    'git add .',
-                    'git commit -m "Random changes including custom config file creation" -q',
-                ],
-                [
-                    '.php-cs-fixer.php',
-                    'dir b/file b.php',
-                ],
-                [
-                    '',
-                    '',
-                ],
-                '...                                                                 3 / 3 (100%)',
+            [
+                '--path-mode=intersection',
+                '--',
+                'dir a/file.php',
+                'dir b/file b.php',
+                '',
             ],
-            'changes-including-composer-lock' => [
-                'changes-including-composer-lock',
-                [
-                    'echo "" >> dir\ b/file\ b.php',
-                    'echo "echo 1;" >> dir\ b/file\ b.php',
-                    'touch composer.lock',
-                    'git add .',
-                    'git commit -m "Random changes including composer.lock" -q',
-                ],
-                [
-                    'composer.lock',
-                    'dir b/file b.php',
-                ],
-                [
-                    '',
-                    '',
-                ],
-                '...                                                                 3 / 3 (100%)',
+            'S.                                                                  2 / 2 (100%)',
+        ];
+
+        yield 'changes-including-dist-config-file' => [
+            'changes-including-dist-config-file',
+            [
+                'echo "" >> dir\ b/file\ b.php',
+                'echo "echo 1;" >> dir\ b/file\ b.php',
+                // `sed -i ...` is not handled the same on Linux and macOS
+                'sed -e \'s/@Symfony/@PSR2/\' .php-cs-fixer.dist.php > .php-cs-fixer.dist.php.new',
+                'mv .php-cs-fixer.dist.php.new .php-cs-fixer.dist.php',
+                'git add .',
+                'git commit -m "Random changes including config file" -q',
             ],
+            [
+                '.php-cs-fixer.dist.php',
+                'dir b/file b.php',
+            ],
+            [
+                '',
+                '',
+            ],
+            '...                                                                 3 / 3 (100%)',
+        ];
+
+        yield 'changes-including-custom-config-file-creation' => [
+            'changes-including-custom-config-file-creation',
+            [
+                'echo "" >> dir\ b/file\ b.php',
+                'echo "echo 1;" >> dir\ b/file\ b.php',
+                'sed -e \'s/@Symfony/@PSR2/\' .php-cs-fixer.dist.php > .php-cs-fixer.php',
+                'git add .',
+                'git commit -m "Random changes including custom config file creation" -q',
+            ],
+            [
+                '.php-cs-fixer.php',
+                'dir b/file b.php',
+            ],
+            [
+                '',
+                '',
+            ],
+            '...                                                                 3 / 3 (100%)',
+        ];
+
+        yield 'changes-including-composer-lock' => [
+            'changes-including-composer-lock',
+            [
+                'echo "" >> dir\ b/file\ b.php',
+                'echo "echo 1;" >> dir\ b/file\ b.php',
+                'touch composer.lock',
+                'git add .',
+                'git commit -m "Random changes including composer.lock" -q',
+            ],
+            [
+                'composer.lock',
+                'dir b/file b.php',
+            ],
+            [
+                '',
+                '',
+            ],
+            '...                                                                 3 / 3 (100%)',
         ];
     }
 

@@ -45,11 +45,11 @@ Rule sets
 
 The rule is part of the following rule sets:
 
-@PHP82Migration
-  Using the `@PHP82Migration <./../../ruleSets/PHP82Migration.rst>`_ rule set will enable the ``simple_to_complex_string_variable`` rule.
+- `@PHP82Migration <./../../ruleSets/PHP82Migration.rst>`_
+- `@PhpCsFixer <./../../ruleSets/PhpCsFixer.rst>`_
+- `@Symfony <./../../ruleSets/Symfony.rst>`_
 
-@PhpCsFixer
-  Using the `@PhpCsFixer <./../../ruleSets/PhpCsFixer.rst>`_ rule set will enable the ``simple_to_complex_string_variable`` rule.
+Source class
+------------
 
-@Symfony
-  Using the `@Symfony <./../../ruleSets/Symfony.rst>`_ rule set will enable the ``simple_to_complex_string_variable`` rule.
+`PhpCsFixer\\Fixer\\StringNotation\\SimpleToComplexStringVariableFixer <./../src/Fixer/StringNotation/SimpleToComplexStringVariableFixer.php>`_

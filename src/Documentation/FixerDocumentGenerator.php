@@ -64,11 +64,11 @@ final class FixerDocumentGenerator
             $doc .= <<<RST
 
 
-Description
------------
+                Description
+                -----------
 
-{$description}
-RST;
+                {$description}
+                RST;
         }
 
         $deprecationDescription = '';
@@ -76,9 +76,9 @@ RST;
         if ($fixer instanceof DeprecatedFixerInterface) {
             $deprecationDescription = <<<'RST'
 
-This rule is deprecated and will be removed on next major version
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-RST;
+                This rule is deprecated and will be removed in the next major version
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                RST;
             $alternatives = $fixer->getSuccessorsNames();
 
             if (0 !== \count($alternatives)) {
@@ -96,17 +96,17 @@ RST;
             $riskyDescriptionRaw = RstUtils::toRst($riskyDescriptionRaw, 0);
             $riskyDescription = <<<RST
 
-Using this rule is risky
-~~~~~~~~~~~~~~~~~~~~~~~~
+                Using this rule is risky
+                ~~~~~~~~~~~~~~~~~~~~~~~~
 
-{$riskyDescriptionRaw}
-RST;
+                {$riskyDescriptionRaw}
+                RST;
         }
 
-        if ($deprecationDescription || $riskyDescription) {
+        if ('' !== $deprecationDescription || '' !== $riskyDescription) {
             $warningsHeader = 'Warning';
 
-            if ($deprecationDescription && $riskyDescription) {
+            if ('' !== $deprecationDescription && '' !== $riskyDescription) {
                 $warningsHeader = 'Warnings';
             }
 
@@ -123,9 +123,9 @@ RST;
             $doc .= <<<'RST'
 
 
-Configuration
--------------
-RST;
+                Configuration
+                -------------
+                RST;
 
             $configurationDefinition = $fixer->getConfigurationDefinition();
 
@@ -135,13 +135,13 @@ RST;
 
                 if ($option instanceof DeprecatedFixerOptionInterface) {
                     $deprecationMessage = RstUtils::toRst($option->getDeprecationMessage());
-                    $optionInfo .= "\n\n.. warning:: This option is deprecated and will be removed on next major version. {$deprecationMessage}";
+                    $optionInfo .= "\n\n.. warning:: This option is deprecated and will be removed in the next major version. {$deprecationMessage}";
                 }
 
                 $optionInfo .= "\n\n".RstUtils::toRst($option->getDescription());
 
                 if ($option instanceof AliasedFixerOption) {
-                    $optionInfo .= "\n\n.. note:: The previous name of this option was ``{$option->getAlias()}`` but it is now deprecated and will be removed on next major version.";
+                    $optionInfo .= "\n\n.. note:: The previous name of this option was ``{$option->getAlias()}`` but it is now deprecated and will be removed in the next major version.";
                 }
 
                 $allowed = HelpCommand::getDisplayableAllowedValues($option);
@@ -154,18 +154,16 @@ RST;
                     );
                 } else {
                     $allowedKind = 'Allowed values';
-                    $allowed = array_map(static function ($value): string {
-                        return $value instanceof AllowedValueSubset
-                            ? 'a subset of ``'.HelpCommand::toString($value->getAllowedValues()).'``'
-                            : '``'.HelpCommand::toString($value).'``';
-                    }, $allowed);
+                    $allowed = array_map(static fn ($value): string => $value instanceof AllowedValueSubset
+                        ? 'a subset of ``'.Utils::toString($value->getAllowedValues()).'``'
+                        : '``'.Utils::toString($value).'``', $allowed);
                 }
 
-                $allowed = implode(', ', $allowed);
+                $allowed = Utils::naturalLanguageJoin($allowed, '');
                 $optionInfo .= "\n\n{$allowedKind}: {$allowed}";
 
                 if ($option->hasDefault()) {
-                    $default = HelpCommand::toString($option->getDefault());
+                    $default = Utils::toString($option->getDefault());
                     $optionInfo .= "\n\nDefault value: ``{$default}``";
                 } else {
                     $optionInfo .= "\n\nThis option is required.";
@@ -181,9 +179,9 @@ RST;
             $doc .= <<<'RST'
 
 
-Examples
---------
-RST;
+                Examples
+                --------
+                RST;
 
             foreach ($samples as $index => $sample) {
                 $title = sprintf('Example #%d', $index + 1);
@@ -196,7 +194,7 @@ RST;
                     } else {
                         $doc .= sprintf(
                             "\n\nWith configuration: ``%s``.",
-                            HelpCommand::toString($sample->getConfiguration())
+                            Utils::toString($sample->getConfiguration())
                         );
                     }
                 }
@@ -220,32 +218,40 @@ RST;
             $doc .= <<<RST
 
 
-Rule sets
----------
+                Rule sets
+                ---------
 
-The rule is part of the following rule set{$plural}:
-RST;
+                The rule is part of the following rule set{$plural}:\n\n
+                RST;
 
             foreach ($ruleSetConfigs as $set => $config) {
                 $ruleSetPath = $this->locator->getRuleSetsDocumentationFilePath($set);
                 $ruleSetPath = substr($ruleSetPath, strrpos($ruleSetPath, '/'));
 
+                $configInfo = (null !== $config)
+                    ? " with config:\n\n  ``".Utils::toString($config)."``\n"
+                    : '';
+
                 $doc .= <<<RST
-
-
-{$set}
-  Using the `{$set} <./../../ruleSets{$ruleSetPath}>`_ rule set will enable the ``{$name}`` rule
-RST;
-
-                if (null !== $config) {
-                    $doc .= " with the config below:\n\n  ``".HelpCommand::toString($config).'``';
-                } elseif ($fixer instanceof ConfigurableFixerInterface) {
-                    $doc .= ' with the default config.';
-                } else {
-                    $doc .= '.';
-                }
+                    - `{$set} <./../../ruleSets{$ruleSetPath}>`_{$configInfo}\n
+                    RST;
             }
         }
+
+        $reflectionObject = new \ReflectionObject($fixer);
+        $className = str_replace('\\', '\\\\', $reflectionObject->getName());
+        $fileName = $reflectionObject->getFileName();
+        $fileName = str_replace('\\', '/', $fileName);
+        $fileName = substr($fileName, strrpos($fileName, '/src/Fixer/') + 1);
+        $fileName = "`{$className} <./../{$fileName}>`_";
+
+        $doc .= <<<RST
+
+            Source class
+            ------------
+
+            {$fileName}
+            RST;
 
         return "{$doc}\n";
     }
@@ -261,15 +267,13 @@ RST;
             'Phpdoc' => 'PHPDoc',
         ];
 
-        usort($fixers, static function (FixerInterface $a, FixerInterface $b): int {
-            return strcmp(\get_class($a), \get_class($b));
-        });
+        usort($fixers, static fn (FixerInterface $a, FixerInterface $b): int => strcmp(\get_class($a), \get_class($b)));
 
         $documentation = <<<'RST'
-=======================
-List of Available Rules
-=======================
-RST;
+            =======================
+            List of Available Rules
+            =======================
+            RST;
 
         $currentGroup = null;
 
@@ -304,10 +308,10 @@ RST;
 
             $documentation .= <<<RST
 
-- `{$fixer->getName()} <{$path}>`_{$attributes}
+                - `{$fixer->getName()} <{$path}>`_{$attributes}
 
-  {$summary}
-RST;
+                  {$summary}
+                RST;
         }
 
         return "{$documentation}\n";
@@ -328,10 +332,10 @@ RST;
 
             $error = <<<RST
 
-.. error::
-   Cannot generate diff for code sample #{$sampleNumber} of rule {$ruleName}:
-   the sample is not suitable for current version of PHP (%s).
-RST;
+                .. error::
+                   Cannot generate diff for code sample #{$sampleNumber} of rule {$ruleName}:
+                   the sample is not suitable for current version of PHP (%s).
+                RST;
 
             return sprintf($error, PHP_VERSION);
         }
@@ -358,9 +362,9 @@ RST;
 
         return <<<RST
 
-.. code-block:: diff
+            .. code-block:: diff
 
-   {$diff}
-RST;
+               {$diff}
+            RST;
     }
 }

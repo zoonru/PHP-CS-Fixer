@@ -28,7 +28,7 @@ use PhpCsFixer\Tests\Test\AbstractFixerTestCase;
 final class SingleSpaceAroundConstructFixerTest extends AbstractFixerTestCase
 {
     /**
-     * @dataProvider provideInvalidConstructCases
+     * @dataProvider provideConfigureRejectsInvalidControlStatementCases
      *
      * @param mixed $construct
      */
@@ -43,18 +43,23 @@ final class SingleSpaceAroundConstructFixerTest extends AbstractFixerTestCase
         ]);
     }
 
-    public static function provideInvalidConstructCases(): array
+    public static function provideConfigureRejectsInvalidControlStatementCases(): iterable
     {
-        return [
-            'null' => [null],
-            'false' => [false],
-            'true' => [true],
-            'int' => [0],
-            'float' => [3.14],
-            'array' => [[]],
-            'object' => [new \stdClass()],
-            'unknown' => ['foo'],
-        ];
+        yield 'null' => [null];
+
+        yield 'false' => [false];
+
+        yield 'true' => [true];
+
+        yield 'int' => [0];
+
+        yield 'float' => [3.14];
+
+        yield 'array' => [[]];
+
+        yield 'object' => [new \stdClass()];
+
+        yield 'unknown' => ['foo'];
     }
 
     /**
@@ -71,49 +76,53 @@ final class SingleSpaceAroundConstructFixerTest extends AbstractFixerTestCase
         $this->doTest($expected, $input);
     }
 
-    public static function provideFixWithAbstractCases(): array
+    public static function provideFixWithAbstractCases(): iterable
     {
-        return [
-            [
-                '<?php abstract class Foo {}; if($a){}',
-                '<?php abstract  class Foo {}; if($a){}',
-            ],
-            [
-                '<?php abstract class Foo {};',
-                '<?php abstract
+        yield [
+            '<?php abstract class Foo {}; if($a){}',
+            '<?php abstract  class Foo {}; if($a){}',
+        ];
+
+        yield [
+            '<?php abstract class Foo {};',
+            '<?php abstract
 
 class Foo {};',
-            ],
-            [
-                '<?php abstract /* foo */class Foo {};',
-                '<?php abstract/* foo */class Foo {};',
-            ],
-            [
-                '<?php abstract /* foo */class Foo {};',
-                '<?php abstract  /* foo */class Foo {};',
-            ],
-            [
-                '<?php
+        ];
+
+        yield [
+            '<?php abstract /* foo */class Foo {};',
+            '<?php abstract/* foo */class Foo {};',
+        ];
+
+        yield [
+            '<?php abstract /* foo */class Foo {};',
+            '<?php abstract  /* foo */class Foo {};',
+        ];
+
+        yield [
+            '<?php
 
 abstract class Foo
 {
     abstract function bar();
 }',
-                '<?php
+            '<?php
 
 abstract class Foo
 {
     abstract  function bar();
 }',
-            ],
-            [
-                '<?php
+        ];
+
+        yield [
+            '<?php
 
 abstract class Foo
 {
     abstract function bar();
 }',
-                '<?php
+            '<?php
 
 abstract class Foo
 {
@@ -121,35 +130,36 @@ abstract class Foo
 
 function bar();
 }',
-            ],
-            [
-                '<?php
+        ];
+
+        yield [
+            '<?php
 
 abstract class Foo
 {
     abstract /* foo */function bar();
 }',
-                '<?php
+            '<?php
 
 abstract class Foo
 {
     abstract  /* foo */function bar();
 }',
-            ],
-            [
-                '<?php
+        ];
+
+        yield [
+            '<?php
 
 abstract class Foo
 {
     abstract /* foo */function bar();
 }',
-                '<?php
+            '<?php
 
 abstract class Foo
 {
     abstract/* foo */function bar();
 }',
-            ],
         ];
     }
 
@@ -167,82 +177,182 @@ abstract class Foo
         $this->doTest($expected, $input);
     }
 
-    public static function provideFixWithBreakCases(): array
+    public static function provideFixWithBreakCases(): iterable
     {
-        return [
-            [
-                '<?php while (true) { break; }',
-            ],
-            [
-                '<?php while (true) { break /* foo */; }',
-                '<?php while (true) { break/* foo */; }',
-            ],
-            [
-                '<?php while (true) { break /* foo */; }',
-                '<?php while (true) { break  /* foo */; }',
-            ],
-            [
-                '<?php while (true) { break 1; }',
-                '<?php while (true) { break  1; }',
-            ],
-            [
-                '<?php while (true) { break 1; }',
-                '<?php while (true) { break
+        yield [
+            '<?php while (true) { break; }',
+        ];
+
+        yield [
+            '<?php while (true) { break /* foo */; }',
+            '<?php while (true) { break/* foo */; }',
+        ];
+
+        yield [
+            '<?php while (true) { break /* foo */; }',
+            '<?php while (true) { break  /* foo */; }',
+        ];
+
+        yield [
+            '<?php while (true) { break 1; }',
+            '<?php while (true) { break  1; }',
+        ];
+
+        yield [
+            '<?php while (true) { break 1; }',
+            '<?php while (true) { break
 
 1; }',
-            ],
-            [
-                '<?php while (true) { break /* foo */1; }',
-                '<?php while (true) { break/* foo */1; }',
-            ],
-            [
-                '<?php while (true) { break /* foo */1; }',
-                '<?php while (true) { break  /* foo */1; }',
-            ],
+        ];
+
+        yield [
+            '<?php while (true) { break /* foo */1; }',
+            '<?php while (true) { break/* foo */1; }',
+        ];
+
+        yield [
+            '<?php while (true) { break /* foo */1; }',
+            '<?php while (true) { break  /* foo */1; }',
         ];
     }
 
     /**
      * @dataProvider provideFixWithAsCases
+     *
+     * @param array<string, string[]> $config
      */
-    public function testFixWithAs(string $expected, ?string $input = null): void
+    public function testFixWithAs(string $expected, ?string $input = null, array $config = []): void
     {
-        $this->fixer->configure([
-            'constructs_followed_by_a_single_space' => [
-                'as',
-            ],
-        ]);
+        $this->fixer->configure($config);
 
         $this->doTest($expected, $input);
     }
 
-    public static function provideFixWithAsCases(): array
+    public static function provideFixWithAsCases(): iterable
     {
-        return [
+        yield [
+            '<?php foreach ($foo as $bar) {}',
+            '<?php foreach ($foo as$bar) {}',
             [
-                '<?php foreach ($foo as $bar) {}',
-                '<?php foreach ($foo as$bar) {}',
+                'constructs_preceded_by_a_single_space' => [],
+                'constructs_followed_by_a_single_space' => ['as'],
             ],
+        ];
+
+        yield [
+            '<?php foreach ($foo as $bar) {}',
+            '<?php foreach ($foo as  $bar) {}',
             [
-                '<?php foreach ($foo as $bar) {}',
-                '<?php foreach ($foo as  $bar) {}',
+                'constructs_preceded_by_a_single_space' => [],
+                'constructs_followed_by_a_single_space' => ['as'],
             ],
+        ];
+
+        yield [
+            '<?php foreach ($foo as $bar) {}',
+            '<?php foreach ($foo  as $bar) {}',
             [
-                '<?php foreach ($foo as $bar) {}',
-                '<?php foreach ($foo as
+                'constructs_preceded_by_a_single_space' => ['as'],
+                'constructs_followed_by_a_single_space' => [],
+            ],
+        ];
+
+        yield [
+            '<?php foreach ($foo as $bar) {}',
+            '<?php foreach ($foo as
 
 $bar) {}',
-            ],
             [
-                '<?php foreach ($foo as /* foo */$bar) {}',
-                '<?php foreach ($foo as/* foo */$bar) {}',
+                'constructs_preceded_by_a_single_space' => [],
+                'constructs_followed_by_a_single_space' => ['as'],
             ],
+        ];
+
+        yield [
+            '<?php foreach ($foo as $bar) {}',
+            '<?php foreach ($foo
+as $bar) {}',
             [
-                '<?php foreach ($foo as /* foo */$bar) {}',
-                '<?php foreach ($foo as  /* foo */$bar) {}',
+                'constructs_preceded_by_a_single_space' => ['as'],
+                'constructs_followed_by_a_single_space' => [],
             ],
+        ];
+
+        yield [
+            '<?php foreach ($foo as /* foo */$bar) {}',
+            '<?php foreach ($foo as/* foo */$bar) {}',
             [
-                '<?php
+                'constructs_preceded_by_a_single_space' => [],
+                'constructs_followed_by_a_single_space' => ['as'],
+            ],
+        ];
+
+        yield [
+            '<?php foreach ($foo/* foo */ as $bar) {}',
+            '<?php foreach ($foo/* foo */as $bar) {}',
+            [
+                'constructs_preceded_by_a_single_space' => ['as'],
+                'constructs_followed_by_a_single_space' => [],
+            ],
+        ];
+
+        yield [
+            '<?php foreach ($foo as /* foo */$bar) {}',
+            '<?php foreach ($foo as  /* foo */$bar) {}',
+            [
+                'constructs_preceded_by_a_single_space' => [],
+                'constructs_followed_by_a_single_space' => ['as'],
+            ],
+        ];
+
+        yield [
+            '<?php foreach ($foo /* foo */ as $bar) {}',
+            '<?php foreach ($foo /* foo */    as $bar) {}',
+            [
+                'constructs_preceded_by_a_single_space' => ['as'],
+                'constructs_followed_by_a_single_space' => [],
+            ],
+        ];
+
+        yield [
+            '<?php foreach (range(1, 12) as $num) {}',
+            '<?php foreach (range(1, 12)as $num) {}',
+            [
+                'constructs_preceded_by_a_single_space' => ['as'],
+                'constructs_followed_by_a_single_space' => [],
+            ],
+        ];
+
+        yield [
+            '<?php foreach (range(1, 12) as $num) {}',
+            '<?php foreach (range(1, 12)   as $num) {}',
+            [
+                'constructs_preceded_by_a_single_space' => ['as'],
+                'constructs_followed_by_a_single_space' => [],
+            ],
+        ];
+
+        yield [
+            '<?php foreach ([1, 2, 3, 4] as $int) {}',
+            '<?php foreach ([1, 2, 3, 4]as $int) {}',
+            [
+                'constructs_preceded_by_a_single_space' => ['as'],
+                'constructs_followed_by_a_single_space' => [],
+            ],
+        ];
+
+        yield [
+            '<?php foreach ([1, 2, 3, 4] as $int) {}',
+            '<?php foreach ([1, 2, 3, 4]
+                as $int) {}',
+            [
+                'constructs_preceded_by_a_single_space' => ['as'],
+                'constructs_followed_by_a_single_space' => [],
+            ],
+        ];
+
+        yield [
+            '<?php
 
 class Foo
 {
@@ -250,7 +360,7 @@ class Foo
         Bar::baz as bar;
     }
 }',
-                '<?php
+            '<?php
 
 class Foo
 {
@@ -258,9 +368,14 @@ class Foo
         Bar::baz as  bar;
     }
 }',
-            ],
             [
-                '<?php
+                'constructs_preceded_by_a_single_space' => [],
+                'constructs_followed_by_a_single_space' => ['as'],
+            ],
+        ];
+
+        yield [
+            '<?php
 
 class Foo
 {
@@ -268,7 +383,7 @@ class Foo
         Bar::baz as bar;
     }
 }',
-                '<?php
+            '<?php
 
 class Foo
 {
@@ -278,9 +393,14 @@ class Foo
 bar;
     }
 }',
-            ],
             [
-                '<?php
+                'constructs_preceded_by_a_single_space' => [],
+                'constructs_followed_by_a_single_space' => ['as'],
+            ],
+        ];
+
+        yield [
+            '<?php
 
 class Foo
 {
@@ -288,7 +408,7 @@ class Foo
         Bar::baz as /* foo */bar;
     }
 }',
-                '<?php
+            '<?php
 
 class Foo
 {
@@ -296,9 +416,15 @@ class Foo
         Bar::baz as/* foo */bar;
     }
 }',
-            ],
+
             [
-                '<?php
+                'constructs_preceded_by_a_single_space' => [],
+                'constructs_followed_by_a_single_space' => ['as'],
+            ],
+        ];
+
+        yield [
+            '<?php
 
 class Foo
 {
@@ -306,7 +432,7 @@ class Foo
         Bar::baz as /* foo */bar;
     }
 }',
-                '<?php
+            '<?php
 
 class Foo
 {
@@ -314,6 +440,143 @@ class Foo
         Bar::baz as  /* foo */bar;
     }
 }',
+            [
+                'constructs_preceded_by_a_single_space' => [],
+                'constructs_followed_by_a_single_space' => ['as'],
+            ],
+        ];
+
+        yield [
+            '<?php
+namespace Foo;
+
+use Bar as Baz;
+
+final class Qux extends Baz {}
+',
+            '<?php
+namespace Foo;
+
+use Bar    as Baz;
+
+final class Qux extends Baz {}
+',
+            [
+                'constructs_preceded_by_a_single_space' => ['as'],
+                'constructs_followed_by_a_single_space' => [],
+            ],
+        ];
+
+        yield [
+            '<?php
+namespace Foo;
+
+use Bar as Baz;
+
+final class Qux extends Baz {}
+',
+            '<?php
+namespace Foo;
+
+use Bar
+    as Baz;
+
+final class Qux extends Baz {}
+',
+            [
+                'constructs_preceded_by_a_single_space' => ['as'],
+                'constructs_followed_by_a_single_space' => [],
+            ],
+        ];
+
+        yield [
+            '<?php
+namespace Foo;
+
+use Bar /** foo */ as Baz;
+
+final class Qux extends Baz {}
+',
+            '<?php
+namespace Foo;
+
+use Bar /** foo */as Baz;
+
+final class Qux extends Baz {}
+',
+            [
+                'constructs_preceded_by_a_single_space' => ['as'],
+                'constructs_followed_by_a_single_space' => [],
+            ],
+        ];
+
+        yield [
+            '<?php
+class Foo
+{
+    use Bar {
+        Bar::baz as bar;
+    }
+}
+',
+            '<?php
+class Foo
+{
+    use Bar {
+        Bar::baz    as bar;
+    }
+}
+',
+            [
+                'constructs_preceded_by_a_single_space' => ['as'],
+                'constructs_followed_by_a_single_space' => [],
+            ],
+        ];
+
+        yield [
+            '<?php
+class Foo
+{
+    use Bar {
+        Bar::baz as bar;
+    }
+}
+',
+            '<?php
+class Foo
+{
+    use Bar {
+        Bar::baz
+as bar;
+    }
+}
+',
+            [
+                'constructs_preceded_by_a_single_space' => ['as'],
+                'constructs_followed_by_a_single_space' => [],
+            ],
+        ];
+
+        yield [
+            '<?php
+class Foo
+{
+    use Bar {
+        Bar::baz/** foo */ as bar;
+    }
+}
+',
+            '<?php
+class Foo
+{
+    use Bar {
+        Bar::baz/** foo */as bar;
+    }
+}
+',
+            [
+                'constructs_preceded_by_a_single_space' => ['as'],
+                'constructs_followed_by_a_single_space' => [],
             ],
         ];
     }
@@ -332,59 +595,60 @@ class Foo
         $this->doTest($expected, $input);
     }
 
-    public static function provideFixWithCaseCases(): array
+    public static function provideFixWithCaseCases(): iterable
     {
-        return [
-            [
-                '<?php
+        yield [
+            '<?php
 switch ($i) {
     case $j:
         break;
 }',
-                '<?php
+            '<?php
 switch ($i) {
     case$j:
         break;
 }',
-            ],
-            [
-                '<?php
+        ];
+
+        yield [
+            '<?php
 switch ($i) {
     case 0:
         break;
 }',
-                '<?php
+            '<?php
 switch ($i) {
     case  0:
         break;
 }',
-            ],
-            [
-                '<?php
+        ];
+
+        yield [
+            '<?php
 switch ($i) {
     case 0:
         break;
 }',
-                '<?php
+            '<?php
 switch ($i) {
     case
 
 0:
         break;
 }',
-            ],
-            [
-                '<?php
+        ];
+
+        yield [
+            '<?php
 switch ($i) {
     case /* foo */0:
         break;
 }',
-                '<?php
+            '<?php
 switch ($i) {
     case/* foo */0:
         break;
 }',
-            ],
         ];
     }
 
@@ -402,31 +666,33 @@ switch ($i) {
         $this->doTest($expected, $input);
     }
 
-    public static function provideFixWithCatchCases(): array
+    public static function provideFixWithCatchCases(): iterable
     {
-        return [
-            [
-                '<?php try {} catch (\Exception $exception) {}',
-                '<?php try {} catch(\Exception $exception) {}',
-            ],
-            [
-                '<?php try {} catch (\Exception $exception) {}',
-                '<?php try {} catch  (\Exception $exception) {}',
-            ],
-            [
-                '<?php try {} catch (\Exception $exception) {}',
-                '<?php try {} catch
+        yield [
+            '<?php try {} catch (\Exception $exception) {}',
+            '<?php try {} catch(\Exception $exception) {}',
+        ];
+
+        yield [
+            '<?php try {} catch (\Exception $exception) {}',
+            '<?php try {} catch  (\Exception $exception) {}',
+        ];
+
+        yield [
+            '<?php try {} catch (\Exception $exception) {}',
+            '<?php try {} catch
 
 (\Exception $exception) {}',
-            ],
-            [
-                '<?php try {} catch /* foo */(Exception $exception) {}',
-                '<?php try {} catch/* foo */(Exception $exception) {}',
-            ],
-            [
-                '<?php try {} catch /* foo */(Exception $exception) {}',
-                '<?php try {} catch  /* foo */(Exception $exception) {}',
-            ],
+        ];
+
+        yield [
+            '<?php try {} catch /* foo */(Exception $exception) {}',
+            '<?php try {} catch/* foo */(Exception $exception) {}',
+        ];
+
+        yield [
+            '<?php try {} catch /* foo */(Exception $exception) {}',
+            '<?php try {} catch  /* foo */(Exception $exception) {}',
         ];
     }
 
@@ -444,63 +710,71 @@ switch ($i) {
         $this->doTest($expected, $input);
     }
 
-    public static function provideFixWithClassCases(): array
+    public static function provideFixWithClassCases(): iterable
     {
-        return [
-            [
-                '<?php class Foo {}',
-                '<?php class  Foo {}',
-            ],
-            [
-                '<?php class Foo {}',
-                '<?php class
+        yield [
+            '<?php class Foo {}',
+            '<?php class  Foo {}',
+        ];
+
+        yield [
+            '<?php class Foo {}',
+            '<?php class
 
 Foo {}',
-            ],
-            [
-                '<?php class /* foo */Foo {}',
-                '<?php class  /* foo */Foo {}',
-            ],
-            [
-                '<?php class /* foo */Foo {}',
-                '<?php class/* foo */Foo {}',
-            ],
-            [
-                '<?php $foo = stdClass::class;',
-            ],
-            [
-                '<?php $foo = new class {};',
-                '<?php $foo = new class  {};',
-                ['constructs_followed_by_a_single_space' => ['class']],
-            ],
-            [
-                '<?php $foo = new class {};',
-                '<?php $foo = new class{};',
-                ['constructs_followed_by_a_single_space' => ['class']],
-            ],
-            [
-                '<?php $foo = new class /* foo */{};',
-                '<?php $foo = new class/* foo */{};',
-                ['constructs_followed_by_a_single_space' => ['class']],
-            ],
-            [
-                '<?php $foo = new class /* foo */{};',
-                '<?php $foo = new class  /* foo */{};',
-                ['constructs_followed_by_a_single_space' => ['class']],
-            ],
-            [
-                '<?php $foo = new class(){};',
-                null,
-                ['constructs_followed_by_a_single_space' => ['class']],
-            ],
-            [
-                '<?php return
+        ];
+
+        yield [
+            '<?php class /* foo */Foo {}',
+            '<?php class  /* foo */Foo {}',
+        ];
+
+        yield [
+            '<?php class /* foo */Foo {}',
+            '<?php class/* foo */Foo {}',
+        ];
+
+        yield [
+            '<?php $foo = stdClass::class;',
+        ];
+
+        yield [
+            '<?php $foo = new class {};',
+            '<?php $foo = new class  {};',
+            ['constructs_followed_by_a_single_space' => ['class']],
+        ];
+
+        yield [
+            '<?php $foo = new class {};',
+            '<?php $foo = new class{};',
+            ['constructs_followed_by_a_single_space' => ['class']],
+        ];
+
+        yield [
+            '<?php $foo = new class /* foo */{};',
+            '<?php $foo = new class/* foo */{};',
+            ['constructs_followed_by_a_single_space' => ['class']],
+        ];
+
+        yield [
+            '<?php $foo = new class /* foo */{};',
+            '<?php $foo = new class  /* foo */{};',
+            ['constructs_followed_by_a_single_space' => ['class']],
+        ];
+
+        yield [
+            '<?php $foo = new class(){};',
+            null,
+            ['constructs_followed_by_a_single_space' => ['class']],
+        ];
+
+        yield [
+            '<?php return
                     $a ? new class(){ public function foo() { echo 1; }}
                     : 1
                 ;',
-                null,
-                ['constructs_followed_by_a_single_space' => ['return']],
-            ],
+            null,
+            ['constructs_followed_by_a_single_space' => ['return']],
         ];
     }
 
@@ -518,34 +792,37 @@ Foo {}',
         $this->doTest($expected, $input);
     }
 
-    public static function provideFixWithContinueCases(): array
+    public static function provideFixWithContinueCases(): iterable
     {
-        return [
-            [
-                '<?php while (true) { continue; }',
-            ],
-            [
-                '<?php while (true) { continue /* foo */; }',
-                '<?php while (true) { continue/* foo */; }',
-            ],
-            [
-                '<?php while (true) { continue /* foo */; }',
-                '<?php while (true) { continue  /* foo */; }',
-            ],
-            [
-                '<?php while (true) { continue 1; }',
-                '<?php while (true) { continue  1; }',
-            ],
-            [
-                '<?php while (true) { continue 1; }',
-                '<?php while (true) { continue
+        yield [
+            '<?php while (true) { continue; }',
+        ];
+
+        yield [
+            '<?php while (true) { continue /* foo */; }',
+            '<?php while (true) { continue/* foo */; }',
+        ];
+
+        yield [
+            '<?php while (true) { continue /* foo */; }',
+            '<?php while (true) { continue  /* foo */; }',
+        ];
+
+        yield [
+            '<?php while (true) { continue 1; }',
+            '<?php while (true) { continue  1; }',
+        ];
+
+        yield [
+            '<?php while (true) { continue 1; }',
+            '<?php while (true) { continue
 
 1; }',
-            ],
-            [
-                '<?php while (true) { continue /* foo*/ 1; }',
-                '<?php while (true) { continue  /* foo*/ 1; }',
-            ],
+        ];
+
+        yield [
+            '<?php while (true) { continue /* foo*/ 1; }',
+            '<?php while (true) { continue  /* foo*/ 1; }',
         ];
     }
 
@@ -563,42 +840,47 @@ Foo {}',
         $this->doTest($expected, $input);
     }
 
-    public static function provideFixWithConstCases(): array
+    public static function provideFixWithConstCases(): iterable
     {
-        return [
-            [
-                '<?php class Foo { const FOO = 9000; }',
-                '<?php class Foo { const  FOO = 9000; }',
-            ],
-            [
-                '<?php class Foo { const FOO = 9000; }',
-                '<?php class Foo { const
+        yield [
+            '<?php class Foo { const FOO = 9000; }',
+            '<?php class Foo { const  FOO = 9000; }',
+        ];
+
+        yield [
+            '<?php class Foo { const FOO = 9000; }',
+            '<?php class Foo { const
 
 FOO = 9000; }',
-            ],
-            [
-                '<?php class Foo { const /* foo */FOO = 9000; }',
-                '<?php class Foo { const/* foo */FOO = 9000; }',
-            ],
-            [
-                '<?php class Foo { const /* foo */FOO = 9000; }',
-                '<?php class Foo { const  /* foo */FOO = 9000; }',
-            ],
-            ['<?php class Foo {
+        ];
+
+        yield [
+            '<?php class Foo { const /* foo */FOO = 9000; }',
+            '<?php class Foo { const/* foo */FOO = 9000; }',
+        ];
+
+        yield [
+            '<?php class Foo { const /* foo */FOO = 9000; }',
+            '<?php class Foo { const  /* foo */FOO = 9000; }',
+        ];
+
+        yield ['<?php class Foo {
     const
         FOO = 9000,
         BAR = 10000;
 }',
-            ],
-            [
-                '<?php
+        ];
+
+        yield [
+            '<?php
 const
     A = 3,
     B = 3
 ?>',
-            ],
-            [
-                '<?php
+        ];
+
+        yield [
+            '<?php
 const A = 3 ?>
 
 <?php
@@ -606,7 +888,7 @@ const A = 3 ?>
 ,
 ,$z
 ] = foo()  ;',
-                '<?php
+            '<?php
 const     A = 3 ?>
 
 <?php
@@ -614,20 +896,20 @@ const     A = 3 ?>
 ,
 ,$z
 ] = foo()  ;',
-            ],
-            [
-                '<?php
+        ];
+
+        yield [
+            '<?php
     const A
     =
     1;
 ',
-                '<?php
+            '<?php
     const
     A
     =
     1;
 ',
-            ],
         ];
     }
 
@@ -645,27 +927,28 @@ const     A = 3 ?>
         $this->doTest($expected, $input);
     }
 
-    public static function provideFixWithConstImportCases(): array
+    public static function provideFixWithConstImportCases(): iterable
     {
-        return [
-            [
-                '<?php use const FOO\BAR;',
-                '<?php use const  FOO\BAR;',
-            ],
-            [
-                '<?php use const FOO\BAR;',
-                '<?php use const
+        yield [
+            '<?php use const FOO\BAR;',
+            '<?php use const  FOO\BAR;',
+        ];
+
+        yield [
+            '<?php use const FOO\BAR;',
+            '<?php use const
 
 FOO\BAR;',
-            ],
-            [
-                '<?php use const /* foo */FOO\BAR;',
-                '<?php use const/* foo */FOO\BAR;',
-            ],
-            [
-                '<?php use const /* foo */FOO\BAR;',
-                '<?php use const  /* foo */FOO\BAR;',
-            ],
+        ];
+
+        yield [
+            '<?php use const /* foo */FOO\BAR;',
+            '<?php use const/* foo */FOO\BAR;',
+        ];
+
+        yield [
+            '<?php use const /* foo */FOO\BAR;',
+            '<?php use const  /* foo */FOO\BAR;',
         ];
     }
 
@@ -683,27 +966,28 @@ FOO\BAR;',
         $this->doTest($expected, $input);
     }
 
-    public static function provideFixWithCloneCases(): array
+    public static function provideFixWithCloneCases(): iterable
     {
-        return [
-            [
-                '<?php clone $foo;',
-                '<?php clone$foo;',
-            ],
-            [
-                '<?php clone $foo;',
-                '<?php clone  $foo;',
-            ],
-            [
-                '<?php clone $foo;',
-                '<?php clone
+        yield [
+            '<?php clone $foo;',
+            '<?php clone$foo;',
+        ];
+
+        yield [
+            '<?php clone $foo;',
+            '<?php clone  $foo;',
+        ];
+
+        yield [
+            '<?php clone $foo;',
+            '<?php clone
 
 $foo;',
-            ],
-            [
-                '<?php clone /* foo */$foo;',
-                '<?php clone/* foo */$foo;',
-            ],
+        ];
+
+        yield [
+            '<?php clone /* foo */$foo;',
+            '<?php clone/* foo */$foo;',
         ];
     }
 
@@ -721,35 +1005,38 @@ $foo;',
         $this->doTest($expected, $input);
     }
 
-    public static function provideFixWithDoCases(): array
+    public static function provideFixWithDoCases(): iterable
     {
-        return [
-            [
-                '<?php do {} while (true);',
-                '<?php do{} while (true);',
-            ],
-            [
-                '<?php DO {} while (true);',
-                '<?php DO{} while (true);',
-            ],
-            [
-                '<?php do {} while (true);',
-                '<?php do  {} while (true);',
-            ],
-            [
-                '<?php do {} while (true);',
-                '<?php do
+        yield [
+            '<?php do {} while (true);',
+            '<?php do{} while (true);',
+        ];
+
+        yield [
+            '<?php DO {} while (true);',
+            '<?php DO{} while (true);',
+        ];
+
+        yield [
+            '<?php do {} while (true);',
+            '<?php do  {} while (true);',
+        ];
+
+        yield [
+            '<?php do {} while (true);',
+            '<?php do
 
 {} while (true);',
-            ],
-            [
-                '<?php do /* foo*/{} while (true);',
-                '<?php do/* foo*/{} while (true);',
-            ],
-            [
-                '<?php do /* foo*/{} while (true);',
-                '<?php do  /* foo*/{} while (true);',
-            ],
+        ];
+
+        yield [
+            '<?php do /* foo*/{} while (true);',
+            '<?php do/* foo*/{} while (true);',
+        ];
+
+        yield [
+            '<?php do /* foo*/{} while (true);',
+            '<?php do  /* foo*/{} while (true);',
         ];
     }
 
@@ -767,27 +1054,28 @@ $foo;',
         $this->doTest($expected, $input);
     }
 
-    public static function provideFixWithEchoCases(): array
+    public static function provideFixWithEchoCases(): iterable
     {
-        return [
-            [
-                '<?php echo $foo;',
-                '<?php echo$foo;',
-            ],
-            [
-                '<?php echo 9000;',
-                '<?php echo  9000;',
-            ],
-            [
-                '<?php echo 9000;',
-                '<?php echo
+        yield [
+            '<?php echo $foo;',
+            '<?php echo$foo;',
+        ];
+
+        yield [
+            '<?php echo 9000;',
+            '<?php echo  9000;',
+        ];
+
+        yield [
+            '<?php echo 9000;',
+            '<?php echo
 
 9000;',
-            ],
-            [
-                '<?php ECHO /* foo */9000;',
-                '<?php ECHO/* foo */9000;',
-            ],
+        ];
+
+        yield [
+            '<?php ECHO /* foo */9000;',
+            '<?php ECHO/* foo */9000;',
         ];
     }
 
@@ -805,27 +1093,28 @@ $foo;',
         $this->doTest($expected, $input);
     }
 
-    public static function provideFixWithElseCases(): array
+    public static function provideFixWithElseCases(): iterable
     {
-        return [
-            [
-                '<?php if (true) {} else {}',
-                '<?php if (true) {} else{}',
-            ],
-            [
-                '<?php if (true) {} else {}',
-                '<?php if (true) {} else  {}',
-            ],
-            [
-                '<?php if (true) {} else {}',
-                '<?php if (true) {} else
+        yield [
+            '<?php if (true) {} else {}',
+            '<?php if (true) {} else{}',
+        ];
+
+        yield [
+            '<?php if (true) {} else {}',
+            '<?php if (true) {} else  {}',
+        ];
+
+        yield [
+            '<?php if (true) {} else {}',
+            '<?php if (true) {} else
 
 {}',
-            ],
-            [
-                '<?php if (true) {} else /* foo */{}',
-                '<?php if (true) {} else/* foo */{}',
-            ],
+        ];
+
+        yield [
+            '<?php if (true) {} else /* foo */{}',
+            '<?php if (true) {} else/* foo */{}',
         ];
     }
 
@@ -843,27 +1132,28 @@ $foo;',
         $this->doTest($expected, $input);
     }
 
-    public static function provideFixWithElseIfCases(): array
+    public static function provideFixWithElseIfCases(): iterable
     {
-        return [
-            [
-                '<?php if (true) {} elseif (false) {}',
-                '<?php if (true) {} elseif(false) {}',
-            ],
-            [
-                '<?php if (true) {} elseif (false) {}',
-                '<?php if (true) {} elseif  (false) {}',
-            ],
-            [
-                '<?php if (true) {} elseif (false) {}',
-                '<?php if (true) {} elseif
+        yield [
+            '<?php if (true) {} elseif (false) {}',
+            '<?php if (true) {} elseif(false) {}',
+        ];
+
+        yield [
+            '<?php if (true) {} elseif (false) {}',
+            '<?php if (true) {} elseif  (false) {}',
+        ];
+
+        yield [
+            '<?php if (true) {} elseif (false) {}',
+            '<?php if (true) {} elseif
 
 (false) {}',
-            ],
-            [
-                '<?php if (true) {} elseif /* foo */(false) {}',
-                '<?php if (true) {} elseif/* foo */(false) {}',
-            ],
+        ];
+
+        yield [
+            '<?php if (true) {} elseif /* foo */(false) {}',
+            '<?php if (true) {} elseif/* foo */(false) {}',
         ];
     }
 
@@ -881,88 +1171,102 @@ $foo;',
         $this->doTest($expected, $input);
     }
 
-    public static function provideFixWithExtendsCases(): array
+    public static function provideFixWithExtendsCases(): iterable
     {
-        return [
-            [
-                '<?php class Foo extends \InvalidArgumentException {}',
-                '<?php class Foo extends  \InvalidArgumentException {}',
-            ],
-            [
-                '<?php class Foo extends \InvalidArgumentException {}',
-                '<?php class Foo extends
+        yield [
+            '<?php class Foo extends \InvalidArgumentException {}',
+            '<?php class Foo extends  \InvalidArgumentException {}',
+        ];
+
+        yield [
+            '<?php class Foo extends \InvalidArgumentException {}',
+            '<?php class Foo extends
 
 \InvalidArgumentException {}',
-            ],
-            [
-                '<?php class Foo extends /* foo */\InvalidArgumentException {}',
-                '<?php class Foo extends/* foo */\InvalidArgumentException {}',
-            ],
-            [
-                '<?php class Foo extends /* foo */\InvalidArgumentException {}',
-                '<?php class Foo extends  /* foo */\InvalidArgumentException {}',
-            ],
-            [
-                '<?php interface Foo extends Bar1 {}',
-                '<?php interface Foo extends  Bar1 {}',
-            ],
-            [
-                '<?php interface Foo extends Bar2 {}',
-                '<?php interface Foo extends
+        ];
+
+        yield [
+            '<?php class Foo extends /* foo */\InvalidArgumentException {}',
+            '<?php class Foo extends/* foo */\InvalidArgumentException {}',
+        ];
+
+        yield [
+            '<?php class Foo extends /* foo */\InvalidArgumentException {}',
+            '<?php class Foo extends  /* foo */\InvalidArgumentException {}',
+        ];
+
+        yield [
+            '<?php interface Foo extends Bar1 {}',
+            '<?php interface Foo extends  Bar1 {}',
+        ];
+
+        yield [
+            '<?php interface Foo extends Bar2 {}',
+            '<?php interface Foo extends
 
 Bar2 {}',
-            ],
-            [
-                '<?php interface Foo extends /* foo */Bar3 {}',
-                '<?php interface Foo extends/* foo */Bar3 {}',
-            ],
-            [
-                '<?php interface Foo extends /* foo */Bar4 {}',
-                '<?php interface Foo extends  /* foo */Bar4 {}',
-            ],
-            [
-                '<?php interface Foo extends Bar5, Baz, Qux {}',
-                '<?php interface Foo extends  Bar5, Baz, Qux {}',
-            ],
-            [
-                '<?php interface Foo extends Bar6, Baz, Qux {}',
-                '<?php interface Foo extends
+        ];
+
+        yield [
+            '<?php interface Foo extends /* foo */Bar3 {}',
+            '<?php interface Foo extends/* foo */Bar3 {}',
+        ];
+
+        yield [
+            '<?php interface Foo extends /* foo */Bar4 {}',
+            '<?php interface Foo extends  /* foo */Bar4 {}',
+        ];
+
+        yield [
+            '<?php interface Foo extends Bar5, Baz, Qux {}',
+            '<?php interface Foo extends  Bar5, Baz, Qux {}',
+        ];
+
+        yield [
+            '<?php interface Foo extends Bar6, Baz, Qux {}',
+            '<?php interface Foo extends
 
 Bar6, Baz, Qux {}',
-            ],
-            [
-                '<?php interface Foo extends /* foo */Bar7, Baz, Qux {}',
-                '<?php interface Foo extends/* foo */Bar7, Baz, Qux {}',
-            ],
-            [
-                '<?php interface Foo extends /* foo */Bar8, Baz, Qux {}',
-                '<?php interface Foo extends  /* foo */Bar8, Baz, Qux {}',
-            ],
-            [
-                '<?php interface Foo extends
+        ];
+
+        yield [
+            '<?php interface Foo extends /* foo */Bar7, Baz, Qux {}',
+            '<?php interface Foo extends/* foo */Bar7, Baz, Qux {}',
+        ];
+
+        yield [
+            '<?php interface Foo extends /* foo */Bar8, Baz, Qux {}',
+            '<?php interface Foo extends  /* foo */Bar8, Baz, Qux {}',
+        ];
+
+        yield [
+            '<?php interface Foo extends
     Bar9,
     Baz,
     Qux
 {}',
-            ],
-            [
-                '<?php $foo = new class extends \InvalidArgumentException {};',
-                '<?php $foo = new class extends  \InvalidArgumentException {};',
-            ],
-            [
-                '<?php $foo = new class extends \InvalidArgumentException {};',
-                '<?php $foo = new class extends
+        ];
+
+        yield [
+            '<?php $foo = new class extends \InvalidArgumentException {};',
+            '<?php $foo = new class extends  \InvalidArgumentException {};',
+        ];
+
+        yield [
+            '<?php $foo = new class extends \InvalidArgumentException {};',
+            '<?php $foo = new class extends
 
 \InvalidArgumentException {};',
-            ],
-            [
-                '<?php $foo = new class extends /* foo */\InvalidArgumentException {};',
-                '<?php $foo = new class extends/* foo */\InvalidArgumentException {};',
-            ],
-            [
-                '<?php $foo = new class extends /* foo */\InvalidArgumentException {};',
-                '<?php $foo = new class extends  /* foo */\InvalidArgumentException {};',
-            ],
+        ];
+
+        yield [
+            '<?php $foo = new class extends /* foo */\InvalidArgumentException {};',
+            '<?php $foo = new class extends/* foo */\InvalidArgumentException {};',
+        ];
+
+        yield [
+            '<?php $foo = new class extends /* foo */\InvalidArgumentException {};',
+            '<?php $foo = new class extends  /* foo */\InvalidArgumentException {};',
         ];
     }
 
@@ -980,49 +1284,53 @@ Bar6, Baz, Qux {}',
         $this->doTest($expected, $input);
     }
 
-    public static function provideFixWithFinalCases(): array
+    public static function provideFixWithFinalCases(): iterable
     {
-        return [
-            [
-                '<?php final class Foo {}',
-                '<?php final  class Foo {}',
-            ],
-            [
-                '<?php final class Foo {}',
-                '<?php final
+        yield [
+            '<?php final class Foo {}',
+            '<?php final  class Foo {}',
+        ];
+
+        yield [
+            '<?php final class Foo {}',
+            '<?php final
 
 class Foo {}',
-            ],
-            [
-                '<?php final /* foo */class Foo {}',
-                '<?php final/* foo */class Foo {}',
-            ],
-            [
-                '<?php final /* foo */class Foo {}',
-                '<?php final  /* foo */class Foo {}',
-            ],
-            [
-                '<?php
+        ];
+
+        yield [
+            '<?php final /* foo */class Foo {}',
+            '<?php final/* foo */class Foo {}',
+        ];
+
+        yield [
+            '<?php final /* foo */class Foo {}',
+            '<?php final  /* foo */class Foo {}',
+        ];
+
+        yield [
+            '<?php
 
 class Foo
 {
     final function bar() {}
 }',
-                '<?php
+            '<?php
 
 class Foo
 {
     final  function bar() {}
 }',
-            ],
-            [
-                '<?php
+        ];
+
+        yield [
+            '<?php
 
 class Foo
 {
     final function bar() {}
 }',
-                '<?php
+            '<?php
 
 class Foo
 {
@@ -1030,35 +1338,36 @@ class Foo
 
 function bar() {}
 }',
-            ],
-            [
-                '<?php
+        ];
+
+        yield [
+            '<?php
 
 class Foo
 {
     final /* foo */function bar() {}
 }',
-                '<?php
+            '<?php
 
 class Foo
 {
     final/* foo */function bar() {}
 }',
-            ],
-            [
-                '<?php
+        ];
+
+        yield [
+            '<?php
 
 class Foo
 {
     final /* foo */function bar() {}
 }',
-                '<?php
+            '<?php
 
 class Foo
 {
     final  /* foo */function bar() {}
 }',
-            ],
         ];
     }
 
@@ -1076,31 +1385,33 @@ class Foo
         $this->doTest($expected, $input);
     }
 
-    public static function provideFixWithFinallyCases(): array
+    public static function provideFixWithFinallyCases(): iterable
     {
-        return [
-            [
-                '<?php try {} finally {}',
-                '<?php try {} finally{}',
-            ],
-            [
-                '<?php try {} finally {}',
-                '<?php try {} finally  {}',
-            ],
-            [
-                '<?php try {} finally {}',
-                '<?php try {} finally
+        yield [
+            '<?php try {} finally {}',
+            '<?php try {} finally{}',
+        ];
+
+        yield [
+            '<?php try {} finally {}',
+            '<?php try {} finally  {}',
+        ];
+
+        yield [
+            '<?php try {} finally {}',
+            '<?php try {} finally
 
 {}',
-            ],
-            [
-                '<?php try {} finally /* foo */{}',
-                '<?php try {} finally/* foo */{}',
-            ],
-            [
-                '<?php try {} finally /* foo */{}',
-                '<?php try {} finally  /* foo */{}',
-            ],
+        ];
+
+        yield [
+            '<?php try {} finally /* foo */{}',
+            '<?php try {} finally/* foo */{}',
+        ];
+
+        yield [
+            '<?php try {} finally /* foo */{}',
+            '<?php try {} finally  /* foo */{}',
         ];
     }
 
@@ -1118,31 +1429,33 @@ class Foo
         $this->doTest($expected, $input);
     }
 
-    public static function provideFixWithForCases(): array
+    public static function provideFixWithForCases(): iterable
     {
-        return [
-            [
-                '<?php for ($i = 0; $i < 3; ++$i) {}',
-                '<?php for($i = 0; $i < 3; ++$i) {}',
-            ],
-            [
-                '<?php for ($i = 0; $i < 3; ++$i) {}',
-                '<?php for  ($i = 0; $i < 3; ++$i) {}',
-            ],
-            [
-                '<?php for ($i = 0; $i < 3; ++$i) {}',
-                '<?php for
+        yield [
+            '<?php for ($i = 0; $i < 3; ++$i) {}',
+            '<?php for($i = 0; $i < 3; ++$i) {}',
+        ];
+
+        yield [
+            '<?php for ($i = 0; $i < 3; ++$i) {}',
+            '<?php for  ($i = 0; $i < 3; ++$i) {}',
+        ];
+
+        yield [
+            '<?php for ($i = 0; $i < 3; ++$i) {}',
+            '<?php for
 
 ($i = 0; $i < 3; ++$i) {}',
-            ],
-            [
-                '<?php for /* foo */($i = 0; $i < 3; ++$i) {}',
-                '<?php for/* foo */($i = 0; $i < 3; ++$i) {}',
-            ],
-            [
-                '<?php for /* foo */($i = 0; $i < 3; ++$i) {}',
-                '<?php for  /* foo */($i = 0; $i < 3; ++$i) {}',
-            ],
+        ];
+
+        yield [
+            '<?php for /* foo */($i = 0; $i < 3; ++$i) {}',
+            '<?php for/* foo */($i = 0; $i < 3; ++$i) {}',
+        ];
+
+        yield [
+            '<?php for /* foo */($i = 0; $i < 3; ++$i) {}',
+            '<?php for  /* foo */($i = 0; $i < 3; ++$i) {}',
         ];
     }
 
@@ -1160,31 +1473,33 @@ class Foo
         $this->doTest($expected, $input);
     }
 
-    public static function provideFixWithForeachCases(): array
+    public static function provideFixWithForeachCases(): iterable
     {
-        return [
-            [
-                '<?php foreach ($foo as $bar) {}',
-                '<?php foreach($foo as $bar) {}',
-            ],
-            [
-                '<?php foreach ($foo as $bar) {}',
-                '<?php foreach  ($foo as $bar) {}',
-            ],
-            [
-                '<?php foreach ($foo as $bar) {}',
-                '<?php foreach
+        yield [
+            '<?php foreach ($foo as $bar) {}',
+            '<?php foreach($foo as $bar) {}',
+        ];
+
+        yield [
+            '<?php foreach ($foo as $bar) {}',
+            '<?php foreach  ($foo as $bar) {}',
+        ];
+
+        yield [
+            '<?php foreach ($foo as $bar) {}',
+            '<?php foreach
 
 ($foo as $bar) {}',
-            ],
-            [
-                '<?php foreach /* foo */($foo as $bar) {}',
-                '<?php foreach/* foo */($foo as $bar) {}',
-            ],
-            [
-                '<?php foreach /* foo */($foo as $bar) {}',
-                '<?php foreach  /* foo */($foo as $bar) {}',
-            ],
+        ];
+
+        yield [
+            '<?php foreach /* foo */($foo as $bar) {}',
+            '<?php foreach/* foo */($foo as $bar) {}',
+        ];
+
+        yield [
+            '<?php foreach /* foo */($foo as $bar) {}',
+            '<?php foreach  /* foo */($foo as $bar) {}',
         ];
     }
 
@@ -1202,49 +1517,53 @@ class Foo
         $this->doTest($expected, $input);
     }
 
-    public static function provideFixWithFunctionCases(): array
+    public static function provideFixWithFunctionCases(): iterable
     {
-        return [
-            [
-                '<?php function foo() {}',
-                '<?php function  foo() {}',
-            ],
-            [
-                '<?php function foo() {}',
-                '<?php function
+        yield [
+            '<?php function foo() {}',
+            '<?php function  foo() {}',
+        ];
+
+        yield [
+            '<?php function foo() {}',
+            '<?php function
 
 foo() {}',
-            ],
-            [
-                '<?php function /* foo */foo() {}',
-                '<?php function/* foo */foo() {}',
-            ],
-            [
-                '<?php function /* foo */foo() {}',
-                '<?php function  /* foo */foo() {}',
-            ],
-            [
-                '<?php
+        ];
+
+        yield [
+            '<?php function /* foo */foo() {}',
+            '<?php function/* foo */foo() {}',
+        ];
+
+        yield [
+            '<?php function /* foo */foo() {}',
+            '<?php function  /* foo */foo() {}',
+        ];
+
+        yield [
+            '<?php
 class Foo
 {
     function bar() {}
 }
 ',
-                '<?php
+            '<?php
 class Foo
 {
     function  bar() {}
 }
 ',
-            ],
-            [
-                '<?php
+        ];
+
+        yield [
+            '<?php
 class Foo
 {
     function bar() {}
 }
 ',
-                '<?php
+            '<?php
 class Foo
 {
     function
@@ -1252,35 +1571,36 @@ class Foo
 bar() {}
 }
 ',
-            ],
-            [
-                '<?php
+        ];
+
+        yield [
+            '<?php
 class Foo
 {
     function /* foo */bar() {}
 }
 ',
-                '<?php
+            '<?php
 class Foo
 {
     function/* foo */bar() {}
 }
 ',
-            ],
-            [
-                '<?php
+        ];
+
+        yield [
+            '<?php
 class Foo
 {
     function /* foo */bar() {}
 }
 ',
-                '<?php
+            '<?php
 class Foo
 {
     function  /* foo */bar() {}
 }
 ',
-            ],
         ];
     }
 
@@ -1298,27 +1618,28 @@ class Foo
         $this->doTest($expected, $input);
     }
 
-    public static function provideFixWithFunctionImportCases(): array
+    public static function provideFixWithFunctionImportCases(): iterable
     {
-        return [
-            [
-                '<?php use function Foo\bar;',
-                '<?php use function  Foo\bar;',
-            ],
-            [
-                '<?php use function Foo\bar;',
-                '<?php use function
+        yield [
+            '<?php use function Foo\bar;',
+            '<?php use function  Foo\bar;',
+        ];
+
+        yield [
+            '<?php use function Foo\bar;',
+            '<?php use function
 
 Foo\bar;',
-            ],
-            [
-                '<?php use function /* foo */Foo\bar;',
-                '<?php use function/* foo */Foo\bar;',
-            ],
-            [
-                '<?php use function /* foo */Foo\bar;',
-                '<?php use function  /* foo */Foo\bar;',
-            ],
+        ];
+
+        yield [
+            '<?php use function /* foo */Foo\bar;',
+            '<?php use function/* foo */Foo\bar;',
+        ];
+
+        yield [
+            '<?php use function /* foo */Foo\bar;',
+            '<?php use function  /* foo */Foo\bar;',
         ];
     }
 
@@ -1336,31 +1657,33 @@ Foo\bar;',
         $this->doTest($expected, $input);
     }
 
-    public static function provideFixWithGlobalCases(): array
+    public static function provideFixWithGlobalCases(): iterable
     {
-        return [
-            [
-                '<?php function foo() { global $bar; }',
-                '<?php function foo() { global$bar; }',
-            ],
-            [
-                '<?php function foo() { global $bar; }',
-                '<?php function foo() { global  $bar; }',
-            ],
-            [
-                '<?php function foo() { global $bar; }',
-                '<?php function foo() { global
+        yield [
+            '<?php function foo() { global $bar; }',
+            '<?php function foo() { global$bar; }',
+        ];
+
+        yield [
+            '<?php function foo() { global $bar; }',
+            '<?php function foo() { global  $bar; }',
+        ];
+
+        yield [
+            '<?php function foo() { global $bar; }',
+            '<?php function foo() { global
 
 $bar; }',
-            ],
-            [
-                '<?php function foo() { global /* foo */$bar; }',
-                '<?php function foo() { global/* foo */$bar; }',
-            ],
-            [
-                '<?php function foo() { global /* foo */$bar; }',
-                '<?php function foo() { global  /* foo */$bar; }',
-            ],
+        ];
+
+        yield [
+            '<?php function foo() { global /* foo */$bar; }',
+            '<?php function foo() { global/* foo */$bar; }',
+        ];
+
+        yield [
+            '<?php function foo() { global /* foo */$bar; }',
+            '<?php function foo() { global  /* foo */$bar; }',
         ];
     }
 
@@ -1378,23 +1701,23 @@ $bar; }',
         $this->doTest($expected, $input);
     }
 
-    public static function provideFixWithGotoCases(): array
+    public static function provideFixWithGotoCases(): iterable
     {
-        return [
-            [
-                '<?php goto foo; foo: echo "Bar";',
-                '<?php goto  foo; foo: echo "Bar";',
-            ],
-            [
-                '<?php goto foo; foo: echo "Bar";',
-                '<?php goto
+        yield [
+            '<?php goto foo; foo: echo "Bar";',
+            '<?php goto  foo; foo: echo "Bar";',
+        ];
+
+        yield [
+            '<?php goto foo; foo: echo "Bar";',
+            '<?php goto
 
 foo; foo: echo "Bar";',
-            ],
-            [
-                '<?php goto /* foo */foo; foo: echo "Bar";',
-                '<?php goto/* foo */foo; foo: echo "Bar";',
-            ],
+        ];
+
+        yield [
+            '<?php goto /* foo */foo; foo: echo "Bar";',
+            '<?php goto/* foo */foo; foo: echo "Bar";',
         ];
     }
 
@@ -1412,27 +1735,28 @@ foo; foo: echo "Bar";',
         $this->doTest($expected, $input);
     }
 
-    public static function provideFixWithIfCases(): array
+    public static function provideFixWithIfCases(): iterable
     {
-        return [
-            [
-                '<?php if ($foo === $bar) {}',
-                '<?php if($foo === $bar) {}',
-            ],
-            [
-                '<?php if ($foo === $bar) {}',
-                '<?php if  ($foo === $bar) {}',
-            ],
-            [
-                '<?php if ($foo === $bar) {}',
-                '<?php if
+        yield [
+            '<?php if ($foo === $bar) {}',
+            '<?php if($foo === $bar) {}',
+        ];
+
+        yield [
+            '<?php if ($foo === $bar) {}',
+            '<?php if  ($foo === $bar) {}',
+        ];
+
+        yield [
+            '<?php if ($foo === $bar) {}',
+            '<?php if
 
 ($foo === $bar) {}',
-            ],
-            [
-                '<?php if /* foo */($foo === $bar) {}',
-                '<?php if/* foo */($foo === $bar) {}',
-            ],
+        ];
+
+        yield [
+            '<?php if /* foo */($foo === $bar) {}',
+            '<?php if/* foo */($foo === $bar) {}',
         ];
     }
 
@@ -1450,52 +1774,58 @@ foo; foo: echo "Bar";',
         $this->doTest($expected, $input);
     }
 
-    public static function provideFixWithImplementsCases(): array
+    public static function provideFixWithImplementsCases(): iterable
     {
-        return [
-            [
-                '<?php class Foo implements \Countable {}',
-                '<?php class Foo implements  \Countable {}',
-            ],
-            [
-                '<?php class Foo implements \Countable {}',
-                '<?php class Foo implements
+        yield [
+            '<?php class Foo implements \Countable {}',
+            '<?php class Foo implements  \Countable {}',
+        ];
+
+        yield [
+            '<?php class Foo implements \Countable {}',
+            '<?php class Foo implements
 
 \Countable {}',
-            ],
-            [
-                '<?php class Foo implements /* foo */\Countable {}',
-                '<?php class Foo implements/* foo */\Countable {}',
-            ],
-            [
-                '<?php class Foo implements /* foo */\Countable {}',
-                '<?php class Foo implements  /* foo */\Countable {}',
-            ],
-            [
-                '<?php class Foo implements
+        ];
+
+        yield [
+            '<?php class Foo implements /* foo */\Countable {}',
+            '<?php class Foo implements/* foo */\Countable {}',
+        ];
+
+        yield [
+            '<?php class Foo implements /* foo */\Countable {}',
+            '<?php class Foo implements  /* foo */\Countable {}',
+        ];
+
+        yield [
+            '<?php class Foo implements
                     \Countable,
                     Bar,
                     Baz
                 {}',
-            ],
-            [
-                '<?php $foo = new class implements \Countable {};',
-                '<?php $foo = new class implements  \Countable {};',
-            ],
-            [
-                '<?php $foo = new class implements \Countable {};',
-                '<?php $foo = new class implements
+        ];
+
+        yield [
+            '<?php $foo = new class implements \Countable {};',
+            '<?php $foo = new class implements  \Countable {};',
+        ];
+
+        yield [
+            '<?php $foo = new class implements \Countable {};',
+            '<?php $foo = new class implements
 
 \Countable {};',
-            ],
-            [
-                '<?php $foo = new class implements /* foo */\Countable {};',
-                '<?php $foo = new class implements/* foo */\Countable {};',
-            ],
-            [
-                '<?php $foo = new class implements /* foo */\Countable {};',
-                '<?php $foo = new class implements  /* foo */\Countable {};',
-            ],
+        ];
+
+        yield [
+            '<?php $foo = new class implements /* foo */\Countable {};',
+            '<?php $foo = new class implements/* foo */\Countable {};',
+        ];
+
+        yield [
+            '<?php $foo = new class implements /* foo */\Countable {};',
+            '<?php $foo = new class implements  /* foo */\Countable {};',
         ];
     }
 
@@ -1513,27 +1843,28 @@ foo; foo: echo "Bar";',
         $this->doTest($expected, $input);
     }
 
-    public static function provideFixWithIncludeCases(): array
+    public static function provideFixWithIncludeCases(): iterable
     {
-        return [
-            [
-                '<?php include "vendor/autoload.php";',
-                '<?php include"vendor/autoload.php";',
-            ],
-            [
-                '<?php include "vendor/autoload.php";',
-                '<?php include  "vendor/autoload.php";',
-            ],
-            [
-                '<?php include "vendor/autoload.php";',
-                '<?php include
+        yield [
+            '<?php include "vendor/autoload.php";',
+            '<?php include"vendor/autoload.php";',
+        ];
+
+        yield [
+            '<?php include "vendor/autoload.php";',
+            '<?php include  "vendor/autoload.php";',
+        ];
+
+        yield [
+            '<?php include "vendor/autoload.php";',
+            '<?php include
 
 "vendor/autoload.php";',
-            ],
-            [
-                '<?php include /* foo */"vendor/autoload.php";',
-                '<?php include/* foo */"vendor/autoload.php";',
-            ],
+        ];
+
+        yield [
+            '<?php include /* foo */"vendor/autoload.php";',
+            '<?php include/* foo */"vendor/autoload.php";',
         ];
     }
 
@@ -1551,27 +1882,28 @@ foo; foo: echo "Bar";',
         $this->doTest($expected, $input);
     }
 
-    public static function provideFixWithIncludeOnceCases(): array
+    public static function provideFixWithIncludeOnceCases(): iterable
     {
-        return [
-            [
-                '<?php include_once "vendor/autoload.php";',
-                '<?php include_once"vendor/autoload.php";',
-            ],
-            [
-                '<?php include_once "vendor/autoload.php";',
-                '<?php include_once  "vendor/autoload.php";',
-            ],
-            [
-                '<?php include_once "vendor/autoload.php";',
-                '<?php include_once
+        yield [
+            '<?php include_once "vendor/autoload.php";',
+            '<?php include_once"vendor/autoload.php";',
+        ];
+
+        yield [
+            '<?php include_once "vendor/autoload.php";',
+            '<?php include_once  "vendor/autoload.php";',
+        ];
+
+        yield [
+            '<?php include_once "vendor/autoload.php";',
+            '<?php include_once
 
 "vendor/autoload.php";',
-            ],
-            [
-                '<?php include_once /* foo */"vendor/autoload.php";',
-                '<?php include_once/* foo */"vendor/autoload.php";',
-            ],
+        ];
+
+        yield [
+            '<?php include_once /* foo */"vendor/autoload.php";',
+            '<?php include_once/* foo */"vendor/autoload.php";',
         ];
     }
 
@@ -1589,31 +1921,33 @@ foo; foo: echo "Bar";',
         $this->doTest($expected, $input);
     }
 
-    public static function provideFixWithInstanceofCases(): array
+    public static function provideFixWithInstanceofCases(): iterable
     {
-        return [
-            [
-                '<?php $foo instanceof \stdClass;',
-                '<?php $foo instanceof  \stdClass;',
-            ],
-            [
-                '<?php $foo instanceof \stdClass;',
-                '<?php $foo instanceof
+        yield [
+            '<?php $foo instanceof \stdClass;',
+            '<?php $foo instanceof  \stdClass;',
+        ];
+
+        yield [
+            '<?php $foo instanceof \stdClass;',
+            '<?php $foo instanceof
 
 \stdClass;',
-            ],
-            [
-                '<?php $foo instanceof /* foo */\stdClass;',
-                '<?php $foo instanceof/* foo */\stdClass;',
-            ],
-            [
-                '<?php $foo instanceof /* foo */\stdClass;',
-                '<?php $foo instanceof  /* foo */\stdClass;',
-            ],
-            [
-                '<?php $foo instanceof $bar;',
-                '<?php $foo instanceof$bar;',
-            ],
+        ];
+
+        yield [
+            '<?php $foo instanceof /* foo */\stdClass;',
+            '<?php $foo instanceof/* foo */\stdClass;',
+        ];
+
+        yield [
+            '<?php $foo instanceof /* foo */\stdClass;',
+            '<?php $foo instanceof  /* foo */\stdClass;',
+        ];
+
+        yield [
+            '<?php $foo instanceof $bar;',
+            '<?php $foo instanceof$bar;',
         ];
     }
 
@@ -1631,11 +1965,10 @@ foo; foo: echo "Bar";',
         $this->doTest($expected, $input);
     }
 
-    public static function provideFixWithInsteadofCases(): array
+    public static function provideFixWithInsteadofCases(): iterable
     {
-        return [
-            [
-                '<?php
+        yield [
+            '<?php
 
 class Talker {
     use A, B {
@@ -1643,7 +1976,7 @@ class Talker {
         A::bigTalk insteadof B;
     }
 }',
-                '<?php
+            '<?php
 
 class Talker {
     use A, B {
@@ -1651,9 +1984,10 @@ class Talker {
         A::bigTalk insteadof B;
     }
 }',
-            ],
-            [
-                '<?php
+        ];
+
+        yield [
+            '<?php
 
 class Talker {
     use A, B {
@@ -1661,7 +1995,7 @@ class Talker {
         A::bigTalk insteadof B;
     }
 }',
-                '<?php
+            '<?php
 
 class Talker {
     use A, B {
@@ -1671,9 +2005,10 @@ A;
         A::bigTalk insteadof B;
     }
 }',
-            ],
-            [
-                '<?php
+        ];
+
+        yield [
+            '<?php
 
 class Talker {
     use A, B {
@@ -1681,7 +2016,7 @@ class Talker {
         A::bigTalk insteadof B;
     }
 }',
-                '<?php
+            '<?php
 
 class Talker {
     use A, B {
@@ -1689,9 +2024,10 @@ class Talker {
         A::bigTalk insteadof B;
     }
 }',
-            ],
-            [
-                '<?php
+        ];
+
+        yield [
+            '<?php
 
 class Talker {
     use A, B {
@@ -1699,7 +2035,7 @@ class Talker {
         A::bigTalk insteadof B;
     }
 }',
-                '<?php
+            '<?php
 
 class Talker {
     use A, B {
@@ -1707,7 +2043,6 @@ class Talker {
         A::bigTalk insteadof B;
     }
 }',
-            ],
         ];
     }
 
@@ -1725,27 +2060,28 @@ class Talker {
         $this->doTest($expected, $input);
     }
 
-    public static function provideFixWithInterfaceCases(): array
+    public static function provideFixWithInterfaceCases(): iterable
     {
-        return [
-            [
-                '<?php interface Foo {}',
-                '<?php interface  Foo {}',
-            ],
-            [
-                '<?php interface Foo {}',
-                '<?php interface
+        yield [
+            '<?php interface Foo {}',
+            '<?php interface  Foo {}',
+        ];
+
+        yield [
+            '<?php interface Foo {}',
+            '<?php interface
 
 Foo {}',
-            ],
-            [
-                '<?php interface /* foo */Foo {}',
-                '<?php interface  /* foo */Foo {}',
-            ],
-            [
-                '<?php interface /* foo */Foo {}',
-                '<?php interface/* foo */Foo {}',
-            ],
+        ];
+
+        yield [
+            '<?php interface /* foo */Foo {}',
+            '<?php interface  /* foo */Foo {}',
+        ];
+
+        yield [
+            '<?php interface /* foo */Foo {}',
+            '<?php interface/* foo */Foo {}',
         ];
     }
 
@@ -1763,27 +2099,28 @@ Foo {}',
         $this->doTest($expected, $input);
     }
 
-    public static function provideFixWithNewCases(): array
+    public static function provideFixWithNewCases(): iterable
     {
-        return [
-            [
-                '<?php new $foo();',
-                '<?php new$foo();',
-            ],
-            [
-                '<?php new Bar();',
-                '<?php new  Bar();',
-            ],
-            [
-                '<?php new Bar();',
-                '<?php new
+        yield [
+            '<?php new $foo();',
+            '<?php new$foo();',
+        ];
+
+        yield [
+            '<?php new Bar();',
+            '<?php new  Bar();',
+        ];
+
+        yield [
+            '<?php new Bar();',
+            '<?php new
 
 Bar();',
-            ],
-            [
-                '<?php new /* foo */Bar();',
-                '<?php new/* foo */Bar();',
-            ],
+        ];
+
+        yield [
+            '<?php new /* foo */Bar();',
+            '<?php new/* foo */Bar();',
         ];
     }
 
@@ -1801,31 +2138,33 @@ Bar();',
         $this->doTest($expected, $input);
     }
 
-    public static function provideFixWithOpenTagWithEchoCases(): array
+    public static function provideFixWithOpenTagWithEchoCases(): iterable
     {
-        return [
-            [
-                '<?= $foo ?>',
-                '<?=$foo ?>',
-            ],
-            [
-                '<?= $foo ?>',
-                '<?=  $foo ?>',
-            ],
-            [
-                '<?= $foo ?>',
-                '<?=
+        yield [
+            '<?= $foo ?>',
+            '<?=$foo ?>',
+        ];
+
+        yield [
+            '<?= $foo ?>',
+            '<?=  $foo ?>',
+        ];
+
+        yield [
+            '<?= $foo ?>',
+            '<?=
 
 $foo ?>',
-            ],
-            [
-                '<?= /* foo */$foo ?>',
-                '<?=/* foo */$foo ?>',
-            ],
-            [
-                '<?= /* foo */$foo ?>',
-                '<?=  /* foo */$foo ?>',
-            ],
+        ];
+
+        yield [
+            '<?= /* foo */$foo ?>',
+            '<?=/* foo */$foo ?>',
+        ];
+
+        yield [
+            '<?= /* foo */$foo ?>',
+            '<?=  /* foo */$foo ?>',
         ];
     }
 
@@ -1843,27 +2182,28 @@ $foo ?>',
         $this->doTest($expected, $input);
     }
 
-    public static function provideFixWithPrintCases(): array
+    public static function provideFixWithPrintCases(): iterable
     {
-        return [
-            [
-                '<?php print $foo;',
-                '<?php print$foo;',
-            ],
-            [
-                '<?php print 9000;',
-                '<?php print  9000;',
-            ],
-            [
-                '<?php print 9000;',
-                '<?php print
+        yield [
+            '<?php print $foo;',
+            '<?php print$foo;',
+        ];
+
+        yield [
+            '<?php print 9000;',
+            '<?php print  9000;',
+        ];
+
+        yield [
+            '<?php print 9000;',
+            '<?php print
 
 9000;',
-            ],
-            [
-                '<?php print /* foo */9000;',
-                '<?php print/* foo */9000;',
-            ],
+        ];
+
+        yield [
+            '<?php print /* foo */9000;',
+            '<?php print/* foo */9000;',
         ];
     }
 
@@ -1881,67 +2221,77 @@ $foo ?>',
         $this->doTest($expected, $input);
     }
 
-    public static function provideFixWithPrivateCases(): array
+    public static function provideFixWithPrivateCases(): iterable
     {
-        return [
-            [
-                '<?php class Foo { private $bar; }',
-                '<?php class Foo { private$bar; }',
-            ],
-            [
-                '<?php class Foo { private $bar; }',
-                '<?php class Foo { private  $bar; }',
-            ],
-            [
-                '<?php class Foo { private $bar; }',
-                '<?php class Foo { private
+        yield [
+            '<?php class Foo { private $bar; }',
+            '<?php class Foo { private$bar; }',
+        ];
+
+        yield [
+            '<?php class Foo { private $bar; }',
+            '<?php class Foo { private  $bar; }',
+        ];
+
+        yield [
+            '<?php class Foo { private $bar; }',
+            '<?php class Foo { private
 
 $bar; }',
-            ],
-            [
-                '<?php class Foo { private /* foo */$bar; }',
-                '<?php class Foo { private/* foo */$bar; }',
-            ],
-            [
-                '<?php class Foo { private /* foo */$bar; }',
-                '<?php class Foo { private  /* foo */$bar; }',
-            ],
-            [
-                '<?php class Foo { private function bar() {} }',
-                '<?php class Foo { private  function bar() {} }',
-            ],
-            [
-                '<?php class Foo { private function bar() {} }',
-                '<?php class Foo { private
+        ];
+
+        yield [
+            '<?php class Foo { private /* foo */$bar; }',
+            '<?php class Foo { private/* foo */$bar; }',
+        ];
+
+        yield [
+            '<?php class Foo { private /* foo */$bar; }',
+            '<?php class Foo { private  /* foo */$bar; }',
+        ];
+
+        yield [
+            '<?php class Foo { private function bar() {} }',
+            '<?php class Foo { private  function bar() {} }',
+        ];
+
+        yield [
+            '<?php class Foo { private function bar() {} }',
+            '<?php class Foo { private
 
 function bar() {} }',
-            ],
-            [
-                '<?php class Foo { private /* foo */function bar() {} }',
-                '<?php class Foo { private/* foo */function bar() {} }',
-            ],
-            [
-                '<?php class Foo { private /* foo */function bar() {} }',
-                '<?php class Foo { private  /* foo */function bar() {} }',
-            ],
-            [
-                '<?php class Foo { private CONST BAR = 9000; }',
-                '<?php class Foo { private  CONST BAR = 9000; }',
-            ],
-            [
-                '<?php class Foo { private CONST BAR = 9000; }',
-                '<?php class Foo { private
+        ];
+
+        yield [
+            '<?php class Foo { private /* foo */function bar() {} }',
+            '<?php class Foo { private/* foo */function bar() {} }',
+        ];
+
+        yield [
+            '<?php class Foo { private /* foo */function bar() {} }',
+            '<?php class Foo { private  /* foo */function bar() {} }',
+        ];
+
+        yield [
+            '<?php class Foo { private CONST BAR = 9000; }',
+            '<?php class Foo { private  CONST BAR = 9000; }',
+        ];
+
+        yield [
+            '<?php class Foo { private CONST BAR = 9000; }',
+            '<?php class Foo { private
 
 CONST BAR = 9000; }',
-            ],
-            [
-                '<?php class Foo { private /* foo */CONST BAR = 9000; }',
-                '<?php class Foo { private/* foo */CONST BAR = 9000; }',
-            ],
-            [
-                '<?php class Foo { private /* foo */CONST BAR = 9000; }',
-                '<?php class Foo { private  /* foo */CONST BAR = 9000; }',
-            ],
+        ];
+
+        yield [
+            '<?php class Foo { private /* foo */CONST BAR = 9000; }',
+            '<?php class Foo { private/* foo */CONST BAR = 9000; }',
+        ];
+
+        yield [
+            '<?php class Foo { private /* foo */CONST BAR = 9000; }',
+            '<?php class Foo { private  /* foo */CONST BAR = 9000; }',
         ];
     }
 
@@ -1959,67 +2309,77 @@ CONST BAR = 9000; }',
         $this->doTest($expected, $input);
     }
 
-    public static function provideFixWithProtectedCases(): array
+    public static function provideFixWithProtectedCases(): iterable
     {
-        return [
-            [
-                '<?php class Foo { protected $bar; }',
-                '<?php class Foo { protected$bar; }',
-            ],
-            [
-                '<?php class Foo { protected $bar; }',
-                '<?php class Foo { protected  $bar; }',
-            ],
-            [
-                '<?php class Foo { protected $bar; }',
-                '<?php class Foo { protected
+        yield [
+            '<?php class Foo { protected $bar; }',
+            '<?php class Foo { protected$bar; }',
+        ];
+
+        yield [
+            '<?php class Foo { protected $bar; }',
+            '<?php class Foo { protected  $bar; }',
+        ];
+
+        yield [
+            '<?php class Foo { protected $bar; }',
+            '<?php class Foo { protected
 
 $bar; }',
-            ],
-            [
-                '<?php class Foo { protected /* foo */$bar; }',
-                '<?php class Foo { protected/* foo */$bar; }',
-            ],
-            [
-                '<?php class Foo { protected /* foo */$bar; }',
-                '<?php class Foo { protected  /* foo */$bar; }',
-            ],
-            [
-                '<?php class Foo { protected function bar() {} }',
-                '<?php class Foo { protected  function bar() {} }',
-            ],
-            [
-                '<?php class Foo { protected function bar() {} }',
-                '<?php class Foo { protected
+        ];
+
+        yield [
+            '<?php class Foo { protected /* foo */$bar; }',
+            '<?php class Foo { protected/* foo */$bar; }',
+        ];
+
+        yield [
+            '<?php class Foo { protected /* foo */$bar; }',
+            '<?php class Foo { protected  /* foo */$bar; }',
+        ];
+
+        yield [
+            '<?php class Foo { protected function bar() {} }',
+            '<?php class Foo { protected  function bar() {} }',
+        ];
+
+        yield [
+            '<?php class Foo { protected function bar() {} }',
+            '<?php class Foo { protected
 
 function bar() {} }',
-            ],
-            [
-                '<?php class Foo { protected /* foo */function bar() {} }',
-                '<?php class Foo { protected/* foo */function bar() {} }',
-            ],
-            [
-                '<?php class Foo { protected /* foo */function bar() {} }',
-                '<?php class Foo { protected  /* foo */function bar() {} }',
-            ],
-            [
-                '<?php class Foo { protected CONST BAR = 9000; }',
-                '<?php class Foo { protected  CONST BAR = 9000; }',
-            ],
-            [
-                '<?php class Foo { protected CONST BAR = 9000; }',
-                '<?php class Foo { protected
+        ];
+
+        yield [
+            '<?php class Foo { protected /* foo */function bar() {} }',
+            '<?php class Foo { protected/* foo */function bar() {} }',
+        ];
+
+        yield [
+            '<?php class Foo { protected /* foo */function bar() {} }',
+            '<?php class Foo { protected  /* foo */function bar() {} }',
+        ];
+
+        yield [
+            '<?php class Foo { protected CONST BAR = 9000; }',
+            '<?php class Foo { protected  CONST BAR = 9000; }',
+        ];
+
+        yield [
+            '<?php class Foo { protected CONST BAR = 9000; }',
+            '<?php class Foo { protected
 
 CONST BAR = 9000; }',
-            ],
-            [
-                '<?php class Foo { protected /* foo */CONST BAR = 9000; }',
-                '<?php class Foo { protected/* foo */CONST BAR = 9000; }',
-            ],
-            [
-                '<?php class Foo { protected /* foo */CONST BAR = 9000; }',
-                '<?php class Foo { protected  /* foo */CONST BAR = 9000; }',
-            ],
+        ];
+
+        yield [
+            '<?php class Foo { protected /* foo */CONST BAR = 9000; }',
+            '<?php class Foo { protected/* foo */CONST BAR = 9000; }',
+        ];
+
+        yield [
+            '<?php class Foo { protected /* foo */CONST BAR = 9000; }',
+            '<?php class Foo { protected  /* foo */CONST BAR = 9000; }',
         ];
     }
 
@@ -2037,67 +2397,77 @@ CONST BAR = 9000; }',
         $this->doTest($expected, $input);
     }
 
-    public static function provideFixWithPublicCases(): array
+    public static function provideFixWithPublicCases(): iterable
     {
-        return [
-            [
-                '<?php class Foo { public $bar; }',
-                '<?php class Foo { public$bar; }',
-            ],
-            [
-                '<?php class Foo { Public $bar; }',
-                '<?php class Foo { Public  $bar; }',
-            ],
-            [
-                '<?php class Foo { public $bar; }',
-                '<?php class Foo { public
+        yield [
+            '<?php class Foo { public $bar; }',
+            '<?php class Foo { public$bar; }',
+        ];
+
+        yield [
+            '<?php class Foo { Public $bar; }',
+            '<?php class Foo { Public  $bar; }',
+        ];
+
+        yield [
+            '<?php class Foo { public $bar; }',
+            '<?php class Foo { public
 
 $bar; }',
-            ],
-            [
-                '<?php class Foo { public /* foo */$bar; }',
-                '<?php class Foo { public/* foo */$bar; }',
-            ],
-            [
-                '<?php class Foo { public /* foo */$bar; }',
-                '<?php class Foo { public  /* foo */$bar; }',
-            ],
-            [
-                '<?php class Foo { public function bar() {} }',
-                '<?php class Foo { public  function bar() {} }',
-            ],
-            [
-                '<?php class Foo { public function bar() {} }',
-                '<?php class Foo { public
+        ];
+
+        yield [
+            '<?php class Foo { public /* foo */$bar; }',
+            '<?php class Foo { public/* foo */$bar; }',
+        ];
+
+        yield [
+            '<?php class Foo { public /* foo */$bar; }',
+            '<?php class Foo { public  /* foo */$bar; }',
+        ];
+
+        yield [
+            '<?php class Foo { public function bar() {} }',
+            '<?php class Foo { public  function bar() {} }',
+        ];
+
+        yield [
+            '<?php class Foo { public function bar() {} }',
+            '<?php class Foo { public
 
 function bar() {} }',
-            ],
-            [
-                '<?php class Foo { public /* foo */function bar() {} }',
-                '<?php class Foo { public/* foo */function bar() {} }',
-            ],
-            [
-                '<?php class Foo { public /* foo */function bar() {} }',
-                '<?php class Foo { public  /* foo */function bar() {} }',
-            ],
-            [
-                '<?php class Foo { public CONST BAR = 9000; }',
-                '<?php class Foo { public  CONST BAR = 9000; }',
-            ],
-            [
-                '<?php class Foo { public CONST BAR = 9000; }',
-                '<?php class Foo { public
+        ];
+
+        yield [
+            '<?php class Foo { public /* foo */function bar() {} }',
+            '<?php class Foo { public/* foo */function bar() {} }',
+        ];
+
+        yield [
+            '<?php class Foo { public /* foo */function bar() {} }',
+            '<?php class Foo { public  /* foo */function bar() {} }',
+        ];
+
+        yield [
+            '<?php class Foo { public CONST BAR = 9000; }',
+            '<?php class Foo { public  CONST BAR = 9000; }',
+        ];
+
+        yield [
+            '<?php class Foo { public CONST BAR = 9000; }',
+            '<?php class Foo { public
 
 CONST BAR = 9000; }',
-            ],
-            [
-                '<?php class Foo { public /* foo */CONST BAR = 9000; }',
-                '<?php class Foo { public/* foo */CONST BAR = 9000; }',
-            ],
-            [
-                '<?php class Foo { public /* foo */CONST BAR = 9000; }',
-                '<?php class Foo { public  /* foo */CONST BAR = 9000; }',
-            ],
+        ];
+
+        yield [
+            '<?php class Foo { public /* foo */CONST BAR = 9000; }',
+            '<?php class Foo { public/* foo */CONST BAR = 9000; }',
+        ];
+
+        yield [
+            '<?php class Foo { public /* foo */CONST BAR = 9000; }',
+            '<?php class Foo { public  /* foo */CONST BAR = 9000; }',
         ];
     }
 
@@ -2115,27 +2485,28 @@ CONST BAR = 9000; }',
         $this->doTest($expected, $input);
     }
 
-    public static function provideFixWithRequireCases(): array
+    public static function provideFixWithRequireCases(): iterable
     {
-        return [
-            [
-                '<?php require "vendor/autoload.php";',
-                '<?php require"vendor/autoload.php";',
-            ],
-            [
-                '<?php require "vendor/autoload.php";',
-                '<?php require  "vendor/autoload.php";',
-            ],
-            [
-                '<?php require "vendor/autoload.php";',
-                '<?php require
+        yield [
+            '<?php require "vendor/autoload.php";',
+            '<?php require"vendor/autoload.php";',
+        ];
+
+        yield [
+            '<?php require "vendor/autoload.php";',
+            '<?php require  "vendor/autoload.php";',
+        ];
+
+        yield [
+            '<?php require "vendor/autoload.php";',
+            '<?php require
 
 "vendor/autoload.php";',
-            ],
-            [
-                '<?php require /* foo */"vendor/autoload.php";',
-                '<?php require/* foo */"vendor/autoload.php";',
-            ],
+        ];
+
+        yield [
+            '<?php require /* foo */"vendor/autoload.php";',
+            '<?php require/* foo */"vendor/autoload.php";',
         ];
     }
 
@@ -2153,27 +2524,28 @@ CONST BAR = 9000; }',
         $this->doTest($expected, $input);
     }
 
-    public static function provideFixWithRequireOnceCases(): array
+    public static function provideFixWithRequireOnceCases(): iterable
     {
-        return [
-            [
-                '<?php require_once "vendor/autoload.php";',
-                '<?php require_once"vendor/autoload.php";',
-            ],
-            [
-                '<?php require_once "vendor/autoload.php";',
-                '<?php require_once  "vendor/autoload.php";',
-            ],
-            [
-                '<?php require_once "vendor/autoload.php";',
-                '<?php require_once
+        yield [
+            '<?php require_once "vendor/autoload.php";',
+            '<?php require_once"vendor/autoload.php";',
+        ];
+
+        yield [
+            '<?php require_once "vendor/autoload.php";',
+            '<?php require_once  "vendor/autoload.php";',
+        ];
+
+        yield [
+            '<?php require_once "vendor/autoload.php";',
+            '<?php require_once
 
 "vendor/autoload.php";',
-            ],
-            [
-                '<?php require_once /* foo */"vendor/autoload.php";',
-                '<?php require_once/* foo */"vendor/autoload.php";',
-            ],
+        ];
+
+        yield [
+            '<?php require_once /* foo */"vendor/autoload.php";',
+            '<?php require_once/* foo */"vendor/autoload.php";',
         ];
     }
 
@@ -2191,123 +2563,138 @@ CONST BAR = 9000; }',
         $this->doTest($expected, $input);
     }
 
-    public static function provideFixWithReturnCases(): array
+    public static function provideFixWithReturnCases(): iterable
     {
-        return [
-            [
-                '<?php return;',
-            ],
-            [
-                '<?php return /* foo */;',
-                '<?php return/* foo */;',
-            ],
-            [
-                '<?php return /* foo */;',
-                '<?php return  /* foo */;',
-            ],
-            [
-                '<?php return $foo;',
-                '<?php return$foo;',
-            ],
-            [
-                '<?php return 9000;',
-                '<?php return  9000;',
-            ],
-            [
-                '<?php return 9000;',
-                '<?php return
+        yield [
+            '<?php return;',
+        ];
+
+        yield [
+            '<?php return /* foo */;',
+            '<?php return/* foo */;',
+        ];
+
+        yield [
+            '<?php return /* foo */;',
+            '<?php return  /* foo */;',
+        ];
+
+        yield [
+            '<?php return $foo;',
+            '<?php return$foo;',
+        ];
+
+        yield [
+            '<?php return 9000;',
+            '<?php return  9000;',
+        ];
+
+        yield [
+            '<?php return 9000;',
+            '<?php return
 
 9000;',
-            ],
-            [
-                '<?php return /* */ 9000 + 1 /* foo */       ?>',
-                '<?php return
+        ];
+
+        yield [
+            '<?php return /* */ 9000 + 1 /* foo */       ?>',
+            '<?php return
 
 
 
 
 
 /* */ 9000 + 1 /* foo */       ?>',
-            ],
-            [
-                '<?php return /* foo */9000;',
-                '<?php return/* foo */9000;',
-            ],
-            [
-                '<?php return $foo && $bar || $baz;',
-                '<?php return
+        ];
+
+        yield [
+            '<?php return /* foo */9000;',
+            '<?php return/* foo */9000;',
+        ];
+
+        yield [
+            '<?php return $foo && $bar || $baz;',
+            '<?php return
 
 $foo && $bar || $baz;',
-            ],
-            [
-                '<?php
+        ];
+
+        yield [
+            '<?php
 
 return
     $foo
     && $bar
     || $baz;',
-            ],
-            [
-                '<?php
+        ];
+
+        yield [
+            '<?php
 
 return
     $foo &&
     $bar ||
     $baz;',
-            ],
-            [
-                '<?php
+        ];
+
+        yield [
+            '<?php
 
 return
     $foo
     + $bar
     - $baz;',
-            ],
-            [
-                '<?php
+        ];
+
+        yield [
+            '<?php
 
 return
     $foo +
     $bar -
     $baz;',
-            ],
-            [
-                '<?php
+        ];
+
+        yield [
+            '<?php
 
 return
     $foo ?
     $bar :
     $baz;',
-            ],
-            [
-                '<?php
+        ];
+
+        yield [
+            '<?php
 
 return
     $foo
     ? $bar
     : baz;',
-            ],
-            [
-                '<?php
+        ];
+
+        yield [
+            '<?php
 
 return
     $foo ?:
     $bar;',
-            ],
-            [
-                '<?php
+        ];
+
+        yield [
+            '<?php
 
 return
     $foo
     ?: $bar;',
-            ],
-            [
-                '<?php
+        ];
+
+        yield [
+            '<?php
 
 return
     $foo
     ?: $bar?>',
-            ],
         ];
     }
 
@@ -2325,55 +2712,94 @@ return
         $this->doTest($expected, $input);
     }
 
-    public static function provideFixWithStaticCases(): array
+    public static function provideFixWithStaticCases(): iterable
     {
-        return [
-            [
-                '<?php function foo() { static $bar; }',
-                '<?php function foo() { static$bar; }',
-            ],
-            [
-                '<?php function foo() { static $bar; }',
-                '<?php function foo() { static  $bar; }',
-            ],
-            [
-                '<?php function foo() { static $bar; }',
-                '<?php function foo() { static
+        yield [
+            '<?php function foo() { static $bar; }',
+            '<?php function foo() { static$bar; }',
+        ];
+
+        yield [
+            '<?php function foo() { static $bar; }',
+            '<?php function foo() { static  $bar; }',
+        ];
+
+        yield [
+            '<?php function foo() { static $bar; }',
+            '<?php function foo() { static
 
 $bar; }',
-            ],
-            [
-                '<?php function foo() { static /* foo */$bar; }',
-                '<?php function foo() { static/* foo */$bar; }',
-            ],
-            [
-                '<?php function foo() { static /* foo */$bar; }',
-                '<?php function foo() { static  /* foo */$bar; }',
-            ],
-            [
-                '<?php class Foo { static function bar() {} }',
-                '<?php class Foo { static  function bar() {} }',
-            ],
-            [
-                '<?php class Foo { static function bar() {} }',
-                '<?php class Foo { static
+        ];
+
+        yield [
+            '<?php function foo() { static /* foo */$bar; }',
+            '<?php function foo() { static/* foo */$bar; }',
+        ];
+
+        yield [
+            '<?php function foo() { static /* foo */$bar; }',
+            '<?php function foo() { static  /* foo */$bar; }',
+        ];
+
+        yield [
+            '<?php class Foo { static function bar() {} }',
+            '<?php class Foo { static  function bar() {} }',
+        ];
+
+        yield [
+            '<?php class Foo { static function bar() {} }',
+            '<?php class Foo { static
 
 function bar() {} }',
-            ],
-            [
-                '<?php class Foo { static /* foo */function bar() {} }',
-                '<?php class Foo { static/* foo */function bar() {} }',
-            ],
-            [
-                '<?php class Foo { static /* foo */function bar() {} }',
-                '<?php class Foo { static  /* foo */function bar() {} }',
-            ],
-            [
-                '<?php class Foo { function bar() { return new static(); } }',
-            ],
-            [
-                '<?php class Foo { function bar() { return static::class; } }',
-            ],
+        ];
+
+        yield [
+            '<?php class Foo { static /* foo */function bar() {} }',
+            '<?php class Foo { static/* foo */function bar() {} }',
+        ];
+
+        yield [
+            '<?php class Foo { static /* foo */function bar() {} }',
+            '<?php class Foo { static  /* foo */function bar() {} }',
+        ];
+
+        yield [
+            '<?php class Foo { public static ?int $x; }',
+            '<?php class Foo { public static?int $x; }',
+        ];
+
+        yield [
+            '<?php class Foo { public static ?int $x; }',
+            '<?php class Foo { public static   ?int $x; }',
+        ];
+
+        yield [
+            '<?php class Foo { public static int $x; }',
+            '<?php class Foo { public static   int $x; }',
+        ];
+
+        yield [
+            '<?php class Foo { public static \Closure $a; }',
+            '<?php class Foo { public static    \Closure $a; }',
+        ];
+
+        yield [
+            '<?php class Foo { public static array $c; }',
+            '<?php class Foo { public static
+array $c; }',
+        ];
+
+        yield [
+            '<?php $a = static fn(): bool => true;',
+            '<?php $a = static    fn(): bool => true;',
+        ];
+
+        yield [
+            '<?php class Foo { function bar() { return new static(); } }',
+        ];
+
+        yield [
+            '<?php class Foo { function bar() { return static::class; } }',
         ];
     }
 
@@ -2391,27 +2817,28 @@ function bar() {} }',
         $this->doTest($expected, $input);
     }
 
-    public static function provideFixWithThrowCases(): array
+    public static function provideFixWithThrowCases(): iterable
     {
-        return [
-            [
-                '<?php throw $foo;',
-                '<?php throw$foo;',
-            ],
-            [
-                '<?php throw new Exception();',
-                '<?php throw  new Exception();',
-            ],
-            [
-                '<?php throw new Exception();',
-                '<?php throw
+        yield [
+            '<?php throw $foo;',
+            '<?php throw$foo;',
+        ];
+
+        yield [
+            '<?php throw new Exception();',
+            '<?php throw  new Exception();',
+        ];
+
+        yield [
+            '<?php throw new Exception();',
+            '<?php throw
 
 new Exception();',
-            ],
-            [
-                '<?php throw /* foo */new Exception();',
-                '<?php throw/* foo */new Exception();',
-            ],
+        ];
+
+        yield [
+            '<?php throw /* foo */new Exception();',
+            '<?php throw/* foo */new Exception();',
         ];
     }
 
@@ -2429,27 +2856,28 @@ new Exception();',
         $this->doTest($expected, $input);
     }
 
-    public static function provideFixWithTraitCases(): array
+    public static function provideFixWithTraitCases(): iterable
     {
-        return [
-            [
-                '<?php trait Foo {}',
-                '<?php trait  Foo {}',
-            ],
-            [
-                '<?php trait Foo {}',
-                '<?php trait
+        yield [
+            '<?php trait Foo {}',
+            '<?php trait  Foo {}',
+        ];
+
+        yield [
+            '<?php trait Foo {}',
+            '<?php trait
 
 Foo {}',
-            ],
-            [
-                '<?php trait /* foo */Foo {}',
-                '<?php trait  /* foo */Foo {}',
-            ],
-            [
-                '<?php trait /* foo */Foo {}',
-                '<?php trait/* foo */Foo {}',
-            ],
+        ];
+
+        yield [
+            '<?php trait /* foo */Foo {}',
+            '<?php trait  /* foo */Foo {}',
+        ];
+
+        yield [
+            '<?php trait /* foo */Foo {}',
+            '<?php trait/* foo */Foo {}',
         ];
     }
 
@@ -2467,31 +2895,33 @@ Foo {}',
         $this->doTest($expected, $input);
     }
 
-    public static function provideFixWithTryCases(): array
+    public static function provideFixWithTryCases(): iterable
     {
-        return [
-            [
-                '<?php try {} catch (\Exception $exception) {}',
-                '<?php try{} catch (\Exception $exception) {}',
-            ],
-            [
-                '<?php try {} catch (\Exception $exception) {}',
-                '<?php try  {} catch (\Exception $exception) {}',
-            ],
-            [
-                '<?php try {} catch (\Exception $exception) {}',
-                '<?php try
+        yield [
+            '<?php try {} catch (\Exception $exception) {}',
+            '<?php try{} catch (\Exception $exception) {}',
+        ];
+
+        yield [
+            '<?php try {} catch (\Exception $exception) {}',
+            '<?php try  {} catch (\Exception $exception) {}',
+        ];
+
+        yield [
+            '<?php try {} catch (\Exception $exception) {}',
+            '<?php try
 
 {} catch (\Exception $exception) {}',
-            ],
-            [
-                '<?php try /* foo */{} catch (\Exception $exception) {}',
-                '<?php try/* foo */{} catch (\Exception $exception) {}',
-            ],
-            [
-                '<?php try /* foo */{} catch (\Exception $exception) {}',
-                '<?php try  /* foo */{} catch (\Exception $exception) {}',
-            ],
+        ];
+
+        yield [
+            '<?php try /* foo */{} catch (\Exception $exception) {}',
+            '<?php try/* foo */{} catch (\Exception $exception) {}',
+        ];
+
+        yield [
+            '<?php try /* foo */{} catch (\Exception $exception) {}',
+            '<?php try  /* foo */{} catch (\Exception $exception) {}',
         ];
     }
 
@@ -2509,63 +2939,72 @@ Foo {}',
         $this->doTest($expected, $input);
     }
 
-    public static function provideFixWithUseCases(): array
+    public static function provideFixWithUseCases(): iterable
     {
-        return [
-            [
-                '<?php use Foo\Bar;',
-                '<?php use  Foo\Bar;',
-            ],
-            [
-                '<?php use Foo\Bar;',
-                '<?php use
+        yield [
+            '<?php use Foo\Bar;',
+            '<?php use  Foo\Bar;',
+        ];
+
+        yield [
+            '<?php use Foo\Bar;',
+            '<?php use
 
 Foo\Bar;',
-            ],
-            [
-                '<?php use /* foo */Foo\Bar;',
-                '<?php use/* foo */Foo\Bar;',
-            ],
-            [
-                '<?php use /* foo */Foo\Bar;',
-                '<?php use  /* foo */Foo\Bar;',
-            ],
-            [
-                '<?php use const Foo\BAR;',
-                '<?php use  const Foo\BAR;',
-            ],
-            [
-                '<?php use const Foo\BAR;',
-                '<?php use
+        ];
+
+        yield [
+            '<?php use /* foo */Foo\Bar;',
+            '<?php use/* foo */Foo\Bar;',
+        ];
+
+        yield [
+            '<?php use /* foo */Foo\Bar;',
+            '<?php use  /* foo */Foo\Bar;',
+        ];
+
+        yield [
+            '<?php use const Foo\BAR;',
+            '<?php use  const Foo\BAR;',
+        ];
+
+        yield [
+            '<?php use const Foo\BAR;',
+            '<?php use
 
 const Foo\BAR;',
-            ],
-            [
-                '<?php use /* foo */const Foo\BAR;',
-                '<?php use/* foo */const Foo\BAR;',
-            ],
-            [
-                '<?php use /* foo */const Foo\BAR;',
-                '<?php use/* foo */const Foo\BAR;',
-            ],
-            [
-                '<?php use function Foo\bar;',
-                '<?php use  function Foo\bar;',
-            ],
-            [
-                '<?php use function Foo\bar;',
-                '<?php use
+        ];
+
+        yield [
+            '<?php use /* foo */const Foo\BAR;',
+            '<?php use/* foo */const Foo\BAR;',
+        ];
+
+        yield [
+            '<?php use /* foo */const Foo\BAR;',
+            '<?php use/* foo */const Foo\BAR;',
+        ];
+
+        yield [
+            '<?php use function Foo\bar;',
+            '<?php use  function Foo\bar;',
+        ];
+
+        yield [
+            '<?php use function Foo\bar;',
+            '<?php use
 
 function Foo\bar;',
-            ],
-            [
-                '<?php use /* foo */function Foo\bar;',
-                '<?php use/* foo */function Foo\bar;',
-            ],
-            [
-                '<?php use /* foo */function Foo\bar;',
-                '<?php use/* foo */function Foo\bar;',
-            ],
+        ];
+
+        yield [
+            '<?php use /* foo */function Foo\bar;',
+            '<?php use/* foo */function Foo\bar;',
+        ];
+
+        yield [
+            '<?php use /* foo */function Foo\bar;',
+            '<?php use/* foo */function Foo\bar;',
         ];
     }
 
@@ -2581,66 +3020,70 @@ function Foo\bar;',
         $this->doTest($expected, $input);
     }
 
-    public static function provideFixWithUseLambdaCases(): array
+    public static function provideFixWithUseLambdaCases(): iterable
     {
-        return [
+        yield [
+            '<?php $foo = function () use($bar) {};',
+            '<?php $foo = function ()use($bar) {};',
             [
-                '<?php $foo = function () use($bar) {};',
-                '<?php $foo = function ()use($bar) {};',
-                [
-                    'constructs_preceded_by_a_single_space' => ['use_lambda'],
-                    'constructs_followed_by_a_single_space' => [],
-                ],
+                'constructs_preceded_by_a_single_space' => ['use_lambda'],
+                'constructs_followed_by_a_single_space' => [],
             ],
+        ];
+
+        yield [
+            '<?php $foo = function ()use ($bar) {};',
+            '<?php $foo = function ()use($bar) {};',
             [
-                '<?php $foo = function ()use ($bar) {};',
-                '<?php $foo = function ()use($bar) {};',
-                [
-                    'constructs_preceded_by_a_single_space' => [],
-                    'constructs_followed_by_a_single_space' => ['use_lambda'],
-                ],
+                'constructs_preceded_by_a_single_space' => [],
+                'constructs_followed_by_a_single_space' => ['use_lambda'],
             ],
+        ];
+
+        yield [
+            '<?php $foo = function () use ($bar) {};',
+            '<?php $foo = function ()use($bar) {};',
             [
-                '<?php $foo = function () use ($bar) {};',
-                '<?php $foo = function ()use($bar) {};',
-                [
-                    'constructs_preceded_by_a_single_space' => ['use_lambda'],
-                    'constructs_followed_by_a_single_space' => ['use_lambda'],
-                ],
+                'constructs_preceded_by_a_single_space' => ['use_lambda'],
+                'constructs_followed_by_a_single_space' => ['use_lambda'],
             ],
+        ];
+
+        yield [
+            '<?php $foo = function () use ($bar) {};',
+            '<?php $foo = function () use  ($bar) {};',
             [
-                '<?php $foo = function () use ($bar) {};',
-                '<?php $foo = function () use  ($bar) {};',
-                [
-                    'constructs_preceded_by_a_single_space' => [],
-                    'constructs_followed_by_a_single_space' => ['use_lambda'],
-                ],
+                'constructs_preceded_by_a_single_space' => [],
+                'constructs_followed_by_a_single_space' => ['use_lambda'],
             ],
-            [
-                '<?php $foo = function () use ($bar) {};',
-                '<?php $foo = function () use
+        ];
+
+        yield [
+            '<?php $foo = function () use ($bar) {};',
+            '<?php $foo = function () use
 
 ($bar) {};',
-                [
-                    'constructs_preceded_by_a_single_space' => [],
-                    'constructs_followed_by_a_single_space' => ['use_lambda'],
-                ],
-            ],
             [
-                '<?php $foo = function () use /* foo */($bar) {};',
-                '<?php $foo = function () use/* foo */($bar) {};',
-                [
-                    'constructs_preceded_by_a_single_space' => [],
-                    'constructs_followed_by_a_single_space' => ['use_lambda'],
-                ],
+                'constructs_preceded_by_a_single_space' => [],
+                'constructs_followed_by_a_single_space' => ['use_lambda'],
             ],
+        ];
+
+        yield [
+            '<?php $foo = function () use /* foo */($bar) {};',
+            '<?php $foo = function () use/* foo */($bar) {};',
             [
-                '<?php $foo = function () use /* foo */($bar) {};',
-                '<?php $foo = function () use  /* foo */($bar) {};',
-                [
-                    'constructs_preceded_by_a_single_space' => [],
-                    'constructs_followed_by_a_single_space' => ['use_lambda'],
-                ],
+                'constructs_preceded_by_a_single_space' => [],
+                'constructs_followed_by_a_single_space' => ['use_lambda'],
+            ],
+        ];
+
+        yield [
+            '<?php $foo = function () use /* foo */($bar) {};',
+            '<?php $foo = function () use  /* foo */($bar) {};',
+            [
+                'constructs_preceded_by_a_single_space' => [],
+                'constructs_followed_by_a_single_space' => ['use_lambda'],
             ],
         ];
     }
@@ -2659,27 +3102,28 @@ function Foo\bar;',
         $this->doTest($expected, $input);
     }
 
-    public static function provideFixWithUseTraitCases(): array
+    public static function provideFixWithUseTraitCases(): iterable
     {
-        return [
-            [
-                '<?php class Foo { use Bar; }',
-                '<?php class Foo { use  Bar; }',
-            ],
-            [
-                '<?php class Foo { use Bar; }',
-                '<?php class Foo { use
+        yield [
+            '<?php class Foo { use Bar; }',
+            '<?php class Foo { use  Bar; }',
+        ];
+
+        yield [
+            '<?php class Foo { use Bar; }',
+            '<?php class Foo { use
 
 Bar; }',
-            ],
-            [
-                '<?php class Foo { use /* foo */Bar; }',
-                '<?php class Foo { use/* foo */Bar; }',
-            ],
-            [
-                '<?php class Foo { use /* foo */Bar; }',
-                '<?php class Foo { use  /* foo */Bar; }',
-            ],
+        ];
+
+        yield [
+            '<?php class Foo { use /* foo */Bar; }',
+            '<?php class Foo { use/* foo */Bar; }',
+        ];
+
+        yield [
+            '<?php class Foo { use /* foo */Bar; }',
+            '<?php class Foo { use  /* foo */Bar; }',
         ];
     }
 
@@ -2697,31 +3141,33 @@ Bar; }',
         $this->doTest($expected, $input);
     }
 
-    public static function provideFixWithVarCases(): array
+    public static function provideFixWithVarCases(): iterable
     {
-        return [
-            [
-                '<?php class Foo { var $bar; }',
-                '<?php class Foo { var$bar; }',
-            ],
-            [
-                '<?php class Foo { var $bar; }',
-                '<?php class Foo { var  $bar; }',
-            ],
-            [
-                '<?php class Foo { var $bar; }',
-                '<?php class Foo { var
+        yield [
+            '<?php class Foo { var $bar; }',
+            '<?php class Foo { var$bar; }',
+        ];
+
+        yield [
+            '<?php class Foo { var $bar; }',
+            '<?php class Foo { var  $bar; }',
+        ];
+
+        yield [
+            '<?php class Foo { var $bar; }',
+            '<?php class Foo { var
 
 $bar; }',
-            ],
-            [
-                '<?php class Foo { var /* foo */$bar; }',
-                '<?php class Foo { var/* foo */$bar; }',
-            ],
-            [
-                '<?php class Foo { var /* foo */$bar; }',
-                '<?php class Foo { var  /* foo */$bar; }',
-            ],
+        ];
+
+        yield [
+            '<?php class Foo { var /* foo */$bar; }',
+            '<?php class Foo { var/* foo */$bar; }',
+        ];
+
+        yield [
+            '<?php class Foo { var /* foo */$bar; }',
+            '<?php class Foo { var  /* foo */$bar; }',
         ];
     }
 
@@ -2739,31 +3185,33 @@ $bar; }',
         $this->doTest($expected, $input);
     }
 
-    public static function provideFixWithWhileCases(): array
+    public static function provideFixWithWhileCases(): iterable
     {
-        return [
-            [
-                '<?php do {} while (true);',
-                '<?php do {} while(true);',
-            ],
-            [
-                '<?php do {} while (true);',
-                '<?php do {} while  (true);',
-            ],
-            [
-                '<?php do {} while (true);',
-                '<?php do {} while
+        yield [
+            '<?php do {} while (true);',
+            '<?php do {} while(true);',
+        ];
+
+        yield [
+            '<?php do {} while (true);',
+            '<?php do {} while  (true);',
+        ];
+
+        yield [
+            '<?php do {} while (true);',
+            '<?php do {} while
 
 (true);',
-            ],
-            [
-                '<?php do {} while /* foo */(true);',
-                '<?php do {} while/* foo */(true);',
-            ],
-            [
-                '<?php do {} while /* foo */(true);',
-                '<?php do {} while  /* foo */(true);',
-            ],
+        ];
+
+        yield [
+            '<?php do {} while /* foo */(true);',
+            '<?php do {} while/* foo */(true);',
+        ];
+
+        yield [
+            '<?php do {} while /* foo */(true);',
+            '<?php do {} while  /* foo */(true);',
         ];
     }
 
@@ -2781,27 +3229,28 @@ $bar; }',
         $this->doTest($expected, $input);
     }
 
-    public static function provideFixWithYieldCases(): array
+    public static function provideFixWithYieldCases(): iterable
     {
-        return [
-            [
-                '<?php function foo() { yield $foo; }',
-                '<?php function foo() { yield$foo; }',
-            ],
-            [
-                '<?php function foo() { yield "Foo"; }',
-                '<?php function foo() { yield  "Foo"; }',
-            ],
-            [
-                '<?php function foo() { yield "Foo"; }',
-                '<?php function foo() { yield
+        yield [
+            '<?php function foo() { yield $foo; }',
+            '<?php function foo() { yield$foo; }',
+        ];
+
+        yield [
+            '<?php function foo() { yield "Foo"; }',
+            '<?php function foo() { yield  "Foo"; }',
+        ];
+
+        yield [
+            '<?php function foo() { yield "Foo"; }',
+            '<?php function foo() { yield
 
 "Foo"; }',
-            ],
-            [
-                '<?php function foo() { yield /* foo */"Foo"; }',
-                '<?php function foo() { yield/* foo */"Foo"; }',
-            ],
+        ];
+
+        yield [
+            '<?php function foo() { yield /* foo */"Foo"; }',
+            '<?php function foo() { yield/* foo */"Foo"; }',
         ];
     }
 
@@ -2817,7 +3266,7 @@ $bar; }',
         $this->doTest($expected, $input);
     }
 
-    public static function provideFixWithYieldFromCases(): array
+    public static function provideFixWithYieldFromCases(): iterable
     {
         $configFollowed = [
             'constructs_contain_a_single_space' => [
@@ -2842,82 +3291,92 @@ $bar; }',
             ],
         ];
 
-        return [
-            [
-                '<?php function foo() { yield from $foo; }',
-                '<?php function foo() { yield from$foo; }',
-                $configFollowed,
-            ],
-            [
-                '<?php function foo() { yield from baz(); }',
-                '<?php function foo() { yield from  baz(); }',
-                $configFollowed,
-            ],
-            [
-                '<?php function foo() { yIeLd fRoM baz(); }',
-                '<?php function foo() { yIeLd fRoM  baz(); }',
-                $configFollowed,
-            ],
-            [
-                '<?php function foo() { yield from baz(); }',
-                '<?php function foo() { yield from
+        yield [
+            '<?php function foo() { yield from $foo; }',
+            '<?php function foo() { yield from$foo; }',
+            $configFollowed,
+        ];
+
+        yield [
+            '<?php function foo() { yield from baz(); }',
+            '<?php function foo() { yield from  baz(); }',
+            $configFollowed,
+        ];
+
+        yield [
+            '<?php function foo() { yIeLd fRoM baz(); }',
+            '<?php function foo() { yIeLd fRoM  baz(); }',
+            $configFollowed,
+        ];
+
+        yield [
+            '<?php function foo() { yield from baz(); }',
+            '<?php function foo() { yield from
 
 baz(); }',
-                $configFollowed,
-            ],
-            [
-                '<?php function foo() { yield from /* foo */baz(); }',
-                '<?php function foo() { yield from/* foo */baz(); }',
-                $configFollowed,
-            ],
-            [
-                '<?php function foo() { yield from /* foo */baz(); }',
-                '<?php function foo() { yield from  /* foo */baz(); }',
-                $configFollowed,
-            ],
-            [
-                '<?php function foo() { yield from /* foo */baz(); }',
-                '<?php function foo() { yield from
+            $configFollowed,
+        ];
+
+        yield [
+            '<?php function foo() { yield from /* foo */baz(); }',
+            '<?php function foo() { yield from/* foo */baz(); }',
+            $configFollowed,
+        ];
+
+        yield [
+            '<?php function foo() { yield from /* foo */baz(); }',
+            '<?php function foo() { yield from  /* foo */baz(); }',
+            $configFollowed,
+        ];
+
+        yield [
+            '<?php function foo() { yield from /* foo */baz(); }',
+            '<?php function foo() { yield from
 
 /* foo */baz(); }',
-                $configFollowed,
-            ],
-            [
-                '<?php function foo() { yield  from baz(); }',
-                '<?php function foo() { yield  from  baz(); }',
-                $configFollowed,
-            ],
-            [
-                '<?php function foo() { yield from  baz(); }',
-                '<?php function foo() { yield  from  baz(); }',
-                $configContain,
-            ],
-            [
-                '<?php function foo() { yield from baz(); }',
-                '<?php function foo() { yield  from  baz(); }',
-                $configAll,
-            ],
-            [
-                '<?php function foo() { yIeLd fRoM baz(); }',
-                '<?php function foo() { yIeLd  fRoM  baz(); }',
-                $configAll,
-            ],
-            [
-                '<?php function foo() { yield from baz(); }',
-                '<?php function foo() { yield
+            $configFollowed,
+        ];
+
+        yield [
+            '<?php function foo() { yield  from baz(); }',
+            '<?php function foo() { yield  from  baz(); }',
+            $configFollowed,
+        ];
+
+        yield [
+            '<?php function foo() { yield from  baz(); }',
+            '<?php function foo() { yield  from  baz(); }',
+            $configContain,
+        ];
+
+        yield [
+            '<?php function foo() { yield from baz(); }',
+            '<?php function foo() { yield  from  baz(); }',
+            $configAll,
+        ];
+
+        yield [
+            '<?php function foo() { yIeLd fRoM baz(); }',
+            '<?php function foo() { yIeLd  fRoM  baz(); }',
+            $configAll,
+        ];
+
+        yield [
+            '<?php function foo() { yield from baz(); }',
+            '<?php function foo() { yield
 
 from baz(); }',
-                $configContain,
-            ],
-            [
-                '<?php function foo() { yield from baz(); }',
-                '<?php function foo() { yield
+            $configContain,
+        ];
+
+        yield [
+            '<?php function foo() { yield from baz(); }',
+            '<?php function foo() { yield
 
 from
 
 baz(); }',
-                $configAll,
-            ],
+            $configAll,
         ];
     }
 
@@ -2935,31 +3394,35 @@ baz(); }',
         $this->doTest($expected, $input);
     }
 
-    public static function provideFixWithPhpOpenCases(): array
+    public static function provideFixWithPhpOpenCases(): iterable
     {
-        return [
-            [
-                '<?php echo 1;',
-                '<?php    echo 1;',
-            ],
-            [
-                "<?php\necho 1;",
-            ],
-            [
-                "<?php\n   echo 1;",
-            ],
-            [
-                '<?php ',
-            ],
-            [
-                "<?php\n",
-            ],
-            [
-                "<?php \necho 1;",
-            ],
-            [
-                "<?php    \n\necho 1;",
-            ],
+        yield [
+            '<?php echo 1;',
+            '<?php    echo 1;',
+        ];
+
+        yield [
+            "<?php\necho 1;",
+        ];
+
+        yield [
+            "<?php\n   echo 1;",
+        ];
+
+        yield [
+            '<?php ',
+        ];
+
+        yield [
+            "<?php\n",
+        ];
+
+        yield [
+            "<?php \necho 1;",
+        ];
+
+        yield [
+            "<?php    \n\necho 1;",
         ];
     }
 

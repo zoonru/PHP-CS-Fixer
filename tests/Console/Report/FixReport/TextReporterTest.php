@@ -27,86 +27,124 @@ use PhpCsFixer\Console\Report\FixReport\TextReporter;
  */
 final class TextReporterTest extends AbstractReporterTestCase
 {
-    protected function createNoErrorReport(): string
+    protected static function createNoErrorReport(): string
     {
         return <<<'TEXT'
-TEXT;
+            TEXT;
     }
 
-    protected function createSimpleReport(): string
+    protected static function createSimpleReport(): string
     {
         return str_replace(
             "\n",
             PHP_EOL,
             <<<'TEXT'
-   1) someFile.php
+                   1) someFile.php
+                      ---------- begin diff ----------
+                --- Original
+                +++ New
+                @@ -2,7 +2,7 @@
 
-TEXT
+                 class Foo
+                 {
+                -    public function bar($foo = 1, $bar)
+                +    public function bar($foo, $bar)
+                     {
+                     }
+                 }
+                      ----------- end diff -----------
+
+
+                TEXT
         );
     }
 
-    protected function createWithDiffReport(): string
+    protected static function createWithDiffReport(): string
     {
         return str_replace(
             "\n",
             PHP_EOL,
             <<<'TEXT'
-   1) someFile.php
-      ---------- begin diff ----------
-this text is a diff ;)
-      ----------- end diff -----------
+                   1) someFile.php
+                      ---------- begin diff ----------
+                --- Original
+                +++ New
+                @@ -2,7 +2,7 @@
+
+                 class Foo
+                 {
+                -    public function bar($foo = 1, $bar)
+                +    public function bar($foo, $bar)
+                     {
+                     }
+                 }
+                      ----------- end diff -----------
 
 
-TEXT
+                TEXT
         );
     }
 
-    protected function createWithAppliedFixersReport(): string
+    protected static function createWithAppliedFixersReport(): string
     {
         return str_replace(
             "\n",
             PHP_EOL,
             <<<'TEXT'
-   1) someFile.php (some_fixer_name_here_1, some_fixer_name_here_2)
+                   1) someFile.php (some_fixer_name_here_1, some_fixer_name_here_2)
 
-TEXT
+                TEXT
         );
     }
 
-    protected function createWithTimeAndMemoryReport(): string
+    protected static function createWithTimeAndMemoryReport(): string
     {
         return str_replace(
             "\n",
             PHP_EOL,
             <<<'TEXT'
-   1) someFile.php
+                   1) someFile.php
+                      ---------- begin diff ----------
+                --- Original
+                +++ New
+                @@ -2,7 +2,7 @@
 
-Fixed 1 of 10 files in 1.234 seconds, 2.500 MB memory used
+                 class Foo
+                 {
+                -    public function bar($foo = 1, $bar)
+                +    public function bar($foo, $bar)
+                     {
+                     }
+                 }
+                      ----------- end diff -----------
 
-TEXT
+
+                Fixed 1 of 10 files in 1.234 seconds, 2.500 MB memory used
+
+                TEXT
         );
     }
 
-    protected function createComplexReport(): string
+    protected static function createComplexReport(): string
     {
         return str_replace(
             "\n",
             PHP_EOL,
             <<<'TEXT'
-   1) someFile.php (<comment>some_fixer_name_here_1, some_fixer_name_here_2</comment>)
-<comment>      ---------- begin diff ----------</comment>
-this text is a diff ;)
-<comment>      ----------- end diff -----------</comment>
+                   1) someFile.php (<comment>some_fixer_name_here_1, some_fixer_name_here_2</comment>)
+                <comment>      ---------- begin diff ----------</comment>
+                this text is a diff ;)
+                <comment>      ----------- end diff -----------</comment>
 
-   2) anotherFile.php (<comment>another_fixer_name_here</comment>)
-<comment>      ---------- begin diff ----------</comment>
-another diff here ;)
-<comment>      ----------- end diff -----------</comment>
+                   2) anotherFile.php (<comment>another_fixer_name_here</comment>)
+                <comment>      ---------- begin diff ----------</comment>
+                another diff here ;)
+                <comment>      ----------- end diff -----------</comment>
 
 
-Found 2 of 10 files that can be fixed in 1.234 seconds, 2.500 MB memory used
+                Found 2 of 10 files that can be fixed in 1.234 seconds, 2.500 MB memory used
 
-TEXT
+                TEXT
         );
     }
 
@@ -122,6 +160,6 @@ TEXT
 
     protected function assertFormat(string $expected, string $input): void
     {
-        static::assertSame($expected, $input);
+        self::assertSame($expected, $input);
     }
 }

@@ -26,5 +26,9 @@ Rule sets
 
 The rule is part of the following rule set:
 
-@Symfony
-  Using the `@Symfony <./../../ruleSets/Symfony.rst>`_ rule set will enable the ``single_line_throw`` rule.
+- `@Symfony <./../../ruleSets/Symfony.rst>`_
+
+Source class
+------------
+
+`PhpCsFixer\\Fixer\\FunctionNotation\\SingleLineThrowFixer <./../src/Fixer/FunctionNotation/SingleLineThrowFixer.php>`_

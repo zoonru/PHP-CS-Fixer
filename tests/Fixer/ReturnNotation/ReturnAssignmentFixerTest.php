@@ -31,11 +31,10 @@ final class ReturnAssignmentFixerTest extends AbstractFixerTestCase
         $this->doTest($expected, $input);
     }
 
-    public static function provideFixNestedFunctionsCases(): array
+    public static function provideFixNestedFunctionsCases(): iterable
     {
-        return [
-            [
-                '<?php
+        yield [
+            '<?php
 function A($a0,$a1,$a2,$d)
 {
     if ($a0) {
@@ -107,7 +106,7 @@ function B($b0, $b1, $b2)
     }
 }
 ',
-                '<?php
+            '<?php
 function A($a0,$a1,$a2,$d)
 {
     if ($a0) {
@@ -179,7 +178,6 @@ function B($b0, $b1, $b2)
     }
 }
 ',
-            ],
         ];
     }
 
@@ -191,40 +189,41 @@ function B($b0, $b1, $b2)
         $this->doTest($expected, $input);
     }
 
-    public static function provideFixCases(): array
+    public static function provideFixCases(): iterable
     {
-        return [
-            [
-                '<?php
+        yield [
+            '<?php
                     function A()
                     {
                         return 15;
                     }
                 ',
-                '<?php
+            '<?php
                     function A()
                     {
                         $a = 15;
                         return $a;
                     }
                 ',
-            ],
-            [
-                '<?php
+        ];
+
+        yield [
+            '<?php
                     function A()
                     {
                         /*0*/return /*1*//*2*/15;/*3*//*4*/ /*5*/ /*6*//*7*//*8*/
                     }
                 ',
-                '<?php
+            '<?php
                     function A()
                     {
                         /*0*/$a/*1*/=/*2*/15;/*3*//*4*/ /*5*/ return/*6*/$a/*7*/;/*8*/
                     }
                 ',
-            ],
-            'comments with leading space' => [
-                '<?php
+        ];
+
+        yield 'comments with leading space' => [
+            '<?php
                     function A()
                     { #1
  #2
@@ -243,7 +242,7 @@ function B($b0, $b1, $b2)
  #15
                     }
                 ',
-                '<?php
+            '<?php
                     function A()
                     { #1
  #2
@@ -262,9 +261,10 @@ function B($b0, $b1, $b2)
  #15
                     }
                 ',
-            ],
-            [
-                '<?php
+        ];
+
+        yield [
+            '<?php
                     abstract class B
                     {
                         abstract protected function Z();public function A()
@@ -273,7 +273,7 @@ function B($b0, $b1, $b2)
                         }
                     }
                 ',
-                '<?php
+            '<?php
                     abstract class B
                     {
                         abstract protected function Z();public function A()
@@ -282,9 +282,10 @@ function B($b0, $b1, $b2)
                         }
                     }
                 ',
-            ],
-            [
-                '<?php
+        ];
+
+        yield [
+            '<?php
                     function b() {
                         if ($c) {
                             return 0;
@@ -292,7 +293,7 @@ function B($b0, $b1, $b2)
                         return testFunction(654+1);
                     }
                 ',
-                '<?php
+            '<?php
                     function b() {
                         if ($c) {
                             $b = 0;
@@ -302,13 +303,15 @@ function B($b0, $b1, $b2)
                         return $a;
                     }
                 ',
-            ],
-            'minimal notation' => [
-                '<?php $e=function(){return 1;};$f=function(){return 1;};$g=function(){return 1;};',
-                '<?php $e=function(){$a=1;return$a;};$f=function(){$a=1;return$a;};$g=function(){$a=1;return$a;};',
-            ],
-            [
-                '<?php
+        ];
+
+        yield 'minimal notation' => [
+            '<?php $e=function(){return 1;};$f=function(){return 1;};$g=function(){return 1;};',
+            '<?php $e=function(){$a=1;return$a;};$f=function(){$a=1;return$a;};$g=function(){$a=1;return$a;};',
+        ];
+
+        yield [
+            '<?php
                     function A()
                     {#1
 #2                    '.'
@@ -327,7 +330,7 @@ return #3
 #15
                     }
                 ',
-                '<?php
+            '<?php
                     function A()
                     {#1
 #2                    '.'
@@ -346,16 +349,17 @@ $a#12
 #15
                     }
                 ',
-            ],
-            [
-                '<?php
+        ];
+
+        yield [
+            '<?php
 function A($b)
 {
         // Comment
         return a("2", 4, $b);
 }
 ',
-                '<?php
+            '<?php
 function A($b)
 {
         // Comment
@@ -364,65 +368,70 @@ function A($b)
         return $value;
 }
 ',
-            ],
-            [
-                '<?php function a($b,$c)  {if($c>1){echo 1;} return (1 + 2 + $b);  }',
-                '<?php function a($b,$c)  {if($c>1){echo 1;} $a= (1 + 2 + $b);return $a; }',
-            ],
-            [
-                '<?php function a($b,$c)  {return (3 * 4 + $b);  }',
-                '<?php function a($b,$c)  {$zz= (3 * 4 + $b);return $zz; }',
-            ],
-            [
-                '<?php
+        ];
+
+        yield [
+            '<?php function a($b,$c)  {if($c>1){echo 1;} return (1 + 2 + $b);  }',
+            '<?php function a($b,$c)  {if($c>1){echo 1;} $a= (1 + 2 + $b);return $a; }',
+        ];
+
+        yield [
+            '<?php function a($b,$c)  {return (3 * 4 + $b);  }',
+            '<?php function a($b,$c)  {$zz= (3 * 4 + $b);return $zz; }',
+        ];
+
+        yield [
+            '<?php
                     function a() {
                         return 4563;
                           ?> <?php
                     }
                 ',
-                '<?php
+            '<?php
                     function a() {
                         $a = 4563;
                         return $a ?> <?php
                     }
                 ',
-            ],
-            [
-                '<?php
+        ];
+
+        yield [
+            '<?php
                     function a()
                     {
                         return $c + 1; /*
 var names are case-insensitive */ }
                 ',
-                '<?php
+            '<?php
                     function a()
                     {
                         $A = $c + 1; /*
 var names are case-insensitive */ return $a   ;}
                 ',
-            ],
-            [
-                '<?php
+        ];
+
+        yield [
+            '<?php
                     function A()
                     {
                         return $f[1]->a();
                     }
                 ',
-                '<?php
+            '<?php
                     function A()
                     {
                         $a = $f[1]->a();
                         return $a;
                     }
                 ',
-                [
-                    '<?php
+            [
+                '<?php
                     function a($foos) {
                         return array_map(function ($foo) {
                             return (string) $foo;
                         }, $foos);
                     }',
-                    '<?php
+                '<?php
                     function a($foos) {
                         $bars = array_map(function ($foo) {
                             return (string) $foo;
@@ -430,28 +439,29 @@ var names are case-insensitive */ return $a   ;}
 
                         return $bars;
                     }',
-                ],
-                [
-                    '<?php
+            ],
+            [
+                '<?php
                     function a($foos) {
                         return ($foos = [\'bar\']);
                     }',
-                    '<?php
+                '<?php
                     function a($foos) {
                         $bars = ($foos = [\'bar\']);
 
                         return $bars;
                     }',
-                ],
             ],
-            [
-                '<?php
+        ];
+
+        yield [
+            '<?php
                     function a($foos) {
                         return (function ($foos) {
                             return $foos;
                         })($foos);
                     }',
-                '<?php
+            '<?php
                     function a($foos) {
                         $bars = (function ($foos) {
                             return $foos;
@@ -459,9 +469,10 @@ var names are case-insensitive */ return $a   ;}
 
                         return $bars;
                     }',
-            ],
-            'anonymous classes' => [
-                '<?php
+        ];
+
+        yield 'anonymous classes' => [
+            '<?php
                     function A()
                     {
                         return new class {};
@@ -484,10 +495,10 @@ var names are case-insensitive */ return $a   ;}
 
                     function E()
                     {
-                        return new class extends Y implements O,P {};
+                        return new class extends Y implements A\O,P {};
                     }
                 ',
-                '<?php
+            '<?php
                     function A()
                     {
                         $a = new class {};
@@ -514,13 +525,14 @@ var names are case-insensitive */ return $a   ;}
 
                     function E()
                     {
-                        $c = new class extends Y implements O,P {};
+                        $c = new class extends Y implements A\O,P {};
                         return $c;
                     }
                 ',
-            ],
-            'lambda' => [
-                '<?php
+        ];
+
+        yield 'lambda' => [
+            '<?php
                     function A()
                     {
                         return function () {};
@@ -558,7 +570,7 @@ var names are case-insensitive */ return $a   ;}
                         return 15;
                     }
                 ',
-                '<?php
+            '<?php
                     function A()
                     {
                         $a = function () {};
@@ -605,21 +617,197 @@ var names are case-insensitive */ return $a   ;}
                         return $a;
                     }
                 ',
-            ],
-            'arrow functions' => [
-                '<?php
+        ];
+
+        yield 'arrow functions' => [
+            '<?php
                     function Foo() {
                         return fn($x) => $x + $y;
                     }
                 ',
-                '<?php
+            '<?php
                     function Foo() {
                         $fn1 = fn($x) => $x + $y;
 
                         return $fn1;
                     }
                 ',
-            ],
+        ];
+
+        yield 'try catch' => [
+            '<?php
+                function foo()
+                {
+                    if (isSomeCondition()) {
+                        return getSomeResult();
+                    }
+
+                    try {
+                        $result = getResult();
+
+                        return $result;
+                    } catch (\Throwable $exception) {
+                        baz($result ?? null);
+                    }
+                }
+                ',
+            '<?php
+                function foo()
+                {
+                    if (isSomeCondition()) {
+                        $result = getSomeResult();
+
+                        return $result;
+                    }
+
+                    try {
+                        $result = getResult();
+
+                        return $result;
+                    } catch (\Throwable $exception) {
+                        baz($result ?? null);
+                    }
+                }
+                ',
+        ];
+
+        yield 'multiple try/catch blocks separated with conditional return' => [
+            '<?php
+                function foo()
+                {
+                    try {
+                        return getResult();
+                    } catch (\Throwable $exception) {
+                        error_log($exception->getMessage());
+                    }
+
+                    if (isSomeCondition()) {
+                        return getSomeResult();
+                    }
+
+                    try {
+                        $result = $a + $b;
+                        return $result;
+                    } catch (\Throwable $th) {
+                        var_dump($result ?? null);
+                    }
+                }
+                ',
+            '<?php
+                function foo()
+                {
+                    try {
+                        $result = getResult();
+                        return $result;
+                    } catch (\Throwable $exception) {
+                        error_log($exception->getMessage());
+                    }
+
+                    if (isSomeCondition()) {
+                        $result = getSomeResult();
+                        return $result;
+                    }
+
+                    try {
+                        $result = $a + $b;
+                        return $result;
+                    } catch (\Throwable $th) {
+                        var_dump($result ?? null);
+                    }
+                }
+                ',
+        ];
+
+        yield 'try/catch/finally' => [
+            '<?php
+                function foo()
+                {
+                    if (isSomeCondition()) {
+                        return getSomeResult();
+                    }
+
+                    try {
+                        $result = getResult();
+
+                        return $result;
+                    } catch (\Throwable $exception) {
+                        error_log($exception->getMessage());
+                    } finally {
+                        baz($result);
+                    }
+                }
+                ',
+            '<?php
+                function foo()
+                {
+                    if (isSomeCondition()) {
+                        $result = getSomeResult();
+
+                        return $result;
+                    }
+
+                    try {
+                        $result = getResult();
+
+                        return $result;
+                    } catch (\Throwable $exception) {
+                        error_log($exception->getMessage());
+                    } finally {
+                        baz($result);
+                    }
+                }
+                ',
+        ];
+
+        yield 'multiple try/catch separated with conditional return, with finally block' => [
+            '<?php
+                function foo()
+                {
+                    try {
+                        return getResult();
+                    } catch (\Throwable $exception) {
+                        error_log($exception->getMessage());
+                    }
+
+                    if (isSomeCondition()) {
+                        return getSomeResult();
+                    }
+
+                    try {
+                        $result = $a + $b;
+                        return $result;
+                    } catch (\Throwable $th) {
+                        throw $th;
+                    } finally {
+                        echo "result:", $result, \PHP_EOL;
+                    }
+                }
+                ',
+            '<?php
+                function foo()
+                {
+                    try {
+                        $result = getResult();
+                        return $result;
+                    } catch (\Throwable $exception) {
+                        error_log($exception->getMessage());
+                    }
+
+                    if (isSomeCondition()) {
+                        $result = getSomeResult();
+                        return $result;
+                    }
+
+                    try {
+                        $result = $a + $b;
+                        return $result;
+                    } catch (\Throwable $th) {
+                        throw $th;
+                    } finally {
+                        echo "result:", $result, \PHP_EOL;
+                    }
+                }
+                ',
         ];
     }
 
@@ -631,51 +819,55 @@ var names are case-insensitive */ return $a   ;}
         $this->doTest($expected);
     }
 
-    public static function provideDoNotFixCases(): array
+    public static function provideDoNotFixCases(): iterable
     {
-        return [
-            'invalid reference stays invalid' => [
-                '<?php
+        yield 'invalid reference stays invalid' => [
+            '<?php
                     function bar() {
                         $foo = &foo();
                         return $foo;
                 }',
-            ],
-            'static' => [
-                '<?php
+        ];
+
+        yield 'static' => [
+            '<?php
                     function a() {
                         static $a;
                         $a = time();
                         return $a;
                     }
                 ',
-            ],
-            'global' => [
-                '<?php
+        ];
+
+        yield 'global' => [
+            '<?php
                     function a() {
                         global $a;
                         $a = time();
                         return $a;
                     }
                 ',
-            ],
-            'passed by reference' => [
-                '<?php
+        ];
+
+        yield 'passed by reference' => [
+            '<?php
                 function foo(&$var)
                     {
                         $var = 1;
                         return $var;
                     }
                 ',
-            ],
-            'not in function scope' => [
-                '<?php
+        ];
+
+        yield 'not in function scope' => [
+            '<?php
                     $a = 1; // var might be global here
                     return $a;
                 ',
-            ],
-            'open-close with ;' => [
-                '<?php
+        ];
+
+        yield 'open-close with ;' => [
+            '<?php
                     function a()
                     {
                         $a = 1;
@@ -685,16 +877,18 @@ var names are case-insensitive */ return $a   ;}
                         return $a;
                     }
                 ',
-            ],
-            'open-close single line' => [
-                '<?php
+        ];
+
+        yield 'open-close single line' => [
+            '<?php
                     function a()
                     {
                         $a = 1 ?><?php return $a;
                     }',
-            ],
-            'open-close' => [
-                '<?php
+        ];
+
+        yield 'open-close' => [
+            '<?php
                     function a()
                     {
                         $a = 1
@@ -703,9 +897,10 @@ var names are case-insensitive */ return $a   ;}
                         return $a;
                     }
                 ',
-            ],
-            'open-close before function' => [
-                '<?php
+        ];
+
+        yield 'open-close before function' => [
+            '<?php
                     $zz = 1 ?><?php
                     function a($zz)
                     {
@@ -713,27 +908,30 @@ var names are case-insensitive */ return $a   ;}
                         return $zz;
                     }
                 ',
-            ],
-            'return complex statement' => [
-                '<?php
+        ];
+
+        yield 'return complex statement' => [
+            '<?php
                     function a($c)
                     {
                         $a = 1;
                         return $a + $c;
                     }
                 ',
-            ],
-            'array assign' => [
-                '<?php
+        ];
+
+        yield 'array assign' => [
+            '<?php
                     function a($c)
                     {
                         $_SERVER["abc"] = 3;
                         return $_SERVER;
                     }
                 ',
-            ],
-            'if assign' => [
-                '<?php
+        ];
+
+        yield 'if assign' => [
+            '<?php
                     function foo ($bar)
                     {
                         $a = 123;
@@ -742,9 +940,10 @@ var names are case-insensitive */ return $a   ;}
                         return $a;
                     }
                 ',
-            ],
-            'else assign' => [
-                '<?php
+        ];
+
+        yield 'else assign' => [
+            '<?php
                     function foo ($bar)
                     {
                         $a = 123;
@@ -755,9 +954,10 @@ var names are case-insensitive */ return $a   ;}
                         return $a;
                     }
                 ',
-            ],
-            'elseif assign' => [
-                '<?php
+        ];
+
+        yield 'elseif assign' => [
+            '<?php
                     function foo ($bar)
                     {
                         $a = 123;
@@ -768,9 +968,10 @@ var names are case-insensitive */ return $a   ;}
                         return $a;
                     }
                 ',
-            ],
-            'echo $a = N / comment $a = N;' => [
-                '<?php
+        ];
+
+        yield 'echo $a = N / comment $a = N;' => [
+            '<?php
                     function a($c)
                     {
                         $a = 1;
@@ -793,18 +994,20 @@ var names are case-insensitive */ return $a   ;}
                         return $a;
                     }
                 ',
-            ],
-            'if ($a = N)' => [
-                '<?php
+        ];
+
+        yield 'if ($a = N)' => [
+            '<?php
                     function a($c)
                     {
                         if ($a = 1)
                             return $a;
                     }
                 ',
-            ],
-            'changed after declaration' => [
-                '<?php
+        ];
+
+        yield 'changed after declaration' => [
+            '<?php
                     function a($c)
                     {
                         $a = 1;
@@ -819,18 +1022,20 @@ var names are case-insensitive */ return $a   ;}
                         return $a;
                     }
                 ',
-            ],
-            'complex statement' => [
-                '<?php
+        ];
+
+        yield 'complex statement' => [
+            '<?php
                     function a($c)
                     {
                         $d = $c && $a = 1;
                         return $a;
                     }
                 ',
-            ],
-            'PHP close tag within function' => [
-                '<?php
+        ];
+
+        yield 'PHP close tag within function' => [
+            '<?php
                     function a($zz)
                     {
                         $zz = 1 ?><?php
@@ -838,9 +1043,10 @@ var names are case-insensitive */ return $a   ;}
                         return $zz;
                     }
                 ',
-            ],
-            'import global using "require"' => [
-                '<?php
+        ];
+
+        yield 'import global using "require"' => [
+            '<?php
                     function a()
                     {
                         require __DIR__."/test3.php";
@@ -848,9 +1054,10 @@ var names are case-insensitive */ return $a   ;}
                         return $b;
                     }
                 ',
-            ],
-            'import global using "require_once"' => [
-                '<?php
+        ];
+
+        yield 'import global using "require_once"' => [
+            '<?php
                     function a()
                     {
                         require_once __DIR__."/test3.php";
@@ -858,9 +1065,10 @@ var names are case-insensitive */ return $a   ;}
                         return $b;
                     }
                 ',
-            ],
-            'import global using "include"' => [
-                '<?php
+        ];
+
+        yield 'import global using "include"' => [
+            '<?php
                     function a()
                     {
                         include __DIR__."/test3.php";
@@ -868,9 +1076,10 @@ var names are case-insensitive */ return $a   ;}
                         return $b;
                     }
                 ',
-            ],
-            'import global using "include_once"' => [
-                '<?php
+        ];
+
+        yield 'import global using "include_once"' => [
+            '<?php
                     function a()
                     {
                         include_once __DIR__."/test3.php";
@@ -878,9 +1087,10 @@ var names are case-insensitive */ return $a   ;}
                         return $b;
                     }
                 ',
-            ],
-            'eval' => [
-                '<?php
+        ];
+
+        yield 'eval' => [
+            '<?php
                     $b = function ($z) {
                         $c = eval($z);
 
@@ -893,9 +1103,10 @@ var names are case-insensitive */ return $a   ;}
                         return $x;
                     };
                 ',
-            ],
-            '${X}' => [
-                '<?php
+        ];
+
+        yield '${X}' => [
+            '<?php
                     function A($g)
                     {
                         $h = ${$g};
@@ -903,9 +1114,10 @@ var names are case-insensitive */ return $a   ;}
                         return $h;
                     }
                 ',
-            ],
-            '$$' => [
-                '<?php
+        ];
+
+        yield '$$' => [
+            '<?php
                     function B($c)
                     {
                         $b = $$c;
@@ -913,9 +1125,10 @@ var names are case-insensitive */ return $a   ;}
                         return $b;
                     }
                 ',
-            ],
-            [
-                '<?php
+        ];
+
+        yield [
+            '<?php
 class XYZ
 {
     public function test1()
@@ -944,28 +1157,32 @@ $a = new XYZ();
 $a = 1;
 var_dump($a); // $a = 2 here _╯°□°╯︵┻━┻
 ',
-            ],
-            'variable returned by reference in function' => [
-                '<?php
+        ];
+
+        yield 'variable returned by reference in function' => [
+            '<?php
                 function &foo() {
                     $var = 1;
                     return $var;
                 }',
-            ],
-            'variable returned by reference in method' => [
-                '<?php
+        ];
+
+        yield 'variable returned by reference in method' => [
+            '<?php
                 class Foo {
                     public function &bar() {
                         $var = 1;
                         return $var;
                     }
                 }',
-            ],
-            'variable returned by reference in lambda' => [
-                '<?php $a = function &() {$z = new A(); return $z;};',
-            ],
-            [
-                '<?php
+        ];
+
+        yield 'variable returned by reference in lambda' => [
+            '<?php $a = function &() {$z = new A(); return $z;};',
+        ];
+
+        yield [
+            '<?php
                 function F() {
                     $a = 1;
 
@@ -976,7 +1193,93 @@ var_dump($a); // $a = 2 here _╯°□°╯︵┻━┻
                     return $a;
                 }
                 ',
-            ],
+        ];
+
+        yield 'try/catch/finally' => [
+            '<?php
+                function add($a, $b): mixed
+                {
+                    try {
+                        $result = $a + $b;
+
+                        return $result;
+                    } catch (\Throwable $th) {
+                        throw $th;
+                    } finally {
+                        echo \'result:\', $result, \PHP_EOL;
+                    }
+                }
+                ',
+        ];
+
+        yield 'try with multiple catch blocks' => [
+            '<?php
+                function foo() {
+                    try {
+                        $bar = bar();
+
+                        return $bar;
+                    } catch (\LogicException $e) {
+                        echo "catch ... ";
+                    } catch (\RuntimeException $e) {
+                        echo $bar;
+                    }
+                }',
+        ];
+
+        yield 'try/catch/finally with some comments' => [
+            '<?php
+                function add($a, $b): mixed
+                {
+                    try {
+                        $result = $a + $b;
+
+                        return $result;
+                    } /* foo */ catch /** bar */ (\LogicException $th) {
+                        throw $th;
+                    }
+                    // Or maybe this....
+                    catch (\RuntimeException $th) {
+                        throw $th;
+                    }
+                    # Print the result anyway
+                    finally {
+                        echo \'result:\', $result, \PHP_EOL;
+                    }
+                }
+                ',
+        ];
+    }
+
+    /**
+     * @dataProvider provideDoNotFix80Cases
+     *
+     * @requires PHP 8.0
+     */
+    public function testDoNotFix80(string $expected): void
+    {
+        $this->doTest($expected);
+    }
+
+    public static function provideDoNotFix80Cases(): iterable
+    {
+        yield 'try with non-capturing catch block' => [
+            '<?php
+                function add($a, $b): mixed
+                {
+                    try {
+                        $result = $a + $b;
+
+                        return $result;
+                    }
+                    catch (\Throwable) {
+                        noop();
+                    }
+                    finally {
+                        echo \'result:\', $result, \PHP_EOL;
+                    }
+                }
+                ',
         ];
     }
 
@@ -1034,14 +1337,14 @@ function foo(&$c) {
     /**
      * @requires PHP 8.0
      *
-     * @dataProvider providePhp80Cases
+     * @dataProvider provideFix80Cases
      */
     public function testFix80(string $expected, ?string $input = null): void
     {
         $this->doTest($expected, $input);
     }
 
-    public static function providePhp80Cases(): iterable
+    public static function provideFix80Cases(): iterable
     {
         yield 'match' => [
             '<?php
@@ -1061,6 +1364,67 @@ function foo(&$c) {
 
                 return $return_value;
             }
+            ',
+        ];
+
+        yield 'attribute before anonymous `class`' => [
+            '<?php
+                function A()
+                {
+                    return new #[Foo] class {};
+                }
+            ',
+            '<?php
+                function A()
+                {
+                    $a = new #[Foo] class {};
+                    return $a;
+                }
+            ',
+        ];
+    }
+
+    /**
+     * @requires PHP 8.3
+     *
+     * @dataProvider provideFixPhp83Cases
+     */
+    public function testFixPhp83(string $expected, ?string $input = null): void
+    {
+        $this->doTest($expected, $input);
+    }
+
+    public static function provideFixPhp83Cases(): iterable
+    {
+        yield 'anonymous readonly class' => [
+            '<?php
+                function A()
+                {
+                    return new readonly class {};
+                }
+            ',
+            '<?php
+                function A()
+                {
+                    $a = new readonly class {};
+                    return $a;
+                }
+            ',
+        ];
+
+        yield 'attribute before anonymous `readonly class`' => [
+            '<?php
+                function A()
+                {
+                    return new #[Foo] readonly class {};
+                }
+            ',
+            '<?php
+                function A()
+                {
+                    $a = new #[Foo] readonly class {};
+                    return $a;
+                }
             ',
         ];
     }

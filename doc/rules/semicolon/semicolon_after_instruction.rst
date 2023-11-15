@@ -22,8 +22,10 @@ Rule sets
 
 The rule is part of the following rule sets:
 
-@PhpCsFixer
-  Using the `@PhpCsFixer <./../../ruleSets/PhpCsFixer.rst>`_ rule set will enable the ``semicolon_after_instruction`` rule.
+- `@PhpCsFixer <./../../ruleSets/PhpCsFixer.rst>`_
+- `@Symfony <./../../ruleSets/Symfony.rst>`_
 
-@Symfony
-  Using the `@Symfony <./../../ruleSets/Symfony.rst>`_ rule set will enable the ``semicolon_after_instruction`` rule.
+Source class
+------------
+
+`PhpCsFixer\\Fixer\\Semicolon\\SemicolonAfterInstructionFixer <./../src/Fixer/Semicolon/SemicolonAfterInstructionFixer.php>`_

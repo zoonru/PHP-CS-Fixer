@@ -21,7 +21,7 @@ Configuration
 
 Whether to use the @test annotation or not.
 
-Allowed values: ``'annotation'``, ``'prefix'``
+Allowed values: ``'annotation'`` and ``'prefix'``
 
 Default value: ``'prefix'``
 
@@ -70,8 +70,10 @@ Rule sets
 
 The rule is part of the following rule sets:
 
-@PhpCsFixer:risky
-  Using the `@PhpCsFixer:risky <./../../ruleSets/PhpCsFixerRisky.rst>`_ rule set will enable the ``php_unit_test_annotation`` rule with the default config.
+- `@PhpCsFixer:risky <./../../ruleSets/PhpCsFixerRisky.rst>`_
+- `@Symfony:risky <./../../ruleSets/SymfonyRisky.rst>`_
 
-@Symfony:risky
-  Using the `@Symfony:risky <./../../ruleSets/SymfonyRisky.rst>`_ rule set will enable the ``php_unit_test_annotation`` rule with the default config.
+Source class
+------------
+
+`PhpCsFixer\\Fixer\\PhpUnit\\PhpUnitTestAnnotationFixer <./../src/Fixer/PhpUnit/PhpUnitTestAnnotationFixer.php>`_

@@ -33,11 +33,10 @@ final class StandardizeNotEqualsFixerTest extends AbstractFixerTestCase
         $this->doTest($expected, $input);
     }
 
-    public static function provideFixCases(): array
+    public static function provideFixCases(): iterable
     {
-        return [
-            ['<?php $a = ($b != $c);'],
-            ['<?php $a = ($b != $c);', '<?php $a = ($b <> $c);'],
-        ];
+        yield ['<?php $a = ($b != $c);'];
+
+        yield ['<?php $a = ($b != $c);', '<?php $a = ($b <> $c);'];
     }
 }
