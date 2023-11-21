@@ -129,7 +129,7 @@ $object->method1()
 
                 // insert the new line with indented semicolon
                 $tokens->insertAt($index++, [$newline, new Token(';')]);
-            } else {
+            } elseif (self::STRATEGY_NO_MULTI_LINE === $this->configuration['strategy']) {
                 if (!$previous->isWhitespace() || !str_contains($previous->getContent(), "\n")) {
                     continue;
                 }
