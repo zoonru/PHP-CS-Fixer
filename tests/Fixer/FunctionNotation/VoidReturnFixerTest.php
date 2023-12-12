@@ -34,6 +34,9 @@ final class VoidReturnFixerTest extends AbstractFixerTestCase
         $this->doTest($expected, $input);
     }
 
+    /**
+     * @return iterable<array{string, 1?: ?string}>
+     */
     public static function provideFixCases(): iterable
     {
         yield ['<?php class Test { public function __construct() {} }'];
@@ -270,7 +273,7 @@ final class VoidReturnFixerTest extends AbstractFixerTestCase
     }
 
     /**
-     * @return iterable<array<string>>
+     * @return iterable<array{string, 1?: ?string}>
      */
     public static function provideFix80Cases(): iterable
     {
@@ -325,7 +328,7 @@ final class VoidReturnFixerTest extends AbstractFixerTestCase
             ))
         ));
 
-        $this->fixer->fix(self::getTestFile(), $tokens);
+        $this->fixer->fix(new \SplFileInfo(__FILE__), $tokens);
 
         self::assertNull($this->lintSource($tokens->generateCode()));
     }

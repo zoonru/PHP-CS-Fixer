@@ -16,12 +16,12 @@ Example #1
    --- Original
    +++ New
     <?php
-   -require ('sample.php');
-   -echo (test (3));
+   -strlen ('Hello World!');
+   -foo (test (3));
    -exit  (1);
    -$func ();
-   +require('sample.php');
-   +echo(test(3));
+   +strlen('Hello World!');
+   +foo(test(3));
    +exit(1);
    +$func();
 
@@ -42,4 +42,4 @@ The rule is part of the following rule sets:
 Source class
 ------------
 
-`PhpCsFixer\\Fixer\\FunctionNotation\\NoSpacesAfterFunctionNameFixer <./../src/Fixer/FunctionNotation/NoSpacesAfterFunctionNameFixer.php>`_
+`PhpCsFixer\\Fixer\\FunctionNotation\\NoSpacesAfterFunctionNameFixer <./../../../src/Fixer/FunctionNotation/NoSpacesAfterFunctionNameFixer.php>`_

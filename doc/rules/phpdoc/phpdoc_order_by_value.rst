@@ -2,7 +2,7 @@
 Rule ``phpdoc_order_by_value``
 ==============================
 
-Order phpdoc tags by value.
+Order PHPDoc tags by value.
 
 Configuration
 -------------
@@ -65,4 +65,4 @@ The rule is part of the following rule set:
 Source class
 ------------
 
-`PhpCsFixer\\Fixer\\Phpdoc\\PhpdocOrderByValueFixer <./../src/Fixer/Phpdoc/PhpdocOrderByValueFixer.php>`_
+`PhpCsFixer\\Fixer\\Phpdoc\\PhpdocOrderByValueFixer <./../../../src/Fixer/Phpdoc/PhpdocOrderByValueFixer.php>`_

@@ -156,7 +156,7 @@ abstract class AbstractFixerTestCase extends TestCase
             }
 
             if ($sample instanceof VersionSpecificCodeSampleInterface) {
-                $supportedPhpVersions = [7_04_00, 8_00_00, 8_01_00, 8_02_00, 8_03_00];
+                $supportedPhpVersions = [7_04_00, 8_00_00, 8_01_00, 8_02_00, 8_03_00, 8_04_00];
 
                 $hasSuitableSupportedVersion = false;
                 foreach ($supportedPhpVersions as $version) {
@@ -378,13 +378,6 @@ abstract class AbstractFixerTestCase extends TestCase
         return new $fixerClassName();
     }
 
-    final protected static function getTestFile(string $filename = __FILE__): \SplFileInfo
-    {
-        static $files = [];
-
-        return $files[$filename] ?? $files[$filename] = new \SplFileInfo($filename);
-    }
-
     /**
      * Tests if a fixer fixes a given string to match the expected result.
      *
@@ -405,7 +398,7 @@ abstract class AbstractFixerTestCase extends TestCase
             throw new \InvalidArgumentException('Input parameter must not be equal to expected parameter.');
         }
 
-        $file ??= self::getTestFile();
+        $file ??= new \SplFileInfo(__FILE__);
         $fileIsSupported = $this->fixer->supports($file);
 
         if (null !== $input) {
@@ -468,9 +461,21 @@ abstract class AbstractFixerTestCase extends TestCase
         return null;
     }
 
-    protected static function assertCorrectCasing(string $needle, string $haystack, string $message): void
+    protected static function assertCorrectCasing(string $haystack, string $needle, string $fixerName, string $descriptionType): void
     {
-        self::assertSame(substr_count(strtolower($haystack), strtolower($needle)), substr_count($haystack, $needle), $message);
+        $exceptions = [
+            'PHPUnit' => [
+                'description' => [
+                    'ordered_class_elements' => 1,
+                ],
+            ],
+        ];
+
+        self::assertSame(
+            substr_count(strtolower($haystack), strtolower($needle)),
+            substr_count($haystack, $needle) + ($exceptions[$needle][$descriptionType][$fixerName] ?? 0),
+            sprintf('[%s] `%s` must be in correct casing in %s.', $fixerName, $needle, $descriptionType)
+        );
     }
 
     private function getLinter(): LinterInterface
@@ -490,8 +495,8 @@ abstract class AbstractFixerTestCase extends TestCase
     {
         self::assertMatchesRegularExpression('/^[A-Z`].+\.$/s', $description, sprintf('[%s] The %s must start with capital letter or a ` and end with dot.', $fixerName, $descriptionType));
         self::assertStringNotContainsString('phpdocs', $description, sprintf('[%s] `PHPDoc` must not be in the plural in %s.', $fixerName, $descriptionType));
-        self::assertCorrectCasing($description, 'PHPDoc', sprintf('[%s] `PHPDoc` must be in correct casing in %s.', $fixerName, $descriptionType));
-        self::assertCorrectCasing($description, 'PHPUnit', sprintf('[%s] `PHPUnit` must be in correct casing in %s.', $fixerName, $descriptionType));
+        self::assertCorrectCasing($description, 'PHPDoc', $fixerName, $descriptionType);
+        self::assertCorrectCasing($description, 'PHPUnit', $fixerName, $descriptionType);
         self::assertFalse(strpos($descriptionType, '``'), sprintf('[%s] The %s must no contain sequential backticks.', $fixerName, $descriptionType));
     }
 

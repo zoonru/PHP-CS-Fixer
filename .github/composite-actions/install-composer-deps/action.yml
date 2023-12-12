@@ -32,6 +32,7 @@ runs:
       run: |
         echo "COMPOSER_CACHE_DIR=$(composer config cache-dir)" >> $GITHUB_ENV
         echo "COMPOSER_CACHE_PHP=$(php -r 'echo PHP_VERSION;')" >> $GITHUB_ENV
+        echo "PHP_VERSION_ID=$(php -r 'echo PHP_VERSION_ID;')" >> $GITHUB_ENV
 
     - name: Cache Composer dependencies
       uses: actions/cache@v3

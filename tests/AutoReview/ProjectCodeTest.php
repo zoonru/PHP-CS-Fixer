@@ -381,7 +381,7 @@ final class ProjectCodeTest extends TestCase
         );
         $strings = array_unique($strings);
 
-        $message = sprintf('Class %s must not use PHPUnit\'s mock,, it shall use ->prophesize() instead.', $testClassName);
+        $message = sprintf('Class %s must not use PHPUnit\'s mock, it shall use anonymous class instead.', $testClassName);
         self::assertNotContains('getMockBuilder', $strings, $message);
         self::assertNotContains('createMock', $strings, $message);
         self::assertNotContains('createMockForIntersectionOfInterfaces', $strings, $message);
@@ -449,6 +449,56 @@ final class ProjectCodeTest extends TestCase
                 $expected['expected'],
                 sprintf('Public method "%s::%s" has parameter \'input\' before \'expected\'.', $reflectionClass->getName(), $method->getName())
             );
+        }
+    }
+
+    /**
+     * @dataProvider provideTestClassCases
+     */
+    public function testDataProvidersDeclaredReturnType(string $testClassName): void
+    {
+        $reflectionClass = new \ReflectionClass($testClassName);
+
+        $publicMethods = array_filter(
+            $reflectionClass->getMethods(),
+            static fn (\ReflectionMethod $reflectionMethod): bool => $reflectionMethod->getDeclaringClass()->getName() === $reflectionClass->getName()
+        );
+
+        $dataProviderMethods = array_filter(
+            $publicMethods,
+            static fn (\ReflectionMethod $reflectionMethod): bool => str_starts_with($reflectionMethod->getName(), 'provide')
+        );
+
+        if ([] === $dataProviderMethods) {
+            $this->expectNotToPerformAssertions(); // no methods to test, all good!
+
+            return;
+        }
+
+        /** @var \ReflectionMethod $method */
+        foreach ($dataProviderMethods as $method) {
+            $methodId = $method->getDeclaringClass()->getName().'::'.$method->getName();
+
+            self::assertSame('iterable', $method->hasReturnType() ? $method->getReturnType()->__toString() : null, sprintf('DataProvider `%s` must provide `iterable` as return in method prototype.', $methodId));
+
+            $doc = new DocBlock(false !== $method->getDocComment() ? $method->getDocComment() : '/** */');
+
+            $returnDocs = $doc->getAnnotationsOfType('return');
+            if (\count($returnDocs) > 1) {
+                throw new \UnexpectedValueException(sprintf('Multiple `%s@return` annotations.', $methodId));
+            }
+            if (1 !== \count($returnDocs)) {
+                $this->addToAssertionCount(1); // no @return annotation, all good!
+
+                continue;
+            }
+
+            $returnDoc = $returnDocs[0];
+            $types = $returnDoc->getTypes();
+
+            self::assertCount(1, $types, sprintf('DataProvider `%s@return` must provide single type.', $methodId));
+            self::assertMatchesRegularExpression('/^iterable\</', $types[0], sprintf('DataProvider `%s@return` must return iterable.', $methodId));
+            self::assertMatchesRegularExpression('/^iterable\\<(?:(?:int\\|)?string, )?array\\{/', $types[0], sprintf('DataProvider `%s@return` must return iterable of tuples (eg `iterable<string, array{string, string}>`).', $methodId));
         }
     }
 
@@ -603,7 +653,7 @@ final class ProjectCodeTest extends TestCase
                 if (1 === $interfacesCount) {
                     $interface = reset($interfaces);
 
-                    if ('Stringable' === $interface->getName()) {
+                    if (\Stringable::class === $interface->getName()) {
                         return false;
                     }
                 }
