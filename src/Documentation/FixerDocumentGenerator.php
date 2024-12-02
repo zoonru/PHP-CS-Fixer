@@ -83,7 +83,7 @@ final class FixerDocumentGenerator
             $alternatives = $fixer->getSuccessorsNames();
 
             if (0 !== \count($alternatives)) {
-                $deprecationDescription .= RstUtils::toRst(sprintf(
+                $deprecationDescription .= RstUtils::toRst(\sprintf(
                     "\n\nYou should use %s instead.",
                     Utils::naturalLanguageJoinWithBackticks($alternatives)
                 ), 0);
@@ -125,13 +125,16 @@ final class FixerDocumentGenerator
             }
 
             $warningsHeaderLine = str_repeat('-', \strlen($warningsHeader));
-            $doc .= "\n\n".implode("\n", array_filter([
-                $warningsHeader,
-                $warningsHeaderLine,
-                $deprecationDescription,
-                $experimentalDescription,
-                $riskyDescription,
-            ]));
+            $doc .= "\n\n".implode("\n", array_filter(
+                [
+                    $warningsHeader,
+                    $warningsHeaderLine,
+                    $deprecationDescription,
+                    $experimentalDescription,
+                    $riskyDescription,
+                ],
+                static fn (string $text): bool => '' !== $text
+            ));
         }
 
         if ($fixer instanceof ConfigurableFixerInterface) {
@@ -164,7 +167,7 @@ final class FixerDocumentGenerator
                 if (null === $allowed) {
                     $allowedKind = 'Allowed types';
                     $allowed = array_map(
-                        static fn ($value): string => '``'.$value.'``',
+                        static fn (string $value): string => '``'.Utils::convertArrayTypeToList($value).'``',
                         $option->getAllowedTypes(),
                     );
                 } else {
@@ -199,7 +202,7 @@ final class FixerDocumentGenerator
                 RST;
 
             foreach ($samples as $index => $sample) {
-                $title = sprintf('Example #%d', $index + 1);
+                $title = \sprintf('Example #%d', $index + 1);
                 $titleLine = str_repeat('~', \strlen($title));
                 $doc .= "\n\n{$title}\n{$titleLine}";
 
@@ -207,7 +210,7 @@ final class FixerDocumentGenerator
                     if (null === $sample->getConfiguration()) {
                         $doc .= "\n\n*Default* configuration.";
                     } else {
-                        $doc .= sprintf(
+                        $doc .= \sprintf(
                             "\n\nWith configuration: ``%s``.",
                             Utils::toString($sample->getConfiguration())
                         );
@@ -253,7 +256,7 @@ final class FixerDocumentGenerator
         $fileName = "`{$className} <./../../../{$fileName}>`_";
 
         $testFileName = Preg::replace('~.*\K/src/(?=Fixer/)~', '/tests/', $fileName);
-        $testFileName = Preg::replace('~PhpCsFixer\\\\\\\\\K(?=Fixer\\\\\\\\)~', 'Tests\\\\\\\\', $testFileName);
+        $testFileName = Preg::replace('~PhpCsFixer\\\\\\\\\K(?=Fixer\\\\\\\)~', 'Tests\\\\\\\\', $testFileName);
         $testFileName = Preg::replace('~(?= <|\.php>)~', 'Test', $testFileName);
 
         $doc .= <<<RST
@@ -293,7 +296,7 @@ final class FixerDocumentGenerator
     }
 
     /**
-     * @param FixerInterface[] $fixers
+     * @param list<FixerInterface> $fixers
      */
     public function generateFixersDocumentationIndex(array $fixers): string
     {
@@ -314,7 +317,7 @@ final class FixerDocumentGenerator
         $currentGroup = null;
 
         foreach ($fixers as $fixer) {
-            $namespace = Preg::replace('/^.*\\\\(.+)\\\\.+Fixer$/', '$1', \get_class($fixer));
+            $namespace = Preg::replace('/^.*\\\(.+)\\\.+Fixer$/', '$1', \get_class($fixer));
             $group = $overrideGroups[$namespace] ?? Preg::replace('/(?<=[[:lower:]])(?=[[:upper:]])/', ' ', $namespace);
 
             if ($group !== $currentGroup) {
@@ -377,7 +380,7 @@ final class FixerDocumentGenerator
                    the sample is not suitable for current version of PHP (%s).
                 RST;
 
-            return sprintf($error, PHP_VERSION);
+            return \sprintf($error, PHP_VERSION);
         }
 
         $old = $sample->getCode();

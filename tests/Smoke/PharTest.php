@@ -62,7 +62,7 @@ final class PharTest extends AbstractSmokeTestCase
         $shouldExpectCodename = Application::VERSION_CODENAME ? 1 : 0;
 
         self::assertMatchesRegularExpression(
-            sprintf("/^PHP CS Fixer (?<version>%s)(?<git_sha> \\([a-z0-9]+\\))?(?<codename> %s){%d}(?<by> by .*)\nPHP runtime: (?<php_version>\\d\\.\\d+\\..*)$/", Application::VERSION, Application::VERSION_CODENAME, $shouldExpectCodename),
+            \sprintf("/^PHP CS Fixer (?<version>%s)(?<git_sha> \\([a-z0-9]+\\))?(?<codename> %s){%d}(?<by> by .*)\nPHP runtime: (?<php_version>\\d\\.\\d+\\..*)$/", Application::VERSION, Application::VERSION_CODENAME, $shouldExpectCodename),
             self::executePharCommand('--version')->getOutput()
         );
     }
@@ -90,11 +90,25 @@ final class PharTest extends AbstractSmokeTestCase
         );
     }
 
-    public function testFix(): void
+    public function testFixSequential(): void
     {
-        self::assertSame(
-            0,
-            self::executePharCommand('fix src/Config.php -vvv --dry-run --diff --using-cache=no 2>&1')->getCode()
+        $command = self::executePharCommand('fix src/Config.php -vvv --dry-run --sequential --diff --using-cache=no 2>&1');
+
+        self::assertSame(0, $command->getCode());
+        self::assertMatchesRegularExpression(
+            '/Running analysis on 1 core sequentially/',
+            $command->getOutput()
+        );
+    }
+
+    public function testFixParallel(): void
+    {
+        $command = self::executePharCommand('fix src/Config.php -vvv --dry-run --diff --using-cache=no --config=.php-cs-fixer.dist.php 2>&1');
+
+        self::assertSame(0, $command->getCode());
+        self::assertMatchesRegularExpression(
+            '/Running analysis on [0-9]+ cores with [0-9]+ files per process/',
+            $command->getOutput()
         );
     }
 
@@ -106,6 +120,9 @@ final class PharTest extends AbstractSmokeTestCase
         );
     }
 
+    /**
+     * @return iterable<array{string}>
+     */
     public static function provideReportCases(): iterable
     {
         yield ['no'];
@@ -119,8 +136,8 @@ final class PharTest extends AbstractSmokeTestCase
     public function testReport(string $usingCache): void
     {
         try {
-            $json = self::executePharCommand(sprintf(
-                'fix %s --dry-run --format=json --rules=\'%s\' --using-cache=%s',
+            $json = self::executePharCommand(\sprintf(
+                'fix %s --dry-run --sequential --format=json --rules=\'%s\' --using-cache=%s',
                 __FILE__,
                 json_encode(['concat_space' => ['spacing' => 'one']], JSON_THROW_ON_ERROR),
                 $usingCache,

@@ -26,7 +26,7 @@ use PhpCsFixer\Tokenizer\Tokens;
 final class GotoLabelAnalyzerTest extends TestCase
 {
     /**
-     * @param int[] $expectedTrue
+     * @param list<int> $expectedTrue
      *
      * @dataProvider provideGotoLabelCases
      */
@@ -104,7 +104,7 @@ Bar3:
     }
 
     /**
-     * @param int[] $expectedTrue
+     * @param list<int> $expectedTrue
      *
      * @dataProvider provideGotoLabel80Cases
      *
@@ -112,15 +112,7 @@ Bar3:
      */
     public function testGotoLabel80(string $source, array $expectedTrue): void
     {
-        $tokens = Tokens::fromCode($source);
-        $analyzer = new GotoLabelAnalyzer();
-
-        foreach ($tokens as $index => $isClassy) {
-            self::assertSame(
-                \in_array($index, $expectedTrue, true),
-                $analyzer->belongsToGoToLabel($tokens, $index)
-            );
-        }
+        $this->testGotoLabel($source, $expectedTrue);
     }
 
     /**
