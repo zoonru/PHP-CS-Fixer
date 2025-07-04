@@ -24,6 +24,13 @@ use PhpCsFixer\Tokenizer\Tokens;
 
 /**
  * @author Gert de Pagter <BackEndTea@gmail.com>
+ *
+ * @phpstan-type _UnsetInfo array{
+ *     startIndex: int,
+ *     endIndex: int,
+ *     isToTransform: bool,
+ *     isFirst: bool,
+ * }
  */
 final class NoUnsetOnPropertyFixer extends AbstractFixer
 {
@@ -33,10 +40,10 @@ final class NoUnsetOnPropertyFixer extends AbstractFixer
             'Properties should be set to `null` instead of using `unset`.',
             [new CodeSample("<?php\nunset(\$this->a);\n")],
             null,
-            'Risky when relying on attributes to be removed using `unset` rather than be set to `null`.'.
-            ' Changing variables to `null` instead of unsetting means these still show up when looping over class variables'.
-            ' and reference properties remain unbroken.'.
-            ' With PHP 7.4, this rule might introduce `null` assignments to properties whose type declaration does not allow it.'
+            'Risky when relying on attributes to be removed using `unset` rather than be set to `null`.'
+            .' Changing variables to `null` instead of unsetting means these still show up when looping over class variables'
+            .' and reference properties remain unbroken.'
+            .' With PHP 7.4, this rule might introduce `null` assignments to properties whose type declaration does not allow it.'
         );
     }
 
@@ -84,7 +91,7 @@ final class NoUnsetOnPropertyFixer extends AbstractFixer
     }
 
     /**
-     * @return list<array<string, bool|int>>
+     * @return list<_UnsetInfo>
      */
     private function getUnsetsInfo(Tokens $tokens, int $index): array
     {
@@ -144,7 +151,7 @@ final class NoUnsetOnPropertyFixer extends AbstractFixer
     }
 
     /**
-     * @param list<array<string, bool|int>> $unsetsInfo
+     * @param list<_UnsetInfo> $unsetsInfo
      */
     private function isAnyUnsetToTransform(array $unsetsInfo): bool
     {
@@ -158,7 +165,7 @@ final class NoUnsetOnPropertyFixer extends AbstractFixer
     }
 
     /**
-     * @param array<string, bool|int> $unsetInfo
+     * @param _UnsetInfo $unsetInfo
      */
     private function updateTokens(Tokens $tokens, array $unsetInfo, bool $isLastUnset): void
     {

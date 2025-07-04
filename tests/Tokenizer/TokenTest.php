@@ -16,6 +16,7 @@ namespace PhpCsFixer\Tests\Tokenizer;
 
 use PhpCsFixer\Tests\TestCase;
 use PhpCsFixer\Tokenizer\CT;
+use PhpCsFixer\Tokenizer\FCT;
 use PhpCsFixer\Tokenizer\Token;
 
 /**
@@ -39,6 +40,9 @@ final class TokenTest extends TestCase
         new Token($input);
     }
 
+    /**
+     * @return iterable<int, array{mixed}>
+     */
     public static function provideConstructorValidationCases(): iterable
     {
         yield [null];
@@ -83,7 +87,7 @@ final class TokenTest extends TestCase
     }
 
     /**
-     * @return iterable<array{Token, bool}>
+     * @return iterable<int, array{Token, bool}>
      */
     public static function provideIsCastCases(): iterable
     {
@@ -115,7 +119,7 @@ final class TokenTest extends TestCase
     }
 
     /**
-     * @return iterable<array{Token, bool}>
+     * @return iterable<int, array{Token, bool}>
      */
     public static function provideIsClassyCases(): iterable
     {
@@ -149,7 +153,7 @@ final class TokenTest extends TestCase
     }
 
     /**
-     * @return iterable<array{Token, bool}>
+     * @return iterable<int, array{Token, bool}>
      */
     public static function provideIsCommentCases(): iterable
     {
@@ -160,11 +164,24 @@ final class TokenTest extends TestCase
         yield [new Token([T_COMMENT, '/* comment */', 1]), true];
 
         yield [new Token([T_DOC_COMMENT, '/** docs */', 1]), true];
+    }
 
-        // @TODO: drop condition when PHP 8.0+ is required
-        if (\defined('T_ATTRIBUTE')) {
-            yield [new Token([T_ATTRIBUTE, '#[', 1]), false];
-        }
+    /**
+     * @dataProvider provideIsComment81Cases
+     *
+     * @requires PHP 8.0
+     */
+    public function testIsComment81(Token $token, bool $isComment): void
+    {
+        self::assertSame($isComment, $token->isComment());
+    }
+
+    /**
+     * @return iterable<int, array{Token, bool}>
+     */
+    public static function provideIsComment81Cases(): iterable
+    {
+        yield [new Token([FCT::T_ATTRIBUTE, '#[', 1]), false];
     }
 
     /**
@@ -176,7 +193,7 @@ final class TokenTest extends TestCase
     }
 
     /**
-     * @return iterable<array{Token, bool}>
+     * @return iterable<int, array{Token, bool}>
      */
     public static function provideIsObjectOperatorCases(): iterable
     {
@@ -189,10 +206,24 @@ final class TokenTest extends TestCase
         yield [new Token([T_DOUBLE_COLON, '::']), false];
 
         yield [new Token([T_OBJECT_OPERATOR, '->']), true];
+    }
 
-        if (\defined('T_NULLSAFE_OBJECT_OPERATOR')) {
-            yield [new Token([T_NULLSAFE_OBJECT_OPERATOR, '?->']), true];
-        }
+    /**
+     * @dataProvider provideIsObjectOperator80Cases
+     *
+     * @requires PHP 8.0
+     */
+    public function testIsObjectOperator80(Token $token, bool $isObjectOperator): void
+    {
+        self::assertSame($isObjectOperator, $token->isObjectOperator());
+    }
+
+    /**
+     * @return iterable<int, array{Token, bool}>
+     */
+    public static function provideIsObjectOperator80Cases(): iterable
+    {
+        yield [new Token([FCT::T_NULLSAFE_OBJECT_OPERATOR, '?->']), true];
     }
 
     public function testIsGivenKind(): void
@@ -232,7 +263,7 @@ final class TokenTest extends TestCase
     }
 
     /**
-     * @return iterable<array{0: null|int, 1: string, 2?: bool}>
+     * @return iterable<int, array{0: null|int, 1: string, 2?: bool}>
      */
     public static function provideIsMagicConstantCases(): iterable
     {
@@ -271,7 +302,7 @@ final class TokenTest extends TestCase
     }
 
     /**
-     * @return iterable<array{Token, bool}>
+     * @return iterable<int, array{Token, bool}>
      */
     public static function provideIsNativeConstantCases(): iterable
     {
@@ -304,7 +335,7 @@ final class TokenTest extends TestCase
     }
 
     /**
-     * @return iterable<array{0: Token, 1: bool, 2?: string}>
+     * @return iterable<int, array{0: Token, 1: bool, 2?: string}>
      */
     public static function provideIsWhitespaceCases(): iterable
     {
@@ -347,6 +378,9 @@ final class TokenTest extends TestCase
         self::assertSame($expectedIsArray, $token->isArray());
     }
 
+    /**
+     * @return iterable<int, array{0: mixed, 1: null|int, 2: null|string, 3: null|bool, 4?: string}>
+     */
     public static function provideCreatingTokenCases(): iterable
     {
         yield [[T_FOREACH, 'foreach'], T_FOREACH, 'foreach', true];
@@ -378,6 +412,9 @@ final class TokenTest extends TestCase
         self::assertSame($equals, $token->equals($other, $caseSensitive));
     }
 
+    /**
+     * @return iterable<int, array{0: Token, 1: bool, 2: array{0: int, 1?: string}|string|Token, 3?: bool}>
+     */
     public static function provideEqualsCases(): iterable
     {
         $brace = self::getBraceToken();
@@ -431,19 +468,36 @@ final class TokenTest extends TestCase
         yield [$function, false, [T_FUNCTION, 'function', 'unexpected']];
 
         yield [new Token('&'), true, '&'];
-        if (\defined('T_AMPERSAND_FOLLOWED_BY_VAR_OR_VARARG')) { // @TODO: drop condition when PHP 8.1+ is required
-            yield [new Token('&'), true, new Token([T_AMPERSAND_FOLLOWED_BY_VAR_OR_VARARG, '&'])];
+    }
 
-            yield [new Token('&'), true, new Token([T_AMPERSAND_NOT_FOLLOWED_BY_VAR_OR_VARARG, '&'])];
+    /**
+     * @param array{0: int, 1?: string}|string|Token $other
+     *
+     * @dataProvider provideEquals81Cases
+     *
+     * @requires PHP 8.1
+     */
+    public function testEquals81(Token $token, bool $equals, $other): void
+    {
+        self::assertSame($equals, $token->equals($other));
+    }
 
-            yield [new Token([T_AMPERSAND_FOLLOWED_BY_VAR_OR_VARARG, '&']), true, '&'];
+    /**
+     * @return iterable<int, array{0: Token, 1: bool, 2: array{0: int, 1?: string}|string|Token}>
+     */
+    public static function provideEquals81Cases(): iterable
+    {
+        yield [new Token('&'), true, new Token([FCT::T_AMPERSAND_FOLLOWED_BY_VAR_OR_VARARG, '&'])];
 
-            yield [new Token([T_AMPERSAND_FOLLOWED_BY_VAR_OR_VARARG, '&']), true, new Token([T_AMPERSAND_FOLLOWED_BY_VAR_OR_VARARG, '&'])];
+        yield [new Token('&'), true, new Token([FCT::T_AMPERSAND_NOT_FOLLOWED_BY_VAR_OR_VARARG, '&'])];
 
-            yield [new Token([T_AMPERSAND_NOT_FOLLOWED_BY_VAR_OR_VARARG, '&']), true, '&'];
+        yield [new Token([FCT::T_AMPERSAND_FOLLOWED_BY_VAR_OR_VARARG, '&']), true, '&'];
 
-            yield [new Token([T_AMPERSAND_NOT_FOLLOWED_BY_VAR_OR_VARARG, '&']), true, new Token([T_AMPERSAND_NOT_FOLLOWED_BY_VAR_OR_VARARG, '&'])];
-        }
+        yield [new Token([FCT::T_AMPERSAND_FOLLOWED_BY_VAR_OR_VARARG, '&']), true, new Token([FCT::T_AMPERSAND_FOLLOWED_BY_VAR_OR_VARARG, '&'])];
+
+        yield [new Token([FCT::T_AMPERSAND_NOT_FOLLOWED_BY_VAR_OR_VARARG, '&']), true, '&'];
+
+        yield [new Token([FCT::T_AMPERSAND_NOT_FOLLOWED_BY_VAR_OR_VARARG, '&']), true, new Token([FCT::T_AMPERSAND_NOT_FOLLOWED_BY_VAR_OR_VARARG, '&'])];
     }
 
     public function testEqualsAnyDefaultIsCaseSensitive(): void
@@ -466,6 +520,9 @@ final class TokenTest extends TestCase
         self::assertSame($equalsAny, $token->equalsAny($other, $caseSensitive));
     }
 
+    /**
+     * @return iterable<int, array{0: bool, 1: list<array{0: int, 1?: string}|string|Token>, 2?: bool}>
+     */
     public static function provideEqualsAnyCases(): iterable
     {
         $brace = self::getBraceToken();
@@ -501,6 +558,9 @@ final class TokenTest extends TestCase
         self::assertSame($isKeyCaseSensitive, Token::isKeyCaseSensitive($caseSensitive, $key));
     }
 
+    /**
+     * @return iterable<int, array{bool, array<int, bool>|bool, int}>
+     */
     public static function provideIsKeyCaseSensitiveCases(): iterable
     {
         yield [true, true, 0];
@@ -537,7 +597,7 @@ final class TokenTest extends TestCase
     }
 
     /**
-     * @return iterable<array{null|string, int}>
+     * @return iterable<int, array{null|string, int}>
      */
     public static function provideTokenGetNameForIdCases(): iterable
     {
@@ -566,7 +626,7 @@ final class TokenTest extends TestCase
     }
 
     /**
-     * @return iterable<array{Token, null|string}>
+     * @return iterable<int, array{Token, null|string}>
      */
     public static function provideGetNameCases(): iterable
     {
@@ -596,6 +656,9 @@ final class TokenTest extends TestCase
         self::assertSame($expected, $token->toArray());
     }
 
+    /**
+     * @return iterable<int, array{Token, array<string, mixed>}>
+     */
     public static function provideToArrayCases(): iterable
     {
         yield [
@@ -630,15 +693,6 @@ final class TokenTest extends TestCase
                 'changed' => false,
             ],
         ];
-    }
-
-    public function testGetClassyTokenKinds(): void
-    {
-        if (\defined('T_ENUM')) {
-            self::assertSame([T_CLASS, T_TRAIT, T_INTERFACE, T_ENUM], Token::getClassyTokenKinds());
-        } else {
-            self::assertSame([T_CLASS, T_TRAIT, T_INTERFACE], Token::getClassyTokenKinds());
-        }
     }
 
     private static function getBraceToken(): Token

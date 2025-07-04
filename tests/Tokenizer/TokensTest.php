@@ -49,9 +49,9 @@ final class TokensTest extends TestCase
     }
 
     /**
-     * @param null|array<int, Token>                       $expected
-     * @param list<array{0: int, 1?: string}|string|Token> $sequence
-     * @param bool|list<bool>                              $caseSensitive
+     * @param null|array<int, Token>                                 $expected
+     * @param non-empty-list<array{0: int, 1?: string}|string|Token> $sequence
+     * @param bool|list<bool>                                        $caseSensitive
      *
      * @dataProvider provideFindSequenceCases
      */
@@ -76,6 +76,9 @@ final class TokensTest extends TestCase
         );
     }
 
+    /**
+     * @return iterable<int, array{0: string, 1: null|array<int, Token>, 2: list<array{0: int, 1?: string}|string|Token>, 3?: int, 4?: int, 5?: array<int, bool>|bool}>
+     */
     public static function provideFindSequenceCases(): iterable
     {
         yield [
@@ -294,7 +297,7 @@ final class TokensTest extends TestCase
     }
 
     /**
-     * @param list<mixed> $sequence sequence of token prototypes
+     * @param non-empty-list<array{0: int, 1?: string}|string|Token> $sequence sequence of token prototypes
      *
      * @dataProvider provideFindSequenceExceptionCases
      */
@@ -308,6 +311,9 @@ final class TokensTest extends TestCase
         $tokens->findSequence($sequence);
     }
 
+    /**
+     * @return iterable<int, array{string, list<mixed>}>
+     */
     public static function provideFindSequenceExceptionCases(): iterable
     {
         $emptyToken = new Token('');
@@ -349,6 +355,8 @@ final class TokensTest extends TestCase
             PHP;
 
         $tokens = Tokens::fromCode($source);
+
+        // @phpstan-ignore-next-line offsetAccess.notFound
         [$fooIndex, $barIndex] = array_keys($tokens->findGivenKind(T_PUBLIC));
 
         $tokens->clearRange($fooIndex, $barIndex - 1);
@@ -371,7 +379,7 @@ final class TokensTest extends TestCase
     }
 
     /**
-     * @return iterable<array{bool, string}>
+     * @return iterable<int, array{bool, string}>
      */
     public static function provideMonolithicPhpDetectionCases(): iterable
     {
@@ -558,6 +566,9 @@ final class TokensTest extends TestCase
         }
     }
 
+    /**
+     * @return iterable<int, array{string, list<int>, list<Token>}>
+     */
     public static function provideClearTokenAndMergeSurroundingWhitespaceCases(): iterable
     {
         $clearToken = new Token('');
@@ -662,8 +673,7 @@ final class TokensTest extends TestCase
         array $findTokens,
         bool $caseSensitive = true
     ): void {
-        $source =
-            '<?php
+        $source = '<?php
                 $a = function ($b) {
                     return $b;
                 };
@@ -683,6 +693,9 @@ final class TokensTest extends TestCase
         self::assertSame($expectedIndex, $tokens->getTokenOfKindSibling($index, $direction, $findTokens, $caseSensitive));
     }
 
+    /**
+     * @return iterable<int, array{null|int, int, int, list<array{int}|string|Token>}>
+     */
     public static function provideTokenOfKindSiblingCases(): iterable
     {
         // find next cases
@@ -727,7 +740,7 @@ final class TokensTest extends TestCase
     }
 
     /**
-     * @return iterable<array{int, string, int, int}>
+     * @return iterable<int, array{int, string, int, int}>
      */
     public static function provideFindBlockEndCases(): iterable
     {
@@ -771,7 +784,7 @@ final class TokensTest extends TestCase
     }
 
     /**
-     * @return iterable<array{int, string, int, int}>
+     * @return iterable<int, array{int, string, int, int}>
      */
     public static function provideFindBlockEnd80Cases(): iterable
     {
@@ -799,7 +812,7 @@ final class TokensTest extends TestCase
     }
 
     /**
-     * @return iterable<array{int, string, int, int}>
+     * @return iterable<int, array{int, string, int, int}>
      */
     public static function provideFindBlockEnd82Cases(): iterable
     {
@@ -873,7 +886,7 @@ final class TokensTest extends TestCase
     }
 
     /**
-     * @return iterable<array{int, string, int, int}>
+     * @return iterable<int, array{int, string, int, int}>
      */
     public static function provideFindBlockEndPre84Cases(): iterable
     {
@@ -984,7 +997,7 @@ final class TokensTest extends TestCase
     }
 
     /**
-     * @return iterable<array{Token, bool}>
+     * @return iterable<int, array{Token, bool}>
      */
     public static function provideIsEmptyCases(): iterable
     {
@@ -1026,7 +1039,7 @@ final class TokensTest extends TestCase
     }
 
     /**
-     * @return iterable<array{string, string, int, int, string}>
+     * @return iterable<int, array{string, string, int, int, string}>
      */
     public static function provideEnsureWhitespaceAtIndexCases(): iterable
     {
@@ -1160,8 +1173,7 @@ echo $a;',
 
     public function testAssertTokensAfterChanging(): void
     {
-        $template =
-            '<?php class SomeClass {
+        $template = '<?php class SomeClass {
                     %s//
 
                     public function __construct($name)
@@ -1205,7 +1217,7 @@ echo $a;',
     }
 
     /**
-     * @return iterable<array{0: int, 1: null|string, 2: string, 3?: string}>
+     * @return iterable<int, array{0: int, 1: null|string, 2: string, 3?: string}>
      */
     public static function provideRemoveLeadingWhitespaceCases(): iterable
     {
@@ -1279,7 +1291,7 @@ echo $a;',
     }
 
     /**
-     * @return iterable<array{0: int, 1: null|string, 2: string, 3?: string}>
+     * @return iterable<int, array{0: int, 1: null|string, 2: string, 3?: string}>
      */
     public static function provideRemoveTrailingWhitespaceCases(): iterable
     {
@@ -1369,6 +1381,9 @@ $bar;',
         self::assertSame($expected, Tokens::detectBlockType($tokens[$index]));
     }
 
+    /**
+     * @return iterable<int, array{null|array{type: Tokens::BLOCK_TYPE_*, isStart: bool}, string, int}>
+     */
     public static function provideDetectBlockTypeCases(): iterable
     {
         yield [
@@ -1429,6 +1444,9 @@ $bar;',
         self::assertTokens(Tokens::fromArray($expected), $tokens);
     }
 
+    /**
+     * @return iterable<array{list<Token>, string, int, int, array<int, Token>}>
+     */
     public static function provideOverrideRangeCases(): iterable
     {
         // typically done by transformers, here we test the reverse
@@ -1551,7 +1569,7 @@ $bar;',
     }
 
     /**
-     * @return iterable<int|string, array{null|int, int, int, string}>
+     * @return iterable<array{null|int, int, int, string}>
      */
     public static function provideGetMeaningfulTokenSiblingCases(): iterable
     {
@@ -1581,7 +1599,7 @@ $bar;',
     /**
      * @dataProvider provideInsertSlicesAtMultiplePlacesCases
      *
-     * @param array<int, Token> $slices
+     * @param list<Token> $slices
      */
     public function testInsertSlicesAtMultiplePlaces(string $expected, array $slices): void
     {
@@ -1600,6 +1618,9 @@ $bar;',
         self::assertTokens(Tokens::fromCode($expected), $tokens);
     }
 
+    /**
+     * @return iterable<string, array{string, array<int, Token>}>
+     */
     public static function provideInsertSlicesAtMultiplePlacesCases(): iterable
     {
         yield 'one slice count' => [
@@ -1659,6 +1680,9 @@ $bar;',
         self::assertTokens($expected, $tokens);
     }
 
+    /**
+     * @return iterable<string, array{Tokens, Tokens, array<int, list<Token>|Token|Tokens>}>
+     */
     public static function provideInsertSlicesCases(): iterable
     {
         // basic insert of single token at 3 different locations including appending as new token
@@ -1752,6 +1776,11 @@ $bar;',
 
             $sets[$j] = $set;
         }
+
+        \assert(\array_key_exists(0, $sets));
+        \assert(\array_key_exists(1, $sets));
+        \assert(\array_key_exists(2, $sets));
+        \assert(\array_key_exists(3, $sets));
 
         yield 'overlapping inserts of bunch of comments' => [
             Tokens::fromCode(\sprintf("<?php\n%s/* line #1 */\n%s/* line #2 */\n%s/* line #3 */%s", $sets[0]['content'], $sets[1]['content'], $sets[2]['content'], $sets[3]['content'])),
@@ -1975,6 +2004,7 @@ $bar;',
         self::assertSame(array_keys($expected), array_keys($input), 'Both arrays need to have same keys.');
 
         foreach ($expected as $index => $expectedToken) {
+            \assert(\array_key_exists($index, $input));
             self::assertTrue(
                 $expectedToken->equals($input[$index]),
                 \sprintf('The token at index %d should be %s, got %s', $index, $expectedToken->toJson(), $input[$index]->toJson())

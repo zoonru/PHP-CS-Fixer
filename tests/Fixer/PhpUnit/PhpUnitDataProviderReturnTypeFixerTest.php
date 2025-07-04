@@ -34,7 +34,7 @@ final class PhpUnitDataProviderReturnTypeFixerTest extends AbstractFixerTestCase
     }
 
     /**
-     * @return iterable<array{0: string, 1?: string}>
+     * @return iterable<string, array{0: string, 1?: string}>
      */
     public static function provideFixCases(): iterable
     {
@@ -205,7 +205,7 @@ class FooTest extends TestCase {
     }
 
     /**
-     * @return iterable<array{string, string}>
+     * @return iterable<string, array{string, 1?: string}>
      */
     public static function provideFixPre80Cases(): iterable
     {
@@ -229,7 +229,7 @@ class FooTest extends TestCase {
     }
 
     /**
-     * @return iterable<array{string, string}>
+     * @return iterable<string, array{string, string}>
      */
     public static function provideFix80Cases(): iterable
     {
@@ -260,7 +260,9 @@ class FooTest extends TestCase {
     }
 
     /**
-     * @return list<string>
+     * @param array{string, 1?: string} ...$types
+     *
+     * @return array{string, 1?: string}
      */
     private static function mapToTemplate(string ...$types): array
     {
@@ -279,6 +281,7 @@ class FooTest extends TestCase {
     public function notProvider(): array {}
 }';
 
+        // @phpstan-ignore-next-line return.type
         return array_map(
             static fn (string $type): string => \sprintf($template, $type),
             $types

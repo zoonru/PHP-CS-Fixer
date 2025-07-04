@@ -36,7 +36,7 @@ final class LowercaseStaticReferenceFixerTest extends AbstractFixerTestCase
     }
 
     /**
-     * @return iterable<array{0: string, 1?: string}>
+     * @return iterable<int, array{0: string, 1?: string}>
      */
     public static function provideFixCases(): iterable
     {
@@ -252,6 +252,41 @@ final class LowercaseStaticReferenceFixerTest extends AbstractFixerTestCase
                     }
                 }',
         ];
+
+        yield [
+            <<<'PHP'
+                <?php
+                class Foo {
+                    public    self $a;
+                    protected self $b;
+                    private   self $c;
+                }
+                PHP,
+            <<<'PHP'
+                <?php
+                class Foo {
+                    public    SELF $a;
+                    protected SELF $b;
+                    private   SELF $c;
+                }
+                PHP,
+        ];
+
+        yield [
+            <<<'PHP'
+                <?php
+                define("SELF", "foo");
+                define("PARENT", "bar");
+                bar(SELF);
+                echo PARENT;
+                class Foo {
+                    public static function f()
+                    {
+                        return SELF;
+                    }
+                }
+                PHP,
+        ];
     }
 
     /**
@@ -265,7 +300,7 @@ final class LowercaseStaticReferenceFixerTest extends AbstractFixerTestCase
     }
 
     /**
-     * @return iterable<array{0: string, 1?: string}>
+     * @return iterable<int, array{0: string, 1?: string}>
      */
     public static function provideFix80Cases(): iterable
     {
@@ -326,7 +361,7 @@ class Foo
     }
 
     /**
-     * @return iterable<array{string}>
+     * @return iterable<int, array{string}>
      */
     public static function provideFix81Cases(): iterable
     {
@@ -350,7 +385,7 @@ class Foo
     }
 
     /**
-     * @return iterable<array{0: string, 1?: null|string}>
+     * @return iterable<int, array{0: string, 1?: null|string}>
      */
     public static function provideFix83Cases(): iterable
     {

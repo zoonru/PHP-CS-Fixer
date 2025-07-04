@@ -236,9 +236,12 @@ Class Notation
 - `single_trait_insert_per_statement <./class_notation/single_trait_insert_per_statement.rst>`_
 
   Each trait ``use`` must be done as single statement.
+- `static_private_method <./class_notation/static_private_method.rst>`_ *(risky)*
+
+  Converts private methods to ``static`` where possible.
 - `visibility_required <./class_notation/visibility_required.rst>`_
 
-  Visibility MUST be declared on all properties and methods; ``abstract`` and ``final`` MUST be declared before the visibility; ``static`` MUST be declared after the visibility.
+  Classes, constants, properties, and methods MUST have visibility declared, and keyword modifiers MUST be in the following order: inheritance modifier (``abstract`` or ``final``), visibility modifier (``public``, ``protected``, or ``private``), set-visibility modifier (``public(set)``, ``protected(set)``, or ``private(set)``), scope modifier (``static``), mutation modifier (``readonly``), type declaration, name.
 
 Class Usage
 -----------
@@ -389,6 +392,9 @@ Function Notation
 - `method_argument_space <./function_notation/method_argument_space.rst>`_
 
   In method arguments and method call, there MUST NOT be a space before each comma and there MUST be one space after each comma. Argument lists MAY be split across multiple lines, where each subsequent line is indented once. When doing so, the first item in the list MUST be on the next line, and there MUST be only one argument per line.
+- `multiline_promoted_properties <./function_notation/multiline_promoted_properties.rst>`_ *(experimental)*
+
+  Promoted properties must be on separate lines.
 - `native_function_invocation <./function_notation/native_function_invocation.rst>`_ *(risky)*
 
   Add leading ``\`` before function invocation to speed up resolving.
@@ -575,6 +581,9 @@ Operator
 - `long_to_shorthand_operator <./operator/long_to_shorthand_operator.rst>`_ *(risky)*
 
   Shorthand notation for operators should be used if possible.
+- `new_expression_parentheses <./operator/new_expression_parentheses.rst>`_
+
+  All ``new`` expressions with a further call must (not) be wrapped in parentheses.
 - `new_with_braces <./operator/new_with_braces.rst>`_ *(deprecated)*
 
   All instances created with ``new`` keyword must (not) be followed by braces.
@@ -652,6 +661,9 @@ PHPUnit
 - `php_unit_construct <./php_unit/php_unit_construct.rst>`_ *(risky)*
 
   PHPUnit assertion method calls like ``->assertSame(true, $foo)`` should be written with dedicated method like ``->assertTrue($foo)``.
+- `php_unit_data_provider_method_order <./php_unit/php_unit_data_provider_method_order.rst>`_
+
+  Data provider method must be placed after/before the last/first test where used.
 - `php_unit_data_provider_name <./php_unit/php_unit_data_provider_name.rst>`_ *(risky)*
 
   Data provider names must match the name of the test.

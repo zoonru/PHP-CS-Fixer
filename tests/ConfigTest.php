@@ -56,7 +56,7 @@ final class ConfigTest extends TestCase
             [
                 'rules' => 'cast_spaces,statement_indentation',
             ],
-            getcwd(),
+            (string) getcwd(),
             new ToolInfo()
         );
 
@@ -77,7 +77,7 @@ final class ConfigTest extends TestCase
             [
                 'rules' => '{"array_syntax": {"syntax": "short"}, "cast_spaces": true}',
             ],
-            getcwd(),
+            (string) getcwd(),
             new ToolInfo()
         );
 
@@ -102,7 +102,7 @@ final class ConfigTest extends TestCase
             [
                 'rules' => '{blah',
             ],
-            getcwd(),
+            (string) getcwd(),
             new ToolInfo()
         );
         $configResolver->getRules();
@@ -219,6 +219,21 @@ final class ConfigTest extends TestCase
         self::assertSame($expected, $config->getCustomFixers());
     }
 
+    /**
+     * @return iterable<int, array{list<FixerInterface>, iterable<FixerInterface>}>
+     */
+    public static function provideRegisterCustomFixersCases(): iterable
+    {
+        $fixers = [
+            new NoWhitespaceBeforeCommaInArrayFixer(),
+            new IncludeFixer(),
+        ];
+
+        yield [$fixers, $fixers];
+
+        yield [$fixers, new \ArrayIterator($fixers)];
+    }
+
     public function testConfigDefault(): void
     {
         $config = new Config();
@@ -259,18 +274,6 @@ final class ConfigTest extends TestCase
 
         $config->setUsingCache(false);
         self::assertFalse($config->getUsingCache());
-    }
-
-    public static function provideRegisterCustomFixersCases(): iterable
-    {
-        $fixers = [
-            new NoWhitespaceBeforeCommaInArrayFixer(),
-            new IncludeFixer(),
-        ];
-
-        yield [$fixers, $fixers];
-
-        yield [$fixers, new \ArrayIterator($fixers)];
     }
 
     public function testConfigConstructorWithName(): void

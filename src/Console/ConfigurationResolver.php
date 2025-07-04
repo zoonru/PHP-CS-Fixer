@@ -42,6 +42,7 @@ use PhpCsFixer\Runner\Parallel\ParallelConfig;
 use PhpCsFixer\Runner\Parallel\ParallelConfigFactory;
 use PhpCsFixer\StdinFileInfo;
 use PhpCsFixer\ToolInfoInterface;
+use PhpCsFixer\UnsupportedPhpVersionAllowedConfigInterface;
 use PhpCsFixer\Utils;
 use PhpCsFixer\WhitespacesFixerConfig;
 use PhpCsFixer\WordMatcher;
@@ -71,6 +72,7 @@ use Symfony\Component\Finder\Finder as SymfonyFinder;
  *      show-progress: null|string,
  *      stop-on-violation: null|bool,
  *      using-cache: null|string,
+ *      allow-unsupported-php-version: null|bool,
  *      verbosity: null|string,
  *  }
  */
@@ -121,6 +123,7 @@ final class ConfigurationResolver
         'show-progress' => null,
         'stop-on-violation' => null,
         'using-cache' => null,
+        'allow-unsupported-php-version' => null,
         'verbosity' => null,
     ];
 
@@ -154,6 +157,8 @@ final class ConfigurationResolver
     private ?RuleSet $ruleSet = null;
 
     private ?bool $usingCache = null;
+
+    private ?bool $isUnsupportedPhpVersionAllowed = null;
 
     private ?FixerFactory $fixerFactory = null;
 
@@ -388,7 +393,7 @@ final class ConfigurationResolver
     public function getProgressType(): string
     {
         if (null === $this->progress) {
-            if ('txt' === $this->getFormat()) {
+            if ('txt' === $this->resolveFormat()) {
                 $progressType = $this->options['show-progress'];
 
                 if (null === $progressType) {
@@ -418,7 +423,7 @@ final class ConfigurationResolver
             $reporterFactory = new ReporterFactory();
             $reporterFactory->registerBuiltInReporters();
 
-            $format = $this->getFormat();
+            $format = $this->resolveFormat();
 
             try {
                 $this->reporter = $reporterFactory->getReporter($format);
@@ -469,6 +474,22 @@ final class ConfigurationResolver
         $this->usingCache = $this->usingCache && $this->isCachingAllowedForRuntime();
 
         return $this->usingCache;
+    }
+
+    public function getUnsupportedPhpVersionAllowed(): bool
+    {
+        if (null === $this->isUnsupportedPhpVersionAllowed) {
+            if (null === $this->options['allow-unsupported-php-version']) {
+                $config = $this->getConfig();
+                $this->isUnsupportedPhpVersionAllowed = $config instanceof UnsupportedPhpVersionAllowedConfigInterface
+                    ? $config->getUnsupportedPhpVersionAllowed()
+                    : false;
+            } else {
+                $this->isUnsupportedPhpVersionAllowed = $this->resolveOptionBooleanValue('allow-unsupported-php-version');
+            }
+        }
+
+        return $this->isUnsupportedPhpVersionAllowed;
     }
 
     /**
@@ -574,10 +595,25 @@ final class ConfigurationResolver
         return $this->fixerFactory;
     }
 
-    private function getFormat(): string
+    private function resolveFormat(): string
     {
         if (null === $this->format) {
-            $this->format = $this->options['format'] ?? $this->getConfig()->getFormat();
+            $formatCandidate = $this->options['format'] ?? $this->getConfig()->getFormat();
+            $parts = explode(',', $formatCandidate);
+
+            if (\count($parts) > 2) {
+                throw new InvalidConfigurationException(\sprintf('The format "%s" is invalid.', $formatCandidate));
+            }
+
+            $this->format = $parts[0];
+
+            if ('@auto' === $this->format) {
+                $this->format = $parts[1] ?? 'txt';
+
+                if (filter_var(getenv('GITLAB_CI'), FILTER_VALIDATE_BOOL)) {
+                    $this->format = 'gitlab';
+                }
+            }
         }
 
         return $this->format;
