@@ -32,7 +32,10 @@ use PhpCsFixer\FixerDefinition\CodeSampleInterface;
 use PhpCsFixer\FixerDefinition\FileSpecificCodeSampleInterface;
 use PhpCsFixer\FixerDefinition\VersionSpecificCodeSampleInterface;
 use PhpCsFixer\FixerFactory;
+use PhpCsFixer\Future;
 use PhpCsFixer\Preg;
+use PhpCsFixer\RuleSet\AutomaticRuleSetDescriptionInterface;
+use PhpCsFixer\RuleSet\DeprecatedRuleSetDescriptionInterface;
 use PhpCsFixer\RuleSet\RuleSets;
 use PhpCsFixer\StdinFileInfo;
 use PhpCsFixer\Tokenizer\Tokens;
@@ -52,11 +55,17 @@ use Symfony\Component\Console\Output\OutputInterface;
  * @author Dariusz Rumiński <dariusz.ruminski@gmail.com>
  *
  * @internal
+ *
+ * @no-named-arguments Parameter names are not covered by the backward compatibility promise.
  */
-#[AsCommand(name: 'describe')]
+#[AsCommand(name: 'describe', description: 'Describe rule / ruleset.')]
 final class DescribeCommand extends Command
 {
+    /** @TODO PHP 8.0 - remove the property */
     protected static $defaultName = 'describe';
+
+    /** @TODO PHP 8.0 - remove the property */
+    protected static $defaultDescription = 'Describe rule / ruleset.';
 
     /**
      * @var ?list<string>
@@ -84,15 +93,12 @@ final class DescribeCommand extends Command
 
     protected function configure(): void
     {
-        $this
-            ->setDefinition(
-                [
-                    new InputArgument('name', InputArgument::REQUIRED, 'Name of rule / set.'),
-                    new InputOption('config', '', InputOption::VALUE_REQUIRED, 'The path to a .php-cs-fixer.php file.'),
-                ]
-            )
-            ->setDescription('Describe rule / ruleset.')
-        ;
+        $this->setDefinition(
+            [
+                new InputArgument('name', InputArgument::REQUIRED, 'Name of rule / set.', null, fn () => array_merge($this->getSetNames(), array_keys($this->getFixers()))),
+                new InputOption('config', '', InputOption::VALUE_REQUIRED, 'The path to a .php-cs-fixer.php file.'),
+            ]
+        );
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
@@ -105,7 +111,7 @@ final class DescribeCommand extends Command
         $resolver = new ConfigurationResolver(
             new Config(),
             ['config' => $input->getOption('config')],
-            getcwd(),
+            getcwd(), // @phpstan-ignore argument.type
             new ToolInfo()
         );
 
@@ -149,7 +155,6 @@ final class DescribeCommand extends Command
             throw new DescribeNameNotFoundException($name, 'rule');
         }
 
-        /** @var FixerInterface $fixer */
         $fixer = $fixers[$name];
 
         $definition = $fixer->getDefinition();
@@ -169,7 +174,7 @@ final class DescribeCommand extends Command
                 : \sprintf('use %s instead', Utils::naturalLanguageJoinWithBackticks($successors));
 
             $endMessage = '. '.ucfirst($message);
-            Utils::triggerDeprecation(new \RuntimeException(str_replace('`', '"', "Rule \"{$name}\" is deprecated{$endMessage}.")));
+            Future::triggerDeprecation(new \RuntimeException(str_replace('`', '"', "Rule \"{$name}\" is deprecated{$endMessage}.")));
             $message = Preg::replace('/(`[^`]+`)/', '<info>$1</info>', $message);
             $output->writeln(\sprintf('<error>DEPRECATED</error>: %s.', $message));
             $output->writeln('');
@@ -222,17 +227,22 @@ final class DescribeCommand extends Command
                 $allowed = HelpCommand::getDisplayableAllowedValues($option);
 
                 if (null === $allowed) {
-                    $allowed = array_map(
-                        static fn (string $type): string => '<comment>'.$type.'</comment>',
-                        $option->getAllowedTypes(),
-                    );
+                    $allowedTypes = $option->getAllowedTypes();
+                    if (null !== $allowedTypes) {
+                        $allowed = array_map(
+                            static fn (string $type): string => '<comment>'.$type.'</comment>',
+                            $allowedTypes,
+                        );
+                    }
                 } else {
                     $allowed = array_map(static fn ($value): string => $value instanceof AllowedValueSubset
                         ? 'a subset of <comment>'.Utils::toString($value->getAllowedValues()).'</comment>'
                         : '<comment>'.Utils::toString($value).'</comment>', $allowed);
                 }
 
-                $line .= ' ('.Utils::naturalLanguageJoin($allowed, '').')';
+                if (null !== $allowed) {
+                    $line .= ' ('.Utils::naturalLanguageJoin($allowed, '').')';
+                }
 
                 $description = Preg::replace('/(`.+?`)/', '<info>$1</info>', OutputFormatter::escape($option->getDescription()));
                 $line .= ': '.lcfirst(Preg::replace('/\.$/', '', $description)).'; ';
@@ -264,7 +274,6 @@ final class DescribeCommand extends Command
             $output->writeln('');
         }
 
-        /** @var list<CodeSampleInterface> $codeSamples */
         $codeSamples = array_filter($definition->getCodeSamples(), static function (CodeSampleInterface $codeSample): bool {
             if ($codeSample instanceof VersionSpecificCodeSampleInterface) {
                 return $codeSample->isSuitableFor(\PHP_VERSION_ID);
@@ -291,8 +300,8 @@ final class DescribeCommand extends Command
                 $output->isDecorated(),
                 \sprintf(
                     '<comment>   ---------- begin diff ----------</comment>%s%%s%s<comment>   ----------- end diff -----------</comment>',
-                    PHP_EOL,
-                    PHP_EOL
+                    \PHP_EOL,
+                    \PHP_EOL
                 )
             );
 
@@ -333,13 +342,23 @@ final class DescribeCommand extends Command
         if ([] !== $ruleSetConfigs) {
             ksort($ruleSetConfigs);
             $plural = 1 !== \count($ruleSetConfigs) ? 's' : '';
-            $output->writeln("Fixer is part of the following rule set{$plural}:");
+            $output->writeln("The fixer is part of the following rule set{$plural}:");
+
+            $ruleSetDefinitions = RuleSets::getSetDefinitions();
 
             foreach ($ruleSetConfigs as $set => $config) {
+                \assert(isset($ruleSetDefinitions[$set]));
+                $ruleSetDescription = $ruleSetDefinitions[$set];
+
+                if ($ruleSetDescription instanceof AutomaticRuleSetDescriptionInterface) {
+                    continue;
+                }
+
+                $deprecatedDesc = ($ruleSetDescription instanceof DeprecatedRuleSetDescriptionInterface) ? ' *(deprecated)*' : '';
                 if (null !== $config) {
-                    $output->writeln(\sprintf('* <info>%s</info> with config: <comment>%s</comment>', $set, Utils::toString($config)));
+                    $output->writeln(\sprintf('* <info>%s</info> with config: <comment>%s</comment>', $set.$deprecatedDesc, Utils::toString($config)));
                 } else {
-                    $output->writeln(\sprintf('* <info>%s</info> with <comment>default</comment> config', $set));
+                    $output->writeln(\sprintf('* <info>%s</info> with <comment>default</comment> config', $set.$deprecatedDesc));
                 }
             }
 
@@ -354,22 +373,40 @@ final class DescribeCommand extends Command
         }
 
         $ruleSetDefinitions = RuleSets::getSetDefinitions();
+        $ruleSetDescription = $ruleSetDefinitions[$name];
         $fixers = $this->getFixers();
 
-        $output->writeln(\sprintf('<fg=blue>Description of the <info>`%s`</info> set.</>', $ruleSetDefinitions[$name]->getName()));
+        $output->writeln(\sprintf('<fg=blue>Description of the <info>`%s`</info> set.</>', $ruleSetDescription->getName()));
         $output->writeln('');
 
-        $output->writeln($this->replaceRstLinks($ruleSetDefinitions[$name]->getDescription()));
+        $output->writeln($this->replaceRstLinks($ruleSetDescription->getDescription()));
         $output->writeln('');
 
-        if ($ruleSetDefinitions[$name]->isRisky()) {
+        if ($ruleSetDescription instanceof DeprecatedRuleSetDescriptionInterface) {
+            $successors = $ruleSetDescription->getSuccessorsNames();
+            $message = [] === $successors
+                ? \sprintf('it will be removed in version %d.0', Application::getMajorVersion() + 1)
+                : \sprintf('use %s instead', Utils::naturalLanguageJoinWithBackticks($successors));
+
+            Future::triggerDeprecation(new \RuntimeException(str_replace('`', '"', "Set \"{$name}\" is deprecated, {$message}.")));
+            $message = Preg::replace('/(`[^`]+`)/', '<info>$1</info>', $message);
+            $output->writeln(\sprintf('<error>DEPRECATED</error>: %s.', $message));
+            $output->writeln('');
+        }
+
+        if ($ruleSetDescription->isRisky()) {
             $output->writeln('<error>This set contains risky rules.</error>');
+            $output->writeln('');
+        }
+
+        if ($ruleSetDescription instanceof AutomaticRuleSetDescriptionInterface) {
+            $output->writeln(AutomaticRuleSetDescriptionInterface::WARNING_MESSAGE_DECORATED);
             $output->writeln('');
         }
 
         $help = '';
 
-        foreach ($ruleSetDefinitions[$name]->getRules() as $rule => $config) {
+        foreach ($ruleSetDescription->getRules() as $rule => $config) {
             if (str_starts_with($rule, '@')) {
                 $set = $ruleSetDefinitions[$rule];
                 $help .= \sprintf(
@@ -382,7 +419,6 @@ final class DescribeCommand extends Command
                 continue;
             }
 
-            /** @var FixerInterface $fixer */
             $fixer = $fixers[$rule];
 
             $definition = $fixer->getDefinition();

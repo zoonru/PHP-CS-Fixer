@@ -18,13 +18,15 @@ use PhpCsFixer\Tests\Test\AbstractFixerTestCase;
 use PhpCsFixer\WhitespacesFixerConfig;
 
 /**
- * @author Dariusz Rumiński <dariusz.ruminski@gmail.com>
- *
  * @internal
  *
  * @covers \PhpCsFixer\Fixer\Whitespace\SingleBlankLineAtEofFixer
  *
  * @extends AbstractFixerTestCase<\PhpCsFixer\Fixer\Whitespace\SingleBlankLineAtEofFixer>
+ *
+ * @author Dariusz Rumiński <dariusz.ruminski@gmail.com>
+ *
+ * @no-named-arguments Parameter names are not covered by the backward compatibility promise.
  */
 final class SingleBlankLineAtEofFixerTest extends AbstractFixerTestCase
 {

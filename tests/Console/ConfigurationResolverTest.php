@@ -51,6 +51,8 @@ use Symfony\Component\Console\Output\OutputInterface;
  * @internal
  *
  * @covers \PhpCsFixer\Console\ConfigurationResolver
+ *
+ * @no-named-arguments Parameter names are not covered by the backward compatibility promise.
  */
 final class ConfigurationResolverTest extends TestCase
 {
@@ -1432,6 +1434,8 @@ For more info about updating see: https://github.com/PHP-CS-Fixer/PHP-CS-Fixer/b
      * @dataProvider provideGetReporterCases
      *
      * @runInSeparateProcess
+     *
+     * @group sf-8-problematic
      */
     public function testGetReporter(string $expectedFormat, string $formatConfig, array $envs = []): void
     {

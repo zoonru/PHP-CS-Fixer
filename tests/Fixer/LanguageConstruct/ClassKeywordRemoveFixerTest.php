@@ -17,13 +17,15 @@ namespace PhpCsFixer\Tests\Fixer\LanguageConstruct;
 use PhpCsFixer\Tests\Test\AbstractFixerTestCase;
 
 /**
- * @author Sullivan Senechal <soullivaneuh@gmail.com>
- *
  * @internal
  *
  * @covers \PhpCsFixer\Fixer\LanguageConstruct\ClassKeywordRemoveFixer
  *
  * @extends AbstractFixerTestCase<\PhpCsFixer\Fixer\LanguageConstruct\ClassKeywordRemoveFixer>
+ *
+ * @author Sullivan Senechal <soullivaneuh@gmail.com>
+ *
+ * @no-named-arguments Parameter names are not covered by the backward compatibility promise.
  */
 final class ClassKeywordRemoveFixerTest extends AbstractFixerTestCase
 {

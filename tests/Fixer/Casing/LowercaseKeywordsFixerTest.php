@@ -17,13 +17,15 @@ namespace PhpCsFixer\Tests\Fixer\Casing;
 use PhpCsFixer\Tests\Test\AbstractFixerTestCase;
 
 /**
- * @author Dariusz Rumiński <dariusz.ruminski@gmail.com>
- *
  * @internal
  *
  * @covers \PhpCsFixer\Fixer\Casing\LowercaseKeywordsFixer
  *
  * @extends AbstractFixerTestCase<\PhpCsFixer\Fixer\Casing\LowercaseKeywordsFixer>
+ *
+ * @author Dariusz Rumiński <dariusz.ruminski@gmail.com>
+ *
+ * @no-named-arguments Parameter names are not covered by the backward compatibility promise.
  */
 final class LowercaseKeywordsFixerTest extends AbstractFixerTestCase
 {

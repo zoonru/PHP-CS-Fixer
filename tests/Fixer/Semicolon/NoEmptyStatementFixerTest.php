@@ -17,13 +17,15 @@ namespace PhpCsFixer\Tests\Fixer\Semicolon;
 use PhpCsFixer\Tests\Test\AbstractFixerTestCase;
 
 /**
- * @author Dariusz Rumiński <dariusz.ruminski@gmail.com>
- *
  * @internal
  *
  * @covers \PhpCsFixer\Fixer\Semicolon\NoEmptyStatementFixer
  *
  * @extends AbstractFixerTestCase<\PhpCsFixer\Fixer\Semicolon\NoEmptyStatementFixer>
+ *
+ * @author Dariusz Rumiński <dariusz.ruminski@gmail.com>
+ *
+ * @no-named-arguments Parameter names are not covered by the backward compatibility promise.
  */
 final class NoEmptyStatementFixerTest extends AbstractFixerTestCase
 {

@@ -17,13 +17,15 @@ namespace PhpCsFixer\Tests\Fixer\ClassNotation;
 use PhpCsFixer\Tests\Test\AbstractFixerTestCase;
 
 /**
- * @author Gregor Harlan <gharlan@web.de>
- *
  * @internal
  *
  * @covers \PhpCsFixer\Fixer\ClassNotation\SelfAccessorFixer
  *
  * @extends AbstractFixerTestCase<\PhpCsFixer\Fixer\ClassNotation\SelfAccessorFixer>
+ *
+ * @author Gregor Harlan <gharlan@web.de>
+ *
+ * @no-named-arguments Parameter names are not covered by the backward compatibility promise.
  */
 final class SelfAccessorFixerTest extends AbstractFixerTestCase
 {

@@ -17,13 +17,15 @@ namespace PhpCsFixer\Tests\Fixer\ClassUsage;
 use PhpCsFixer\Tests\Test\AbstractFixerTestCase;
 
 /**
- * @author Kuba Werłos <werlos@gmail.com>
- *
  * @internal
  *
  * @covers \PhpCsFixer\Fixer\ClassUsage\DateTimeImmutableFixer
  *
  * @extends AbstractFixerTestCase<\PhpCsFixer\Fixer\ClassUsage\DateTimeImmutableFixer>
+ *
+ * @author Kuba Werłos <werlos@gmail.com>
+ *
+ * @no-named-arguments Parameter names are not covered by the backward compatibility promise.
  */
 final class DateTimeImmutableFixerTest extends AbstractFixerTestCase
 {

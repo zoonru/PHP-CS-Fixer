@@ -17,13 +17,15 @@ namespace PhpCsFixer\Tests\Fixer\ClassNotation;
 use PhpCsFixer\Tests\Test\AbstractFixerTestCase;
 
 /**
- * @author Marcel Behrmann <marcel@behrmann.dev>
- *
  * @internal
  *
  * @covers \PhpCsFixer\Fixer\ClassNotation\PhpdocReadonlyClassCommentToKeywordFixer
  *
  * @extends AbstractFixerTestCase<\PhpCsFixer\Fixer\ClassNotation\PhpdocReadonlyClassCommentToKeywordFixer>
+ *
+ * @author Marcel Behrmann <marcel@behrmann.dev>
+ *
+ * @no-named-arguments Parameter names are not covered by the backward compatibility promise.
  */
 final class PhpdocReadonlyClassCommentToKeywordFixerTest extends AbstractFixerTestCase
 {

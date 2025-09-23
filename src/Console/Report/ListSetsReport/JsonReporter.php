@@ -22,6 +22,8 @@ use PhpCsFixer\RuleSet\RuleSetDescriptionInterface;
  * @readonly
  *
  * @internal
+ *
+ * @no-named-arguments Parameter names are not covered by the backward compatibility promise.
  */
 final class JsonReporter implements ReporterInterface
 {
@@ -47,6 +49,6 @@ final class JsonReporter implements ReporterInterface
             ];
         }
 
-        return json_encode($json, JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT);
+        return json_encode($json, \JSON_THROW_ON_ERROR | \JSON_PRETTY_PRINT);
     }
 }

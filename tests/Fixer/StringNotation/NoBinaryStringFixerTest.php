@@ -17,13 +17,15 @@ namespace PhpCsFixer\Tests\Fixer\StringNotation;
 use PhpCsFixer\Tests\Test\AbstractFixerTestCase;
 
 /**
- * @author ntzm
- *
  * @internal
  *
  * @covers \PhpCsFixer\Fixer\StringNotation\NoBinaryStringFixer
  *
  * @extends AbstractFixerTestCase<\PhpCsFixer\Fixer\StringNotation\NoBinaryStringFixer>
+ *
+ * @author ntzm
+ *
+ * @no-named-arguments Parameter names are not covered by the backward compatibility promise.
  */
 final class NoBinaryStringFixerTest extends AbstractFixerTestCase
 {

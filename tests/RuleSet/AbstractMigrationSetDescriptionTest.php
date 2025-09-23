@@ -21,10 +21,32 @@ use PhpCsFixer\Tests\TestCase;
  * @internal
  *
  * @covers \PhpCsFixer\RuleSet\AbstractMigrationSetDescription
+ *
+ * @no-named-arguments Parameter names are not covered by the backward compatibility promise.
  */
 final class AbstractMigrationSetDescriptionTest extends TestCase
 {
     public function testGetDescriptionForPhpMigrationSet(): void
+    {
+        $set = new class extends AbstractMigrationSetDescription {
+            public function getName(): string
+            {
+                return '@PHP9x9MigrationSet';
+            }
+
+            public function getRules(): array
+            {
+                return [];
+            }
+        };
+
+        self::assertSame('Rules to improve code for PHP 9.9 compatibility.', $set->getDescription());
+    }
+
+    /**
+     * @TODO v4 - remove the test while solving @MARKER_deprecated_migration_name_pattern
+     */
+    public function testGetDescriptionForPhpMigrationSetLegacy(): void
     {
         $set = new class extends AbstractMigrationSetDescription {
             public function getName(): string
@@ -60,6 +82,9 @@ final class AbstractMigrationSetDescriptionTest extends TestCase
 
     public function testGetDescriptionForNoneMigrationSet(): void
     {
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessageMatches('/^Cannot generate name of ".*" \/ "foo"\.$/');
+
         $set = new class extends AbstractMigrationSetDescription {
             public function getName(): string
             {
@@ -72,9 +97,6 @@ final class AbstractMigrationSetDescriptionTest extends TestCase
             }
         };
 
-        $this->expectException(\RuntimeException::class);
-        $this->expectExceptionMessageMatches('/^Cannot generate description for ".*" "foo"\.$/');
-
-        $set->getDescription();
+        $set->getName(); // @phpstan-ignore method.resultUnused
     }
 }

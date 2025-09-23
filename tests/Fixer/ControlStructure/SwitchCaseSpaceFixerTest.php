@@ -17,13 +17,15 @@ namespace PhpCsFixer\Tests\Fixer\ControlStructure;
 use PhpCsFixer\Tests\Test\AbstractFixerTestCase;
 
 /**
- * @author Sullivan Senechal <soullivaneuh@gmail.com>
- *
  * @internal
  *
  * @covers \PhpCsFixer\Fixer\ControlStructure\SwitchCaseSpaceFixer
  *
  * @extends AbstractFixerTestCase<\PhpCsFixer\Fixer\ControlStructure\SwitchCaseSpaceFixer>
+ *
+ * @author Sullivan Senechal <soullivaneuh@gmail.com>
+ *
+ * @no-named-arguments Parameter names are not covered by the backward compatibility promise.
  */
 final class SwitchCaseSpaceFixerTest extends AbstractFixerTestCase
 {

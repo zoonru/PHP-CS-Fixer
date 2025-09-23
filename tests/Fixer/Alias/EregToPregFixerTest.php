@@ -17,13 +17,15 @@ namespace PhpCsFixer\Tests\Fixer\Alias;
 use PhpCsFixer\Tests\Test\AbstractFixerTestCase;
 
 /**
- * @author Matteo Beccati <matteo@beccati.com>
- *
  * @internal
  *
  * @covers \PhpCsFixer\Fixer\Alias\EregToPregFixer
  *
  * @extends AbstractFixerTestCase<\PhpCsFixer\Fixer\Alias\EregToPregFixer>
+ *
+ * @author Matteo Beccati <matteo@beccati.com>
+ *
+ * @no-named-arguments Parameter names are not covered by the backward compatibility promise.
  */
 final class EregToPregFixerTest extends AbstractFixerTestCase
 {

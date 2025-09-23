@@ -17,13 +17,15 @@ namespace PhpCsFixer\Tests\Fixer\FunctionNotation;
 use PhpCsFixer\Tests\Test\AbstractFixerTestCase;
 
 /**
- * @author Mark Nielsen
- *
  * @internal
  *
  * @covers \PhpCsFixer\Fixer\FunctionNotation\VoidReturnFixer
  *
  * @extends AbstractFixerTestCase<\PhpCsFixer\Fixer\FunctionNotation\VoidReturnFixer>
+ *
+ * @author Mark Nielsen
+ *
+ * @no-named-arguments Parameter names are not covered by the backward compatibility promise.
  */
 final class VoidReturnFixerTest extends AbstractFixerTestCase
 {

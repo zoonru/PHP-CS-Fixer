@@ -215,6 +215,15 @@ To visualize all the rules that belong to a ruleset:
 
     php php-cs-fixer.phar describe @PSR2
 
+Command-line completion
+-----------------------
+
+Command-line completion can be enabled by running this command and following the instructions:
+
+.. code-block:: console
+
+    php php-cs-fixer.phar completion --help
+
 Caching
 -------
 
@@ -259,7 +268,7 @@ Then, add the following command to your CI:
     '
     CHANGED_FILES=$(git diff --name-only --diff-filter=ACMRTUXB "${COMMIT_RANGE}")
     if ! echo "${CHANGED_FILES}" | grep -qE "^(\\.php-cs-fixer(\\.dist)?\\.php|composer\\.lock)$"; then EXTRA_ARGS=$(printf -- '--path-mode=intersection\n--\n%s' "${CHANGED_FILES}"); else EXTRA_ARGS=''; fi
-    vendor/bin/php-cs-fixer check --config=.php-cs-fixer.dist.php -v --stop-on-violation --using-cache=no ${EXTRA_ARGS}
+    vendor/bin/php-cs-fixer check --config=.php-cs-fixer.dist.php -v --show-progress=dots --stop-on-violation --using-cache=no ${EXTRA_ARGS}
 
 Where ``$COMMIT_RANGE`` is your range of commits, e.g. ``${{github.event.before}}...${{github.event.after}}`` or ``HEAD~..HEAD``.
 
@@ -269,11 +278,13 @@ GitLab Code Quality Integration
 If you want to integrate with GitLab's Code Quality feature, in order for report to contain correct line numbers, you
 will need to use both ``--format=gitlab`` and ``--diff`` arguments.
 
-Environment options
--------------------
+Environment
+-----------
 
-The ``PHP_CS_FIXER_IGNORE_ENV`` environment variable can be used to ignore any environment requirements.
-This includes requirements like missing PHP extensions, unsupported PHP versions or by using HHVM.
+The ``--allow-unsupported-php-version=yes`` can be used to ignore any environment requirements.
+
+Also possible via ``PHP_CS_FIXER_IGNORE_ENV`` environment variable (deprecated),
+which also allows the Fixer to run with required PHP extensions missing.
 
 NOTE: Execution may be unstable when used.
 

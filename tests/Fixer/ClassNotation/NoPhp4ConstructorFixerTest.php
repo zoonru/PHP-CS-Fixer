@@ -17,13 +17,15 @@ namespace PhpCsFixer\Tests\Fixer\ClassNotation;
 use PhpCsFixer\Tests\Test\AbstractFixerTestCase;
 
 /**
- * @author Matteo Beccati <matteo@beccati.com>
- *
  * @internal
  *
  * @covers \PhpCsFixer\Fixer\ClassNotation\NoPhp4ConstructorFixer
  *
  * @extends AbstractFixerTestCase<\PhpCsFixer\Fixer\ClassNotation\NoPhp4ConstructorFixer>
+ *
+ * @author Matteo Beccati <matteo@beccati.com>
+ *
+ * @no-named-arguments Parameter names are not covered by the backward compatibility promise.
  */
 final class NoPhp4ConstructorFixerTest extends AbstractFixerTestCase
 {

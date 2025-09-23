@@ -17,13 +17,15 @@ namespace PhpCsFixer\Tests\Fixer\Basic;
 use PhpCsFixer\Tests\Test\AbstractFixerTestCase;
 
 /**
- * @author Dariusz Rumiński <dariusz.ruminski@gmail.com>
- *
  * @internal
  *
  * @covers \PhpCsFixer\Fixer\Basic\EncodingFixer
  *
  * @extends AbstractFixerTestCase<\PhpCsFixer\Fixer\Basic\EncodingFixer>
+ *
+ * @author Dariusz Rumiński <dariusz.ruminski@gmail.com>
+ *
+ * @no-named-arguments Parameter names are not covered by the backward compatibility promise.
  */
 final class EncodingFixerTest extends AbstractFixerTestCase
 {

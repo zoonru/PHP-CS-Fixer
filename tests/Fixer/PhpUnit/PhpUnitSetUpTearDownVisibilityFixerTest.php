@@ -17,13 +17,15 @@ namespace PhpCsFixer\Tests\Fixer\PhpUnit;
 use PhpCsFixer\Tests\Test\AbstractFixerTestCase;
 
 /**
- * @author Gert de Pagter
- *
  * @internal
  *
  * @covers \PhpCsFixer\Fixer\PhpUnit\PhpUnitSetUpTearDownVisibilityFixer
  *
  * @extends AbstractFixerTestCase<\PhpCsFixer\Fixer\PhpUnit\PhpUnitSetUpTearDownVisibilityFixer>
+ *
+ * @author Gert de Pagter
+ *
+ * @no-named-arguments Parameter names are not covered by the backward compatibility promise.
  */
 final class PhpUnitSetUpTearDownVisibilityFixerTest extends AbstractFixerTestCase
 {

@@ -17,13 +17,15 @@ namespace PhpCsFixer\Tests\Fixer\Import;
 use PhpCsFixer\Tests\Test\AbstractFixerTestCase;
 
 /**
- * @author Carlos Cirello <carlos.cirello.nl@gmail.com>
- *
  * @internal
  *
  * @covers \PhpCsFixer\Fixer\Import\NoLeadingImportSlashFixer
  *
  * @extends AbstractFixerTestCase<\PhpCsFixer\Fixer\Import\NoLeadingImportSlashFixer>
+ *
+ * @author Carlos Cirello <carlos.cirello.nl@gmail.com>
+ *
+ * @no-named-arguments Parameter names are not covered by the backward compatibility promise.
  */
 final class NoLeadingImportSlashFixerTest extends AbstractFixerTestCase
 {

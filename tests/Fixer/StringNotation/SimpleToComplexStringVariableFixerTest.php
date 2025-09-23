@@ -17,13 +17,15 @@ namespace PhpCsFixer\Tests\Fixer\StringNotation;
 use PhpCsFixer\Tests\Test\AbstractFixerTestCase;
 
 /**
- * @author Dave van der Brugge <dmvdbrugge@gmail.com>
- *
  * @internal
  *
  * @covers \PhpCsFixer\Fixer\StringNotation\SimpleToComplexStringVariableFixer
  *
  * @extends AbstractFixerTestCase<\PhpCsFixer\Fixer\StringNotation\SimpleToComplexStringVariableFixer>
+ *
+ * @author Dave van der Brugge <dmvdbrugge@gmail.com>
+ *
+ * @no-named-arguments Parameter names are not covered by the backward compatibility promise.
  */
 final class SimpleToComplexStringVariableFixerTest extends AbstractFixerTestCase
 {

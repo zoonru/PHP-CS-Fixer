@@ -17,13 +17,15 @@ namespace PhpCsFixer\Tests\Fixer\LanguageConstruct;
 use PhpCsFixer\Tests\Test\AbstractFixerTestCase;
 
 /**
- * @author Gert de Pagter <BackEndTea@gmail.com>
- *
  * @internal
  *
  * @covers \PhpCsFixer\Fixer\LanguageConstruct\NoUnsetOnPropertyFixer
  *
  * @extends AbstractFixerTestCase<\PhpCsFixer\Fixer\LanguageConstruct\NoUnsetOnPropertyFixer>
+ *
+ * @author Gert de Pagter <BackEndTea@gmail.com>
+ *
+ * @no-named-arguments Parameter names are not covered by the backward compatibility promise.
  */
 final class NoUnsetOnPropertyFixerTest extends AbstractFixerTestCase
 {

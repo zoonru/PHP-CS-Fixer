@@ -17,13 +17,15 @@ namespace PhpCsFixer\Tests\Fixer\Whitespace;
 use PhpCsFixer\Tests\Test\AbstractFixerTestCase;
 
 /**
- * @author Dariusz Rumiński <dariusz.ruminski@gmail.com>
- *
  * @internal
  *
  * @covers \PhpCsFixer\Fixer\Whitespace\NoTrailingWhitespaceFixer
  *
  * @extends AbstractFixerTestCase<\PhpCsFixer\Fixer\Whitespace\NoTrailingWhitespaceFixer>
+ *
+ * @author Dariusz Rumiński <dariusz.ruminski@gmail.com>
+ *
+ * @no-named-arguments Parameter names are not covered by the backward compatibility promise.
  */
 final class NoTrailingWhitespaceFixerTest extends AbstractFixerTestCase
 {

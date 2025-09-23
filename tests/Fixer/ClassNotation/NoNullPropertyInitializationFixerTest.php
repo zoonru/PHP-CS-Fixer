@@ -17,13 +17,15 @@ namespace PhpCsFixer\Tests\Fixer\ClassNotation;
 use PhpCsFixer\Tests\Test\AbstractFixerTestCase;
 
 /**
- * @author ntzm
- *
  * @internal
  *
  * @covers \PhpCsFixer\Fixer\ClassNotation\NoNullPropertyInitializationFixer
  *
  * @extends AbstractFixerTestCase<\PhpCsFixer\Fixer\ClassNotation\NoNullPropertyInitializationFixer>
+ *
+ * @author ntzm
+ *
+ * @no-named-arguments Parameter names are not covered by the backward compatibility promise.
  */
 final class NoNullPropertyInitializationFixerTest extends AbstractFixerTestCase
 {
