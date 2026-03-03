@@ -7,10 +7,12 @@ Rules to improve code for PHP 7.0 compatibility.
 Warning
 -------
 
-This set contains rules that are risky
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+This rule set is RISKY
+~~~~~~~~~~~~~~~~~~~~~~
 
-Using this rule set may lead to changes in your code's logic and behaviour. Use it with caution and review changes before incorporating them into your code base.
+This set contains rules that are risky. Using it may lead to changes in your
+code's logic and behaviour. Use it with caution and review changes before
+incorporating them into your code base.
 
 Rules
 -----
@@ -21,5 +23,5 @@ Rules
 - `non_printable_character <./../rules/basic/non_printable_character.rst>`_
 - `random_api_migration <./../rules/alias/random_api_migration.rst>`_ with config:
 
-  ``['replacements' => ['mt_rand' => 'random_int', 'rand' => 'random_int']]``
+  ``['replacements' => ['mt_getrandmax' => 'getrandmax', 'mt_rand' => 'random_int', 'mt_srand' => 'srand', 'rand' => 'random_int']]``
 

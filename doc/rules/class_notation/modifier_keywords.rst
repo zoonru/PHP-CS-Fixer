@@ -9,6 +9,14 @@ keyword modifiers MUST be in the following order: inheritance modifier
 ``private(set)``), scope modifier (``static``), mutation modifier
 (``readonly``), type declaration, name.
 
+Warning
+-------
+
+This rule is CONFIGURABLE
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+You can configure this rule using the following option: ``elements``.
+
 Configuration
 -------------
 
@@ -185,12 +193,12 @@ The rule is part of the following rule sets:
 - `@PHP83Migration <./../../ruleSets/PHP83Migration.rst>`_ *(deprecated)*
 - `@PHP84Migration <./../../ruleSets/PHP84Migration.rst>`_ *(deprecated)*
 - `@PHP85Migration <./../../ruleSets/PHP85Migration.rst>`_ *(deprecated)*
+- `@PhpCsFixer <./../../ruleSets/PhpCsFixer.rst>`_
 - `@PSR2 <./../../ruleSets/PSR2.rst>`_ with config:
 
   ``['elements' => ['method', 'property']]``
 
 - `@PSR12 <./../../ruleSets/PSR12.rst>`_
-- `@PhpCsFixer <./../../ruleSets/PhpCsFixer.rst>`_
 - `@Symfony <./../../ruleSets/Symfony.rst>`_
 
 References

@@ -100,7 +100,7 @@ Put this content inside:
 Note how the class and file name match. Also keep in mind that all
 fixers must implement `PhpCsFixer\\Fixer\\FixerInterface <./../src/Fixer/FixerInterface.php>`_. In this case, the fixer is
 inheriting from `PhpCsFixer\\AbstractFixer <./../src/AbstractFixer.php>`_, which fulfills the interface with some
-default behavior.
+default behaviour.
 
 Now let us create the test file at
 ``tests/Fixer/Comment/RemoveCommentsFixerTest.php``. Put this content inside:
@@ -146,11 +146,11 @@ Now let us create the test file at
        }
    }
 
-Step 2 - Using tests to define fixers behavior
-______________________________________________
+Step 2 - Using tests to define fixers behaviour
+_______________________________________________
 
 Now that the files are created, you can start writing tests to define the
-behavior of the fixer. You have to do it in two ways: first, ensuring
+behaviour of the fixer. You have to do it in two ways: first, ensuring
 the fixer changes what it should be changing; second, ensuring that
 fixer does not change what is not supposed to change. Thus:
 
@@ -242,7 +242,7 @@ like:
 Step 3 - Implement your solution
 ________________________________
 
-You have defined the behavior of your fixer in tests. Now it is time to
+You have defined the behaviour of your fixer in tests. Now it is time to
 implement it.
 
 First, we need to create one method to describe what this fixer does:
@@ -273,7 +273,7 @@ Execute the following command in your command shell:
 
 .. code-block:: console
 
-   php dev-tools/doc.php
+   composer docs
 
 Next, we must filter what type of tokens we want to fix. Here, we are interested in code that contains ``T_COMMENT`` tokens:
 
@@ -485,7 +485,7 @@ The review usually flows like this:
 
 1. People will check your code for common mistakes and logical
    caveats. Usually, the person building a fixer is blind about some
-   behavior mistakes of fixers. Expect to write few more tests to cater for
+   behaviour mistakes of fixers. Expect to write few more tests to cater for
    the reviews.
 2. People will discuss the relevance of your fixer. If it is
    something that goes along with Symfony style standards, or PSR-1/PSR-2
@@ -533,7 +533,29 @@ Why am I asked to use ``getPrevMeaningfulToken()`` instead of ``getPrevNonWhites
   you use ``getPrevMeaningfulToken()``, no matter if you have got a comment
   or a whitespace, the returned token will always be ``->``.
 
+Why am I asked to iterate `PhpCsFixer\\Tokenizer\\Tokens <./../src/Tokenizer/Tokens.php>`_ backward?
+  If you add new tokens to the collection, and iterating the collection going forward, you will mismatch the index/not add the items properly.
+
+  See https://3v4l.org/sP9s0#v8.5.1.
+
+How shall I decide on default option values for rules configurable via `PhpCsFixer\\Fixer\\ConfigurableFixerInterface <./../src/Fixer/ConfigurableFixerInterface.php>`_?
+  Default value should reflect default style of following standard, in order:
+
+  - `PER-CS`_,
+  - if not specified - `Symfony Coding Standards`_ or PHPUnit best practices,
+  - if still not specified - by our own guidance (present your reasoning).
+
+Should I add new rule to ruleset?
+  - If rule is explicitly implementing defined, documented coding standard - you shall add it to respective ruleset definition.
+  - If you have a feeling that it matches the community standard, yet cannot find reference for it in their docs:
+
+    - create rule (1st PR),
+    - suggest given community to start using it (eg raise PR towards Symfony for Symfony ruleset),
+    - extend ruleset with new rule when community accepted it (2nd PR).
+
 .. _Composer: https://getcomposer.org
 .. _idempotent: https://en.wikipedia.org/wiki/Idempotence#Computer_science_meaning
 .. _Linus's Law: https://en.wikipedia.org/wiki/Linus%27s_Law
 .. _List of Parser Tokens: https://php.net/manual/en/tokens.php
+.. _PER-CS: https://www.php-fig.org/per/coding-style/
+.. _Symfony Coding Standards: https://symfony.com/doc/current/contributing/code/standards.html

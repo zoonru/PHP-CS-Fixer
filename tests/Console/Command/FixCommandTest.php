@@ -18,7 +18,7 @@ use PhpCsFixer\ConfigInterface;
 use PhpCsFixer\ConfigurationException\InvalidConfigurationException;
 use PhpCsFixer\Console\Application;
 use PhpCsFixer\Console\Command\FixCommand;
-use PhpCsFixer\Runner\Parallel\ParallelConfigFactory;
+use PhpCsFixer\Console\ConfigurationResolver;
 use PhpCsFixer\Tests\TestCase;
 use PhpCsFixer\ToolInfo;
 use Symfony\Component\Console\Command\Command;
@@ -39,25 +39,26 @@ final class FixCommandTest extends TestCase
         $cmdTester = $this->doTestExecute([
             '--path-mode' => 'intersection',
             '--show-progress' => 'none',
+            '--config' => __DIR__.'/../../Fixtures/.php-cs-fixer.vanilla.php',
         ]);
 
         self::assertSame(
             Command::SUCCESS,
-            $cmdTester->getStatusCode()
+            $cmdTester->getStatusCode(),
         );
     }
 
     public function testEmptyRulesValue(): void
     {
         $this->expectException(
-            InvalidConfigurationException::class
+            InvalidConfigurationException::class,
         );
         $this->expectExceptionMessageMatches(
-            '#^Empty rules value is not allowed\.$#'
+            '#^Empty rules value is not allowed\.$#',
         );
 
         $this->doTestExecute(
-            ['--rules' => '']
+            ['--rules' => ''],
         );
     }
 
@@ -70,7 +71,7 @@ final class FixCommandTest extends TestCase
             [
                 '--using-cache' => 'not today',
                 '--rules' => 'switch_case_semicolon_to_colon',
-            ]
+            ],
         );
 
         $cmdTester->getStatusCode();
@@ -82,7 +83,7 @@ final class FixCommandTest extends TestCase
      */
     public function testSequentialRun(): void
     {
-        $pathToDistConfig = __DIR__.'/../../../.php-cs-fixer.dist.php';
+        $pathToDistConfig = __DIR__.'/../../Fixtures/.php-cs-fixer.vanilla.php';
         $configWithFixedParallelConfig = <<<PHP
             <?php
 
@@ -99,15 +100,10 @@ final class FixCommandTest extends TestCase
             [
                 '--config' => $tmpFile,
                 'path' => [__DIR__],
-            ]
+            ],
         );
 
-        $availableMaxProcesses = ParallelConfigFactory::detect()->getMaxProcesses();
-
         self::assertStringContainsString('Running analysis on 1 core sequentially.', $cmdTester->getDisplay());
-        if ($availableMaxProcesses > 1) {
-            self::assertStringContainsString('You can enable parallel runner and speed up the analysis!', $cmdTester->getDisplay());
-        }
         self::assertStringContainsString('(header_comment)', $cmdTester->getDisplay());
         self::assertSame(8, $cmdTester->getStatusCode());
     }
@@ -122,7 +118,7 @@ final class FixCommandTest extends TestCase
      */
     public function testParallelRun(): void
     {
-        $pathToDistConfig = __DIR__.'/../../../.php-cs-fixer.dist.php';
+        $pathToDistConfig = __DIR__.'/../../Fixtures/.php-cs-fixer.vanilla.php';
         $configWithFixedParallelConfig = <<<PHP
             <?php
 
@@ -139,11 +135,10 @@ final class FixCommandTest extends TestCase
             [
                 '--config' => $tmpFile,
                 'path' => [__DIR__],
-            ]
+            ],
         );
 
         self::assertStringContainsString('Running analysis on 2 cores with 1 file per process.', $cmdTester->getDisplay());
-        self::assertStringContainsString('Parallel runner is an experimental feature and may be unstable, use it at your own risk. Feedback highly appreciated!', $cmdTester->getDisplay());
         self::assertStringContainsString('(header_comment)', $cmdTester->getDisplay());
         self::assertSame(8, $cmdTester->getStatusCode());
     }
@@ -157,7 +152,7 @@ final class FixCommandTest extends TestCase
             self::markTestSkipped('This test requires version of PHP higher than '.ConfigInterface::PHP_VERSION_SYNTAX_SUPPORTED);
         }
 
-        $pathToDistConfig = __DIR__.'/../../../.php-cs-fixer.dist.php';
+        $pathToDistConfig = __DIR__.'/../../Fixtures/.php-cs-fixer.vanilla.php';
         $configWithFixedParallelConfig = <<<PHP
             <?php
 
@@ -173,7 +168,7 @@ final class FixCommandTest extends TestCase
             [
                 '--config' => $tmpFile,
                 'path' => [__DIR__],
-            ]
+            ],
         );
 
         self::assertStringContainsString('PHP CS Fixer currently supports PHP syntax only up to PHP '.ConfigInterface::PHP_VERSION_SYNTAX_SUPPORTED, $cmdTester->getDisplay());
@@ -186,7 +181,7 @@ final class FixCommandTest extends TestCase
             self::markTestSkipped('This test requires version of PHP higher than '.ConfigInterface::PHP_VERSION_SYNTAX_SUPPORTED);
         }
 
-        $pathToDistConfig = __DIR__.'/../../../.php-cs-fixer.dist.php';
+        $pathToDistConfig = __DIR__.'/../../Fixtures/.php-cs-fixer.vanilla.php';
         $configWithFixedParallelConfig = <<<PHP
             <?php
 
@@ -202,11 +197,11 @@ final class FixCommandTest extends TestCase
             [
                 '--config' => $tmpFile,
                 'path' => [__DIR__],
-            ]
+            ],
         );
 
         self::assertStringContainsString('PHP CS Fixer currently supports PHP syntax only up to PHP '.ConfigInterface::PHP_VERSION_SYNTAX_SUPPORTED, $cmdTester->getDisplay());
-        self::assertStringContainsString('Add Config::setUnsupportedPhpVersionAllowed(true) to allow executions on unsupported PHP versions.', $cmdTester->getDisplay());
+        self::assertStringContainsString('Add `Config::setUnsupportedPhpVersionAllowed(true)` to allow executions on unsupported PHP versions.', $cmdTester->getDisplay());
         self::assertSame(1, $cmdTester->getStatusCode());
     }
 
@@ -225,13 +220,13 @@ final class FixCommandTest extends TestCase
             array_merge(
                 ['command' => $command->getName()],
                 $this->getDefaultArguments(),
-                $arguments
+                $arguments,
             ),
             [
                 'interactive' => false,
                 'decorated' => false,
                 'verbosity' => OutputInterface::VERBOSITY_DEBUG,
-            ]
+            ],
         );
 
         return $commandTester;
@@ -249,6 +244,7 @@ final class FixCommandTest extends TestCase
             '--dry-run' => true,
             '--using-cache' => 'no',
             '--show-progress' => 'none',
+            '--config' => ConfigurationResolver::IGNORE_CONFIG_FILE,
         ];
     }
 }

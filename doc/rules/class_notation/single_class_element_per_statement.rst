@@ -4,6 +4,14 @@ Rule ``single_class_element_per_statement``
 
 There MUST NOT be more than one property or constant declared per statement.
 
+Warning
+-------
+
+This rule is CONFIGURABLE
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+You can configure this rule using the following option: ``elements``.
+
 Configuration
 -------------
 
@@ -82,6 +90,7 @@ The rule is part of the following rule sets:
 
 - `@PER-CS3.0 <./../../ruleSets/PER-CS3.0.rst>`_ *(deprecated)*
 - `@PER-CS3x0 <./../../ruleSets/PER-CS3x0.rst>`_
+- `@PhpCsFixer <./../../ruleSets/PhpCsFixer.rst>`_
 - `@PSR2 <./../../ruleSets/PSR2.rst>`_ with config:
 
   ``['elements' => ['property']]``
@@ -90,7 +99,6 @@ The rule is part of the following rule sets:
 
   ``['elements' => ['property']]``
 
-- `@PhpCsFixer <./../../ruleSets/PhpCsFixer.rst>`_
 - `@Symfony <./../../ruleSets/Symfony.rst>`_
 
 References

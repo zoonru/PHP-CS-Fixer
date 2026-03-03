@@ -3,6 +3,277 @@ CHANGELOG for PHP CS Fixer
 
 This file contains changelogs for stable releases only.
 
+Changelog for v3.94.2
+---------------------
+
+* fix: `AttributeBlockNoSpacesFixer` - skipping some attributes when multiple present (#9445)
+* fix: `NoUnusedImportsFixer` - do not remove constant types (#9442)
+* fix: `PhpdocLineSpanFixer` - handle unions and intersections in properties (#9438)
+* deps: bump crate-ci/typos from 1.43.4 to 1.43.5 (#9444)
+
+Changelog for v3.94.1
+---------------------
+
+* chore: add tests for `ArgumentsAnalyzer` (#9422)
+* chore: bump dev-tools to PHP 8.5 (#9432)
+* chore: ConfigurableFixerTemplateFixer - allow to remove option from computed options (#9437)
+* chore: fix Tokens::getIterator() type (#9433)
+* chore: reduce Generator into iterable (#9435)
+* chore: reduce Iterator->Traversable and Traversable->iterable when possible (#9434)
+* CI: cleanup sca.yml (#9430)
+* deps: bump crate-ci/typos from 1.43.2 to 1.43.4 (#9426)
+* deps: bump ergebnis/composer-normalize from 2.49.0 to 2.50.0 in /dev-tools (#9427)
+* deps: bump the phpstan group in /dev-tools with 4 updates (#9425)
+* deps: dependabot group for shipmonk/ (#9429)
+* docs: switch sets ordering to case-insensitive (#9423)
+* test: check PHP env in CI jobs (#9428)
+
+Changelog for v3.94.0
+---------------------
+
+* UX: enable parallel runner by default (#9408)
+* feat: Add option `case` to `phpdoc_line_span` fixer (#9391)
+* feat: PhpdocLineSpanFixer - support docs for classes, trait usages and other code lines (#8832)
+* feat: `VoidReturnFixer` - allow to skip lambdas (#9417)
+* chore: fix comment (#9404)
+* chore: Linter tests for Schrodinger's validity (#9398)
+* chore: ModernizeStrposFixer - no need for configuration hooks (#9419)
+* chore: `VoidReturnFixer` - better describe exceptions (#9418)
+* CI: no need for special handling of MacOS (#9403)
+* CI: run tests using PHPUnit 13 (#9410)
+* deps: bump crate-ci/typos from 1.42.1 to 1.42.3 (#9395)
+* deps: bump crate-ci/typos from 1.42.3 to 1.43.2 (#9405)
+* deps: bump ergebnis/composer-normalize from 2.48.2 to 2.49.0 in /dev-tools (#9396)
+* deps: bump the phpstan group in /dev-tools with 2 updates (#9394)
+* deps: upgrade dev-deps (#9411)
+* DX: use custom name for custom config (#9402)
+* fix: absolute path in reports (#9399)
+* fix: indentation for backed enum with multiline assignment (#9362)
+* fix: Runner - fix occasional sub-process freeze on parallel execution with `--stop-on-violation` (#9393)
+* fix: `NoUnreachableDefaultArgumentValueFixer` - fix for closures (#9409)
+* fix: `UseArrowFunctionsFixer` - do not convert closure in attribute (#9416)
+* test: create PHP 8.5 risky compat test (#9420)
+* UX: Do not run interactive configurator when rules are passed explicitly (#9378)
+
+Changelog for v3.93.1
+---------------------
+
+* fix: `ErrorOutput` - do not show "begin diff"/"end diff" when there is no diff (#9361)
+* fix: `UseArrowFunctionsFixer` - don't convert lambda with `use($var)` clause if it includes another file (#9389)
+* DX: use null coalescing operator (#9380)
+
+Changelog for v3.93.0
+---------------------
+
+* feat: add `ModernSerializationMethodsFixer` (#9108)
+* feat: Add `NoRedundantReadonlyPropertyFixer` (#9339)
+* feat: add `PhpdocTypesNoDuplicatesFixer` (#9312)
+* feat: do not suggest config file creation if config explicitly skipped with `--config=-` (#9379)
+* feat: improve handling of `@see` tags in `FullyQualifiedStrictTypesFixer` (#9350)
+* feat: PER attribute block no spaces (#9264)
+* feat: php_unit_test_case_static_method_calls - change default 'call_type' to 'this' for v4 (#9328)
+* feat: protected_to_private - add to`@Symfony` set (#9303)
+* feat: PSR/PER-CS - adjust `braces_position` rule (#9329)
+* feat: remove `php_unit_test_case_static_method_calls` from PHPUnit sets (#9341)
+* feat: `@PHP7x0MigrationRisky` - update configuration of `RandomApiMigrationFixer` to match it's newly updated v4 defaults (#9368)
+* feat: `@Symfony:risky` - extend set with `modern_serialization_methods` (#9366)
+* feat: `@Symfony:risky` - extend set with `static_lambda` (#9365)
+* feat: `@Symfony` - enable `no_unneeded_control_parentheses.statements.negative_instanceof` (#9336)
+* feat: `@Symfony` - extend set with `no_useless_else` (#9363)
+* feat: `@Symfony` - extend set with `no_useless_return` (#9364)
+* feat: `RandomApiMigrationFixer` - allow to convert `mt_getrandmax` and `mt_srand` (#9367)
+* fix: properly expose memory usage while running parallel mode (#9352)
+* fix: `ModifierKeywordsFixer` - closure in attribute (#9358)
+* fix: `NoUselessElseFixer` - handle conditional symbol declarations (#9347)
+* fix: `OrderedClassElementsFixer` - closure in attribute (#9357)
+* fix: `PhpUnitAttributesFixer` - do not add for annotation `@testWith` when attribute `TestWith` already present (#9354)
+* refactor: add base key-existence check for cross-process communication in parallel runner (#9360)
+* refactor: FixerDocumentGenerator - limit the scope to create rule instance in future mode only (#9359)
+* test: fix compatibility towards Symfony 8 (#9370)
+* test: update PHP 8.5 compat test to cover closure in attribute and prevent conversion to empty arrow function (#9373)
+* chore: add clarifying `@return` annotations to `Config` (#9337)
+* chore: fix `assign.propertyType` error from PHPStan (#9332)
+* chore: PHPUnit sets - cleanup test, update docs/comments (#9342)
+* chore: simplify `phpstan:baseline` command (#9346)
+* deps: bump crate-ci/typos from 1.41.0 to 1.42.0 (#9338)
+* deps: bump crate-ci/typos from 1.42.0 to 1.42.1 (#9376)
+* deps: bump dev deps (#9369)
+* deps: bump the phpstan group in /dev-tools with 3 updates (#9375)
+* docs: show default value for future mode (#9355)
+* DX: add env for easier finding which fixer break a PHP syntax (#9356)
+
+Changelog for v3.92.5
+---------------------
+
+* fix: `CombineConsecutiveUnsetsFixer` - proper handling of trailing comma (#9335)
+* chore: cleanup self-config file (#9324)
+* chore: fix `variable.undefined` error from PHPStan (#9330)
+* deps: bump crate-ci/typos from 1.40.0 to 1.41.0 (#9325)
+* docs: extend Q&A for creating the rule (#9331)
+
+Changelog for v3.92.4
+---------------------
+
+* fix: `ComposerJsonReader` - handle more syntaxes (#9327)
+* UX: Runner/Parallel/Process - friendly message when tmp dir not writable (#9319)
+* docs: fix RST links (#9321)
+* DX: internal commands for working with tokens (#9251)
+* chore: Add CS commit to .git-blame-ignore-revs
+* chore: apply trailing_comma_in_multiline: elements.arguments (#9314)
+* deps: upgrade dev-deps (#9318)
+
+Changelog for v3.92.3
+---------------------
+
+* fix: using Rule Customisation Policy with parallel runner (#9309)
+* chore: phpstan - cover `.php-cs-fixer.dist.php` (#9311)
+* chore: `.php-cs-fixer.dist.php` - drop wrongly called `ignoreVCSIgnored` (#9310)
+
+Changelog for v3.92.2
+---------------------
+
+* fix: let `@php-cs-fixer-ignore` accept custom fixer names (#9306)
+* chore: introduce `PHP_CS_FIXER_IGNORE_MISMATCHED_RULES_EXCEPTIONS` (#9307)
+
+Changelog for v3.92.1
+---------------------
+
+* chore: update php-compatibility config (#9302)
+* deps: bump actions/cache from 4 to 5 (#9295)
+* deps: bump phpstan/phpstan-phpunit from 2.0.9 to 2.0.10 in /dev-tools in the phpstan group (#9293)
+* deps: bump shipmonk/phpstan-baseline-per-identifier from 2.2.0 to 2.3.0 in /dev-tools (#9294)
+* docs: update README.md (#9277)
+* DX: make all `testFix*` methods have no more than 4 parameters (#9298)
+* DX: make all `testFix*` methods have second parameter `$input` (#9297)
+* DX: rename parameter `$config` to `$configuration` (#9299)
+* DX: restrict `testFix*` parameter names (#9301)
+* DX: use `WhitespacesFixerConfig` in tests (#9300)
+* fix: describe - skip listing automated rules, as cannot determine them in projects (#9304)
+* test: PHPUnit sets - check that set is providing proper target for rules (#9296)
+* test: `ProjectCodeTest::testExpectedInputOrder` - move checks for `testFix...` methods (#9291)
+
+Changelog for v3.92.0
+---------------------
+
+* feat: exception for rules via `@php-cs-fixer-ignore` annotation (#9280)
+* feat: exception for rules via `Rule Customisation Policy` (#9107)
+* feat: `PhpUnitTestCaseStaticMethodCallsFixer` - add handling of `getStubBuilder` (#9276)
+* feat: `PhpUnitTestCaseStaticMethodCallsFixer` - add `target` option (#8498)
+* chore: '.php-cs-fixer.dist.php' - remove no longer needed rule, 'expectedDeprecation' annotation does not exist for long time (#9266)
+* chore: fix `arguments.count` error from PHPStan (#9258)
+* chore: fix `generator.valueType` error from PHPStan (#9259)
+* chore: fix `plus.*NonNumeric` errors from PHPStan (#9260)
+* chore: Runner - better input types handling (#9286)
+* chore: watch out for non-final classes (#9262)
+* chore: `Config::getFinder()` - fix typehinting (#9288)
+* deps: bump alpine from 3.22 to 3.23 (#9269)
+* deps: bump phpcompatibility/php-compatibility from 10.0.0-alpha1 to 10.0.0-alpha2 in /dev-tools (#9271)
+* deps: bump the phpstan group in /dev-tools with 3 updates (#9270)
+* deps: dev-tools - upgrade deep deps (#9272)
+* docs: exception for rules in dedicated doc files, for easier discoverability (#9281)
+* docs: upgrade docs to not use legacy set (#9282)
+* DX: make all `testFix*` methods have first parameter `$expected` (#9289)
+* refactor: fix violation of 'no_useless_concat_operator' (#9267)
+* refactor: `ProjectCodeTest` - refactor `testExpectedInputOrder` test (#9290)
+* Revert (partially) "feat: Finder to find dot-files by default in v4/future-mode (#9187)" (#9287)
+* test: RuleSetTest - check against non-deprecated variant of PHPUnit sets (#9265)
+* UX: exception for rules via `Rule Customisation Policy` - better error message for wrong customisers (#9279)
+* UX: exception for rules via `Rule Customisation Policy` - prevent policy without version (#9278)
+
+Changelog for v3.91.3
+---------------------
+
+* Revert "feat: Symfony - add stringable_for_to_string to set" (#9268)
+
+Changelog for v3.91.2
+---------------------
+
+* fix: fix support call-site generic variance (#9253)
+* chore: adjust autoloader to exclude all Internal classes in classmap (#9252)
+* CI: set `PHP_CS_FIXER_IGNORE_ENV` for PHP 8.6 (#9254)
+
+Changelog for v3.91.1
+---------------------
+
+* UX: show warning on PHP-mismatch only for 'fix' and 'check' commands (#9243)
+* docs: unify rule/ruleset doc tags (#9250)
+* refactor: don't expose internal commands/rules (#9245)
+* refactor: memoize fixer names (#9219)
+* refactor: use custom set for internal rules (#9247)
+* test: show that `describe` command works well for custom sets (#9246)
+
+Changelog for v3.91.0
+---------------------
+
+* UX: init command (#9215)
+* feat: PHP 8.5 compatibility support (#9234)
+* feat: Add `StringableForToStringFixer` (#9218)
+* feat: support call-site generic variance (#9212)
+* feat: Symfony - add stringable_for_to_string to set (#9235)
+* chore: do not mark NamespaceAnalysis as internal, because it's part of public API interface (#9193)
+* chore: ExampleRuleset - improve test fixture name (#9214)
+* chore: traits - require interfaces or base classes (#9086)
+* CI: Add PHPStan rule to validate public API surface completeness (#9196)
+* CI: auto-select PHP_MAX for special jobs (#9231)
+* CI: drop duplicated PHP 8.4 jobs (#9229)
+* CI: fix SCA after Symfony 7.4.0 release (#9226)
+* CI: no more need for solving PHP 8.4 deprecations in `/vendor/` anymore (#9230)
+* CI: switch trivial jobs to ubuntu-slim (#9232)
+* CI: upgrade `.php-cs-fixer.php-highest.php` to fully reflect PHP 8.4 (#9233)
+* deps: bump actions/checkout from 5 to 6 (#9210)
+* deps: bump crate-ci/typos from 1.39.2 to 1.40.0 (#9237)
+* deps: bump shipmonk/composer-dependency-analyser from 1.8.3 to 1.8.4 in /dev-tools (#9238)
+* deps: bump shipmonk/dead-code-detector from 0.13.5 to 0.14.0 in /dev-tools (#9239)
+* deps: bump Symfony v8 to RC (#9221)
+* deps: bump Symfony v8 to stable (#9222)
+* deps: update xdebug (#9228)
+* fix: move config template to non-excluded folder (#9241)
+* fix: `DeclareStrictTypesFixer` - do not duplicate `strict_types` if it is already present, with other directive (#9225)
+* fix: `FullyQualifiedStrictTypesFixer` - fix crash on `T_OPEN_TAG_WITH_ECHO` (#9217)
+* test: allow CI to define both, numeric and non-numeric PHP versions/builds (#9236)
+* test: do not allow to fail PHP 8.5 job (#9224)
+* test: let's not dance on the edge of the JIT stack limit (#9211)
+* test: run smoke tests on any OS (#9242)
+* tests: update PHP 8.5 compatibility test (#9223)
+
+Changelog for v3.90.0
+---------------------
+
+* feat: always have `@PHPXxYMigration(:risky)` sets for supported PHP versions (#9207)
+* feat: Finder to find dot-files by default in v4/future-mode (#9187)
+* fix: manage the space between operator and version on Composer JSON reader (#9203)
+* fix: PhpdocAnnotationWithoutDotFixer lowercases `@param` type when description starts with all-uppercase word (#9169)
+* UX: groom warning of PHP mismatch for runtime vs target project minimum supported version (#9202)
+* UX: Rules override warning (#9188)
+* UX: `describe` command - allow to visualize Set as tree (#9179)
+* docs: rework `.php-cs-fixer.php` local config file docs (#9185)
+* docs: update Set descriptions (#9183)
+* chore: Declare support for Symfony 8 (#9172)
+* chore: add missing v4 TODOs (#9197)
+* chore: mark one remaining Analyzer to become internal (#9194)
+* chore: mark v2 leftovers with v4 TODO (#9181)
+* chore: no need for deprecation trigger in internal DataProviderAnalysis (#9192)
+* deps: bump crate-ci/typos from 1.38.1 to 1.39.0 (#9175)
+* deps: bump crate-ci/typos from 1.39.0 to 1.39.2 (#9205)
+* deps: bump the phpstan group in /dev-tools with 2 updates (#9204)
+* DX: different name for special configs (#9180)
+* DX: improve types for `testInvalidConfiguration` methods (#9206)
+* DX: `describe` command - allow to expose rules without sets via `@-` alias (#9178)
+* refactor: move assertions from `tearDown` into `assertPostConditions` to fix `Test code or tested code did not remove its own error handlers` warning (#9182)
+* refactor: prevent tests to use actual repository `.php-cs-fixer.dist.php` file (#9177)
+* test: add more test(s) for ComposerJsonReader (#9200)
+* test: ensure calling parent method from hook-alike methods (#9184)
+
+Changelog for v3.89.2
+---------------------
+
+* fix: `NoUnneededBracesFixer` - do not crash on multiline group import (#9160)
+* chore: Standardize repository to use British English spelling (#9154)
+* CI: ensure enforced Symfony version is installed (#9174)
+* deps: bump php-coveralls to v2.9 (#9173)
+* refactor: FixerDocumentGenerator::getSetsOfRule - cache resolved sets (#9170)
+* refactor: FixerDocumentGenerator::getSetsOfRule - use cache (#9171)
+
 Changelog for v3.89.1
 ---------------------
 
@@ -147,7 +418,7 @@ Changelog for v3.87.0
 * chore: apply phpdoc_tag_no_named_arguments (#8969)
 * chore: configure phpdoc_tag_no_named_arguments (#8970)
 * chore: convert private methods to constants (#8976)
-* chore: deprecate `Annotation::getTagsWithTypes` in favor of `TAGS_WITH_TYPES` constant (#8977)
+* chore: deprecate `Annotation::getTagsWithTypes` in favour of `TAGS_WITH_TYPES` constant (#8977)
 * chore: exclude files in .gitattributes (#8960)
 * chore: extract token types for PHPStan (#8925)
 * chore: handle fixer options without allowed types defined (#8973)
@@ -508,7 +779,7 @@ Changelog for v3.76.0
 * feat: Introduce `StaticPrivateMethodFixer` (#4557)
 * feat: `BracesPositionFixer` - support property hooks in promoted properties (#8613)
 * feat: `ClassAttributesSeparationFixer` - add support for property hooks (#8610)
-* feat: `GlobalNamespaceImportFixer` - analyze and fix more annotations with types (#8593)
+* feat: `GlobalNamespaceImportFixer` - analyse and fix more annotations with types (#8593)
 * feat: `LowercaseKeywordsFixer` - support asymmetric visibility (#8607)
 * feat: `NoExtraBlankLinesFixer` - add comma to supported tokens (#8655)
 * feat: `NoSuperfluousPhpdocTagsFixer` - support asymmetric visibility (#8700)
@@ -1184,7 +1455,7 @@ Changelog for v3.50.0
 * fix: Proper build target for local Docker Compose (#7834)
 * fix: union PHPDoc support in `fully_qualified_strict_types` fixer (#7719)
 * fix: `ExecutorWithoutErrorHandler` - remove invalid PHP 7.4 type (#7845)
-* fix: `fully_qualified_strict_types` must honor template/local type identifiers (#7724)
+* fix: `fully_qualified_strict_types` must honour template/local type identifiers (#7724)
 * fix: `MethodArgumentSpaceFixer` - do not break heredoc/nowdoc (#7828)
 * fix: `NumericLiteralSeparatorFixer` - do not change `float` to `int` when there is nothing after the dot (#7805)
 * fix: `PhpUnitStrictFixer` - do not crash on property having the name of method to fix (#7804)
@@ -1277,7 +1548,7 @@ Changelog for v3.47.0
 * fix: `ClassReferenceNameCasingFixer` capitalizes the property name after the nullsafe operator (#7696)
 * fix: `fully_qualified_strict_types` with `leading_backslash_in_global_namespace` enabled - handle reserved types in phpDoc (#7648)
 * fix: `NoSpaceAroundDoubleColonFixer` must run before `MethodChainingIndentationFixer` (#7723)
-* fix: `no_superfluous_phpdoc_tags` must honor multiline docs (#7697)
+* fix: `no_superfluous_phpdoc_tags` must honour multiline docs (#7697)
 * fix: `numeric_literal_separator` - Handle zero-leading floats properly (#7737)
 * refactor: increase performance by ~7% thanks to `Tokens::block*Cache` hit increased by ~12% (#6176)
 * refactor: Tokens - fast check for non-block in 'detectBlockType', evaluate definitions only once in 'getBlockEdgeDefinitions' (#7655)
@@ -2148,7 +2419,7 @@ Changelog for v3.9.6
 --------------------
 
 * bug: BinaryOperatorSpacesFixer: Solve issues with scoped arrow and equal alignments (#6515)
-* bug: Fix 3 weird behavior about BinaryOperatorSpacesFixer (#6450)
+* bug: Fix 3 weird behaviour about BinaryOperatorSpacesFixer (#6450)
 * docs: Add intersection type to types_spaces rule description (#6479)
 * DX: no need to use forked diff anymore (#6526)
 * DX: remove unused FixerFileProcessedEvent::STATUS_UNKNOWN (#6516)

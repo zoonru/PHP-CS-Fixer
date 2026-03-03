@@ -1,6 +1,11 @@
 ===========================
 List of Available Rule sets
 ===========================
+- `@auto <./Auto.rst>`_
+- `@auto:risky <./AutoRisky.rst>`_
+- `@autoPHPMigration <./AutoPHPMigration.rst>`_
+- `@autoPHPMigration:risky <./AutoPHPMigrationRisky.rst>`_
+- `@autoPHPUnitMigration:risky <./AutoPHPUnitMigrationRisky.rst>`_
 - `@DoctrineAnnotation <./DoctrineAnnotation.rst>`_
 - `@PER <./PER.rst>`_ *(deprecated)*
 - `@PER-CS <./PER-CS.rst>`_
@@ -30,11 +35,15 @@ List of Available Rule sets
 - `@PHP8x0Migration <./PHP8x0Migration.rst>`_
 - `@PHP8x0Migration:risky <./PHP8x0MigrationRisky.rst>`_
 - `@PHP8x1Migration <./PHP8x1Migration.rst>`_
+- `@PHP8x1Migration:risky <./PHP8x1MigrationRisky.rst>`_
 - `@PHP8x2Migration <./PHP8x2Migration.rst>`_
 - `@PHP8x2Migration:risky <./PHP8x2MigrationRisky.rst>`_
 - `@PHP8x3Migration <./PHP8x3Migration.rst>`_
+- `@PHP8x3Migration:risky <./PHP8x3MigrationRisky.rst>`_
 - `@PHP8x4Migration <./PHP8x4Migration.rst>`_
+- `@PHP8x4Migration:risky <./PHP8x4MigrationRisky.rst>`_
 - `@PHP8x5Migration <./PHP8x5Migration.rst>`_
+- `@PHP8x5Migration:risky <./PHP8x5MigrationRisky.rst>`_
 - `@PHP54Migration <./PHP54Migration.rst>`_ *(deprecated)*
 - `@PHP56Migration:risky <./PHP56MigrationRisky.rst>`_ *(deprecated)*
 - `@PHP70Migration <./PHP70Migration.rst>`_ *(deprecated)*
@@ -52,6 +61,8 @@ List of Available Rule sets
 - `@PHP83Migration <./PHP83Migration.rst>`_ *(deprecated)*
 - `@PHP84Migration <./PHP84Migration.rst>`_ *(deprecated)*
 - `@PHP85Migration <./PHP85Migration.rst>`_ *(deprecated)*
+- `@PhpCsFixer <./PhpCsFixer.rst>`_
+- `@PhpCsFixer:risky <./PhpCsFixerRisky.rst>`_
 - `@PHPUnit3x0Migration:risky <./PHPUnit3x0MigrationRisky.rst>`_
 - `@PHPUnit3x2Migration:risky <./PHPUnit3x2MigrationRisky.rst>`_
 - `@PHPUnit3x5Migration:risky <./PHPUnit3x5MigrationRisky.rst>`_
@@ -68,6 +79,7 @@ List of Available Rule sets
 - `@PHPUnit8x4Migration:risky <./PHPUnit8x4MigrationRisky.rst>`_
 - `@PHPUnit9x1Migration:risky <./PHPUnit9x1MigrationRisky.rst>`_
 - `@PHPUnit10x0Migration:risky <./PHPUnit10x0MigrationRisky.rst>`_
+- `@PHPUnit11x0Migration:risky <./PHPUnit11x0MigrationRisky.rst>`_
 - `@PHPUnit30Migration:risky <./PHPUnit30MigrationRisky.rst>`_ *(deprecated)*
 - `@PHPUnit32Migration:risky <./PHPUnit32MigrationRisky.rst>`_ *(deprecated)*
 - `@PHPUnit35Migration:risky <./PHPUnit35MigrationRisky.rst>`_ *(deprecated)*
@@ -88,12 +100,5 @@ List of Available Rule sets
 - `@PSR2 <./PSR2.rst>`_
 - `@PSR12 <./PSR12.rst>`_
 - `@PSR12:risky <./PSR12Risky.rst>`_
-- `@PhpCsFixer <./PhpCsFixer.rst>`_
-- `@PhpCsFixer:risky <./PhpCsFixerRisky.rst>`_
 - `@Symfony <./Symfony.rst>`_
 - `@Symfony:risky <./SymfonyRisky.rst>`_
-- `@auto <./Auto.rst>`_
-- `@auto:risky <./AutoRisky.rst>`_
-- `@autoPHPMigration <./AutoPHPMigration.rst>`_
-- `@autoPHPMigration:risky <./AutoPHPMigrationRisky.rst>`_
-- `@autoPHPUnitMigration:risky <./AutoPHPUnitMigrationRisky.rst>`_

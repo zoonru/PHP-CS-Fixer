@@ -4,6 +4,15 @@ Rule ``function_declaration``
 
 Spaces should be properly placed in a function declaration.
 
+Warning
+-------
+
+This rule is CONFIGURABLE
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+You can configure this rule using the following options: ``closure_fn_spacing``,
+``closure_function_spacing``, ``trailing_comma_single_line``.
+
 Configuration
 -------------
 
@@ -15,6 +24,8 @@ Spacing to use before open parenthesis for short arrow functions.
 Allowed values: ``'none'`` and ``'one'``
 
 Default value: ``'one'``
+
+Default value (future-mode): ``'none'``
 
 ``closure_function_spacing``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -126,15 +137,15 @@ The rule is part of the following rule sets:
 
   ``['closure_fn_spacing' => 'none']``
 
+- `@PhpCsFixer <./../../ruleSets/PhpCsFixer.rst>`_ with config:
+
+  ``['closure_fn_spacing' => 'one']``
+
 - `@PSR2 <./../../ruleSets/PSR2.rst>`_ with config:
 
   ``['closure_fn_spacing' => 'one']``
 
 - `@PSR12 <./../../ruleSets/PSR12.rst>`_ with config:
-
-  ``['closure_fn_spacing' => 'one']``
-
-- `@PhpCsFixer <./../../ruleSets/PhpCsFixer.rst>`_ with config:
 
   ``['closure_fn_spacing' => 'one']``
 

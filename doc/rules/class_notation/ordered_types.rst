@@ -4,6 +4,15 @@ Rule ``ordered_types``
 
 Sort union types and intersection types using configured order.
 
+Warning
+-------
+
+This rule is CONFIGURABLE
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+You can configure this rule using the following options: ``case_sensitive``,
+``null_adjustment``, ``sort_algorithm``.
+
 Configuration
 -------------
 
@@ -24,6 +33,8 @@ Forces the position of ``null`` (overrides ``sort_algorithm``).
 Allowed values: ``'always_first'``, ``'always_last'`` and ``'none'``
 
 Default value: ``'always_first'``
+
+Default value (future-mode): ``'always_last'``
 
 ``sort_algorithm``
 ~~~~~~~~~~~~~~~~~~

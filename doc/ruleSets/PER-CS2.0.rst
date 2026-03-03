@@ -7,8 +7,8 @@ Rules that follow `PER Coding Style 2.0 <https://www.php-fig.org/per/coding-styl
 Warning
 -------
 
-This rule set is deprecated and will be removed in the next major version
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+This rule set is DEPRECATED and will be removed in the next major version 4.0
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 You should use ``@PER-CS2x0`` instead.
 
@@ -18,6 +18,7 @@ Rules
 - `@PER-CS1x0 <./PER-CS1x0.rst>`_
 - `array_indentation <./../rules/whitespace/array_indentation.rst>`_
 - `array_syntax <./../rules/array_notation/array_syntax.rst>`_
+- `attribute_block_no_spaces <./../rules/attribute_notation/attribute_block_no_spaces.rst>`_
 - `cast_spaces <./../rules/cast_notation/cast_spaces.rst>`_
 - `concat_space <./../rules/operator/concat_space.rst>`_ with config:
 

@@ -4,6 +4,15 @@ Rule ``single_import_per_statement``
 
 There MUST be one use keyword per declaration.
 
+Warning
+-------
+
+This rule is CONFIGURABLE
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+You can configure this rule using the following option:
+``group_to_single_imports``.
+
 Configuration
 -------------
 
@@ -90,12 +99,12 @@ The rule is part of the following rule sets:
 
   ``['group_to_single_imports' => false]``
 
+- `@PhpCsFixer <./../../ruleSets/PhpCsFixer.rst>`_
 - `@PSR2 <./../../ruleSets/PSR2.rst>`_
 - `@PSR12 <./../../ruleSets/PSR12.rst>`_ with config:
 
   ``['group_to_single_imports' => false]``
 
-- `@PhpCsFixer <./../../ruleSets/PhpCsFixer.rst>`_
 - `@Symfony <./../../ruleSets/Symfony.rst>`_
 
 References

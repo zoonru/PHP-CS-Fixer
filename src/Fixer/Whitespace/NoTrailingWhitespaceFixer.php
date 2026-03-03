@@ -38,7 +38,7 @@ final class NoTrailingWhitespaceFixer extends AbstractFixer
     {
         return new FixerDefinition(
             'There must be no trailing whitespace at the end of non-blank lines.',
-            [new CodeSample("<?php\n\$a = 1;     \n")]
+            [new CodeSample("<?php\n\$a = 1;     \n")],
         );
     }
 
@@ -88,6 +88,7 @@ final class NoTrailingWhitespaceFixer extends AbstractFixer
                 }
 
                 for ($i = 1; $i < $linesSize; ++$i) {
+                    \assert(isset($lines[$i]));
                     $trimmedLine = rtrim($lines[$i], " \t");
                     if ('' !== $trimmedLine) {
                         $lines[$i] = $trimmedLine;

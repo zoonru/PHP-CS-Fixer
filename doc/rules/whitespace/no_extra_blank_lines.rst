@@ -4,6 +4,14 @@ Rule ``no_extra_blank_lines``
 
 Removes extra blank lines and/or blank lines following configuration.
 
+Warning
+-------
+
+This rule is CONFIGURABLE
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+You can configure this rule using the following option: ``tokens``.
+
 Configuration
 -------------
 
@@ -251,13 +259,13 @@ The rule is part of the following rule sets:
 
   ``['tokens' => ['use']]``
 
-- `@PSR12 <./../../ruleSets/PSR12.rst>`_ with config:
-
-  ``['tokens' => ['use']]``
-
 - `@PhpCsFixer <./../../ruleSets/PhpCsFixer.rst>`_ with config:
 
   ``['tokens' => ['attribute', 'break', 'case', 'continue', 'curly_brace_block', 'default', 'extra', 'parenthesis_brace_block', 'return', 'square_brace_block', 'switch', 'throw', 'use']]``
+
+- `@PSR12 <./../../ruleSets/PSR12.rst>`_ with config:
+
+  ``['tokens' => ['use']]``
 
 - `@Symfony <./../../ruleSets/Symfony.rst>`_ with config:
 

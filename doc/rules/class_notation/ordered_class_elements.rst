@@ -30,6 +30,15 @@ Custom values:
 - ``method:*``: specify a single method name (e.g. ``method:__invoke``) to set
 the order of that specific method.
 
+Warning
+-------
+
+This rule is CONFIGURABLE
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+You can configure this rule using the following options: ``case_sensitive``,
+``order``, ``sort_algorithm``.
+
 Configuration
 -------------
 
@@ -206,11 +215,11 @@ The rule is part of the following rule sets:
 
   ``['order' => ['use_trait']]``
 
+- `@PhpCsFixer <./../../ruleSets/PhpCsFixer.rst>`_
 - `@PSR12 <./../../ruleSets/PSR12.rst>`_ with config:
 
   ``['order' => ['use_trait']]``
 
-- `@PhpCsFixer <./../../ruleSets/PhpCsFixer.rst>`_
 - `@Symfony <./../../ruleSets/Symfony.rst>`_ with config:
 
   ``['order' => ['use_trait']]``

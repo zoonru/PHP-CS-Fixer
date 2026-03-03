@@ -7,8 +7,8 @@ There must be no trailing whitespace at the end of lines in strings.
 Warning
 -------
 
-Using this rule is risky
-~~~~~~~~~~~~~~~~~~~~~~~~
+This rule is RISKY
+~~~~~~~~~~~~~~~~~~
 
 Changing the whitespaces in strings might affect string comparisons and outputs.
 
@@ -41,8 +41,8 @@ The rule is part of the following rule sets:
 - `@PER-CS3x0:risky <./../../ruleSets/PER-CS3x0Risky.rst>`_
 - `@PER-CS:risky <./../../ruleSets/PER-CSRisky.rst>`_
 - `@PER:risky <./../../ruleSets/PERRisky.rst>`_ *(deprecated)*
-- `@PSR12:risky <./../../ruleSets/PSR12Risky.rst>`_
 - `@PhpCsFixer:risky <./../../ruleSets/PhpCsFixerRisky.rst>`_
+- `@PSR12:risky <./../../ruleSets/PSR12Risky.rst>`_
 
 References
 ----------

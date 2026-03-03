@@ -5,6 +5,15 @@ Rule ``new_with_parentheses``
 All instances created with ``new`` keyword must (not) be followed by
 parentheses.
 
+Warning
+-------
+
+This rule is CONFIGURABLE
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+You can configure this rule using the following options: ``anonymous_class``,
+``named_class``.
+
 Configuration
 -------------
 
@@ -16,6 +25,8 @@ Whether anonymous classes should be followed by parentheses.
 Allowed types: ``bool``
 
 Default value: ``true``
+
+Default value (future-mode): ``false``
 
 ``named_class``
 ~~~~~~~~~~~~~~~
@@ -110,13 +121,13 @@ The rule is part of the following rule sets:
 
   ``['anonymous_class' => false]``
 
-- `@PSR12 <./../../ruleSets/PSR12.rst>`_ with config:
-
-  ``['anonymous_class' => true]``
-
 - `@PhpCsFixer <./../../ruleSets/PhpCsFixer.rst>`_ with config:
 
   ``['anonymous_class' => false]``
+
+- `@PSR12 <./../../ruleSets/PSR12.rst>`_ with config:
+
+  ``['anonymous_class' => true]``
 
 - `@Symfony <./../../ruleSets/Symfony.rst>`_ with config:
 

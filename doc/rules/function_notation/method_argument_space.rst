@@ -13,6 +13,15 @@ Description
 
 This fixer covers rules defined in PSR2 ¶4.4, ¶4.6.
 
+Warning
+-------
+
+This rule is CONFIGURABLE
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+You can configure this rule using the following options: ``after_heredoc``,
+``attribute_placement``, ``keep_multiple_spaces_after_comma``, ``on_multiline``.
+
 Configuration
 -------------
 
@@ -24,6 +33,8 @@ Whether the whitespace between heredoc end and comma should be removed.
 Allowed types: ``bool``
 
 Default value: ``false``
+
+Default value (future-mode): ``true``
 
 ``attribute_placement``
 ~~~~~~~~~~~~~~~~~~~~~~~
@@ -383,6 +394,10 @@ The rule is part of the following rule sets:
 
   ``['after_heredoc' => true]``
 
+- `@PhpCsFixer <./../../ruleSets/PhpCsFixer.rst>`_ with config:
+
+  ``['after_heredoc' => true, 'on_multiline' => 'ensure_fully_multiline']``
+
 - `@PSR2 <./../../ruleSets/PSR2.rst>`_ with config:
 
   ``['after_heredoc' => false, 'attribute_placement' => 'ignore', 'on_multiline' => 'ensure_fully_multiline']``
@@ -390,10 +405,6 @@ The rule is part of the following rule sets:
 - `@PSR12 <./../../ruleSets/PSR12.rst>`_ with config:
 
   ``['after_heredoc' => false, 'attribute_placement' => 'ignore', 'on_multiline' => 'ensure_fully_multiline']``
-
-- `@PhpCsFixer <./../../ruleSets/PhpCsFixer.rst>`_ with config:
-
-  ``['after_heredoc' => true, 'on_multiline' => 'ensure_fully_multiline']``
 
 - `@Symfony <./../../ruleSets/Symfony.rst>`_ with config:
 

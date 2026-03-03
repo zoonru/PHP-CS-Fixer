@@ -47,6 +47,42 @@ final class DeclareStrictTypesFixerTest extends AbstractFixerTestCase
      */
     public static function provideFixCases(): iterable
     {
+        yield 'remove existing declaration' => [
+            '<?php ',
+            '<?php declare(strict_types=1);',
+            ['strategy' => 'remove'],
+        ];
+
+        yield 'remove existing declaration with ticks' => [
+            '<?php declare(ticks=1);',
+            '<?php declare(strict_types=1, ticks=1);',
+            ['strategy' => 'remove'],
+        ];
+
+        yield 'remove existing declaration with ticks before' => [
+            '<?php declare(ticks=1);',
+            '<?php declare(ticks=1, strict_types=1);',
+            ['strategy' => 'remove'],
+        ];
+
+        yield 'remove existing declaration with strict_types=0' => [
+            '<?php ',
+            '<?php declare(strict_types=0);',
+            ['strategy' => 'remove'],
+        ];
+
+        yield 'remove existing declaration with comments' => [
+            '<?php /**/ ',
+            '<?php /**/ declare(strict_types=1);',
+            ['strategy' => 'remove'],
+        ];
+
+        yield 'update multi-declare statement' => [
+            '<?php declare(strict_types=1, ticks=1);',
+            '<?php declare(strict_types=0, ticks=1);',
+            ['strategy' => 'enforce'],
+        ];
+
         yield [
             '<?php
 declare(ticks=1);
@@ -60,6 +96,19 @@ class A {
 
         yield [
             '<?php declare/* A b C*/(strict_types=1);',
+        ];
+
+        yield [
+            '<?php declare(strict_types=1, ticks=1);',
+        ];
+
+        yield [
+            '<?php declare(ticks=1, strict_types=1);',
+        ];
+
+        yield [
+            '<?php declare(ticks=1, strict_types=1);',
+            '<?php declare(ticks=1, strict_types=0);',
         ];
 
         yield 'monolithic file with closing tag' => [
@@ -155,13 +204,13 @@ $a = 456;
         yield [
             '<?php declare(strict_types=1);',
             '<?php declare(strict_types=0);',
-            ['preserve_existing_declaration' => false],
+            ['strategy' => 'enforce'],
         ];
 
         yield [
             '<?php declare(strict_types=0);',
             null,
-            ['preserve_existing_declaration' => true],
+            ['strategy' => 'add_when_missing'],
         ];
 
         yield ['  <?php echo 123;']; // first statement must be an open tag

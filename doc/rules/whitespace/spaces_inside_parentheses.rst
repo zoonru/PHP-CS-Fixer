@@ -11,6 +11,14 @@ By default there are not any additional spaces inside parentheses, however with
 ``space=single`` configuration option whitespace inside parentheses will be
 unified to single space.
 
+Warning
+-------
+
+This rule is CONFIGURABLE
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+You can configure this rule using the following option: ``space``.
+
 Configuration
 -------------
 
@@ -101,9 +109,9 @@ The rule is part of the following rule sets:
 - `@PER-CS2x0 <./../../ruleSets/PER-CS2x0.rst>`_
 - `@PER-CS3.0 <./../../ruleSets/PER-CS3.0.rst>`_ *(deprecated)*
 - `@PER-CS3x0 <./../../ruleSets/PER-CS3x0.rst>`_
+- `@PhpCsFixer <./../../ruleSets/PhpCsFixer.rst>`_
 - `@PSR2 <./../../ruleSets/PSR2.rst>`_
 - `@PSR12 <./../../ruleSets/PSR12.rst>`_
-- `@PhpCsFixer <./../../ruleSets/PhpCsFixer.rst>`_
 - `@Symfony <./../../ruleSets/Symfony.rst>`_
 
 References

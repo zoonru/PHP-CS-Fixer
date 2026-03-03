@@ -4,6 +4,15 @@ Rule ``binary_operator_spaces``
 
 Binary operators should be surrounded by space as configured.
 
+Warning
+-------
+
+This rule is CONFIGURABLE
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+You can configure this rule using the following options: ``default``,
+``operators``.
+
 Configuration
 -------------
 
@@ -281,11 +290,11 @@ The rule is part of the following rule sets:
 
   ``['default' => 'at_least_single_space']``
 
+- `@PhpCsFixer <./../../ruleSets/PhpCsFixer.rst>`_
 - `@PSR12 <./../../ruleSets/PSR12.rst>`_ with config:
 
   ``['default' => 'at_least_single_space']``
 
-- `@PhpCsFixer <./../../ruleSets/PhpCsFixer.rst>`_
 - `@Symfony <./../../ruleSets/Symfony.rst>`_
 
 References

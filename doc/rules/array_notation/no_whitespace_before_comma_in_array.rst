@@ -4,6 +4,14 @@ Rule ``no_whitespace_before_comma_in_array``
 
 In array declaration, there MUST NOT be a whitespace before each comma.
 
+Warning
+-------
+
+This rule is CONFIGURABLE
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+You can configure this rule using the following option: ``after_heredoc``.
+
 Configuration
 -------------
 
@@ -15,6 +23,8 @@ Whether the whitespace between heredoc end and comma should be removed.
 Allowed types: ``bool``
 
 Default value: ``false``
+
+Default value (future-mode): ``true``
 
 Examples
 --------

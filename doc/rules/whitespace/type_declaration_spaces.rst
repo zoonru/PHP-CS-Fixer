@@ -5,6 +5,14 @@ Rule ``type_declaration_spaces``
 Ensure single space between a variable and its type declaration in function
 arguments and properties.
 
+Warning
+-------
+
+This rule is CONFIGURABLE
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+You can configure this rule using the following option: ``elements``.
+
 Configuration
 -------------
 
@@ -17,6 +25,8 @@ fixed.
 Allowed values: a subset of ``['constant', 'function', 'property']``
 
 Default value: ``['function', 'property']``
+
+Default value (future-mode): ``['function', 'property', 'constant']``
 
 Examples
 --------

@@ -5,6 +5,14 @@ Rule ``declare_equal_normalize``
 Equal sign in declare statement should be surrounded by spaces or not following
 configuration.
 
+Warning
+-------
+
+This rule is CONFIGURABLE
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+You can configure this rule using the following option: ``space``.
+
 Configuration
 -------------
 
@@ -59,8 +67,8 @@ The rule is part of the following rule sets:
 - `@PER-CS2x0 <./../../ruleSets/PER-CS2x0.rst>`_
 - `@PER-CS3.0 <./../../ruleSets/PER-CS3.0.rst>`_ *(deprecated)*
 - `@PER-CS3x0 <./../../ruleSets/PER-CS3x0.rst>`_
-- `@PSR12 <./../../ruleSets/PSR12.rst>`_
 - `@PhpCsFixer <./../../ruleSets/PhpCsFixer.rst>`_
+- `@PSR12 <./../../ruleSets/PSR12.rst>`_
 - `@Symfony <./../../ruleSets/Symfony.rst>`_
 
 References
