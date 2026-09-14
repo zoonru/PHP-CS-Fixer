@@ -2037,6 +2037,26 @@ class Foo
 }',
             ['elements' => ['property' => 'none']],
         ];
+
+        yield 'promoted property as last class element' => [
+            <<<'PHP'
+                <?php
+                class Foo
+                {
+                    public int $a = 1;
+
+                    public function __construct(public int $x) {}
+                }
+                PHP,
+            <<<'PHP'
+                <?php
+                class Foo
+                {
+                    public int $a = 1;
+                    public function __construct(public int $x) {}
+                }
+                PHP,
+        ];
     }
 
     /**
@@ -2309,6 +2329,47 @@ enum Cards: string
                 <?php class Foo {
                     private int $a { set(int $a) {} }
                     private int $b { set(int $b) {} }
+                }
+                PHP,
+        ];
+
+        yield 'hooked property as last element before class closing brace' => [
+            <<<'PHP'
+                <?php class Foo {
+                    public string $bar { get => 'x'; }
+                }
+                PHP,
+            <<<'PHP'
+                <?php class Foo {
+                    public string $bar { get => 'x'; }}
+                PHP,
+        ];
+    }
+
+    /**
+     * @dataProvider provideFix85Cases
+     *
+     * @requires PHP >= 8.5.0
+     */
+    #[DataProvider('provideFix85Cases')]
+    #[RequiresPhp('>= 8.5.0')]
+    public function testFix85(string $expected, ?string $input = null): void
+    {
+        $this->testFix($expected, $input);
+    }
+
+    /**
+     * @return iterable<string, array{0: string, 1?: string}>
+     */
+    public static function provideFix85Cases(): iterable
+    {
+        yield 'closure in constant' => [
+            <<<'PHP'
+                <?php class SomeClass
+                {
+                    public const \Closure NULL = static function (mixed $v): bool {
+                        return null === $v;
+                    };
                 }
                 PHP,
         ];

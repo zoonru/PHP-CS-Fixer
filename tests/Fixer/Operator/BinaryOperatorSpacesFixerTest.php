@@ -50,7 +50,7 @@ final class BinaryOperatorSpacesFixerTest extends AbstractFixerTestCase
         $this->expectException(InvalidFixerConfigurationException::class);
         $this->expectExceptionMessageMatches($exceptionExpression);
 
-        $this->fixer->configure($config);
+        $this->fixer->configure($config); // @phpstan-ignore argument.type
     }
 
     /**
@@ -3426,6 +3426,108 @@ function test()
                 ],
             ],
         ];
+
+        yield 'do not align separate nested arrays' => [
+            '<?php
+                [
+                    [1 =>   "foo"],
+                    [2    => "foo"],
+                    [3 => "foo"],
+                ];
+                ',
+            '<?php
+                [
+                    [1 =>   "foo"],
+                    [2    =>"foo"],
+                    [3=>"foo"],
+                ];
+                ',
+            ['operators' => ['=>' => BinaryOperatorSpacesFixer::ALIGN_SINGLE_SPACE]],
+        ];
+
+        yield 'do not align separate nested arrays with align_single_space_minimal' => [
+            '<?php
+                $g = [
+                    ["aa" => "a"],
+                    ["bbb" => "b"],
+                    ["cccc" => "c"],
+                ];
+            ',
+            '<?php
+                $g = [
+                    ["aa" =>     "a"],
+                    ["bbb" =>  "b"],
+                    ["cccc" => "c"],
+                ];
+            ',
+            ['operators' => ['=>' => BinaryOperatorSpacesFixer::ALIGN_SINGLE_SPACE_MINIMAL]],
+        ];
+
+        yield 'do not align separate nested arrays with non-array values in array' => [
+            '<?php
+                [
+                    "and",
+                    ["key" => false],
+                    ["long_key" => false],
+                ];
+                ',
+            '<?php
+                [
+                    "and",
+                    ["key"    => false],
+                    ["long_key" => false],
+                ];
+                ',
+            ['operators' => ['=>' => BinaryOperatorSpacesFixer::ALIGN_SINGLE_SPACE_MINIMAL]],
+        ];
+
+        yield 'do not align separate nested arrays in function call' => [
+            '<?php
+                $g = array_replace(
+                    ["aa" => "a"],
+                    ["bbb" => "b"],
+                    ["cccc" => "c"],
+                );
+            ',
+            '<?php
+                $g = array_replace(
+                    ["aa" =>     "a"],
+                    ["bbb" =>  "b"],
+                    ["cccc" => "c"],
+                );
+            ',
+            ['operators' => ['=>' => BinaryOperatorSpacesFixer::ALIGN_SINGLE_SPACE_MINIMAL]],
+        ];
+
+        yield 'do not align nested array in yield with following yields' => [
+            <<<'PHP'
+                <?php
+
+                function provide()
+                {
+                    yield 'aaa' => [
+                        [
+                            [
+                                'attribute' => 1,
+                                'message'   => 'x',
+                            ],
+                            [
+                                'attribute' => 1,
+                                'message'   => 'x',
+                            ],
+                            [
+                                'attribute' => 1,
+                                'message'   => 'x',
+                            ],
+                        ],
+                    ];
+                    yield 'bbbbbbbbbbbbbbbbbbbbbbbbbbbb' => [];
+                    yield 'cccccccccccccccccccccccccccc' => [];
+                }
+                PHP,
+            null,
+            ['operators' => ['=>' => BinaryOperatorSpacesFixer::ALIGN_SINGLE_SPACE_MINIMAL_BY_SCOPE]],
+        ];
     }
 
     /**
@@ -3508,6 +3610,24 @@ function test()
                     default => 'default or 0',
                     'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h' => 'letter',
                     C2 => 'constant C2',
+                };
+                PHP,
+            ['operators' => ['=>' => BinaryOperatorSpacesFixer::ALIGN_BY_SCOPE]],
+        ];
+
+        yield 'match on array literals' => [
+            <<<'PHP'
+                <?php
+                echo match ($foo) {
+                    [false, true]  => 'partial',
+                    [false, false] => 'wrong',
+                };
+                PHP,
+            <<<'PHP'
+                <?php
+                echo match ($foo) {
+                    [false, true] => 'partial',
+                    [false, false] => 'wrong',
                 };
                 PHP,
             ['operators' => ['=>' => BinaryOperatorSpacesFixer::ALIGN_BY_SCOPE]],

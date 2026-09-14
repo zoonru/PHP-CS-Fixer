@@ -42,6 +42,17 @@ final class ControlStructureBracesFixer extends AbstractFixer
         \T_SWITCH,
     ];
 
+    /**
+     * Control structures that take no condition, so that a parenthesis
+     * following one of them opens their body rather than closing a condition.
+     */
+    private const CONDITIONLESS_CONTROL_TOKENS = [
+        \T_DO,
+        \T_ELSE,
+        \T_FINALLY,
+        \T_TRY,
+    ];
+
     private const CONTROL_CONTINUATION_TOKENS = [
         \T_IF => [\T_ELSE, \T_ELSEIF],
         \T_DO => [\T_WHILE],
@@ -107,7 +118,7 @@ final class ControlStructureBracesFixer extends AbstractFixer
 
             if ($tokenAfterParenthesis->isGivenKind([\T_IF, \T_FOR, \T_FOREACH, \T_SWITCH, \T_WHILE])) {
                 $tokenAfterParenthesisBlockEnd = $tokens->findBlockEnd( // go to ')'
-                    Tokens::BLOCK_TYPE_PARENTHESIS_BRACE,
+                    Tokens::BLOCK_TYPE_PARENTHESIS,
                     $tokens->getNextMeaningfulToken($nextAfterParenthesisEndIndex),
                 );
 
@@ -146,6 +157,10 @@ final class ControlStructureBracesFixer extends AbstractFixer
 
     private function findParenthesisEnd(Tokens $tokens, int $structureTokenIndex): int
     {
+        if ($tokens[$structureTokenIndex]->isGivenKind(self::CONDITIONLESS_CONTROL_TOKENS)) {
+            return $structureTokenIndex;
+        }
+
         $nextIndex = $tokens->getNextMeaningfulToken($structureTokenIndex);
         $nextToken = $tokens[$nextIndex];
 
@@ -153,7 +168,7 @@ final class ControlStructureBracesFixer extends AbstractFixer
             return $structureTokenIndex;
         }
 
-        return $tokens->findBlockEnd(Tokens::BLOCK_TYPE_PARENTHESIS_BRACE, $nextIndex);
+        return $tokens->findBlockEnd(Tokens::BLOCK_TYPE_PARENTHESIS, $nextIndex);
     }
 
     private function findStatementEnd(Tokens $tokens, int $parenthesisEndIndex): int
@@ -164,7 +179,7 @@ final class ControlStructureBracesFixer extends AbstractFixer
         $nextToken = $tokens[$nextIndex];
 
         if ($nextToken->equals('{')) {
-            return $tokens->findBlockEnd(Tokens::BLOCK_TYPE_CURLY_BRACE, $nextIndex);
+            return $tokens->findBlockEnd(Tokens::BLOCK_TYPE_BRACE, $nextIndex);
         }
 
         if ($nextToken->isGivenKind(self::CONTROL_TOKENS)) {
@@ -203,7 +218,7 @@ final class ControlStructureBracesFixer extends AbstractFixer
 
             // if there is some block in statement (eg lambda function) we need to skip it
             if ($token->equals('{')) {
-                $index = $tokens->findBlockEnd(Tokens::BLOCK_TYPE_CURLY_BRACE, $index);
+                $index = $tokens->findBlockEnd(Tokens::BLOCK_TYPE_BRACE, $index);
 
                 continue;
             }

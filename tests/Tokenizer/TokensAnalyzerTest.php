@@ -873,6 +873,38 @@ enum Foo: string
                 }
                 PHP,
         ];
+
+        yield 'T_?_SET' => [
+            [
+                9 => [
+                    'classIndex' => 1,
+                    'type' => 'method',
+                ],
+                18 => [
+                    'classIndex' => 1,
+                    'type' => 'promoted_property',
+                ],
+                25 => [
+                    'classIndex' => 1,
+                    'type' => 'promoted_property',
+                ],
+                32 => [
+                    'classIndex' => 1,
+                    'type' => 'promoted_property',
+                ],
+            ],
+            <<<'PHP'
+                <?php
+                class Foo
+                {
+                    public function __construct(
+                        public(set) array $a,
+                        protected(set) array $b,
+                        private(set) array $c,
+                    ) {}
+                }
+                PHP,
+        ];
     }
 
     /**
@@ -926,6 +958,26 @@ enum Foo: string
             <<<'PHP'
                 <?php class Foo {
                     public function __construct(final bool $b) {}
+                }
+                PHP,
+        ];
+
+        yield 'closures' => [
+            [
+                11 => ['classIndex' => 3, 'type' => 'const'],
+                33 => ['classIndex' => 3, 'type' => 'const'],
+                67 => ['classIndex' => 3, 'type' => 'property'],
+                91 => ['classIndex' => 3, 'type' => 'method'],
+            ],
+            <<<'PHP'
+                <?php final class Foo
+                {
+                    private const \Closure I_AM_EMPTY = static function () {};
+                    private const \Closure I_AM_1 = static function (): int { return 1; };
+                    private \Closure $iAmTwo = static function (): int { return 2; };
+                    function my_array_filter(
+                        Closure $callback = static function ($item) { return !empty($item); },
+                    ) {}
                 }
                 PHP,
         ];
@@ -2811,8 +2863,8 @@ class TestClass {
                 continue;
             }
 
-            \assert(\array_key_exists($index, $expected));
-            self::assertSame($expected[$index], $tokensAnalyzer->isEnumCase($index));
+            self::assertArrayHasKey($index, $expected);
+            self::assertSame($expected[$index], $tokensAnalyzer->isEnumCase($index), \sprintf('Expecting TokensAnalyzer::isEnumCase(%d)=%s.', $index, $expected[$index] ? 'true' : 'false'));
         }
     }
 
@@ -2854,7 +2906,7 @@ enum Foo
             ],
         ];
 
-        yield 'pure enum with switch' => [
+        yield 'pure enum with switch in between enum-cases' => [
             '<?php
 enum Foo
 {
@@ -2869,6 +2921,17 @@ enum Foo
                 return strtolower($instance->name);
         }
     }
+
+    public static function getUpperName(self $instance): string
+    {
+        switch ($instance->name) {
+            case \'One\':
+            case \'Two\':
+                return strtoupper($instance->name);
+        }
+    }
+
+    case Three;
 }
 ',
             [
@@ -2876,6 +2939,9 @@ enum Foo
                 12 => true,
                 45 => false,
                 50 => false,
+                97 => false,
+                102 => false,
+                121 => true,
             ],
         ];
 

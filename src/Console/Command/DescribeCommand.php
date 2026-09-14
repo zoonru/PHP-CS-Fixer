@@ -525,8 +525,10 @@ final class DescribeCommand extends Command
             \assert(isset($rules[$rule]));
             $config = $rules[$rule];
             if (str_starts_with($rule, '@')) {
+                \assert(isset($ruleSetDefinitions[$rule]));
                 $child = $this->createTreeNode($ruleSetDefinitions[$rule], $ruleSetDefinitions, $fixers);
             } else {
+                \assert(isset($fixers[$rule]));
                 $fixer = $fixers[$rule];
                 $tags = DocumentationTagGenerator::analyseRule($fixer);
                 $extra = [] !== $tags
@@ -720,13 +722,13 @@ final class DescribeCommand extends Command
             public function getDescription(): string
             {
                 return $this->overrides[__FUNCTION__]
-                    ?? (null !== $this->original ? $this->original->{__FUNCTION__}() : 'unknown description'); // @phpstan-ignore method.dynamicName
+                    ?? (null !== $this->original ? $this->original->getDescription() : 'unknown description');
             }
 
             public function getName(): string
             {
                 $value = $this->overrides[__FUNCTION__]
-                    ?? (null !== $this->original ? $this->original->{__FUNCTION__}() : 'unknown name'); // @phpstan-ignore method.dynamicName
+                    ?? (null !== $this->original ? $this->original->getName() : 'unknown name');
 
                 if (\in_array('expand', $this->adjustments, true)) {
                     $value .= ' (expanded)';
@@ -738,7 +740,7 @@ final class DescribeCommand extends Command
             public function getRules(): array
             {
                 $value = $this->overrides[__FUNCTION__]
-                    ?? (null !== $this->original ? $this->original->{__FUNCTION__}() : null); // @phpstan-ignore method.dynamicName
+                    ?? (null !== $this->original ? $this->original->getRules() : null);
 
                 if (null === $value) {
                     throw new \LogicException('Cannot get rules from unknown original rule set and missing overrides.');
@@ -754,7 +756,7 @@ final class DescribeCommand extends Command
             public function isRisky(): bool
             {
                 $value = $this->overrides[__FUNCTION__]
-                    ?? (null !== $this->original ? $this->original->{__FUNCTION__}() : null); // @phpstan-ignore method.dynamicName
+                    ?? (null !== $this->original ? $this->original->isRisky() : null);
 
                 if (null === $value) {
                     throw new \LogicException('Cannot get isRisky from unknown original rule set and missing overrides.');

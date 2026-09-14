@@ -221,20 +221,27 @@ final class UtilsTest extends TestCase
     public function testSortFixers(): void
     {
         $fixers = [
-            $this->createFixerDouble('f1', 0),
-            $this->createFixerDouble('f2', -10),
+            $this->createFixerDouble('f1_a', 0),
+            $this->createFixerDouble('F1_b', 0),
+            $this->createFixerDouble('f1_c', 0),
+            $this->createFixerDouble('fy', -10),
             $this->createFixerDouble('f3', 10),
-            $this->createFixerDouble('f4', -10),
+            $this->createFixerDouble('fx', -10),
         ];
 
         self::assertSame(
             [
-                $fixers[2],
-                $fixers[0],
-                $fixers[1],
-                $fixers[3],
+                'f3',
+                'F1_b',
+                'f1_a',
+                'f1_c',
+                'fx',
+                'fy',
             ],
-            Utils::sortFixers($fixers),
+            array_map(
+                static fn (FixerInterface $fixer): string => $fixer->getName(),
+                Utils::sortFixers($fixers),
+            ),
         );
     }
 
@@ -457,12 +464,22 @@ final class UtilsTest extends TestCase
         yield ["'foo'", 'foo'];
     }
 
+    /**
+     * @param non-empty-string $name
+     */
     private function createFixerDouble(string $name, int $priority): FixerInterface
     {
         return new class($name, $priority) implements FixerInterface {
+            /**
+             * @var non-empty-string
+             */
             private string $name;
+
             private int $priority;
 
+            /**
+             * @param non-empty-string $name
+             */
             public function __construct(string $name, int $priority)
             {
                 $this->name = $name;

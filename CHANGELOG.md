@@ -3,6 +3,277 @@ CHANGELOG for PHP CS Fixer
 
 This file contains changelogs for stable releases only.
 
+Changelog for v3.95.25
+----------------------
+
+* fix: handle missing terminator after `??` in `AssignNullCoalescingToCoalesceEqualFixer` (#9831)
+* fix: `IsNullFixer` - do not fix is_null() calls using argument unpacking (#9830)
+* fix: `IsNullFixer` - handle is_null() calls using named arguments (#9828)
+* UX: init - use outlined messages (#9826)
+* deps: bump crate-ci/typos from 1.49.0 to 1.50.1 in /.github/workflows in the all group across 1 directory (#9824)
+* deps: bump phpstan/phpstan from 2.2.9 to 2.2.12 in /dev-tools in the phpstan group (#9822)
+* deps: bump shipmonk/dead-code-detector from 1.3.3 to 1.4.0 in /dev-tools in the shipmonk group across 1 directory (#9823)
+
+Changelog for v3.95.24
+----------------------
+
+* fix: `ControlStructureBracesFixer` - do not read a body starting with a parenthesis as a condition (#9815)
+* UX: init - add handling of `.gitignore` (#9813)
+* UX: init - add sections (#9819)
+* UX: init - command improvements (#9807)
+* UX: init - fix typos and improve wording (#9820)
+* UX: init command - suggest php_unit_test_case_static_method_calls rule (#9810)
+* chore: Fixer name must not be empty (#9756)
+* chore: `DescribeCommand` - replace dynamic method calls with explicit ones (#9817)
+* chore: `PhpdocOrderFixer` - fix type of duplicated tags passed to `naturalLanguageJoin` (#9818)
+* CI: fix warning - Unexpected input(s) 'extensions' (#9809)
+* CI: introduce PHPBench (#9755)
+* refactor: init - move content preparation to helper method (#9812)
+
+Changelog for v3.95.23
+----------------------
+
+* fix: `FunctionsAnalyzer` - detect return type of a closure with a `use` clause (#9806)
+
+Changelog for v3.95.22
+----------------------
+
+* fix: `StaticLambdaFixer` - do not make a lambda static when it is the direct subject of bindTo() or call() (#9802)
+* chore: Implement PHPStan `Preg::replaceCallback()` extension (#9799)
+* chore: `Utils` - fix `stableSort()` and `sortFixers()` template types, remove `@phpstan-ignore` suppressions (#9798)
+* deps: bump phpstan/phpstan from 2.2.8 to 2.2.9 (#9797)
+
+Changelog for v3.95.21
+----------------------
+
+* fix: `StatementIndentationFixer` - do not treat ternary colon as block start (#9795)
+* perf: Introduce new candidate check for transformers (#9770)
+* perf: Optimize `NameQualifiedTransformer` token insertion (#9759)
+* CI: add BC check (#9791)
+* deps: upgrade dev-tools (#9793)
+
+Changelog for v3.95.20
+----------------------
+
+* fix: `PsrAutoloadingFixer` - do not throw when the file cannot be resolved on disk (#9762)
+* refactor: Transformers - move looping over tokens directly into each transformer individually (#9782)
+* test: drop `mikey179/vfsstream` (#9787)
+* test: NoUnusedImportsFixerTest - add new cases around quoted values (#9784)
+
+Changelog for v3.95.19
+----------------------
+
+* fix: binary_operator_spaces alignment for nested single-line arrays in multiline array (#9654)
+* fix: `ClassDefinitionFixer` - keep multiline constructor args when anonymous class has both `extends` and `implements` (#9625)
+* fix: `SelfStaticAccessorFixer` - do not stop fixing a class after a `static` return type (#9774)
+* chore: Fix incorrect URL in CommentsAnalyzer.php docblock (#9772)
+* chore: `Runner` - ignore coverage of non-deterministic parallel branches (#9785)
+* CI: fix using `PHP_CS_FIXER_FAST_LINT_TEST_CASES` (#9783)
+* deps: bump phpstan/phpstan from 2.2.7 to 2.2.8 in /dev-tools in the phpstan group (#9779)
+* deps: bump squizlabs/php_codesniffer from 4.0.1 to 4.0.4 in /dev-tools (#9768)
+* deps: bump the all group across 1 directory with 2 updates (#9767)
+* test: introduce `TestCaseUtils::createTemporaryDirectory()` helper (#9788)
+* test: ProjectCodeTest - restore the duplicate check in data providers (#9761)
+* test: `AbstractFixerTestCase` - use `spl_object_id()` to fix PHP 8.6 deprecations (#9786)
+
+Changelog for v3.95.18
+----------------------
+
+* CI: attach provenance and SBOM attestations to the released image (#9751)
+* deps: bump the phpstan group in /dev-tools with 2 updates (#9748)
+* deps: update dev-tools (#9754)
+* perf: Limit token search in `simplified_if_return` (#9747)
+
+Changelog for v3.95.17
+----------------------
+
+* perf: `Token::equals()` - Avoid building intermediary arrays (#9739)
+* perf: `Tokens::findSequence()` - improve looping logic (#9737)
+
+Changelog for v3.95.16
+----------------------
+
+* fix: `NoSuperfluousPhpdocTagsFixer` with multiple hidden params (#9736)
+* fix: `PowToExponentiationFixer` - do not produce two consecutive whitespace tokens (#9735)
+* chore: do not remove ParaUnit for PHPUnit v13, as they are now compatible (#9579)
+* CI: introduce `perf` as new PR type (#9742)
+* deps: update dev deps (#9743)
+* test: AbstractIntegrationTestCase - externalized FixerFactory creation (#9744)
+
+Changelog for v3.95.15
+----------------------
+
+* fix: self-update - fix "Access Denied" error when running on Windows (#9731)
+
+Changelog for v3.95.14
+----------------------
+
+* fix: `ClassAttributesSeparationFixer` - handle property with hooks as last class element (#9724)
+* fix: `SingleClassElementPerStatementFixer` - do not break PHP syntax when splitting properties with disjunctive normal form type (#9723)
+* fix: `TrailingCommaInMultilineFixer` - do not add trailing comma after first-class callable (#9722)
+* chore: add code coverage ignore annotations to parallel runner and worker (#9721)
+* chore: cleanup `FunctionToConstantFixer` (#9719)
+* test: HeaderCommentFixerTest - improve invalid configuration types (#9728)
+* test: `ClassDefinitionFixerTest` - improve PHPDocs (#9726)
+* test: `ConfigurationResolverTest` - fix types (#9725)
+* test: `GeneralAttributeRemoveFixerTest` - improve data provider types (#9727)
+* test: `ProjectCodeTest` - improve PHPDocs (#9730)
+* deps: allow to run PHPUnit v12 directly for project, without future-ready CI workarounds (#9580)
+* deps: bump shipmonk/dead-code-detector from 1.3.0 to 1.3.1 in /dev-tools in the shipmonk group across 1 directory (#9718)
+* deps: bump the phpstan group in /dev-tools with 2 updates (#9717)
+
+Changelog for v3.95.13
+----------------------
+
+* fix: `SelfAccessorFixer` - do not replace constant with same name as class in the middle of a static access chain (#9716)
+* fix: `SingleClassElementPerStatementFixer` - do not drop type of typed constants (#9706)
+
+Changelog for v3.95.12
+----------------------
+
+* fix: `BinaryOperatorSpacesFixer` - do not align nested array in yield with following yields (#9708)
+* chore: cleanup `RuleSetDocumentationGenerator` (#9705)
+* chore: unblock self-approval (#9699)
+* deps: bump crate-ci/typos from 1.47.2 to 1.48.0 in /.github/workflows in the all group across 1 directory (#9712)
+* deps: bump shipmonk/dead-code-detector from 1.2.1 to 1.3.0 in /dev-tools in the shipmonk group across 1 directory (#9711)
+* deps: bump the all group across 2 directories with 1 update (#9704)
+* deps: bump the phpstan group in /dev-tools with 2 updates (#9710)
+* deps: PHPUnit - PHP 8.6 compat changes (#9714)
+
+Changelog for v3.95.11
+----------------------
+
+* fix: `NoBreakCommentFixer` - handle enum cases, `TokensAnalyzer::isEnumCase` - fix handling nested switch-cases (#9565)
+* deps: bump actions/checkout from 6 to 7 in /.github/workflows in the all group across 1 directory (#9694)
+* deps: bump dev deps (#9702)
+* deps: bump phpstan/phpstan-symfony from 2.0.19 to 2.0.20 in /dev-tools in the phpstan group (#9693)
+* test: use correct test precondition failure mode in PharTest (#9700)
+
+Changelog for v3.95.10
+----------------------
+
+* fix: `TokensAnalyzer` - handle `T_PUBLIC_SET`, `T_PROTECTED_SET`, `T_PRIVATE_SET`  (#9696)
+
+Changelog for v3.95.9
+---------------------
+
+* chore: apply `class_keyword` (#9689)
+* refactor: change Fixers execution order to always-deterministic (#9690)
+
+Changelog for v3.95.8
+---------------------
+
+* fix: `SingleClassElementPerStatementFixer` - do not drop modifiers when splitting `final` constants/properties (#9687)
+
+Changelog for v3.95.7
+---------------------
+
+* fix: `ClassReferenceNameCasingFixer` - do not change case of typed class constant names (#9686)
+
+Changelog for v3.95.6
+---------------------
+
+* chore: Docker - ignore root-user warning for pip (#9682)
+* chore: fix typo in comment about fixer configuration (#9675)
+* chore: narrow `Preg::match`/`Preg::matchAll` subject string type when match is truthy (#9668)
+* deps: bump alpine from 3.23 to 3.24 in the all group (#9679)
+* deps: bump codecov/codecov-action from 6 to 7 in /.github/workflows in the all group across 1 directory (#9681)
+* deps: bump shipmonk/dead-code-detector from 1.1.3 to 1.2.0 in /dev-tools in the shipmonk group across 1 directory (#9661)
+* deps: update dev-deps (#9683)
+* deps: upgrade deep-deps for dev-tools (#9677)
+* fix: `PhpUnitAttributesFixer` - correctly handle `@requires` PHPUnit with space-separated version constraint (#9684)
+* UX: Cache - explicit deprecation for usage of non-handled objects in rules configuration, as they silently fail now; add support for JsonSerializable config values (#9678)
+
+Changelog for v3.95.5
+---------------------
+
+* chore: Cleanup `assert()` and add more precise `Preg::matchAll()` return type (#9667)
+* chore: cleanup `GroupImportFixer` (#9671)
+* chore: improve `TypeExpression` (#9665)
+* chore: please markdown-lint (#9659)
+* chore: use more `assert` calls (#9666)
+* deps: Allow installation of `sebastian/diff:^9.0` (#9663)
+* deps: bump crate-ci/typos from 1.47.0 to 1.47.2 in /.github/workflows in the all group across 1 directory (#9662)
+* docs/refactor: clarify bracket types naming (#5915)
+* fix: Add support for `phpunit/phpunit:^13.2` in `PhpUnitTestCaseStaticMethodCallsFixer` (#9664)
+* fix: Use `AgentDetector` to detect presence of AI agent only when `@auto` format has been selected (#9658)
+* fix: `PhpdocAddMissingParamAnnotationFixer` - skip attribute tokens when extracting parameter type (#9634)
+* fix: `StaticPrivateMethodFixer` - fix for private constructor and abstract static method (#9598)
+* refactor: `simplified_if_return` - applyFix to use slices for token insertion (#9670)
+
+Changelog for v3.95.4
+---------------------
+
+* chore: improve `ArrayIndentationFixer` (#9643)
+* chore: improve `ClassDefinitionFixer` (#9645)
+* chore: improve `ControlCaseStructuresAnalyzer` (#9644)
+* chore: improve `NoAliasFunctionsFixer` (#9647)
+* chore: improve `NoSuperfluousPhpdocTagsFixer` (#9646)
+* chore: improve `PhpUnitTestCaseStaticMethodCallsFixer` (#9649)
+* chore: improve `Token` (#9650)
+* chore: improve `WorkerException` (#9648)
+* chore: minor updates around PHPStan (#9651)
+* deps: bump crate-ci/typos from 1.46.2 to 1.47.0 in /.github/workflows in the all group across 1 directory (#9639)
+* deps: bump PHPStan to 2.2.1 (#9635)
+* deps: minor upgrades of dev-tools (#9653)
+* fix: Address credential exposure concern related to using `ergebnis/agent-detector` for detecting the presence of an AI agent (#9656)
+* test: improve data providers return types (#9642)
+
+Changelog for v3.95.3
+---------------------
+
+* fix: `MultilinePromotedPropertiesFixer` - fix for `new` in initializers (#9619)
+* fix: `PhpdocLineSpanFixer` - run after `NoSuperfluousPhpdocTagsFixer` (#9615)
+* CI: add generic phpstan/phpstan-deprecation-rules, so usage of old deprecated constants is detected (#9636)
+* CI: replace PHP `8.6snapshot` with `nightly` in matrix (#9628)
+* deps: bump crate-ci/typos from 1.46.0 to 1.46.1 in /.github/workflows in the all group across 1 directory (#9624)
+* deps: bump crate-ci/typos from 1.46.1 to 1.46.2 in /.github/workflows in the all group across 1 directory (#9631)
+* deps: bump ergebnis/composer-normalize from 2.51.0 to 2.52.0 in /dev-tools (#9627)
+* deps: bump the phpstan group in /dev-tools with 2 updates (#9626)
+* deps: upgrade misc deps (#9621)
+* refactor: AttributeBlockNoSpacesFixer - no need for loop when we already know bracket indices (#9446)
+
+Changelog for v3.95.2
+---------------------
+
+* fix: `MethodArgumentSpaceFixer` - avoid collapsing multi-line arguments (#9559)
+* fix: `ModifierKeywordsFixer` - do not break PHP syntax for closures in constant expressions (#9596)
+* fix: `NoRedundantReadonlyPropertyFixer` - fix `TypeError` when trait contains anonymous class (#9457)
+* fix: `PhpUnitAttributesFixer` - add missing handling of `CoversMethod` and naive handling of `CoversTrait` (#9588)
+* fix: `TextReporter` - always show summary footer (#9595)
+* deps: bump crate-ci/typos from 1.45.1 to 1.46.0 in /.github/workflows in the all group across 1 directory (#9605)
+* deps: bump ergebnis/composer-normalize from 2.50.0 to 2.51.0 in /dev-tools (#9561)
+* deps: bump phpstan/phpstan from 2.1.46 to 2.1.47 in /dev-tools in the phpstan group (#9560)
+* deps: bump phpstan/phpstan from 2.1.51 to 2.1.52 in /dev-tools in the phpstan group (#9601)
+* deps: bump PHPUnit patch versions (#9593)
+* deps: bump shipmonk/dead-code-detector from 1.0.0 to 1.1.0 in /dev-tools in the shipmonk group across 1 directory (#9569)
+* deps: bump the all group across 1 directory with 2 updates (#9570)
+* deps: bump the phpstan group across 1 directory with 2 updates (#9608)
+* deps: update `facile-it/paraunit` to ^2.11 (#9589)
+* deps: upgrade PHPUnit in GitHub Actions (#9577)
+* chore: .gitattributes - export-ignore for logo.md (#9611)
+* chore: .gitattributes - sort entries (#9612)
+* chore: Add CS commit to .git-blame-ignore-revs
+* chore: Add CS commit to .git-blame-ignore-revs
+* chore: add tests to `PhpdocTagCasingFixerTest` (#9610)
+* chore: cleanup `AbstractFopenFlagFixer` (#9592)
+* chore: cleanup `BlankLineBetweenImportGroupsFixer` (#9562)
+* chore: cleanup `ControlStructureBracesFixer` (#9609)
+* chore: cleanup `NoExtraBlankLinesFixer` (#9567)
+* chore: cleanup `OrderedImportsFixer` (#9603)
+* chore: cleanup `PhpdocSingleLineVarSpacingFixer` (#9591)
+* chore: cleanup `PhpdocToReturnTypeFixer` (#9558)
+* chore: CS - apply `PhpUnitRequiresConstraintFixer` from `https://github.com/kubawerlos/php-cs-fixer-custom-fixers` (#9581)
+* chore: CS - apply `php_unit_attributes` rule (#9578)
+* chore: ensure consistent `@author` name per email (#9606)
+* chore: fix wrong test Attribute (#9586)
+* chore: infection - define staticAnalysisTool (#9607)
+* chore: move Codecov config (#9597)
+* CI: move PHPUnit version management earlier to prevent composer installation phase to run 2 times (#9587)
+* CI: specify Codecov token (#9556)
+* CI: use Codecov for code coverage (#9553)
+* test: `NoUnsetCastFixerTest` - run any test on PHP >= 8 (#9585)
+
 Changelog for v3.95.1
 ---------------------
 

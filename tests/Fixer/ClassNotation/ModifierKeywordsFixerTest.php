@@ -1014,6 +1014,27 @@ var_dump(Foo::CAT->test());',
                 PHP,
         ];
 
+        yield 'asymmetric visibility with regular and readonly' => [
+            <<<'PHP'
+                <?php class Foo
+                {
+                    public function __construct(
+                        public private(set) array $bare = [],
+                        public private(set) readonly array $withReadonly = [],
+                    ) {}
+                }
+                PHP,
+            <<<'PHP'
+                <?php class Foo
+                {
+                    public function __construct(
+                        private(set) array $bare = [],
+                        private(set) readonly array $withReadonly = [],
+                    ) {}
+                }
+                PHP,
+        ];
+
         yield 'promoted property with visibility, set-visibility and reference' => [
             <<<'PHP'
                 <?php class Foo
@@ -1093,6 +1114,26 @@ var_dump(Foo::CAT->test());',
                 }
                 PHP,
         ];
+
+        yield 'closure in constant' => [
+            <<<'PHP'
+                <?php class SomeClass
+                {
+                    public const \Closure NULL = static function (mixed $v): bool {
+                        return null === $v;
+                    };
+                }
+                PHP,
+        ];
+
+        yield 'closure as default argument' => [
+            <<<'PHP'
+                <?php class SomeClass
+                {
+                    public function foo(callable $callback = static function(): void{}): array {}
+                }
+                PHP,
+        ];
     }
 
     /**
@@ -1106,7 +1147,7 @@ var_dump(Foo::CAT->test());',
         $this->expectException(InvalidFixerConfigurationException::class);
         $this->expectExceptionMessageMatches($expectedMessage);
 
-        $this->fixer->configure($config);
+        $this->fixer->configure($config); // @phpstan-ignore argument.type
     }
 
     /**
