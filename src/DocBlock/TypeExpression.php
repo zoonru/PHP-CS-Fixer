@@ -86,8 +86,14 @@ final class TypeExpression
                     [\h\v*]*\}
                 )
                 |
-                (?<callable> # callable syntax, e.g. `callable(string, int...): bool`, `\Closure<T>(T, int): T`
+                (?<callable> # callable syntax, e.g. `callable(string, int...): bool`, `\Closure<T>(T, int): T`, `\Closure[pure](int): T`
                     (?<callable_name>(?&name))
+                    (?<callable_purity> # Psalm purity, e.g. `[pure]`, `[P]`, `[read-props|io]`
+                        (?<callable_purity_start>\[\h*)
+                        (?<callable_purity_types>(?&types_inner))
+                        \h*\]
+                        (?=\h*\()
+                    |)
                     (?<callable_template>
                         (?<callable_template_start>\h*<\h*)
                         (?<callable_template_inners>
@@ -134,8 +140,19 @@ final class TypeExpression
                     )?
                 )
                 |
-                (?<generic> # generic syntax, e.g.: `array<int, \Foo\Bar>`
+                (?<generic> # generic syntax, e.g.: `array<int, \Foo\Bar>`, `iterable[pure]<int, \Foo\Bar>`
                     (?<generic_name>(?&name))
+                    (?<generic_purities> # Psalm purities, e.g. `[pure]`, `[P, read-props|io]`
+                        (?<generic_purities_start>\[\h*)
+                        (?<generic_purities_types>
+                            (?&types_inner)
+                            (?:
+                                \h*,\h*
+                                (?&types_inner)
+                            )*+
+                        )
+                        \h*\]
+                    |)
                     (?<generic_start>\h*<[\h\v*]*)
                     (?<generic_types>
                         (?&types_inner)
@@ -570,33 +587,55 @@ final class TypeExpression
                 'expression' => $this->inner(substr($matches['type'][0], 0, -\strlen($matches['array'][0]))),
             ];
         } elseif ('' !== ($matches['generic'][0] ?? '') && 0 === $matches['generic'][1]) {
-            \assert(isset($matches['generic_name'], $matches['generic_start'], $matches['generic_types']));
+            \assert(isset($matches['generic_name'], $matches['generic_purities'], $matches['generic_start'], $matches['generic_types']));
 
             $this->innerTypeExpressions[] = [
                 'start_index' => 0,
                 'expression' => $this->inner($matches['generic_name'][0]),
             ];
 
+            if ('' !== $matches['generic_purities'][0]) {
+                \assert(isset($matches['generic_purities_start'], $matches['generic_purities_types']));
+
+                $this->parseCommaSeparatedInnerTypes(
+                    \strlen($matches['generic_name'][0]) + \strlen($matches['generic_purities_start'][0]),
+                    $matches['generic_purities_types'][0],
+                );
+            }
+
             $this->parseCommaSeparatedInnerTypes(
-                \strlen($matches['generic_name'][0]) + \strlen($matches['generic_start'][0]),
+                \strlen($matches['generic_name'][0])
+                    + \strlen($matches['generic_purities'][0])
+                    + \strlen($matches['generic_start'][0]),
                 $matches['generic_types'][0],
             );
         } elseif ('' !== ($matches['callable'][0] ?? '') && 0 === $matches['callable'][1]) {
-            \assert(isset($matches['callable_name'], $matches['callable_template'], $matches['callable_start'], $matches['callable_arguments'], $matches['callable_template_start'], $matches['callable_template_inners']));
+            \assert(isset($matches['callable_name'], $matches['callable_purity'], $matches['callable_template'], $matches['callable_start'], $matches['callable_arguments'], $matches['callable_template_start'], $matches['callable_template_inners']));
 
             $this->innerTypeExpressions[] = [
                 'start_index' => 0,
                 'expression' => $this->inner($matches['callable_name'][0]),
             ];
 
+            if ('' !== $matches['callable_purity'][0]) {
+                \assert(isset($matches['callable_purity_start'], $matches['callable_purity_types']));
+
+                $this->innerTypeExpressions[] = [
+                    'start_index' => \strlen($matches['callable_name'][0]) + \strlen($matches['callable_purity_start'][0]),
+                    'expression' => $this->inner($matches['callable_purity_types'][0]),
+                ];
+            }
+
             $this->parseCallableTemplateInnerTypes(
                 \strlen($matches['callable_name'][0])
+                    + \strlen($matches['callable_purity'][0])
                     + \strlen($matches['callable_template_start'][0]),
                 $matches['callable_template_inners'][0],
             );
 
             $this->parseCallableArgumentTypes(
                 \strlen($matches['callable_name'][0])
+                    + \strlen($matches['callable_purity'][0])
                     + \strlen($matches['callable_template'][0])
                     + \strlen($matches['callable_start'][0]),
                 $matches['callable_arguments'][0],

@@ -292,6 +292,20 @@ final class TypeExpressionTest extends TestCase
 
         yield ['Closure<T>(): T'];
 
+        yield ['\Closure[pure](string): bool'];
+
+        yield ['Closure[ _ ](int): void'];
+
+        yield ['callable[read-props|io](): void'];
+
+        yield ['iterable[pure]<int, string>'];
+
+        yield ['Iterator[P, read-props|io]<int, \Foo>'];
+
+        yield ['static[P]<int, Foo>'];
+
+        yield ['callable(): \Generator[pure]<int, int, mixed, void>'];
+
         yield ['Closure<Tx, Ty>(): array{x: Tx, y: Ty}'];
 
         yield ['Closure<Tx, Ty>(): array{x: Tx, y: Ty, ...<Closure(): void>}'];
@@ -370,6 +384,10 @@ final class TypeExpressionTest extends TestCase
         yield ['class cannot contain space'];
 
         yield ['\\\class_with_double_backslash'];
+
+        yield ['Foo [P]<int>'];
+
+        yield ['Closure[P, Q](int): void'];
 
         yield ['class\\\with_double_backslash'];
 
@@ -862,6 +880,38 @@ final class TypeExpressionTest extends TestCase
         $typeExpression = $typeExpression->mapTypes($addLeadingSlash);
         $this->checkInnerTypeExpressionsStartIndex($typeExpression);
         self::assertSame('\Foo|\Bar|($v is \Closure(\X, \Y): \Z ? \U : (\V&\W))', $typeExpression->toString());
+    }
+
+    public function testMapTypesWithPurities(): void
+    {
+        $typeExpression = new TypeExpression('Closure[P](Foo): Iterator[pure, read-props|io]<int, Bar>', null, []);
+
+        $callLog = [];
+        $typeExpression = $typeExpression->mapTypes(static function (TypeExpression $type) use (&$callLog) {
+            $callLog[] = $type->toString();
+
+            if (\in_array($type->toString(), ['Closure', 'Foo', 'Iterator', 'Bar'], true)) {
+                return new TypeExpression('\\'.$type->toString(), null, []);
+            }
+
+            return $type;
+        });
+        self::assertSame([
+            'Closure',
+            'P',
+            'Foo',
+            'Iterator',
+            'pure',
+            'read-props',
+            'io',
+            'read-props|io',
+            'int',
+            'Bar',
+            '\Iterator[pure, read-props|io]<int, \Bar>',
+            '\Closure[P](\Foo): \Iterator[pure, read-props|io]<int, \Bar>',
+        ], $callLog);
+        $this->checkInnerTypeExpressionsStartIndex($typeExpression);
+        self::assertSame('\Closure[P](\Foo): \Iterator[pure, read-props|io]<int, \Bar>', $typeExpression->toString());
     }
 
     public function testWalkTypes(): void

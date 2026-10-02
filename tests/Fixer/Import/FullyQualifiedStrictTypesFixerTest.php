@@ -2308,6 +2308,34 @@ function foo($v) {}',
             ['import_symbols' => true],
         ];
 
+        yield 'Test PHPDoc with Psalm purities' => [
+            <<<'EOD'
+                <?php
+
+                namespace Ns;
+                use X\A;
+                use X\B;
+
+                /**
+                 * @param \Closure[_](A): B $fx
+                 * @param iterable[pure, read-props|io]<int, A> $items
+                 */
+                function foo($fx, $items) {}
+                EOD,
+            <<<'EOD'
+                <?php
+
+                namespace Ns;
+
+                /**
+                 * @param \Closure[_](\X\A): \X\B $fx
+                 * @param iterable[pure, read-props|io]<int, \X\A> $items
+                 */
+                function foo($fx, $items) {}
+                EOD,
+            ['import_symbols' => true],
+        ];
+
         yield 'Test PHPDoc string must be kept as is' => [
             '<?php
 
