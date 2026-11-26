@@ -630,6 +630,25 @@ final class GlobalNamespaceImportFixerTest extends AbstractFixerTestCase
             ['import_classes' => true],
         ];
 
+        yield 'import_classes (true) - phpdoc string literal types' => [
+            <<<'EXPECTED'
+                <?php
+                namespace Test;
+                use Throwable;
+
+                /** @return '~\d[\s-]\(?\d{3}\)?~ui'|"\Foo"|Throwable */
+                function x() {}
+                EXPECTED,
+            <<<'INPUT'
+                <?php
+                namespace Test;
+
+                /** @return '~\d[\s-]\(?\d{3}\)?~ui'|"\Foo"|\Throwable */
+                function x() {}
+                INPUT,
+            ['import_classes' => true],
+        ];
+
         yield 'import_classes (true) - ignore other imported types' => [
             <<<'EXPECTED'
                 <?php
@@ -1056,6 +1075,26 @@ final class GlobalNamespaceImportFixerTest extends AbstractFixerTestCase
                 try {
                 } catch (/* ... */ Exception $e /* ... */) {
                 }
+                INPUT,
+            ['import_classes' => false],
+        ];
+
+        yield 'import_classes (false) - phpdoc string literal types' => [
+            <<<'EXPECTED'
+                <?php
+                namespace Test;
+                use Foo;
+
+                /** @return 'Foo'|"Foo"|\Foo */
+                function x() {}
+                EXPECTED,
+            <<<'INPUT'
+                <?php
+                namespace Test;
+                use Foo;
+
+                /** @return 'Foo'|"Foo"|Foo */
+                function x() {}
                 INPUT,
             ['import_classes' => false],
         ];
